@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý User</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Danh sách người dùng</h2>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Họ tên</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Role</th>
+        <th>Created At</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="u : ${user}">
+        <td th:text="${u.id}"></td>
+        <td th:text="${u.fullName}"></td>
+        <td th:text="${u.email}"></td>
+        <td th:text="${u.phone}"></td>
+        <td th:text="${u.role}"></td>
+        <td th:text="${#temporals.format(u.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
