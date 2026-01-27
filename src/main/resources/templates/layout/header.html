@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<header th:fragment="header">
+
+    <nav th:fragment="header" class="main-nav">
+        <a> ai biết thi kế logo khum</a>
+        <a th:href="@{/home}">Trang chủ</a>
+        <a th:href="@{/products}">Sản phẩm</a>
+        <a th:href="@{/sale}">Sale off</a>
+        <a th:href="@{/news}">Tin tức</a>
+        <a th:href="@{/about}">Giới thiệu</a>
+        <a th:href="@{/contact}">Liên hệ</a>
+        <span style="float:right">
+        <a th:href="@{/logout}">Logout</a>
+        </span>
+    </nav>
+</header>
+
+
+
