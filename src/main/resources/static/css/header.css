@@ -1,0 +1,41 @@
+header {
+    width: 100%;
+    background-color: #111;
+}
+.main-nav {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 14px 20px;
+
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+.main-nav .logo {
+    font-size: 18px;
+    font-weight: bold;
+    color: #00e5ff;
+    margin-right: 30px;
+    cursor: default;
+}
+.main-nav a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 14px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    transition: 0.2s;
+}
+.main-nav a:hover {
+    background-color: #222;
+}
+.nav-right {
+    margin-left: auto;
+}
+.nav-right a {
+    background-color: #ff5252;
+    color: #fff;
+}
+.nav-right a:hover {
+    background-color: #ff1744;
+}

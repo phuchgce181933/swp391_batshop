@@ -9,12 +9,9 @@ public class HomeController {
 
     @GetMapping("/home")
     public String home(HttpSession session) {
-
-//        // (khuyến nghị) check login
-//        if (session.getAttribute("user") == null) {
-//            return "redirect:/login";
-//        }
-
+        if (session.getAttribute("user") == null) {
+            return "redirect:/login";
+        }
         return "home";
     }
 }
