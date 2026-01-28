@@ -2,8 +2,36 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <header th:fragment="header">
     <link rel="stylesheet" th:href="@{/css/header.css}">
+    <div class="top-header">
+        <div class="container">
+
+            <div class="logo">
+                <img src="/images/logo.png" alt="Logo">
+            </div>
+
+            <div class="hotline">
+                HOTLINE:
+                <span>0977508430</span> |
+                <span>0338000308</span>
+            </div>
+
+            <div class="search-box">
+                <input type="text" placeholder="Tìm sản phẩm...">
+                <button>🔍</button>
+            </div>
+
+            <div class="top-icons">
+                <div class="icon">🔍<br><small>TRA CỨU</small></div>
+                <div class="icon">👤<br><small>TÀI KHOẢN</small></div>
+                <div class="icon cart">
+                    🛒<span class="badge">3</span><br>
+                    <small>GIỎ HÀNG</small>
+                </div>
+            </div>
+
+        </div>
+    </div>
     <nav th:fragment="header" class="main-nav">
-        <a> ai biết thi kế logo khum</a>
         <a th:href="@{/home}">Trang chủ</a>
         <a th:href="@{/products}">Sản phẩm</a>
         <a th:href="@{/sale}">Sale off</a>
