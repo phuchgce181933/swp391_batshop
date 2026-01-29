@@ -26,28 +26,28 @@ public class AuthController {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
-    // Hiển thị form
+
     @GetMapping("/register")
     public String showRegister(Model model) {
         model.addAttribute("user", new User());
         return "auth/register";
     }
 
-    // Xử lý đăng ký
+
     @PostMapping("/register")
     public String register(
             @ModelAttribute("user") User user,
             Model model
     ) {
-        // 1. Check email tồn tại
+
         if (userRepository.existsByEmail(user.getEmail())) {
             model.addAttribute("error", "Email đã tồn tại");
             return "auth/register";
         }
-        // 2. Hash password
+
         user.setPasswordHash(passwordEncoder.encode(user.getPasswordHash())
         );
-        // 3. Set mặc định
+
         user.setRole(Role.USER);
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
@@ -56,10 +56,12 @@ public class AuthController {
 
         return "redirect:/login";
     }
+
     @GetMapping("/login")
     public String showLoginForm(Model model) {
         return "auth/login";
     }
+
     @PostMapping("/login")
     public String doLogin(@RequestParam String email,
                           @RequestParam String password, Model model, HttpSession session) {
