@@ -2,28 +2,54 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Login</title>
+    <title>BatShop Login</title>
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+
 </head>
 <body>
 
-<h2>Login</h2>
+<div class="container">
 
-<form th:action="@{/login}" method="post">
+    <!-- LEFT PANEL -->
+    <div class="left-panel">
+        <a href="/" class="home-btn">← Home</a>
 
-    <label>Email</label>
-    <input type="text" name="email" />
-    <br>
+        <div class="brand">
+            <h1>BAT<span>SHOP</span>.</h1>
+            <p>
+                Join the BatShop community.<br>
+                Exclusive deals and best products await.
+            </p>
+        </div>
+    </div>
 
-    <label>Password</label>
-    <input type="password" name="password" />
-    <br>
+    <!-- RIGHT PANEL -->
+    <div class="right-panel">
 
-    <button type="submit">Login</button>
-</form>
+        <div class="login-card">
+            <h2>Welcome Back</h2>
+            <p class="sub">Enter your login information</p>
 
-<p th:if="${param.error}" style="color:red">
-    Sai email hoặc mật khẩu
-</p>
+            <form th:action="@{/login}" method="post">
+
+                <label>Email</label>
+                <input type="text" name="email" placeholder="Email">
+
+                <label>Password</label>
+                <input type="password" name="password" placeholder="Password">
+
+                <button type="submit">LOG IN</button>
+
+                <p th:if="${param.error}" class="error">
+                    Sai email hoặc mật khẩu
+                </p>
+
+            </form>
+        </div>
+
+    </div>
+
+</div>
 
 </body>
 </html>

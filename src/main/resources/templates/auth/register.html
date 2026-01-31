@@ -1,36 +1,45 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Đăng ký</title>
-</head>
-<body>
+<link rel="stylesheet" th:href="@{/css/register.css}">
 
-<h2>Đăng ký</h2>
+<div class="container">
 
-<p th:if="${error}" th:text="${error}" style="color:red"></p>
+    <!-- LEFT -->
+    <div class="left-panel">
+        <a href="/" class="home-btn">← Home</a>
 
-<form th:action="@{/register}" th:object="${user}" method="post">
+        <div class="brand">
+            <h1>BAT<span>SHOP</span>.</h1>
+            <p>
+                Join the BatShop community.<br>
+                Create your account today.
+            </p>
+        </div>
+    </div>
 
-    <label>Họ tên</label>
-    <input type="text" th:field="*{fullName}" required>
-    <br>
+    <!-- RIGHT -->
+    <div class="right-panel">
 
-    <label>Email</label>
-    <input type="email" th:field="*{email}" required>
-    <br>
+        <div class="card">
+            <form th:action="@{/register}" th:object="${user}" method="post">
 
-    <label>Số điện thoại</label>
-    <input type="text" th:field="*{phone}">
-    <br>
+                <label>Họ tên</label>
+                <input type="text" th:field="*{fullName}" required>
 
-    <label>Mật khẩu</label>
-    <input type="password" th:field="*{passwordHash}" required>
-    <br>
+                <label>Email</label>
+                <input type="email" th:field="*{email}" required>
 
-    <button type="submit">Đăng ký</button>
+                <label>Số điện thoại</label>
+                <input type="text" th:field="*{phone}">
 
-</form>
+                <label>Mật khẩu</label>
+                <input type="password" th:field="*{passwordHash}" required>
 
-</body>
-</html>
+                <button type="submit">ĐĂNG KÝ</button>
+
+                <p th:if="${error}" class="error" th:text="${error}"></p>
+
+            </form>
+        </div>
+
+    </div>
+
+</div>
