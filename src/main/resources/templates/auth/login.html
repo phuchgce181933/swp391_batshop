@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <title>BatShop Login</title>
     <link rel="stylesheet" th:href="@{/css/login.css}">
-
 </head>
+
 <body>
 
 <div class="container">
 
     <!-- LEFT PANEL -->
     <div class="left-panel">
-        <a href="/" class="home-btn">← Home</a>
+        <a th:href="@{/home}" class="home-btn">← Home</a>
 
         <div class="brand">
             <h1>BAT<span>SHOP</span>.</h1>
@@ -32,17 +32,31 @@
 
             <form th:action="@{/login}" method="post">
 
+                <!-- EMAIL -->
                 <label>Email</label>
-                <input type="text" name="email" placeholder="Email">
+                <input type="text"
+                       name="email"
+                       placeholder="Email"
+                       th:value="${email}"
+                       th:classappend="${error} ? 'input-error' : ''">
 
+                <!-- PASSWORD -->
                 <label>Password</label>
-                <input type="password" name="password" placeholder="Password">
 
+                <!-- ERROR BOX -->
+                <div class="error-box"
+                     th:if="${error}"
+                     th:text="${error}">
+                </div>
+
+                <input type="password"
+                       name="password"
+                       placeholder="Password"
+                       th:classappend="${error} ? 'input-error' : ''">
+
+                <!-- BUTTON -->
                 <button type="submit">LOG IN</button>
 
-                <p th:if="${param.error}" class="error">
-                    Sai email hoặc mật khẩu
-                </p>
             </form>
         </div>
     </div>
