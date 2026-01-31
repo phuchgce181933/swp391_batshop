@@ -4,9 +4,9 @@
   <input type="hidden" th:field="*{id}" />
 
   Image URL:
-  <input type="text" th:field="*{imageUrl}" /><br>
-  <img th:if="${banner.imageUrl != null}"
-       th:src="${banner.imageUrl}"
+  <input type="text" th:field="*{image}" /><br>
+  <img th:if="${banner.image != null}"
+       th:src="${banner.image}"
        width="200" /><br><br>
 
   Link:
