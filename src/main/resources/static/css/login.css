@@ -182,3 +182,14 @@ button:hover {
         width: 100%;
     }
 }
+.success-box {
+    background: #e7f7ea;
+    color: #1b8a3d;
+    border: 1px solid #a6e0b5;
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    font-weight: 600;
+    text-align: center;
+    animation: fadeSlideIn 0.35s ease;
+}
