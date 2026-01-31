@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${product.name}"></title>
+    <link rel="stylesheet" th:href="@{/css/product-detail.css}">
+</head>
+<body>
+
+<div th:replace="layout/header :: header"></div>
+
+<div class="product-detail-container">
+
+    <!-- IMAGE -->
+    <div class="product-images">
+        <img class="main-img"
+             th:src="@{/uploads/products/{img}(img=${product.images[0].image})}">
+
+        <div class="thumb-list">
+            <img th:each="img : ${product.images}"
+                 th:src="@{/uploads/products/{img}(img=${img.image})}">
+        </div>
+    </div>
+
+    <!-- INFO -->
+    <div class="product-info">
+
+        <h1 th:text="${product.name}"></h1>
+
+        <p>Thương hiệu: <b th:text="${product.brand.name}"></b></p>
+        <p>Tình trạng:
+            <span th:text="${product.status ? 'Còn hàng' : 'Hết hàng'}"></span>
+        </p>
+
+        <h2 class="price">
+            <span th:text="${#numbers.formatDecimal(product.price,0,'COMMA',0,'POINT')} + ' ₫'"></span>
+        </h2>
+
+        <!-- QUANTITY -->
+        <div class="qty-box">
+            <button onclick="minusQty()">-</button>
+            <input id="qty" type="number" value="1" min="1">
+            <button onclick="plusQty()">+</button>
+        </div>
+
+        <!-- BUTTONS -->
+        <div class="btn-group">
+            <form th:action="@{/cart/add}" method="post">
+                <input type="hidden" name="productId" th:value="${product.id}">
+                <input type="hidden" id="qtyInput" name="quantity" value="1">
+
+                <button type="submit" class="btn-cart">THÊM VÀO GIỎ HÀNG</button>
+            </form>
+
+            <button class="btn-buy">MUA NGAY</button>
+        </div>
+    </div>
+
+</div>
+
+<!-- DESCRIPTION -->
+<div class="product-desc">
+    <h3>Mô tả sản phẩm</h3>
+    <p th:text="${product.description}"></p>
+</div>
+
+<div th:replace="layout/footer :: footer"></div>
+
+<script>
+    function plusQty() {
+        let q = document.getElementById("qty");
+        q.value = parseInt(q.value) + 1;
+        document.getElementById("qtyInput").value = q.value;
+    }
+
+    function minusQty() {
+        let q = document.getElementById("qty");
+        if (q.value > 1) q.value--;
+        document.getElementById("qtyInput").value = q.value;
+    }
+</script>
+
+</body>
+</html>
