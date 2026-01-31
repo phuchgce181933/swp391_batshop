@@ -107,6 +107,33 @@ input:focus {
     box-shadow: 0 0 0 3px rgba(91,108,255,0.15);
 }
 
+/* input lỗi */
+.input-error {
+    border-color: #ff4b4b;
+    box-shadow: 0 0 0 3px rgba(255,75,75,0.15);
+    animation: shake 0.25s linear;
+}
+
+/* ERROR BOX ĐẸP */
+.error-box {
+    background: #ffe5e5;
+    color: #c40000;
+    border: 1px solid #ffb3b3;
+    padding: 12px;
+    border-radius: 10px;
+    margin: 10px 0 8px 0;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+
+    animation: fadeSlideIn 0.35s ease;
+}
+
+.error-box::before {
+    content: "⚠ ";
+}
+
+/* BUTTON */
 button {
     width: 100%;
     margin-top: 22px;
@@ -125,10 +152,24 @@ button:hover {
     background: #e63b3b;
 }
 
-.error {
-    color: red;
-    text-align: center;
-    margin-top: 12px;
+/* ANIMATION */
+@keyframes fadeSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-3px); }
+    50% { transform: translateX(3px); }
+    75% { transform: translateX(-3px); }
+    100% { transform: translateX(0); }
 }
 
 /* RESPONSIVE */

@@ -126,3 +126,42 @@ button:hover {
         width: 100%;
     }
 }
+/* ERROR BOX */
+.error-box {
+    background: #ffe5e5;
+    color: #c40000;
+    border: 1px solid #ffb3b3;
+    padding: 12px;
+    border-radius: 10px;
+    margin: 8px 0;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+
+    animation: fadeSlideIn 0.35s ease;
+}
+
+.error-box::before {
+    content: "⚠ ";
+}
+
+/* input lỗi */
+.input-error {
+    border-color: #ff4b4b;
+    box-shadow: 0 0 0 3px rgba(255,75,75,0.15);
+    animation: shake 0.25s linear;
+}
+
+/* animation */
+@keyframes fadeSlideIn {
+    from { opacity:0; transform:translateY(-6px); }
+    to { opacity:1; transform:translateY(0); }
+}
+
+@keyframes shake {
+    0%{transform:translateX(0);}
+    25%{transform:translateX(-3px);}
+    50%{transform:translateX(3px);}
+    75%{transform:translateX(-3px);}
+    100%{transform:translateX(0);}
+}
