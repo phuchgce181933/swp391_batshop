@@ -1,0 +1,31 @@
+<h2>Manage Categories</h2>
+
+<p th:if="${error}" th:text="${error}" style="color:red"></p>
+
+<a th:href="@{/admin/categories/add}">+ Add Category</a>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Total Products</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="c : ${categories}">
+        <td th:text="${c.id}"></td>
+        <td th:text="${c.name}"></td>
+
+        <!-- tránh lỗi null -->
+        <td th:text="${c.products != null ? c.products.size() : 0}"></td>
+
+        <td>
+            <a th:href="@{/admin/categories/edit/{id}(id=${c.id})}">Edit</a> |
+            <a th:href="@{/admin/categories/delete/{id}(id=${c.id})}"
+               onclick="return confirm('Delete this category?')">Delete</a>
+        </td>
+    </tr>
+    </tbody>
+</table>

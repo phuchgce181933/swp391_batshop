@@ -1,0 +1,19 @@
+<h2>Edit Blog</h2>
+
+<form th:action="@{/admin/blogs/edit}" method="post" th:object="${blog}">
+    <input type="hidden" th:field="*{id}" />
+
+    Title:
+    <input type="text" th:field="*{title}" required /><br><br>
+
+    Image URL:
+    <input type="text" th:field="*{imageUrl}" /><br>
+    <img th:if="${blog.imageUrl != null}"
+         th:src="${blog.imageUrl}"
+         width="200"/><br><br>
+
+    Content:
+    <textarea th:field="*{content}" rows="8"></textarea><br><br>
+
+    <button type="submit">Update</button>
+</form>

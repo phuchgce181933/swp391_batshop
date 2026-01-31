@@ -1,0 +1,16 @@
+<h2>Edit Banner</h2>
+
+<form th:action="@{/admin/banners/edit}" method="post" th:object="${banner}">
+  <input type="hidden" th:field="*{id}" />
+
+  Image URL:
+  <input type="text" th:field="*{imageUrl}" /><br>
+  <img th:if="${banner.imageUrl != null}"
+       th:src="${banner.imageUrl}"
+       width="200" /><br><br>
+
+  Link:
+  <input type="text" th:field="*{link}" /><br><br>
+
+  <button type="submit">Update</button>
+</form>
