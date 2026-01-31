@@ -38,5 +38,8 @@ public class Product {
     private Brand brand;
 
     @OneToMany(mappedBy = "product")
+    private List<ProductImage> images;
+
+    @OneToMany(mappedBy = "product")
     private List<FlashSaleProduct> flashSales;
 }
