@@ -56,6 +56,9 @@
 
                 <!-- BUTTON -->
                 <button type="submit">LOG IN</button>
+                <div class="success-box" th:if="${param.changed}">
+                    ✅ Đổi mật khẩu thành công — vui lòng đăng nhập lại
+                </div>
 
             </form>
         </div>

@@ -77,4 +77,48 @@ public class AuthController {
         session.setAttribute("user", user);
         return "redirect:/home";
     }
+    // =========================
+// CHANGE PASSWORD
+// =========================
+    @GetMapping("/change-password")
+    public String showChangePassword() {
+        return "auth/change-password";
+    }
+    @PostMapping("/change-password")
+    public String changePassword(
+            @RequestParam String oldPass,
+            @RequestParam String newPass,
+            @RequestParam String confirmPass,
+            HttpSession session,
+            Model model
+    ) {
+
+        User user = (User) session.getAttribute("user");
+
+        if (user == null) {
+            return "redirect:/login";
+        }
+
+        // check mật khẩu cũ
+        if (!passwordEncoder.matches(oldPass, user.getPasswordHash())) {
+            model.addAttribute("error", "Mật khẩu cũ không đúng");
+            return "auth/change-password";
+        }
+
+        // check xác nhận
+        if (!newPass.equals(confirmPass)) {
+            model.addAttribute("error", "Mật khẩu xác nhận không khớp");
+            return "auth/change-password";
+        }
+
+        // cập nhật mật khẩu
+        user.setPasswordHash(passwordEncoder.encode(newPass));
+        userRepository.save(user);
+
+        // ❗ logout user
+        session.invalidate();
+
+        // ✅ redirect về login + flag success
+        return "redirect:/login?changed=true";
+    }
 }
