@@ -1,6 +1,7 @@
 package com.ra.batshop.controller;
 
 import com.ra.batshop.repository.ProductRepository;
+import com.ra.batshop.repository.ProductVariantRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,16 +12,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class HomeController {
     private final ProductRepository productRepository;
-    public HomeController(ProductRepository productRepository) {
+    private final ProductVariantRepository productVariantRepository;
+
+    public HomeController(ProductRepository productRepository, ProductVariantRepository productVariantRepository) {
 
         this.productRepository = productRepository;
+        this.productVariantRepository = productVariantRepository;
     }
     @GetMapping()
     public String home(Model model, HttpSession session) {
         if (session.getAttribute("user") == null) {
             return "redirect:/login";
         }
-        model.addAttribute("products", productRepository.findAll());
+        model.addAttribute("productvariant", productVariantRepository.findAll()); // BẮT BUỘC
         return "home";
     }
 

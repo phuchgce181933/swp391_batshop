@@ -1,0 +1,57 @@
+<div th:fragment="productvariant-list">
+
+<h2>Sản phẩm cầu lông</h2>
+
+<div style="display:flex; gap:20px; flex-wrap:wrap;">
+
+    <div th:each="v : ${productvariant}"
+         style="width:220px;border:1px solid #ddd;padding:10px;border-radius:10px;">
+
+        <!-- IMAGE -->
+        <div class="product-image">
+
+            <!-- Có ảnh -->
+            <img th:if="${v.product != null and v.product.images != null and !v.product.images.isEmpty()}"
+                 th:src="@{/uploads/products/{img}(img=${v.product.images[0].image})}"
+                 alt="Product image"
+                 width="180">
+
+            <!-- Không có ảnh -->
+            <img th:if="${v.product == null or v.product.images == null or v.product.images.isEmpty()}"
+                 src="/img/no-image.png"
+                 alt="No image"
+                 width="180">
+
+        </div>
+
+        <!-- NAME -->
+        <h4 th:text="${v.product != null ? v.product.name : 'No name'}"></h4>
+
+        <!-- BRAND -->
+        <p th:text="${v.brand != null ? v.brand.name : 'No brand'}"></p>
+
+        <!-- SIZE -->
+        <p th:if="${v.size != null}"
+           th:text="'Size: ' + ${v.size.name}">
+        </p>
+
+
+        <!-- COLOR -->
+        <p th:text="${v.color != null ? v.color.name : 'No color'}"></p>
+
+        <!-- PRICE -->
+        <p style="color:red;font-weight:bold;"
+           th:text="${#numbers.formatDecimal(v.additionalPrice != null ? v.additionalPrice : 0, 0, 'COMMA', 0, 'POINT')} + ' ₫'">
+        </p>
+
+
+        <!-- DETAIL -->
+        <a th:href="@{/productvariant/detail/{id}(id=${v.id})}">
+            Xem chi tiết
+        </a>
+
+    </div>
+
+</div>
+
+</div>
