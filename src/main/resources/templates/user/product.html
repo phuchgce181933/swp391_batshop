@@ -1,0 +1,22 @@
+<h2 class="section-title">Sản phẩm cầu lông</h2>
+<link rel="stylesheet" th:href="@{/css/homeproduct.css}">
+
+<div class="product-grid">
+    <div class="product-card" th:each="p : ${products}">
+
+        <!-- INFO -->
+        <div class="product-info">
+            <h3 th:text="${p.name}"></h3>
+            <p class="brand" th:text="${p.brand.name}"></p>
+            <p class="category" th:text="${p.category.name}"></p>
+            <p class="price"
+               th:text="${#numbers.formatDecimal(p.price,0,'COMMA',0,'POINT')} + ' ₫'"></p>
+        </div>
+
+        <!-- BUTTON -->
+        <div class="product-actions">
+            <a th:href="@{/product/detail/{id}(id=${p.id})}" class="btn-detail">Xem chi tiết</a>
+        </div>
+
+    </div>
+</div>
