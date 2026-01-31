@@ -16,10 +16,11 @@ public class HomeController {
         this.productRepository = productRepository;
     }
     @GetMapping()
-    public String home(HttpSession session) {
+    public String home(Model model, HttpSession session) {
         if (session.getAttribute("user") == null) {
             return "redirect:/login";
         }
+        model.addAttribute("products", productRepository.findAll());
         return "home";
     }
 

@@ -1,14 +1,5 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Sản phẩm</title>
-    <link rel="stylesheet" th:href="@{/css/homeproduct.css}">
-</head>
-
-<body>
-
-<h2 class="section-title">Sản phẩm cầu lông</h2>
+<div th:fragment="product-list">
+    <h2 class="section-title">Sản phẩm cầu lông</h2>
 
 <div class="product-grid">
     <div class="product-card" th:each="p : ${products}">
@@ -45,6 +36,4 @@
 
     </div>
 </div>
-
-</body>
-</html>
+</div>

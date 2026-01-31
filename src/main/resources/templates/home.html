@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Home</title>
+    <link rel="stylesheet" th:href="@{/css/homeproduct.css}">
 </head>
 <body>
 
@@ -13,15 +14,17 @@
 <main style="padding:20px">
     <h1>Welcome to Home Page</h1>
     <p>This is home page content</p>
+    <!-- PRODUCT LIST -->
+    <div th:replace="user/product :: product-list"></div>
 </main>
 
 <!-- Footer -->
 <div th:replace="layout/footer :: footer"></div>
 <a th:href="@{/change-password}" class="btn-change-pass">
-    🔑 ChangePassword
+     ChangePassword
 </a>
 <a th:href="@{/profile/edit}" class="btn-change-pass">
-    ✏️ UpdateProfile
+     UpdateProfile
 </a>
 
 </body>
