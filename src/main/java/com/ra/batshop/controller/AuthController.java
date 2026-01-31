@@ -41,7 +41,7 @@ public class AuthController {
     ) {
 
         if (userRepository.existsByEmail(user.getEmail())) {
-            model.addAttribute("error", "Email đã tồn tại");
+            model.addAttribute("errorEmail", "Email đã tồn tại");
             return "auth/register";
         }
 
