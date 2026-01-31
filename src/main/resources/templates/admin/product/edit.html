@@ -1,0 +1,32 @@
+<h2>Edit Product</h2>
+
+<form th:action="@{/admin/products/edit}" method="post" th:object="${product}">
+    <input type="hidden" th:field="*{id}" />
+
+    Name:
+    <input type="text" th:field="*{name}" /><br>
+
+    Description:
+    <textarea th:field="*{description}"></textarea><br>
+
+    Price:
+    <input type="number" step="0.01" th:field="*{price}" /><br>
+
+    Category:
+    <select th:field="*{category}">
+        <option th:each="c : ${categories}"
+                th:value="${c}"
+                th:text="${c.name}">
+        </option>
+    </select><br>
+
+    Brand:
+    <select th:field="*{brand}">
+        <option th:each="b : ${brands}"
+                th:value="${b}"
+                th:text="${b.name}">
+        </option>
+    </select><br>
+
+    <button type="submit">Update</button>
+</form>

@@ -1,0 +1,15 @@
+<h2>Add Blog</h2>
+
+<form th:action="@{/admin/blogs/add}" method="post" th:object="${blog}">
+
+    Title:
+    <input type="text" th:field="*{title}" required /><br><br>
+
+    Image URL:
+    <input type="text" th:field="*{imageUrl}" placeholder="https://..." /><br><br>
+
+    Content:
+    <textarea th:field="*{content}" rows="8"></textarea><br><br>
+
+    <button type="submit">Save</button>
+</form>

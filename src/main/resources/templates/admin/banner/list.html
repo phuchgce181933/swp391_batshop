@@ -1,0 +1,38 @@
+<h2>Manage Banners</h2>
+
+<a th:href="@{/admin/banners/add}">+ Add Banner</a>
+
+<table>
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Image</th>
+    <th>Link</th>
+    <th>Action</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="b : ${banners}">
+    <td th:text="${b.id}"></td>
+
+    <td>
+      <img th:if="${b.imageUrl != null}"
+           th:src="${b.imageUrl}"
+           width="120" />
+      <span th:if="${b.imageUrl == null}">No image</span>
+    </td>
+
+    <td>
+      <a th:href="${b.link}" target="_blank"
+         th:text="${b.link}">
+      </a>
+    </td>
+
+    <td>
+      <a th:href="@{/admin/banners/edit/{id}(id=${b.id})}">Edit</a> |
+      <a th:href="@{/admin/banners/delete/{id}(id=${b.id})}"
+         onclick="return confirm('Delete this banner?')">Delete</a>
+    </td>
+  </tr>
+  </tbody>
+</table>

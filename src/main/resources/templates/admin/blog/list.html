@@ -1,0 +1,40 @@
+<h2>Manage Blogs</h2>
+
+<a th:href="@{/admin/blogs/add}">+ Add Blog</a>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Image</th>
+        <th>Title</th>
+        <th>Created At</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="b : ${blogs}">
+        <td th:text="${b.id}"></td>
+
+        <td>
+            <img th:if="${b.imageUrl != null}"
+                 th:src="${b.imageUrl}"
+                 width="120"/>
+            <span th:if="${b.imageUrl == null}">No image</span>
+        </td>
+
+        <td th:text="${b.title}"></td>
+
+        <td th:text="${b.createdAt != null
+              ? #temporals.format(b.createdAt,'dd/MM/yyyy HH:mm')
+              : ''}">
+        </td>
+
+        <td>
+            <a th:href="@{/admin/blogs/edit/{id}(id=${b.id})}">Edit</a> |
+            <a th:href="@{/admin/blogs/delete/{id}(id=${b.id})}"
+               onclick="return confirm('Delete this blog?')">Delete</a>
+        </td>
+    </tr>
+    </tbody>
+</table>

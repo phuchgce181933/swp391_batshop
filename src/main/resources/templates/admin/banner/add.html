@@ -1,0 +1,12 @@
+<h2>Add Banner</h2>
+
+<form th:action="@{/admin/banners/add}" method="post" th:object="${banner}">
+
+    Image URL:
+    <input type="text" th:field="*{imageUrl}" placeholder="https://..." /><br><br>
+
+    Link:
+    <input type="text" th:field="*{link}" placeholder="https://..." /><br><br>
+
+    <button type="submit">Save</button>
+</form>

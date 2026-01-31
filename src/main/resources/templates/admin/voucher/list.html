@@ -1,0 +1,41 @@
+<h2>Manage Vouchers</h2>
+
+<a th:href="@{/admin/vouchers/add}">+ Add Voucher</a>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Code</th>
+        <th>Discount (%)</th>
+        <th>Status</th>
+        <th>Valid From</th>
+        <th>Valid To</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="v : ${vouchers}">
+        <td th:text="${v.id}"></td>
+        <td th:text="${v.code}"></td>
+        <td th:text="${v.discountPercent}"></td>
+
+        <td th:text="${v.active ? 'Active' : 'Inactive'}"></td>
+
+        <td th:text="${v.validFrom != null
+            ? #temporals.format(v.validFrom,'dd/MM/yyyy') : ''}">
+        </td>
+
+        <td th:text="${v.validTo != null
+            ? #temporals.format(v.validTo,'dd/MM/yyyy') : ''}">
+        </td>
+
+        <td>
+            <a th:href="@{/admin/vouchers/edit/{id}(id=${v.id})}">Edit</a> |
+            <a th:href="@{/admin/vouchers/toggle/{id}(id=${v.id})}"
+               th:text="${v.active ? 'Deactivate' : 'Activate'}">
+            </a>
+        </td>
+    </tr>
+    </tbody>
+</table>

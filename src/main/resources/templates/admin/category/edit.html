@@ -1,0 +1,10 @@
+<h2>Edit Category</h2>
+
+<form th:action="@{/admin/categories/edit}" method="post" th:object="${category}">
+    <input type="hidden" th:field="*{id}" />
+
+    Name:
+    <input type="text" th:field="*{name}" required />
+    <br><br>
+    <button type="submit">Update</button>
+</form>
