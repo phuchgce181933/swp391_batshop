@@ -175,3 +175,16 @@ button:hover {
     text-align: center;
     font-weight: 600;
 }
+.success-box {
+    background: #e6ffed;
+    color: #0a7a32;
+    border: 1px solid #a6e6b8;
+    padding: 12px;
+    border-radius: 10px;
+    margin-top: 12px;
+    font-weight: 600;
+    text-align: center;
+
+    animation: fadeSlideIn 0.35s ease;
+}
+
