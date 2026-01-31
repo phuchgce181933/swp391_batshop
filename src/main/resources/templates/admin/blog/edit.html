@@ -7,9 +7,10 @@
     <input type="text" th:field="*{title}" required /><br><br>
 
     Image URL:
-    <input type="text" th:field="*{imageUrl}" /><br>
-    <img th:if="${blog.imageUrl != null}"
-         th:src="${blog.imageUrl}"
+    <input type="text" th:field="*{image}" /><br>
+    <!--/*@thymesVar id="imageUrl" type=""*/-->
+    <img th:if="${blog.image != null}"
+         th:src="${blog.image}"
          width="200"/><br><br>
 
     Content:

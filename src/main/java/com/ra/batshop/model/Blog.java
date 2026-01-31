@@ -16,7 +16,7 @@ public class Blog {
 
     private String title;
 
-    private String imageUrl;
+    private String image;
 
     @Column(columnDefinition = "TEXT")
     private String content;
