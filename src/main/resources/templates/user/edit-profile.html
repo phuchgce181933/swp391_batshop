@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Cập nhật thông tin</title>
+    <link rel="stylesheet" th:href="@{/css/register.css}">
+</head>
+<body>
+
+<div class="container">
+    <div class="right-panel" style="width:100%">
+        <div class="card">
+
+            <h2>Cập nhật thông tin</h2>
+
+            <form th:action="@{/profile/edit}" method="post" th:object="${user}">
+
+                <label>Họ tên</label>
+                <input type="text" th:field="*{fullName}" required>
+
+                <label>Email</label>
+                <input type="email" th:field="*{email}">
+
+
+                <label>Số điện thoại</label>
+                <input type="text" th:field="*{phone}">
+
+                <button type="submit">CẬP NHẬT</button>
+
+                <div class="error-box" th:if="${error}" th:text="${error}"></div>
+                <div class="success-box" th:if="${success}" th:text="${success}"></div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

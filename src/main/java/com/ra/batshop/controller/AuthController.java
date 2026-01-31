@@ -121,4 +121,62 @@ public class AuthController {
         // ✅ redirect về login + flag success
         return "redirect:/login?changed=true";
     }
+    @GetMapping("/profile/edit")
+    public String editProfileForm(HttpSession session, Model model) {
+
+        User currentUser = (User) session.getAttribute("user");
+
+        if (currentUser == null) {
+            return "redirect:/login";
+        }
+
+        model.addAttribute("user", currentUser);
+        return "user/edit-profile";
+    }
+    @PostMapping("/profile/edit")
+    public String editProfileSubmit(
+            @ModelAttribute("user") User formUser,
+            HttpSession session,
+            Model model
+    ) {
+        try {
+
+            User currentUser = (User) session.getAttribute("user");
+
+            if (currentUser == null) {
+                return "redirect:/login";
+            }
+
+            User dbUser = userRepository.findById(currentUser.getId())
+                    .orElseThrow(() -> new RuntimeException("User không tồn tại"));
+            // check email trùng với user khác
+            if (!dbUser.getEmail().equals(formUser.getEmail())
+                    && userRepository.existsByEmail(formUser.getEmail())) {
+
+                model.addAttribute("error", "Email đã tồn tại");
+                model.addAttribute("user", dbUser);
+                return "user/edit-profile";
+            }
+
+            dbUser.setEmail(formUser.getEmail());
+
+            dbUser.setFullName(formUser.getFullName());
+            dbUser.setPhone(formUser.getPhone());
+            dbUser.setUpdatedAt(LocalDateTime.now());
+
+            userRepository.save(dbUser);
+
+            session.setAttribute("user", dbUser);
+
+            model.addAttribute("user", dbUser);
+            model.addAttribute("success", "Cập nhật thành công");
+
+            return "user/edit-profile";
+
+        } catch (Exception e) {
+            model.addAttribute("error", "Lỗi cập nhật: " + e.getMessage());
+            return "user/edit-profile";
+        }
+    }
+
 }
