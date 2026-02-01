@@ -1,7 +1,9 @@
-<aside th:fragment="sidebar">
-    <ul>
+<aside class="admin-sidebar" th:fragment="sidebar">
+    <h2 class="sidebar-title">BATSHOP</h2>
+
+    <ul class="admin-menu">
         <li><a th:href="@{/admin/dashboard}">Dashboard</a></li>
-        <li><a th:href="@{/admin/manageruser}">Managr Users</a></li>
+        <li><a th:href="@{/admin/manageruser}">Manage Users</a></li>
         <li><a th:href="@{/admin/products}">Manage Products</a></li>
         <li><a th:href="@{/admin/banners}">Manage Banners</a></li>
         <li><a th:href="@{/admin/blogs}">Manage Blogs</a></li>
