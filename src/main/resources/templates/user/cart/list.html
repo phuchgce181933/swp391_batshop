@@ -8,6 +8,8 @@
 </head>
 <body>
 <div th:replace="layout/header :: header"></div>
+
+
 <h1>giở hàng</h1>
 <table>
     <thead>
@@ -38,8 +40,8 @@
                 <button type="submit">Cập nhật</button>
             </form>
         </td>
-        <td th:text="${item.productVariant.additionalPrice}"></td>
-        <td th:text="${item.quantity*item.getProductVariant().additionalPrice}"></td>
+        <td th:text="${#numbers.formatDecimal(item.productVariant.additionalPrice, 0, 'POINT', 0, 'COMMA')}"></td>
+        <td th:text="${#numbers.formatDecimal(item.quantity*item.getProductVariant().additionalPrice, 0, 'POINT', 0, 'COMMA')}"></td>
         <td>
             <form th:action="@{/cart/delete}" method="post">
                 <input type="hidden" name="id" th:value="${item.id}">
@@ -49,14 +51,18 @@
     </tr>
     </tbody>
 </table>
-<button type="submit">Thành toán</button>
+<div class="cart-summary">
+<div>
+    <td  th:text="${#numbers.formatDecimal(
+        totalCart, 0, 'POINT', 0, 'COMMA')} + ' đ'">
+    </td>
+</div>
+    <a th:href="@{/checkout/list}" class="checkout-btn">
+        Thanh toán
+    </a>
+</div>
+
 <!-- đích -->
 <div th:replace="layout/footer :: footer"></div>
-<a th:href="@{/change-password}" class="btn-change-pass">
-    ChangePassword
-</a>
-<a th:href="@{/profile/edit}" class="btn-change-pass">
-    UpdateProfile
-</a>
 </body>
 </html>
