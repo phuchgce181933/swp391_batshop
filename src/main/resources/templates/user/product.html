@@ -4,7 +4,6 @@
 <div class="product-grid">
     <div class="product-card" th:each="p : ${products}">
 
-        <!-- IMAGE -->
         <div class="product-image">
 
             <img th:if="${p.images != null and !p.images.isEmpty()}"
