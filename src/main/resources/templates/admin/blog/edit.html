@@ -1,20 +1,50 @@
 <h2>Edit Blog</h2>
 
-<form th:action="@{/admin/blogs/edit}" method="post" th:object="${blog}">
-    <input type="hidden" th:field="*{id}" />
+<form th:action="@{/admin/blogs/edit}"
+      method="post"
+      enctype="multipart/form-data"
+      th:object="${blog}">
 
-    Title:
-    <input type="text" th:field="*{title}" required /><br><br>
+    <input type="hidden" th:field="*{id}">
 
-    Image URL:
-    <input type="text" th:field="*{image}" /><br>
-    <!--/*@thymesVar id="imageUrl" type=""*/-->
-    <img th:if="${blog.image != null}"
-         th:src="${blog.image}"
-         width="200"/><br><br>
+    <div>
+        <label>Title</label><br>
+        <input type="text" th:field="*{title}" required>
+    </div>
 
-    Content:
-    <textarea th:field="*{content}" rows="8"></textarea><br><br>
+    <br>
+
+    <div th:if="${blog.image != null}">
+        <label>Current Image</label><br>
+        <img th:src="@{/uploads/product/{img}(img=${blog.image})}"
+             width="200">
+    </div>
+
+    <br>
+
+    <div>
+        <label>Change Image</label><br>
+        <input type="file" name="file">
+    </div>
+
+    <br>
+
+    <div>
+        <label>Status</label><br>
+        <select th:field="*{status}">
+            <option th:value="true">Active</option>
+            <option th:value="false">Inactive</option>
+        </select>
+    </div>
+
+    <br>
+
+    <div>
+        <label>Content</label><br>
+        <textarea th:field="*{content}" rows="8"></textarea>
+    </div>
+
+    <br>
 
     <button type="submit">Update</button>
 </form>

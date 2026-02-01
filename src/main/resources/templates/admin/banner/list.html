@@ -1,37 +1,43 @@
-<h2>Manage Banners</h2>
+<h2>Banner List</h2>
 
 <a th:href="@{/admin/banners/add}">+ Add Banner</a>
 
-<table>
+<table border="1" cellpadding="10">
   <thead>
   <tr>
     <th>ID</th>
+    <th>Name</th>
     <th>Image</th>
-    <th>Link</th>
+    <th>Status</th>
     <th>Action</th>
   </tr>
   </thead>
+
   <tbody>
   <tr th:each="b : ${banners}">
     <td th:text="${b.id}"></td>
 
-    <td>
-      <img th:if="${b.imageUrl != null}"
-           th:src="${b.imageUrl}"
-           width="120" />
-      <span th:if="${b.imageUrl == null}">No image</span>
-    </td>
+    <td th:text="${b.name}"></td>
 
     <td>
-      <a th:href="${b.link}" target="_blank"
-         th:text="${b.link}">
+      <img th:if="${b.image != null}"
+           th:src="@{/uploads/product/{img}(img=${b.image})}"
+           width="120">
+    </td>
+
+    <td th:text="${b.status ? 'ACTIVE' : 'INACTIVE'}"></td>
+
+    <td>
+      <a th:href="@{/admin/banners/edit/{id}(id=${b.id})}">Edit</a>
+      |
+      <a th:href="@{/admin/banners/toggle/{id}(id=${b.id})}">
+        <span th:text="${b.status ? 'Disable' : 'Enable'}"></span>
       </a>
-    </td>
-
-    <td>
-      <a th:href="@{/admin/banners/edit/{id}(id=${b.id})}">Edit</a> |
+      |
       <a th:href="@{/admin/banners/delete/{id}(id=${b.id})}"
-         onclick="return confirm('Delete this banner?')">Delete</a>
+         onclick="return confirm('Delete this banner?')">
+        Delete
+      </a>
     </td>
   </tr>
   </tbody>

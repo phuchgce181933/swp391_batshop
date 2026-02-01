@@ -5,6 +5,12 @@ import com.ra.batshop.repository.BannerRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @Controller
 @RequestMapping("/admin/banners")
@@ -12,32 +18,44 @@ public class BannerController {
 
     private final BannerRepository bannerRepository;
 
+    private final String UPLOAD_DIR = "uploads/product/";
+
     public BannerController(BannerRepository bannerRepository) {
         this.bannerRepository = bannerRepository;
     }
 
-    // LIST
     @GetMapping
     public String list(Model model) {
         model.addAttribute("banners", bannerRepository.findAll());
         return "admin/banner/list";
     }
 
-    // ADD FORM
     @GetMapping("/add")
     public String addForm(Model model) {
-        model.addAttribute("banner", new Banner());
+        Banner banner = new Banner();
+        banner.setStatus(true); // mặc định active
+        model.addAttribute("banner", banner);
         return "admin/banner/add";
     }
 
-    // SAVE
     @PostMapping("/add")
-    public String save(@ModelAttribute Banner banner) {
+    public String save(
+            @ModelAttribute Banner banner,
+            @RequestParam("file") MultipartFile file
+    ) throws IOException {
+
+        if (!file.isEmpty()) {
+            String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+            Path path = Paths.get(UPLOAD_DIR + fileName);
+            Files.createDirectories(path.getParent());
+            Files.write(path, file.getBytes());
+            banner.setImage(fileName);
+        }
+
         bannerRepository.save(banner);
         return "redirect:/admin/banners";
     }
 
-    // EDIT FORM
     @GetMapping("/edit/{id}")
     public String editForm(@PathVariable Integer id, Model model) {
         model.addAttribute("banner",
@@ -45,14 +63,36 @@ public class BannerController {
         return "admin/banner/edit";
     }
 
-    // UPDATE
     @PostMapping("/edit")
-    public String update(@ModelAttribute Banner banner) {
+    public String update(
+            @ModelAttribute Banner banner,
+            @RequestParam("file") MultipartFile file
+    ) throws IOException {
+
+        Banner oldBanner = bannerRepository.findById(banner.getId()).orElseThrow();
+
+        if (!file.isEmpty()) {
+            String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+            Path path = Paths.get(UPLOAD_DIR + fileName);
+            Files.createDirectories(path.getParent());
+            Files.write(path, file.getBytes());
+            banner.setImage(fileName);
+        } else {
+            banner.setImage(oldBanner.getImage());
+        }
+
         bannerRepository.save(banner);
         return "redirect:/admin/banners";
     }
 
-    // DELETE
+    @GetMapping("/toggle/{id}")
+    public String toggleStatus(@PathVariable Integer id) {
+        Banner banner = bannerRepository.findById(id).orElseThrow();
+        banner.setStatus(!banner.getStatus());
+        bannerRepository.save(banner);
+        return "redirect:/admin/banners";
+    }
+
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable Integer id) {
         bannerRepository.deleteById(id);

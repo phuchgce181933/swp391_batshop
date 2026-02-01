@@ -21,5 +21,15 @@ public class Blog {
     @Column(columnDefinition = "TEXT")
     private String content;
 
+    private Boolean status;
+
     private LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        if (status == null) {
+            status = true;
+        }
+    }
 }
