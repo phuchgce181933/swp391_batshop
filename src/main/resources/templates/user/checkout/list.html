@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Checkout</title>
+    <link rel="stylesheet" th:href="@{/css/checkout/checkout.css}">
+</head>
+<body>
+
+<div th:replace="layout/header :: header"></div>
+
+<div class="checkout-container">
+
+    <h2>Đơn hàng (<span th:text="${#lists.size(cartItems)}"></span> sản phẩm)</h2>
+
+    <div class="address-box">
+        <h3> Địa chỉ giao hàng</h3>
+        <form th:action="@{/checkout/confirm}" method="post">
+
+            <div th:each="addr : ${addresses}" class="address-item">
+
+                <label>
+                    <input type="radio"
+                           name="addressId"
+                           th:value="${addr.id}"
+                           th:checked="${defaultAddress != null and addr.id == defaultAddress.id}"/>
+
+                    <strong th:text="${addr.fullName}"></strong>
+                    | <span th:text="${addr.phone}"></span><br>
+
+                    <span th:text="${addr.addressLine}"></span>,
+                    <span th:text="${addr.district}"></span>,
+                    <span th:text="${addr.city}"></span>
+                </label>
+            </div>
+        </form>
+    </div>
+
+
+    <div class="order-item" th:each="item : ${cartItems}">
+        <div class="item-left">
+            <span class="qty" th:text="${item.quantity}"></span>
+            <img th:if="${item.productVariant.product.images != null
+                    and !item.productVariant.product.images.isEmpty()}"
+                 th:src="@{/uploads/products/{img}(img=${item.productVariant.product.images[0].image})}"
+                 alt="product">
+        </div>
+
+        <div class="item-info">
+            <p th:if="${item.productVariant.brand != null}"
+               th:text="${item.productVariant.brand.name}">
+            </p>
+        </div>
+        <div>
+            <p th:if="${item.productVariant.size != null}"
+            th:text="${item.productVariant.size.name}">
+            </p>
+        </div>
+
+        <div class="item-info">
+            <p th:text="${item.productVariant.brand.name}"></p>
+        </div>
+
+        <div class="item-price"
+             th:text="${#numbers.formatDecimal(
+                item.quantity * item.productVariant.additionalPrice,
+                0,'POINT',0,'COMMA')} + ' đ'">
+        </div>
+    </div>
+
+    <div class="coupon">
+        <input type="text" placeholder="Mã giảm giá">
+        <button>Sử dụng</button>
+    </div>
+
+    <div class="total">
+        <span>Tổng cộng</span>
+        <strong th:text="${#numbers.formatDecimal(totalCart,0,'POINT',0,'COMMA')} + ' đ'"></strong>
+    </div>
+
+    <div class="payment-box">
+        <h3> Phương thức thanh toán</h3>
+
+        <label class="payment-item">
+            <input type="radio" name="paymentMethod" value="COD" checked>
+            Thanh toán khi nhận hàng (COD)
+        </label>
+
+        <label class="payment-item">
+            <input type="radio" name="paymentMethod" value="VNPAY">
+            Thanh toán qua VNPAY
+        </label>
+    </div>
+
+    <form th:action="@{/checkout/confirm}" method="post">
+        <input type="hidden" name="addressId"
+               th:value="${defaultAddress != null ? defaultAddress.id : ''}">
+        <button type="submit" class="btn-order">ĐẶT HÀNG</button>
+    </form>
+
+
+    <div class="note">
+        <p>- Giá trên đã gồm phí vận chuyển 30 nghìn đồng.</p>
+    </div>
+
+</div>
+
+<div th:replace="layout/footer :: footer"></div>
+
+</body>
+</html>
