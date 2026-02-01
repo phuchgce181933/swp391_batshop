@@ -1,0 +1,265 @@
+/* RESET */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: #f4f6f8;
+}
+
+/* LAYOUT */
+.admin-wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* SIDEBAR */
+.admin-sidebar {
+    width: 240px;
+    background-color: #1f2937;
+    color: #fff;
+    padding: 20px 0;
+}
+
+.sidebar-title {
+    text-align: center;
+    font-size: 18px;
+    margin-bottom: 24px;
+    letter-spacing: 1px;
+}
+
+/* MENU */
+.admin-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.admin-menu li {
+    margin-bottom: 4px;
+}
+
+.admin-menu a {
+    display: block;
+    padding: 12px 20px;
+    color: #d1d5db;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    font-weight: 500;
+}
+
+.admin-menu a:hover {
+    background-color: #374151;
+    color: #fff;
+}
+
+.admin-menu a.active {
+    background-color: #2563eb;
+    color: #fff;
+}
+
+/* CONTENT */
+.admin-content {
+    flex: 1;
+    padding: 24px;
+}
+
+----------------------------------------------
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f9;
+}
+
+/* layout tổng */
+.admin-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* sidebar */
+.sidebar {
+    width: 260px;
+    background: linear-gradient(180deg, #1f2937, #111827);
+    color: #fff;
+    padding: 20px;
+}
+
+/* content bên phải */
+.admin-content {
+    flex: 1;
+    padding: 30px;
+    background: #f4f6f9;
+}
+
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+}
+
+.admin-table th,
+.admin-table td {
+    padding: 12px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.admin-table th {
+    background: #f9fafb;
+    text-transform: uppercase;
+    font-size: 13px;
+}
+
+.admin-table tr:hover {
+    background: #f1f5f9;
+}
+
+.badge {
+    background: #2563eb;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+}
+
+/* RESET */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: #f4f6f8;
+}
+
+/* LAYOUT */
+.admin-wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* SIDEBAR */
+.admin-sidebar {
+    width: 240px;
+    background-color: #1f2937;
+    color: #fff;
+    padding: 20px 0;
+}
+
+.sidebar-title {
+    text-align: center;
+    font-size: 18px;
+    margin-bottom: 24px;
+    letter-spacing: 1px;
+}
+
+/* MENU */
+.admin-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.admin-menu li {
+    margin-bottom: 4px;
+}
+
+.admin-menu a {
+    display: block;
+    padding: 12px 20px;
+    color: #d1d5db;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    font-weight: 500;
+}
+
+.admin-menu a:hover {
+    background-color: #374151;
+    color: #fff;
+}
+
+.admin-menu a.active {
+    background-color: #2563eb;
+    color: #fff;
+}
+
+/* CONTENT */
+.admin-content {
+    flex: 1;
+    padding: 24px;
+}
+
+----------------------------------------------
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f9;
+}
+
+/* layout tổng */
+.admin-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* sidebar */
+.sidebar {
+    width: 260px;
+    background: linear-gradient(180deg, #1f2937, #111827);
+    color: #fff;
+    padding: 20px;
+}
+
+/* content bên phải */
+.admin-content {
+    flex: 1;
+    padding: 30px;
+    background: #f4f6f9;
+}
+
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+}
+
+.admin-table th,
+.admin-table td {
+    padding: 12px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.admin-table th {
+    background: #f9fafb;
+    text-transform: uppercase;
+    font-size: 13px;
+}
+
+.admin-table tr:hover {
+    background: #f1f5f9;
+}
+
+.badge {
+    background: #2563eb;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+}

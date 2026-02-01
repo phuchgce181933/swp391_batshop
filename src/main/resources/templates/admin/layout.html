@@ -2,11 +2,21 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Hello Home</title>
+    <title>Admin - BatShop</title>
+
+    <link rel="stylesheet" th:href="@{/css/admin/admin.css}">
 </head>
 <body>
 
-<!-- Header -->
-<div th:replace="admin/sidebar :: sidebar"></div>
+<div class="admin-layout">
+    <!-- Sidebar -->
+    <aside th:replace="admin/sidebar :: sidebar"></aside>
+
+    <!-- Main content -->
+    <main class="admin-content">
+        <div th:replace="${content}"></div>
+    </main>
+</div>
+
 </body>
 </html>

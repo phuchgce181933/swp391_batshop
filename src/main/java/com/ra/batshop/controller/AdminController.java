@@ -8,22 +8,26 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
+@RequestMapping("/admin")
 public class AdminController {
+
     private final UserRepository userRepository;
+
     public AdminController(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-    @GetMapping("/admin")
-    public String dashboard() {
+    @GetMapping("")
+    public String dashboard(Model model) {
+        model.addAttribute("content", "admin/dashboard");
         return "admin/layout";
     }
 
-    @GetMapping("/admin/manageruser")
+    @GetMapping("/manageruser")
     public String userPage(Model model) {
-        model.addAttribute("user", userRepository.findAll());
-        return "admin/user";
+        model.addAttribute("users", userRepository.findAll());
+        model.addAttribute("content", "admin/user");
+        return "admin/layout";
     }
-
 
 }
