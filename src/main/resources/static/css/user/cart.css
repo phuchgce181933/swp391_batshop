@@ -62,3 +62,23 @@ td:last-child form button {
     border-radius: 8px;
     z-index: 200;
 }
+.cart-summary {
+    max-width: 900px;
+    margin: 20px auto;
+    text-align: left;
+    background: #fff;
+    padding: 15px;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.checkout-btn {
+    display: inline-block;
+    padding: 12px 24px;
+    background: #ff5722;
+    color: #fff;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    text-align: center;
+}

@@ -43,6 +43,11 @@
         <p style="color:red;font-weight:bold;"
            th:text="${#numbers.formatDecimal(v.additionalPrice != null ? v.additionalPrice : 0, 0, 'COMMA', 0, 'POINT')} + ' ₫'">
         </p>
+        <form th:action="@{/cart/add}" method="post">
+            <input type="hidden" name="productVariantId" th:value="${v.id}">
+            <input type="hidden" name="quantity" value="1">
+            <button type="submit">Thêm vào giỏ</button>
+        </form>
 
 
         <!-- DETAIL -->
