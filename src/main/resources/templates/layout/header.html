@@ -22,7 +22,7 @@
 
             <div class="top-icons">
                 <div class="icon"><br><small>TRA CỨU</small></div>
-                <div class="icon"><br><small>TÀI KHOẢN</small></div>
+                <a th:href="@{/profile/edit}"> Tài Khoản </a>
                 <a th:href="@{/cart/list}">giỏ hàng</a>
             </div>
 
@@ -35,9 +35,8 @@
         <a th:href="@{/news}">Tin tức</a>
         <a th:href="@{/about}">Giới thiệu</a>
         <a th:href="@{/contact}">Liên hệ</a>
-        <span style="float:right">
         <a th:href="@{/logout}">Logout</a>
-        </span>
+
     </nav>
 </header>
 

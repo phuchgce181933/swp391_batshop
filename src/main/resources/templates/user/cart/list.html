@@ -1,10 +1,13 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Home</title>
+    <link rel="stylesheet" th:href="@{/css/homeproduct.css}">
+    <link rel="stylesheet" th:href="@{/css/user/cart.css}">
 </head>
 <body>
+<div th:replace="layout/header :: header"></div>
 <h1>giở hàng</h1>
 <table>
     <thead>
@@ -14,6 +17,7 @@
         <th>quantity</th>
         <th>price</th>
         <th>tổng</th>
+        <th>delete</th>
     </tr>
     </thead>
     <tbody>
@@ -36,9 +40,23 @@
         </td>
         <td th:text="${item.productVariant.additionalPrice}"></td>
         <td th:text="${item.quantity*item.getProductVariant().additionalPrice}"></td>
+        <td>
+            <form th:action="@{/cart/delete}" method="post">
+                <input type="hidden" name="id" th:value="${item.id}">
+                <button type="submit">delete</button>
+            </form>
+        </td>
     </tr>
     </tbody>
 </table>
 <button type="submit">Thành toán</button>
+<!-- đích -->
+<div th:replace="layout/footer :: footer"></div>
+<a th:href="@{/change-password}" class="btn-change-pass">
+    ChangePassword
+</a>
+<a th:href="@{/profile/edit}" class="btn-change-pass">
+    UpdateProfile
+</a>
 </body>
 </html>

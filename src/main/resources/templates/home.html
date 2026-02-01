@@ -7,25 +7,19 @@
 </head>
 <body>
 
-<!-- Header -->
+<!-- Đầu -->
 <div th:replace="layout/header :: header"></div>
 
-<!-- Content -->
+<!-- Giữa -->
 <main style="padding:20px">
     <h1>Welcome to Home Page</h1>
-    <p>This is home page content</p>
     <!-- PRODUCT LIST -->
     <div th:replace="user/productvariant-list :: productvariant-list"></div>
 </main>
 
-<!-- Footer -->
+<!-- Đích -->
 <div th:replace="layout/footer :: footer"></div>
-<a th:href="@{/change-password}" class="btn-change-pass">
-     ChangePassword
-</a>
-<a th:href="@{/profile/edit}" class="btn-change-pass">
-     UpdateProfile
-</a>
+
 
 </body>
 </html>

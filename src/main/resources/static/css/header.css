@@ -93,6 +93,7 @@
 header {
     width: 100%;
     background-color: #111;
+    z-index: 1000;
 }
 
 .main-nav {

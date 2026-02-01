@@ -1,0 +1,64 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f7f7f7;
+    padding: 30px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+table {
+    width: 100%;
+    max-width: 900px;
+    margin: auto;
+    border-collapse: collapse;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+thead {
+    background: #f0f0f0;
+}
+
+th, td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #e0e0e0;
+    text-align: center;
+}
+
+tr:hover {
+    background: #fafafa;
+}
+
+button {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+td form button {
+    background: #2196F3;
+    color: #fff;
+}
+
+td:last-child form button {
+    background: #f44336;
+    color: #fff;
+}
+
+#cart-container {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    width: 420px;
+    max-height: 70vh;
+    overflow-y: auto;
+    background: #fff;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+    padding: 15px;
+    border-radius: 8px;
+    z-index: 200;
+}
