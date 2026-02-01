@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>giở hàng</h1>
+<table>
+    <thead>
+    <tr>
+        <th>id</th>
+        <th>productVariant</th>
+        <th>quantity</th>
+        <th>price</th>
+        <th>tổng</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="item, stat : ${cartItems}">
+        <td th:text="${stat.count}"></td>
+        <td th:text="${item.productVariant.product.name}"></td>
+        <td>
+            <form th:action="@{/cart/update}" method="post">
+                <input type="hidden" name="id"
+                       th:value="${item.id}"/>
+
+                <input type="number"
+                       name="quantity"
+                       th:value="${item.quantity}"
+                       min="1"
+                       style="width:60px"/>
+
+                <button type="submit">Cập nhật</button>
+            </form>
+        </td>
+        <td th:text="${item.productVariant.additionalPrice}"></td>
+        <td th:text="${item.quantity*item.getProductVariant().additionalPrice}"></td>
+    </tr>
+    </tbody>
+</table>
+<button type="submit">Thành toán</button>
+</body>
+</html>
