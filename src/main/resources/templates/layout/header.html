@@ -1,325 +1,44 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<body>
+<header th:fragment="header">
+    <link rel="stylesheet" th:href="@{/css/header.css}">
+    <div class="top-header">
+        <div class="container">
 
-<div th:fragment="header">
-    <style>
-        /* --- General Styles --- */
-        :root {
-            --primary-color: #e63946; /* Sporty Red/Orange */
-            --secondary-color: #1d3557; /* Deep Blue */
-            --light-bg: #f8f9fa;
-            --text-dark: #333;
-        }
-
-        /* --- Utilities --- */
-        .text-primary-custom { color: var(--primary-color); }
-        .bg-primary-custom { background-color: var(--primary-color); }
-        .btn-primary-custom {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 10px 25px;
-            border-radius: 50px;
-            transition: all 0.3s;
-        }
-        .btn-primary-custom:hover {
-            background-color: #c92a35;
-            transform: translateY(-2px);
-            color: white;
-        }
-
-        /* --- Header & Navbar --- */
-        .top-bar {
-            background-color: var(--secondary-color);
-            color: white;
-            font-size: 0.85rem;
-            padding: 5px 0;
-        }
-        .navbar {
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            padding: 15px 0;
-            background: white;
-        }
-        .navbar-brand {
-            font-weight: 700;
-            font-size: 1.8rem;
-            color: var(--secondary-color);
-        }
-        .navbar-brand span { color: var(--primary-color); }
-        .nav-link {
-            font-weight: 500;
-            color: var(--secondary-color);
-            margin: 0 10px;
-        }
-        .nav-link:hover { color: var(--primary-color); }
-
-        .search-box input {
-            border-radius: 50px 0 0 50px;
-            border: 1px solid #ddd;
-            border-right: none;
-        }
-        .search-box button {
-            border-radius: 0 50px 50px 0;
-            background-color: var(--primary-color);
-            border: none;
-            color: white;
-        }
-
-        /* =========================================
-            DROPDOWN HOVER & STYLING
-           ========================================= */
-        .dropdown:hover .dropdown-menu {
-            display: block;
-            margin-top: 0;
-        }
-
-        .dropdown-menu {
-            border: none;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
-            border-radius: 10px;
-            padding: 10px 0;
-            animation: fadeIn 0.3s ease;
-            min-width: 200px;
-        }
-        .dropdown-menu-end {
-            right: 0;
-            left: auto;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .dropdown-item {
-            padding: 10px 20px;
-            font-size: 0.9rem;
-            color: var(--text-dark);
-            transition: all 0.2s;
-        }
-
-        .dropdown-item:hover {
-            background-color: var(--light-bg);
-            color: var(--primary-color);
-        }
-
-        /* Remove caret icon */
-        .dropdown-toggle::after {
-            display: none;
-        }
-
-        /* =========================================
-            CART DROPDOWN STYLING
-           ========================================= */
-        .cart-dropdown-menu {
-            min-width: 350px;
-            padding: 0;
-            right: 0;
-            left: auto;
-        }
-
-        .cart-items-wrapper {
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .cart-item {
-            display: flex;
-            align-items: center;
-            padding: 15px;
-            border-bottom: 1px solid #f0f0f0;
-            transition: background 0.2s;
-        }
-
-        .cart-item:hover {
-            background-color: #f9f9f9;
-        }
-
-        .cart-item img {
-            width: 50px;
-            height: 50px;
-            object-fit: contain;
-            border: 1px solid #eee;
-            border-radius: 5px;
-            margin-right: 15px;
-            padding: 2px;
-            background: #fff;
-        }
-
-        .cart-item-info {
-            flex-grow: 1;
-            padding-right: 10px;
-        }
-
-        .cart-item-title {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--text-dark);
-            margin-bottom: 3px;
-            line-height: 1.2;
-            display: -webkit-box;
-            -webkit-line-clamp: 1;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .cart-item-price {
-            font-size: 0.85rem;
-            color: #777;
-        }
-
-        .cart-item-price span {
-            color: var(--primary-color);
-            font-weight: 700;
-        }
-
-        .btn-remove-cart {
-            color: #ccc;
-            cursor: pointer;
-            transition: color 0.2s;
-            background: none;
-            border: none;
-        }
-
-        .btn-remove-cart:hover {
-            color: #e63946;
-        }
-
-        .cart-summary {
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 0 0 10px 10px;
-        }
-
-        .cart-total {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: 700;
-            font-size: 1rem;
-            margin-bottom: 15px;
-        }
-
-        .cart-total span { color: var(--primary-color); }
-    </style>
-
-    <div class="top-bar">
-        <div class="container d-flex justify-content-between align-items-center">
-            <div>
-                <i class="fas fa-envelope me-2"></i> support@smashsports.com |
-                <i class="fas fa-phone ms-3 me-2"></i> +84 123 456 789
+            <div class="logo">
+                <img src="/images/logo.png" alt="Logo">
             </div>
-            <div>
-                <a th:href="@{/Information/aboutUs}" class="text-white text-decoration-none me-4">About Us</a>
-                <a th:href="@{/Information/policy}" class="text-white text-decoration-none me-3">Policy</a>
-                <a th:href="@{/Information/contactUs}" class="text-white text-decoration-none">Contact Us</a>
+
+            <div class="hotline">
+                HOTLINE:
+                <span>0905087335</span> |
+                <span>0905087335</span>
             </div>
+
+            <div class="search-box">
+                <input type="text" placeholder="Tìm sản phẩm...">
+                <button>🔍</button>
+            </div>
+
+            <div class="top-icons">
+                <div class="icon"><br><small>TRA CỨU</small></div>
+                <a th:href="@{/profile/edit}"> Tài Khoản </a>
+                <a th:href="@{/cart/list}">giỏ hàng</a>
+            </div>
+
         </div>
     </div>
+    <nav th:fragment="header" class="main-nav">
+        <a th:href="@{/home}">Trang chủ</a>
+        <a th:href="@{/products}">Sản phẩm</a>
+        <a th:href="@{/sale}">Sale off</a>
+        <a th:href="@{/news}">Tin tức</a>
+        <a th:href="@{/about}">Giới thiệu</a>
+        <a th:href="@{/contact}">Liên hệ</a>
+        <a th:href="@{/logout}">Logout</a>
 
-    <nav class="navbar navbar-expand-lg sticky-top">
-        <div class="container">
-            <a class="navbar-brand" th:href="@{/}">Smash<span>Sports</span>.</a>
-
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
-                    <li class="nav-item"><a class="nav-link" th:href="@{/}">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" th:href="@{/Product/productList}">Product</a></li>
-                    <li class="nav-item"><a class="nav-link" th:href="@{/Product/flashSale}">Flash Sale</a></li>
-                    <li class="nav-item"><a class="nav-link" th:href="@{/Blog/blog}">Blog</a></li>
-                </ul>
-
-                <form class="d-flex search-box me-3">
-                    <input class="form-control" type="search" placeholder="Search rackets, shoes...">
-                    <button class="btn" type="submit"><i class="fas fa-search"></i></button>
-                </form>
-
-                <div class="d-flex align-items-center">
-
-                    <div class="dropdown me-4">
-                        <a th:href="@{/Purchase/cart}" class="text-dark fs-5 position-relative">
-                            <i class="fas fa-shopping-cart"></i>
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:0.6rem;">4</span>
-                        </a>
-
-                        <div class="dropdown-menu dropdown-menu-end cart-dropdown-menu">
-                            <div class="cart-items-wrapper">
-                                <div class="cart-item">
-                                    <img th:src="@{/images/Racket Yonex Astrox 100 ZZ.jpg}" alt="Item">
-                                    <div class="cart-item-info">
-                                        <div class="cart-item-title">Yonex Astrox 100 ZZ</div>
-                                        <div class="cart-item-price">1 x <span>145.000₫</span></div>
-                                    </div>
-                                    <button class="btn-remove-cart" onclick="this.closest('.cart-item').remove()"><i class="fas fa-trash-alt"></i></button>
-                                </div>
-                                <div class="cart-item">
-                                    <img th:src="@{/images/Shoes Yonex SHB 65Z3 Wide.jpg}" alt="Item">
-                                    <div class="cart-item-info">
-                                        <div class="cart-item-title">Shoes Yonex SHB 65Z3</div>
-                                        <div class="cart-item-price">1 x <span>85.000₫</span></div>
-                                    </div>
-                                    <button class="btn-remove-cart" onclick="this.closest('.cart-item').remove()"><i class="fas fa-trash-alt"></i></button>
-                                </div>
-                                <div class="cart-item">
-                                    <img th:src="@{/images/Shirt Yonex U30.jpg}" alt="Item">
-                                    <div class="cart-item-info">
-                                        <div class="cart-item-title">Shirt Yonex U30</div>
-                                        <div class="cart-item-price">1 x <span>130.000₫</span></div>
-                                    </div>
-                                    <button class="btn-remove-cart" onclick="this.closest('.cart-item').remove()"><i class="fas fa-trash-alt"></i></button>
-                                </div>
-                                <div class="cart-item">
-                                    <img th:src="@{/images/Badminton Shuttlecock Yonex AS240.jpg}" alt="Item">
-                                    <div class="cart-item-info">
-                                        <div class="cart-item-title">Yonex Shuttlecock AS240</div>
-                                        <div class="cart-item-price">1 x <span>25.000₫</span></div>
-                                    </div>
-                                    <button class="btn-remove-cart" onclick="this.closest('.cart-item').remove()"><i class="fas fa-trash-alt"></i></button>
-                                </div>
-                            </div>
-
-                            <div class="cart-summary">
-                                <div class="cart-total">
-                                    Subtotal: <span>385.000₫</span>
-                                </div>
-                                <div class="d-grid gap-2">
-                                    <a th:href="@{/Purchase/checkoutDetail}" class="btn btn-primary-custom btn-sm rounded-1">Checkout</a>
-                                    <a th:href="@{/Purchase/cart}" class="btn btn-outline-dark btn-sm rounded-1">View Cart</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="dropdown">
-                        <a th:href="@{/Login/login}" class="text-dark fs-5 d-flex align-items-center text-decoration-none">
-                            <i class="fas fa-user"></i>
-                        </a>
-
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                            <li><a class="dropdown-item" th:href="@{/Profile/profile}"><i class="fas fa-id-card me-2"></i> Profile</a></li>
-                            <li><a class="dropdown-item" th:href="@{/Profile/changePassword}"><i class="fas fa-lock me-2"></i> Change Password</a></li>
-
-                            <li><hr class="dropdown-divider"></li>
-
-                            <li><a class="dropdown-item" th:href="@{/Profile/ordersView}"><i class="fas fa-box me-2"></i> My Orders</a></li>
-                            <li><a class="dropdown-item" th:href="@{/Profile/ordersHistory}"><i class="fas fa-history me-2"></i> Orders History</a></li>
-                            <li><a class="dropdown-item" th:href="@{/Profile/wishlist}"><i class="fas fa-heart me-2"></i> Wishlist</a></li>
-
-                            <li><hr class="dropdown-divider"></li>
-
-                            <li><a class="dropdown-item text-danger fw-bold" th:href="@{/logout}"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
     </nav>
-</div>
+</header>
 
-</body>
-</html>
+
+

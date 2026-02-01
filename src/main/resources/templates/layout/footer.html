@@ -1,78 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<body>
-
 <footer th:fragment="footer">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-4 mb-4">
-                <a href="#" class="navbar-brand text-white mb-3 d-block" style="font-weight: 700; font-size: 1.8rem;">Smash<span class="text-primary-custom" style="color: #e63946;">Sports</span>.</a>
-                <p class="text-secondary">Your #1 destination for professional badminton equipment. We provide authentic gears for champions.</p>
-                <div>
-                    <a href="https://www.facebook.com/" class="me-3 fs-5 text-secondary"><i class="fab fa-facebook"></i></a>
-                    <a href="https://www.instagram.com/" class="me-3 fs-5 text-secondary"><i class="fab fa-instagram"></i></a>
-                    <a href="https://www.youtube.com/" class="me-3 fs-5 text-secondary"><i class="fab fa-youtube"></i></a>
-                </div>
-            </div>
-
-            <div class="col-md-2 mb-4">
-                <h5 class="text-white">Shop</h5>
-                <ul class="list-unstyled">
-                    <li><a th:href="@{/Product/productList}" class="text-secondary text-decoration-none">Rackets</a></li>
-                    <li><a th:href="@{/Product/productList}" class="text-secondary text-decoration-none">Shoes</a></li>
-                    <li><a th:href="@{/Product/productList}" class="text-secondary text-decoration-none">Apparel</a></li>
-                    <li><a th:href="@{/Product/productList}" class="text-secondary text-decoration-none">Accessories</a></li>
-                    <li><a th:href="@{/Product/productList}" class="text-secondary text-decoration-none">Sale</a></li>
-                </ul>
-            </div>
-
-            <div class="col-md-2 mb-4">
-                <h5 class="text-white">Customer Care</h5>
-                <ul class="list-unstyled">
-                    <li><a th:href="@{/Information/contactUs}" class="text-secondary text-decoration-none">Contact Us</a></li>
-                    <li><a th:href="@{/Information/policy}" class="text-secondary text-decoration-none">Warranty Policy</a></li>
-                    <li><a href="#" class="text-secondary text-decoration-none">Shipping Info</a></li>
-                    <li><a href="#" class="text-secondary text-decoration-none">FAQs</a></li>
-                </ul>
-            </div>
-
-            <div class="col-md-4 mb-4">
-                <h5 class="text-white">Newsletter</h5>
-                <p class="text-secondary">Subscribe to get updates on new arrivals and special offers.</p>
-                <div class="input-group mb-3">
-                    <input type="text" class="form-control" placeholder="Your Email">
-                    <button class="btn btn-primary-custom" style="background-color: #e63946; color: white; border: none;" type="button">Subscribe</button>
-                </div>
-            </div>
-        </div>
-
-        <hr style="border-color: #444;">
-
-        <div class="row py-3">
-            <div class="col-md-6 text-secondary">
-                &copy; 2026 SmashSports. All rights reserved.
-            </div>
-            <div class="col-md-6 text-end">
-                <i class="fab fa-cc-visa fs-4 me-2 text-secondary"></i>
-                <i class="fab fa-cc-mastercard fs-4 me-2 text-secondary"></i>
-                <i class="fab fa-cc-paypal fs-4 text-secondary"></i>
-            </div>
-        </div>
-    </div>
-
-    <style>
-        footer {
-            background-color: #1d3557; /* Màu secondary-color */
-            color: #ddd;
-            padding-top: 50px;
-        }
-        footer a:hover {
-            color: white !important;
-            padding-left: 5px;
-            transition: 0.3s;
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/footer.css}">
+    <hr>
+    <p style="text-align:center">
+        © 2026 BatShop
+    </p>
 </footer>
-
-</body>
 </html>
