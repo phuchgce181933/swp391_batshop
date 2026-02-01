@@ -1,43 +1,59 @@
-<h2>Edit Banner</h2>
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Sửa Banner</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-4 col-md-6">
+  <h3>Cập nhật Banner</h3>
+  <form th:action="@{/admin/banners/edit}" th:object="${banner}" method="post" enctype="multipart/form-data">
+    <input type="hidden" th:field="*{id}">
 
-<form th:action="@{/admin/banners/edit}"
-      method="post"
-      th:object="${banner}"
-      enctype="multipart/form-data">
+    <div class="mb-3">
+      <label class="form-label">Tiêu đề Banner</label>
+      <input type="text" class="form-control" th:field="*{name}" required>
+    </div>
 
-  <input type="hidden" th:field="*{id}"/>
+    <div class="mb-3">
+      <label class="form-label">Hình ảnh</label>
+      <div class="mb-2">
+        <img id="previewImage"
+             th:if="*{imageUrl}" th:src="@{*{imageUrl}}"
+             class="img-thumbnail" style="max-height: 150px;">
 
-  <div>
-    <label>Banner Name</label><br>
-    <input type="text" th:field="*{name}" required>
-  </div>
+        <img id="previewImage" th:unless="*{imageUrl}" src="#"
+             class="img-thumbnail" style="max-height: 150px; display: none;">
+      </div>
 
-  <br>
+      <input type="file" name="file" class="form-control" accept="image/*" onchange="showPreview(this)">
+      <input type="hidden" th:field="*{imageUrl}">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Link liên kết</label>
+      <input type="text" class="form-control" th:field="*{link}">
+    </div>
+    <div class="form-check mb-3">
+      <input class="form-check-input" type="checkbox" th:field="*{status}">
+      <label class="form-check-label">Hiển thị ngay</label>
+    </div>
+    <button type="submit" class="btn btn-primary">Cập nhật</button>
+    <a th:href="@{/admin/banners}" class="btn btn-secondary">Hủy</a>
+  </form>
+</div>
 
-  <div th:if="${banner.image != null}">
-    <label>Current Image</label><br>
-    <img th:src="@{/uploads/product/{img}(img=${banner.image})}"
-         width="200">
-  </div>
-
-  <br>
-
-  <div>
-    <label>Change Image (optional)</label><br>
-    <input type="file" name="file">
-  </div>
-
-  <br>
-
-  <div>
-    <label>Status</label><br>
-    <select th:field="*{status}">
-      <option th:value="true">Active</option>
-      <option th:value="false">Inactive</option>
-    </select>
-  </div>
-
-  <br>
-
-  <button type="submit">Update</button>
-</form>
+<script>
+  function showPreview(input) {
+    if (input.files && input.files[0]) {
+      var reader = new FileReader();
+      reader.onload = function (e) {
+        var img = document.getElementById('previewImage');
+        img.src = e.target.result;
+        img.style.display = 'block';
+      }
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+</script>
+</body>
+</html>
