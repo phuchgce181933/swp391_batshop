@@ -7,10 +7,7 @@ import com.ra.batshop.repository.ProductVariantRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -35,7 +32,16 @@ public class CartItemController {
         model.addAttribute("cartItems", cartitem);
         return "user/cart/list";
     }
-
+    @PostMapping("/delete")
+    public String delete(@RequestParam("id") Integer id,
+            HttpSession httpSession) {
+        User user = (User) httpSession.getAttribute("user");
+        if (user == null) {
+            return "redirect:/login";
+        }
+        cartItemRepository.deleteById(id);
+        return "redirect:/cart/list";
+    }
     @PostMapping("/update")
     public String updateCartItem(@RequestParam("id") Integer id,
                                  @RequestParam("quantity") Integer quantity,
