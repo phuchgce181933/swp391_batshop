@@ -14,10 +14,14 @@ public class Banner {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    private String name;
+
     @Column(name = "image", length = 255)
     private String image;
 
     @Column(length = 255)
     private String link;
+
+    private Boolean status;
 }
 

@@ -1,15 +1,39 @@
 <h2>Add Blog</h2>
 
-<form th:action="@{/admin/blogs/add}" method="post" th:object="${blog}">
+<form th:action="@{/admin/blogs/add}"
+      method="post"
+      enctype="multipart/form-data">
 
-    Title:
-    <input type="text" th:field="*{title}" required /><br><br>
+    <div>
+        <label>Title</label><br>
+        <input type="text" name="title" required>
+    </div>
 
-    Image URL:
-    <input type="text" th:field="*{imageUrl}" placeholder="https://..." /><br><br>
+    <br>
 
-    Content:
-    <textarea th:field="*{content}" rows="8"></textarea><br><br>
+    <div>
+        <label>Image</label><br>
+        <input type="file" name="file" required>
+    </div>
 
-    <button type="submit">Save</button>
+    <br>
+
+    <div>
+        <label>Status</label><br>
+        <select name="status">
+            <option value="true">Active</option>
+            <option value="false">Inactive</option>
+        </select>
+    </div>
+
+    <br>
+
+    <div>
+        <label>Content</label><br>
+        <textarea name="content" rows="8"></textarea>
+    </div>
+
+    <br>
+
+    <button type="submit">Add Blog</button>
 </form>

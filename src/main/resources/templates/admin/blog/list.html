@@ -2,38 +2,53 @@
 
 <a th:href="@{/admin/blogs/add}">+ Add Blog</a>
 
-<table>
+<br><br>
+
+<table border="1" cellpadding="10">
     <thead>
     <tr>
         <th>ID</th>
         <th>Image</th>
         <th>Title</th>
+        <th>Status</th>
         <th>Created At</th>
         <th>Action</th>
     </tr>
     </thead>
+
     <tbody>
     <tr th:each="b : ${blogs}">
         <td th:text="${b.id}"></td>
 
         <td>
-            <img th:if="${b.imageUrl != null}"
-                 th:src="${b.imageUrl}"
-                 width="120"/>
-            <span th:if="${b.imageUrl == null}">No image</span>
+            <img th:if="${b.image != null and !#strings.isEmpty(b.image)}"
+                 th:src="@{/uploads/product/{img}(img=${b.image})}"
+                 width="120">
+            <span th:if="${b.image == null or #strings.isEmpty(b.image)}">
+                No image
+            </span>
         </td>
 
         <td th:text="${b.title}"></td>
 
+        <td th:text="${b.status ? 'ACTIVE' : 'INACTIVE'}"></td>
+
         <td th:text="${b.createdAt != null
-              ? #temporals.format(b.createdAt,'dd/MM/yyyy HH:mm')
-              : ''}">
+            ? #temporals.format(b.createdAt,'dd/MM/yyyy HH:mm')
+            : ''}">
         </td>
 
         <td>
-            <a th:href="@{/admin/blogs/edit/{id}(id=${b.id})}">Edit</a> |
+            <a th:href="@{/admin/blogs/edit/{id}(id=${b.id})}">Edit</a>
+            |
+            <a th:href="@{/admin/blogs/toggle/{id}(id=${b.id})}">
+                <span th:text="${b.status ? 'Disable' : 'Enable'}"></span>
+            </a>
+            |
             <a th:href="@{/admin/blogs/delete/{id}(id=${b.id})}"
-               onclick="return confirm('Delete this blog?')">Delete</a>
+               onclick="return confirm('Delete this blog?')">
+                Delete
+            </a>
         </td>
     </tr>
     </tbody>

@@ -1,12 +1,16 @@
-<h2>Add Banner</h2>
+<form th:action="@{/admin/banners/add}" method="post" enctype="multipart/form-data">
 
-<form th:action="@{/admin/banners/add}" method="post" th:object="${banner}">
+    <label>Name</label>
+    <input type="text" name="name" required>
 
-    Image URL:
-    <input type="text" th:field="*{imageUrl}" placeholder="https://..." /><br><br>
+    <label>Image</label>
+    <input type="file" name="file" required>
 
-    Link:
-    <input type="text" th:field="*{link}" placeholder="https://..." /><br><br>
+    <label>Status</label>
+    <select name="status">
+        <option th:value="true">Active</option>
+        <option th:value="false">Inactive</option>
+    </select>
 
     <button type="submit">Save</button>
 </form>
