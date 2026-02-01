@@ -29,7 +29,6 @@ public class UserAddress {
 
     private String city;
     private String district;
-    private String ward;
 
     private Boolean isDefault;
 }
