@@ -42,4 +42,7 @@ public class Product {
 
     @OneToMany(mappedBy = "product")
     private List<FlashSaleProduct> flashSales;
+
+    @OneToOne(mappedBy = "product")
+    private RacketDetail racketDetails;
 }
