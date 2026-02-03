@@ -1,0 +1,14 @@
+<h2>Add Brand</h2>
+
+<form th:action="@{/admin/brands/add}" method="post" th:object="${brand}">
+    <label>Name</label>
+    <input type="text" th:field="*{name}" required>
+
+    <label>Status</label>
+    <select th:field="*{status}">
+        <option th:value="true">Active</option>
+        <option th:value="false">Inactive</option>
+    </select>
+
+    <button type="submit">Save</button>
+</form>

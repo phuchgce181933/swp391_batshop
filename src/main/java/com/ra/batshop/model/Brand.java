@@ -15,4 +15,6 @@ public class Brand {
 
     @Column(unique = true)
     private String name;
+
+    private Boolean status;
 }
