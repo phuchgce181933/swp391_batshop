@@ -18,7 +18,7 @@ public class BannerController {
 
     private final BannerRepository bannerRepository;
 
-    private final String UPLOAD_DIR = "uploads/product/";
+    private final String UPLOAD_DIR = "src/main/resources/static/uploads/";
 
     public BannerController(BannerRepository bannerRepository) {
         this.bannerRepository = bannerRepository;
@@ -47,8 +47,12 @@ public class BannerController {
         if (!file.isEmpty()) {
             String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
             Path path = Paths.get(UPLOAD_DIR + fileName);
+
+            // Tạo thư mục nếu chưa tồn tại
             Files.createDirectories(path.getParent());
+            // Ghi file
             Files.write(path, file.getBytes());
+
             banner.setImage(fileName);
         }
 

@@ -21,7 +21,7 @@
 
     <td>
       <img th:if="${b.image != null}"
-           th:src="@{/uploads/product/{img}(img=${b.image})}"
+           th:src="@{/uploads/{img}(img=${b.image})}"
            width="120">
     </td>
 
