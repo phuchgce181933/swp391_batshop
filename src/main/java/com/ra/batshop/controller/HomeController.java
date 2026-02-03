@@ -27,10 +27,15 @@ public class HomeController {
 
     @GetMapping()
     public String home(Model model, HttpSession session) {
+        // Kiểm tra đăng nhập (giữ nguyên code cũ của bạn)
         if (session.getAttribute("user") == null) {
             return "redirect:/login";
         }
+
+        // 1. Lấy danh sách Banner đang Active
         model.addAttribute("banners", bannerRepository.findAllByStatusTrue());
+
+        // 2. Lấy danh sách sản phẩm (giữ nguyên code cũ)
         model.addAttribute("productvariant", productVariantRepository.findAll());
 
         return "home";

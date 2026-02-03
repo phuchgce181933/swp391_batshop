@@ -6,22 +6,26 @@
     <link rel="stylesheet" th:href="@{/css/homeproduct.css}">
 
     <style>
+        /* Khung hiển thị chính: Cố định chiều cao */
         .slider-container {
             position: relative;
             width: 100%;
-            height: 550px;
-            overflow: hidden;
+            height: 550px; /* Chiều cao cố định (có thể chỉnh 500px-600px) */
+            overflow: hidden; /* Ẩn các phần thừa */
             background-color: #ddd;
         }
 
+        /* Dải chứa toàn bộ các slide */
         .slider-track {
             display: flex;
             height: 100%;
             width: 100%;
+            /* Lưu ý: transition sẽ được xử lý bằng JS để làm trùm infinity loop */
         }
 
+        /* Từng slide đơn lẻ */
         .slide {
-            min-width: 100%;
+            min-width: 100%; /* Mỗi slide chiếm trọn chiều rộng khung */
             height: 100%;
             position: relative;
         }
@@ -29,7 +33,7 @@
         .slide img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: cover; /* Ảnh tự cắt để lấp đầy khung, không bị méo */
             object-position: center;
         }
 
@@ -55,6 +59,8 @@
 
         .prev { left: 10px; border-radius: 5px; }
         .next { right: 10px; border-radius: 5px; }
+
+        /* Ẩn nút nếu không cần thiết (xử lý logic sau) */
         .hidden { display: none; }
     </style>
 </head>
@@ -186,6 +192,7 @@
 </script>
 
 <script th:if="${banners.size() <= 1}">
+    // Ẩn nút nếu ít banner
     document.getElementById('prevBtn').style.display = 'none';
     document.getElementById('nextBtn').style.display = 'none';
 </script>
