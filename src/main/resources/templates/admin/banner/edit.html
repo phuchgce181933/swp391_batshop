@@ -15,7 +15,7 @@
   <br>
 
   <div th:if="${banner.image != null}">
-    <label>Current Image</label><br>
+    <label>Current Image:</label><br>
     <img th:src="@{/uploads/{img}(img=${banner.image})}"
          width="200">
   </div>
