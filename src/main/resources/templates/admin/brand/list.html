@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Brands</title>
+</head>
+<body>
+
+<h2>Manage Brands</h2>
+
+<a th:href="@{/admin/brands/add}">+ Add Brand</a>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Status</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr th:each="b : ${brands}">
+        <td th:text="${b.id}"></td>
+        <td th:text="${b.name}"></td>
+        <td th:text="${b.status} ? 'Active' : 'Inactive'"></td>
+        <td>
+            <a th:href="@{/admin/brands/edit/{id}(id=${b.id})}">Edit</a>
+            |
+            <a th:href="@{/admin/brands/delete/{id}(id=${b.id})}"
+               onclick="return confirm('Delete this brand?')">Delete</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

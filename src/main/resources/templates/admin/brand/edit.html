@@ -1,0 +1,16 @@
+<h2>Edit Brand</h2>
+
+<form th:action="@{/admin/brands/edit}" method="post" th:object="${brand}">
+    <input type="hidden" th:field="*{id}">
+
+    <label>Name</label>
+    <input type="text" th:field="*{name}" required>
+
+    <label>Status</label>
+    <select th:field="*{status}">
+        <option th:value="true">Active</option>
+        <option th:value="false">Inactive</option>
+    </select>
+
+    <button type="submit">Update</button>
+</form>
