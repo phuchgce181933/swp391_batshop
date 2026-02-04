@@ -20,14 +20,16 @@ public class CategoryController {
     @GetMapping
     public String list(Model model) {
         model.addAttribute("categories", categoryRepository.findAll());
-        return "admin/category/list";
+        model.addAttribute("content", "admin/category/list");
+        return "admin/layout";
     }
 
     // ADD FORM
     @GetMapping("/add")
     public String addForm(Model model) {
         model.addAttribute("category", new Category());
-        return "admin/category/add";
+        model.addAttribute("content", "admin/category/add");
+        return "admin/layout";
     }
 
     // SAVE
@@ -40,9 +42,9 @@ public class CategoryController {
     // EDIT FORM
     @GetMapping("/edit/{id}")
     public String editForm(@PathVariable Integer id, Model model) {
-        model.addAttribute("category",
-                categoryRepository.findById(id).orElseThrow());
-        return "admin/category/edit";
+        model.addAttribute("category", categoryRepository.findById(id).orElseThrow());
+        model.addAttribute("content", "admin/category/edit");
+        return "admin/layout";
     }
 
     // UPDATE
@@ -60,7 +62,8 @@ public class CategoryController {
         if (category.getProducts() != null && !category.getProducts().isEmpty()) {
             model.addAttribute("error", "Cannot delete category with products");
             model.addAttribute("categories", categoryRepository.findAll());
-            return "admin/category/list";
+            model.addAttribute("content", "admin/category/list");
+            return "admin/layout";
         }
 
         categoryRepository.deleteById(id);

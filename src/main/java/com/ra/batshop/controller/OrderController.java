@@ -22,16 +22,17 @@ public class OrderController {
     public String list(Model model) {
         model.addAttribute("orders", orderRepository.findAll());
         model.addAttribute("statuses", OrderStatus.values());
-        return "admin/order/list";
+        model.addAttribute("content", "admin/order/list");
+        return "admin/layout";
     }
 
     // DETAIL
     @GetMapping("/{id}")
     public String detail(@PathVariable Integer id, Model model) {
-        model.addAttribute("order",
-                orderRepository.findById(id).orElseThrow());
+        model.addAttribute("order", orderRepository.findById(id).orElseThrow());
         model.addAttribute("statuses", OrderStatus.values());
-        return "admin/order/detail";
+        model.addAttribute("content", "admin/order/detail");
+        return "admin/layout";
     }
 
     // UPDATE STATUS

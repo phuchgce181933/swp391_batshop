@@ -1,0 +1,122 @@
+/* ====== PAGE TITLE ====== */
+h2 {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+p {
+    color: #6b7280;
+    margin-bottom: 20px;
+}
+
+/* ====== ADD CATEGORY BUTTON ====== */
+a[href*="/admin/categories/add"] {
+    float: right;
+    margin-top: -45px;
+    background: #2563eb;
+    color: #fff;
+    padding: 10px 16px;
+    border-radius: 12px;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+a[href*="/admin/categories/add"]:hover {
+    background: #1d4ed8;
+}
+
+/* ====== TABLE ====== */
+.admin-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: #fff;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+}
+
+.admin-table thead {
+    background: #f9fafb;
+}
+
+.admin-table th {
+    text-align: left;
+    padding: 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+}
+
+.admin-table td {
+    padding: 18px 16px;
+    border-top: 1px solid #e5e7eb;
+    font-size: 15px;
+}
+
+/* ====== TOTAL PRODUCTS BADGE ====== */
+
+.admin-table td:nth-child(3) {
+    display: table-cell;
+}
+
+.admin-table td:nth-child(3) span,
+.admin-table td:nth-child(3) {
+    white-space: nowrap;
+}
+
+.admin-table td:nth-child(3) {
+    font-weight: 500;
+}
+
+.admin-table td:nth-child(3)::before {
+    content: "";
+}
+
+.admin-table td:nth-child(3) {
+    position: relative;
+}
+
+.admin-table td:nth-child(3) > * {
+    display: inline-block;
+    background: #dbeafe;
+    color: #2563eb;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 14px;
+}
+
+/* ====== ACTION BUTTONS ====== */
+.admin-table td:last-child a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 14px;
+    margin-right: 8px;
+}
+
+/* Edit */
+.admin-table td:last-child a[href*="edit"] {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.admin-table td:last-child a[href*="edit"]:hover {
+    background: #dbeafe;
+}
+
+/* Delete */
+.admin-table td:last-child a[href*="delete"] {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+.admin-table td:last-child a[href*="delete"]:hover {
+    background: #fee2e2;
+}
