@@ -72,7 +72,7 @@
 <div th:replace="layout/header :: header"></div>
 
 <div class="banner-container" th:if="${not #lists.isEmpty(banners)}">
-
+<!--    phước-->
     <div class="banner-track" id="bannerTrack">
         <div class="banner-slide" th:each="banner : ${banners}">
             <img th:src="@{'/uploads/product/' + ${banner.image}}" th:alt="${banner.name}">
@@ -82,7 +82,7 @@
     <button class="banner-btn prev-btn" id="prevBtn" th:if="${banners.size() > 1}">&#10094;</button>
     <button class="banner-btn next-btn" id="nextBtn" th:if="${banners.size() > 1}">&#10095;</button>
 </div>
-
+<!--phước-->
 <main style="padding:20px">
     <h1>Welcome to BatShop</h1>
     <div th:replace="user/productvariant-list :: productvariant-list"></div>
