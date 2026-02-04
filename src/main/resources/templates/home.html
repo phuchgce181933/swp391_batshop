@@ -28,6 +28,7 @@
     <h1>Welcome to BatShop</h1>
     <div th:replace="user/productvariant-list :: productvariant-list"></div>
 </main>
+<div th:replace="user/blog/list :: blog"></div>
 
 <div th:replace="layout/footer :: footer"></div>
 
@@ -43,7 +44,7 @@
 
         let currentIndex = 1;
         let slideInterval;
-        const intervalTime = 4000; // Thời gian chuyển slide (4 giây)
+        const intervalTime = 5000; // Thời gian chuyển slide (5 giây)
 
         // LOGIC INFINITY LOOP (VÒNG LẶP VÔ TẬN)
         // Clone slide đầu và cuối để tạo hiệu ứng trượt mượt mà khi quay vòng

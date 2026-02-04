@@ -1,0 +1,16 @@
+<h2>All Categories</h2>
+
+<p th:if="${error}" th:text="${error}" style="color:red"></p>
+
+<table>
+    <thead>
+    <tr>
+        <th>Name</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="c : ${categories}">
+        <td th:text="${c.name}"></td>
+    </tr>
+    </tbody>
+</table>

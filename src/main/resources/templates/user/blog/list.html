@@ -1,0 +1,33 @@
+<header th:fragment="blog">
+<h2>All Blogs</h2>
+
+
+<br><br>
+
+<table border="1" cellpadding="10">
+    <thead>
+    <tr>
+        <th>Image</th>
+        <th>Title</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr th:each="b : ${blogs}">
+
+
+        <td>
+            <img th:if="${b.image != null and !#strings.isEmpty(b.image)}"
+                 th:src="@{/uploads/product/{img}(img=${b.image})}"
+                 width="120">
+            <span th:if="${b.image == null or #strings.isEmpty(b.image)}">
+                No image
+            </span>
+        </td>
+
+        <td th:text="${b.title}"></td>
+
+    </tr>
+    </tbody>
+</table>
+</header>
