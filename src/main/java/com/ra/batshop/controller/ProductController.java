@@ -31,7 +31,8 @@ public class ProductController {
     @GetMapping
     public String list(Model model) {
         model.addAttribute("products", productRepository.findAll());
-        return "admin/product/list";
+        model.addAttribute("content", "admin/product/list");
+        return "admin/layout";
     }
 
     // ADD FORM
@@ -40,7 +41,8 @@ public class ProductController {
         model.addAttribute("product", new Product());
         model.addAttribute("categories", categoryRepository.findAll());
 //        model.addAttribute("brands", brandRepository.findAll());
-        return "admin/product/add";
+        model.addAttribute("content", "admin/product/add");
+        return "admin/layout";
     }
 
     // SAVE
@@ -55,11 +57,11 @@ public class ProductController {
     // EDIT FORM
     @GetMapping("/edit/{id}")
     public String editForm(@PathVariable Integer id, Model model) {
-        model.addAttribute("product",
-                productRepository.findById(id).orElseThrow());
+        model.addAttribute("product", productRepository.findById(id).orElseThrow());
         model.addAttribute("categories", categoryRepository.findAll());
 //        model.addAttribute("brands", brandRepository.findAll());
-        return "admin/product/edit";
+        model.addAttribute("content", "admin/product/edit");
+        return "admin/layout";
     }
 
     // UPDATE

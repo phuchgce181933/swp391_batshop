@@ -20,14 +20,16 @@ public class BrandController {
     @GetMapping
     public String list(Model model) {
         model.addAttribute("brands", brandRepository.findAll());
-        return "admin/brand/list";
+        model.addAttribute("content", "admin/brand/list");
+        return "admin/layout";
     }
 
     // ADD FORM
     @GetMapping("/add")
     public String addForm(Model model) {
         model.addAttribute("brand", new Brand());
-        return "admin/brand/add";
+        model.addAttribute("content", "admin/brand/add");
+        return "admin/layout";
     }
 
     // ADD
@@ -40,9 +42,9 @@ public class BrandController {
     // EDIT FORM
     @GetMapping("/edit/{id}")
     public String editForm(@PathVariable Integer id, Model model) {
-        model.addAttribute("brand",
-                brandRepository.findById(id).orElseThrow());
-        return "admin/brand/edit";
+        model.addAttribute("brand", brandRepository.findById(id).orElseThrow());
+        model.addAttribute("content", "admin/brand/edit");
+        return "admin/layout";
     }
 
     // UPDATE

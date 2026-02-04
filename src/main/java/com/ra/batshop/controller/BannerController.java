@@ -27,7 +27,8 @@ public class BannerController {
     @GetMapping
     public String list(Model model) {
         model.addAttribute("banners", bannerRepository.findAll());
-        return "admin/banner/list";
+        model.addAttribute("content", "admin/banner/list");
+        return "admin/layout";
     }
 
     @GetMapping("/add")
@@ -35,7 +36,8 @@ public class BannerController {
         Banner banner = new Banner();
         banner.setStatus(true); // mặc định active
         model.addAttribute("banner", banner);
-        return "admin/banner/add";
+        model.addAttribute("content", "admin/banner/add");
+        return "admin/layout";
     }
 
     @PostMapping("/add")
@@ -58,9 +60,9 @@ public class BannerController {
 
     @GetMapping("/edit/{id}")
     public String editForm(@PathVariable Integer id, Model model) {
-        model.addAttribute("banner",
-                bannerRepository.findById(id).orElseThrow());
-        return "admin/banner/edit";
+        model.addAttribute("banner", bannerRepository.findById(id).orElseThrow());
+        model.addAttribute("content", "admin/banner/edit");
+        return "admin/layout";
     }
 
     @PostMapping("/edit")
