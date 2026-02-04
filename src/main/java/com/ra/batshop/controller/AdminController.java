@@ -26,7 +26,7 @@ public class AdminController {
     @GetMapping("/manageruser")
     public String userPage(Model model) {
         model.addAttribute("users", userRepository.findAll());
-        model.addAttribute("content", "admin/user");
+        model.addAttribute("content", "admin/user/list");
         return "admin/layout";
     }
 

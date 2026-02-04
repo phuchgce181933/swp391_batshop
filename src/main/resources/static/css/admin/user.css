@@ -1,0 +1,65 @@
+/* ===== USER ===== */
+
+h2 {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+/* TABLE */
+.admin-table {
+    width: 100%;
+    background: #ffffff;
+    border-radius: 14px;
+    border-collapse: collapse;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    overflow: hidden;
+}
+
+/* HEADER */
+.admin-table thead {
+    background: #f9fafb;
+}
+
+.admin-table th {
+    padding: 14px 18px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: #6b7280;
+    text-align: left;
+}
+
+/* BODY */
+.admin-table td {
+    padding: 16px 18px;
+    border-top: 1px solid #e5e7eb;
+    font-size: 14px;
+    color: #374151;
+}
+
+/* ROW HOVER */
+.admin-table tbody tr:hover {
+    background: #f9fafb;
+}
+
+/* BADGE (ROLE) */
+.badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 500;
+    background: #e0ecff;
+    color: #2563eb;
+}
+
+/* ROLE COLORS (OPTIONAL – AUTO BY TEXT) */
+.badge:has(:not(*)) {}
+
+/* RESPONSIVE (OPTIONAL) */
+@media (max-width: 900px) {
+    .admin-table {
+        font-size: 13px;
+    }
+}

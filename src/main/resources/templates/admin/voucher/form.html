@@ -1,21 +1,25 @@
-<h2 th:text="${voucher.id == null ? 'Add Voucher' : 'Edit Voucher'}"></h2>
+<form th:action="@{/admin/vouchers/save}"
+      th:object="${voucher}"
+      method="post">
 
-<form th:action="@{/admin/vouchers/save}" method="post"
-      th:object="${voucher}">
-
-    <input type="hidden" th:field="*{id}" />
+    <!-- ID -->
+    <input type="hidden"
+           th:if="${voucher.id != null}"
+           th:field="*{id}" />
 
     <label>Code</label><br>
     <input type="text" th:field="*{code}" required /><br><br>
 
     <label>Discount Percent</label><br>
-    <input type="number" th:field="*{discountPercent}" min="1" max="100" required /><br><br>
+    <input type="number" th:field="*{discountPercent}" min="1" max="100" /><br><br>
 
     <label>Valid From</label><br>
-    <input type="datetime-local" th:field="*{validFrom}" /><br><br>
+    <input type="datetime-local"
+           th:field="*{validFrom}" /><br><br>
 
     <label>Valid To</label><br>
-    <input type="datetime-local" th:field="*{validTo}" /><br><br>
+    <input type="datetime-local"
+           th:field="*{validTo}" /><br><br>
 
     <button type="submit">Save</button>
 </form>

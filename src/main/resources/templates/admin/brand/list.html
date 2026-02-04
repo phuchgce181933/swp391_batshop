@@ -1,39 +1,50 @@
-<!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Manage Brands</title>
-</head>
-<body>
+<link rel="stylesheet" th:href="@{/css/admin/brand.css}">
 
-<h2>Manage Brands</h2>
+<h2 class="page-title">Manager Brands</h2>
 
-<a th:href="@{/admin/brands/add}">+ Add Brand</a>
+<div class="page-actions right">
+    <a th:href="@{/admin/brands/add}" class="btn btn-primary">
+        + Add Brand
+    </a>
+</div>
 
-<table border="1">
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Status</th>
-        <th>Action</th>
-    </tr>
-    </thead>
+<div class="table-wrapper">
+    <table class="admin-table">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+        </thead>
 
-    <tbody>
-    <tr th:each="b : ${brands}">
-        <td th:text="${b.id}"></td>
-        <td th:text="${b.name}"></td>
-        <td th:text="${b.status} ? 'Active' : 'Inactive'"></td>
-        <td>
-            <a th:href="@{/admin/brands/edit/{id}(id=${b.id})}">Edit</a>
-            |
-            <a th:href="@{/admin/brands/delete/{id}(id=${b.id})}"
-               onclick="return confirm('Delete this brand?')">Delete</a>
-        </td>
-    </tr>
-    </tbody>
-</table>
+        <tbody>
+        <tr th:each="b : ${brands}">
+            <td th:text="${b.id}"></td>
 
-</body>
-</html>
+            <td th:text="${b.name}"></td>
+
+            <td>
+                <span class="badge"
+                      th:text="${b.status ? 'Active' : 'Inactive'}"
+                      th:classappend="${b.status} ? 'badge-active' : 'badge-inactive'">
+                </span>
+            </td>
+
+            <td class="action-col">
+                <a th:href="@{/admin/brands/edit/{id}(id=${b.id})}"
+                   class="btn btn-edit">Edit</a>
+                <span class="divider">|</span>
+                <a th:href="@{/admin/brands/delete/{id}(id=${b.id})}"
+                   class="btn btn-delete"
+                   onclick="return confirm('Delete this brand?')">
+                    Delete
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+

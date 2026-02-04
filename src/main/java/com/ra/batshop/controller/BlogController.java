@@ -26,13 +26,15 @@ public class BlogController {
     @GetMapping
     public String list(Model model) {
         model.addAttribute("blogs", blogRepository.findAll());
-        return "admin/blog/list";
+        model.addAttribute("content", "admin/blog/list");
+        return "admin/layout";
     }
 
     @GetMapping("/add")
     public String addForm(Model model) {
         model.addAttribute("blog", new Blog());
-        return "admin/blog/add";
+        model.addAttribute("content", "admin/blog/add");
+        return "admin/layout";
     }
 
     @PostMapping("/add")
@@ -75,9 +77,9 @@ public class BlogController {
 
     @GetMapping("/edit/{id}")
     public String editForm(@PathVariable Integer id, Model model) {
-        model.addAttribute("blog",
-                blogRepository.findById(id).orElseThrow());
-        return "admin/blog/edit";
+        model.addAttribute("blog", blogRepository.findById(id).orElseThrow());
+        model.addAttribute("content", "admin/blog/edit");
+        return "admin/layout";
     }
 
     @PostMapping("/edit")

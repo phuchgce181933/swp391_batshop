@@ -22,29 +22,34 @@ public class VoucherController {
     @GetMapping
     public String list(Model model) {
         model.addAttribute("vouchers", voucherRepository.findAll());
-        return "admin/voucher/list";
+        model.addAttribute("content", "admin/voucher/list");
+        return "admin/layout";
     }
 
     // ADD FORM
     @GetMapping("/add")
     public String addForm(Model model) {
         model.addAttribute("voucher", new Voucher());
-        return "admin/voucher/form";
+        model.addAttribute("content", "admin/voucher/form");
+        return "admin/layout";
     }
 
     // EDIT FORM
     @GetMapping("/edit/{id}")
     public String editForm(@PathVariable Integer id, Model model) {
-        model.addAttribute("voucher",
-                voucherRepository.findById(id).orElseThrow());
-        return "admin/voucher/form";
+        model.addAttribute("voucher", voucherRepository.findById(id).orElseThrow());
+        model.addAttribute("content", "admin/voucher/form");
+        return "admin/layout";
     }
 
     // SAVE (ADD + EDIT)
     @PostMapping("/save")
     public String save(@ModelAttribute Voucher voucher) {
 
-        if (voucher.getId() == null) {
+        if (voucher.getId() != null) {
+            Voucher old = voucherRepository.findById(voucher.getId()).orElseThrow();
+            voucher.setActive(old.getActive()); // giữ trạng thái cũ
+        } else {
             voucher.setActive(true);
         }
 
