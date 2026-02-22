@@ -35,9 +35,8 @@
                        name="quantity"
                        th:value="${item.quantity}"
                        min="1"
-                       style="width:60px"/>
-
-                <button type="submit">Cập nhật</button>
+                       style="width:60px"
+                       onchange="this.form.submit()"/>
             </form>
         </td>
         <td th:text="${#numbers.formatDecimal(item.productVariant.additionalPrice, 0, 'POINT', 0, 'COMMA')}"></td>

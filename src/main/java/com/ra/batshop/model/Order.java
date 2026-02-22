@@ -20,6 +20,11 @@ public class Order {
 
     private BigDecimal totalPrice;
 
+    private String paymentMethod;
+    private String paymentStatus;
+    //private String transactionNo;
+    //private String vnpTxnRef;
+    //private LocalDateTime paidAt;
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
