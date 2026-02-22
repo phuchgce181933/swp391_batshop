@@ -1,9 +1,6 @@
-<header th:fragment="blog">
-<h2>All Blogs</h2>
-
-
+<div th:fragment="blog">
+<h1>All Blogs</h1>
 <br><br>
-
 <table border="1" cellpadding="10">
     <thead>
     <tr>
@@ -14,8 +11,6 @@
 
     <tbody>
     <tr th:each="b : ${blogs}">
-
-
         <td>
             <img th:if="${b.image != null and !#strings.isEmpty(b.image)}"
                  th:src="@{/uploads/product/{img}(img=${b.image})}"
@@ -30,4 +25,4 @@
     </tr>
     </tbody>
 </table>
-</header>
+</div>

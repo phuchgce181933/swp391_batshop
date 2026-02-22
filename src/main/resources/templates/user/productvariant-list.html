@@ -12,7 +12,7 @@
 
             <!-- Có ảnh -->
             <img th:if="${v.product != null and v.product.images != null and !v.product.images.isEmpty()}"
-                 th:src="@{/uploads/products/{img}(img=${v.product.images[0].image})}"
+                 th:src="@{/uploads/product/{img}(img=${v.product.images[0].image})}"
                  alt="Product image"
                  width="180">
 

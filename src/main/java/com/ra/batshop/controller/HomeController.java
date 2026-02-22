@@ -35,15 +35,16 @@ public class HomeController {
 
     @GetMapping()
     public String home(Model model, HttpSession session) {
-        if (session.getAttribute("user") == null) {
-            return "redirect:/login";
-        }
+//        if (session.getAttribute("user") == null) {
+//            return "redirect:/login";
+//        }
 
         // 3. Lấy danh sách banner active
         List<Banner> banners = bannerRepository.findAllByStatusTrue();
         model.addAttribute("banners", banners);
-
         model.addAttribute("productvariant", productVariantRepository.findAll());
+        model.addAttribute("blogs", blogRepository.findAll());
+        model.addAttribute("categories", categoryRepository.findAll());
         return "home";
     }
 
@@ -62,6 +63,8 @@ public class HomeController {
     @GetMapping("/blog")
     public String listBlog(Model model) {
         model.addAttribute("blogs", blogRepository.findAll());
-        return "user/blog/list";
+
+       return "user/blog/list";
+
     }
 }
