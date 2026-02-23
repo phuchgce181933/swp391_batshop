@@ -99,3 +99,18 @@
     object-fit: cover;
     border-radius: 8px;
 }
+.alert {
+    padding: 15px;
+    margin: 15px 0;
+    border-radius: 6px;
+}
+
+.success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.error {
+    background-color: #f8d7da;
+    color: #721c24;
+}

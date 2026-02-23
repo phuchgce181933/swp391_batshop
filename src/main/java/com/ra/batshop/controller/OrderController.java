@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
 import java.net.URLEncoder;
@@ -72,7 +73,8 @@ public class OrderController {
     public String confirmCheckout(@RequestParam Integer addressId,
                                   @RequestParam String paymentMethod,
                                   HttpSession session,
-                                  HttpServletRequest request) throws Exception {
+                                  HttpServletRequest request,
+                                  RedirectAttributes redirectAttributes) throws Exception {
 
         User user = (User) session.getAttribute("user");
         if (user == null) return "redirect:/login";
@@ -157,16 +159,20 @@ public class OrderController {
 
             String vnp_SecureHash = VnpayConfig.hmacSHA512(secretKey, hashData.toString());
             query.append("vnp_SecureHash=").append(vnp_SecureHash);
-
+            redirectAttributes.addFlashAttribute("successMessage",
+                    "Đặt hàng thành công! Vui lòng chờ xác nhận.");
             return "redirect:" + vnp_PayUrl + "?" + query.toString();
         }
 
         // COD
         cartItemRepository.deleteAll(cartItems);
+        redirectAttributes.addFlashAttribute("successMessage",
+                "Đặt hàng thành công! Vui lòng chờ xác nhận.");
         return "redirect:/home";
     }
     @GetMapping("/vnpay-return")
-    public String vnpayReturn(HttpServletRequest request, HttpSession session) {
+    public String vnpayReturn(HttpServletRequest request, HttpSession session,
+                              RedirectAttributes redirectAttributes) {
 
         String responseCode = request.getParameter("vnp_ResponseCode");
         String txnRef = request.getParameter("vnp_TxnRef");
@@ -176,8 +182,8 @@ public class OrderController {
         if ("00".equals(responseCode)) {
             order.setPaymentStatus("PAID");
             order.setStatus(OrderStatus.CONFIRMED);
-
-            User user = (User) session.getAttribute("user");
+            redirectAttributes.addFlashAttribute("successMessage",
+                    "Thanh toán VNPAY thành công!");            User user = (User) session.getAttribute("user");
             if (user != null) {
                 List<CartItem> cartItems = cartItemRepository.findByUserId(user.getId());
                 cartItemRepository.deleteAll(cartItems);

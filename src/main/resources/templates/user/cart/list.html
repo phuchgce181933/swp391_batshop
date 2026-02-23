@@ -23,14 +23,23 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="item, stat : ${cartItems}">
+
+    <!-- giỏ hàng rỗng -->
+    <tr th:if="${#lists.isEmpty(cartItems)}">
+        <td colspan="6" style="text-align:center; padding:20px;">
+            🛒 Giỏ hàng của bạn đang trống
+        </td>
+    </tr>
+
+    <!-- có sản phẩm -->
+    <tr th:each="item, stat : ${cartItems}"
+        th:unless="${#lists.isEmpty(cartItems)}">
+
         <td th:text="${stat.count}"></td>
         <td th:text="${item.productVariant.product.name}"></td>
         <td>
             <form th:action="@{/cart/update}" method="post">
-                <input type="hidden" name="id"
-                       th:value="${item.id}"/>
-
+                <input type="hidden" name="id" th:value="${item.id}"/>
                 <input type="number"
                        name="quantity"
                        th:value="${item.quantity}"
@@ -40,7 +49,7 @@
             </form>
         </td>
         <td th:text="${#numbers.formatDecimal(item.productVariant.additionalPrice, 0, 'POINT', 0, 'COMMA')}"></td>
-        <td th:text="${#numbers.formatDecimal(item.quantity*item.getProductVariant().additionalPrice, 0, 'POINT', 0, 'COMMA')}"></td>
+        <td th:text="${#numbers.formatDecimal(item.quantity * item.productVariant.additionalPrice, 0, 'POINT', 0, 'COMMA')}"></td>
         <td>
             <form th:action="@{/cart/delete}" method="post">
                 <input type="hidden" name="id" th:value="${item.id}">
@@ -48,6 +57,7 @@
             </form>
         </td>
     </tr>
+
     </tbody>
 </table>
 <div class="cart-summary">
