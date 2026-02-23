@@ -1,22 +1,30 @@
 <h2>Manager Products</h2>
 
 <a th:href="@{/admin/products/add}">+ Add Product</a>
-
+<link rel="stylesheet" th:href="@{/css/admin/product.css}">
 <table>
     <thead>
     <tr>
         <th>ID</th>
+        <th>Image</th>
         <th>Name</th>
         <th>Category</th>
         <th>Brand</th>
         <th>Price</th>
         <th>Status</th>
         <th>Action</th>
+        <th>Detail product variant</th>
     </tr>
     </thead>
     <tbody>
     <tr th:each="p : ${products}">
         <td th:text="${p.id}"></td>
+        <td>
+            <img th:if="${p.images != null and !p.images.isEmpty()}"
+                 th:src="@{/uploads/product/{img}(img=${p.images[0].image})}"
+                 width="80"
+                 alt="product">
+        </td>
         <td th:text="${p.name}"></td>
         <td th:text="${p.category.name}"></td>
         <td th:text="${p.brand.name}"></td>
@@ -26,6 +34,11 @@
             <a th:href="@{/admin/products/edit/{id}(id=${p.id})}">Edit</a> |
             <a th:href="@{/admin/products/delete/{id}(id=${p.id})}"
                onclick="return confirm('Delete product?')">Delete</a>
+        </td>
+        <td>
+            <a th:href="@{/admin/products/{id}/variants(id=${p.id})}">
+                View
+            </a>
         </td>
     </tr>
     </tbody>

@@ -1,6 +1,9 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
 <h2>Add Product</h2>
 
-<form th:action="@{/admin/products/add}" method="post" th:object="${product}">
+<form th:action="@{/admin/products/add}" method="post" th:object="${product}" enctype="multipart/form-data">
 
     Name:
     <input type="text" th:field="*{name}" /><br>
@@ -12,20 +15,88 @@
     <input type="number" step="0.01" th:field="*{price}" /><br>
 
     Category:
-    <select th:field="*{category}">
+    <select th:field="*{category.id}">
+        <option value="">-- Select Category --</option>
         <option th:each="c : ${categories}"
-                th:value="${c}"
+                th:value="${c.id}"
+                th:text="${c.name}">
+        </option>
+    </select>
+    <br>
+
+    Brand:
+    <select th:field="*{brand.id}">
+        <option value="">-- Select Brand --</option>
+        <option th:each="b : ${brands}"
+                th:value="${b.id}"
+                th:text="${b.name}">
+        </option>
+    </select>
+    <div>
+        <label>Preview Image:</label><br>
+
+        <img id="previewImage"
+             src="/images/no-image.png"
+             width="150"
+             style="border:1px solid #ccc; padding:5px;">
+    </div>
+
+    <br>
+
+    <label>Select Image:</label>
+    <input type="file" name="imageFile" id="imageInput" accept="image/*">
+    <br>
+<!--    vảiant-->
+    <h3>Product Variant</h3>
+
+    Stock:
+    <input type="number" name="stock"><br>
+
+    Additional Price:
+    <input type="number" step="0.01" name="additionalPrice"><br>
+
+    Size:
+    <select name="sizeId">
+        <option th:each="s : ${sizes}"
+                th:value="${s.id}"
+                th:text="${s.name}">
+        </option>
+    </select><br>
+
+    Color:
+    <select name="colorId">
+        <option th:each="c : ${colors}"
+                th:value="${c.id}"
                 th:text="${c.name}">
         </option>
     </select><br>
 
     Brand:
-    <select th:field="*{brand}">
+    <select name="variantBrandId">
         <option th:each="b : ${brands}"
-                th:value="${b}"
+                th:value="${b.id}"
                 th:text="${b.name}">
         </option>
     </select><br>
-
     <button type="submit">Save</button>
 </form>
+<script>
+    document.getElementById("imageInput")
+        .addEventListener("change", function (event) {
+
+            const file = event.target.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    document.getElementById("previewImage")
+                        .src = e.target.result;
+                };
+
+                reader.readAsDataURL(file);
+            }
+        });
+</script>
+</body>
+</html>
