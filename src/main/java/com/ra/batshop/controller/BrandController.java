@@ -41,7 +41,7 @@ public class BrandController {
 
     // EDIT FORM
     @GetMapping("/edit/{id}")
-    public String editForm(@PathVariable Integer id, Model model) {
+    public String editForm(@PathVariable Long id, Model model) {
         model.addAttribute("brand", brandRepository.findById(id).orElseThrow());
         model.addAttribute("content", "admin/brand/edit");
         return "admin/layout";
@@ -56,7 +56,7 @@ public class BrandController {
 
     // DELETE
     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable Integer id) {
+    public String delete(@PathVariable Long id) {
         brandRepository.deleteById(id);
         return "redirect:/admin/brands";
     }
