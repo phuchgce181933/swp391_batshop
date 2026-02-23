@@ -8,10 +8,16 @@
 
 
 </head>
+
 <body>
-
 <div th:replace="layout/header :: header"></div>
+<div th:if="${successMessage}" class="alert success">
+    <p th:text="${successMessage}"></p>
+</div>
 
+<div th:if="${errorMessage}" class="alert error">
+    <p th:text="${errorMessage}"></p>
+</div>
 <div class="banner-container" th:if="${not #lists.isEmpty(banners)}">
 <!--    phước-->
     <div class="banner-track" id="bannerTrack">
@@ -127,6 +133,23 @@
         startSlide();
     }
 </script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const alerts = document.querySelectorAll(".alert");
 
+        if (alerts.length > 0) {
+            setTimeout(() => {
+                alerts.forEach(alert => {
+                    alert.classList.add("fade-out");
+
+                    // Ẩn hẳn sau khi fade
+                    setTimeout(() => {
+                        alert.style.display = "none";
+                    }, 500);
+                });
+            }, 5000); // 5 giây
+        }
+    });
+</script>
 </body>
 </html>

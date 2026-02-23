@@ -53,7 +53,14 @@ public class CartItemController {
             return "redirect:/login";
         }
         List<CartItem> cartitem = cartItemRepository.findByUserId(user.getId());
+        if (cartitem == null) {
+            cartitem = List.of();
+        }
+
         Double total = cartItemRepository.calculateTotalByUserId(user.getId());
+        if (total == null) {
+            total = 0.0;
+        }
         model.addAttribute("cartItems", cartitem);
         model.addAttribute("totalCart", total );
         return "user/cart/list";

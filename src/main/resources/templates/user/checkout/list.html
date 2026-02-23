@@ -13,36 +13,12 @@
 
     <h2>Đơn hàng (<span th:text="${#lists.size(cartItems)}"></span> sản phẩm)</h2>
 
-    <div class="address-box">
-        <h3> Địa chỉ giao hàng</h3>
-        <form th:action="@{/checkout/confirm}" method="post">
-
-            <div th:each="addr : ${addresses}" class="address-item">
-
-                <label>
-                    <input type="radio"
-                           name="addressId"
-                           th:value="${addr.id}"
-                           th:checked="${defaultAddress != null and addr.id == defaultAddress.id}"/>
-
-                    <strong th:text="${addr.fullName}"></strong>
-                    | <span th:text="${addr.phone}"></span><br>
-
-                    <span th:text="${addr.addressLine}"></span>,
-                    <span th:text="${addr.district}"></span>,
-                    <span th:text="${addr.city}"></span>
-                </label>
-            </div>
-        </form>
-    </div>
-
-
     <div class="order-item" th:each="item : ${cartItems}">
         <div class="item-left">
             <span class="qty" th:text="${item.quantity}"></span>
             <img th:if="${item.productVariant.product.images != null
                     and !item.productVariant.product.images.isEmpty()}"
-                 th:src="@{/uploads/products/{img}(img=${item.productVariant.product.images[0].image})}"
+                 th:src="@{/uploads/product/{img}(img=${item.productVariant.product.images[0].image})}"
                  alt="product">
         </div>
 
@@ -78,24 +54,47 @@
         <strong th:text="${#numbers.formatDecimal(totalCart,0,'POINT',0,'COMMA')} + ' đ'"></strong>
     </div>
 
-    <div class="payment-box">
-        <h3> Phương thức thanh toán</h3>
+    <form th:action="@{/admin/orders/confirm}" method="post">
 
-        <label class="payment-item">
-            <input type="radio" name="paymentMethod" value="COD" checked>
-            Thanh toán khi nhận hàng (COD)
-        </label>
+        <!-- ===== ĐỊA CHỈ ===== -->
+        <div class="address-box">
+            <h3>Địa chỉ giao hàng</h3>
 
-        <label class="payment-item">
-            <input type="radio" name="paymentMethod" value="VNPAY">
-            Thanh toán qua VNPAY
-        </label>
-    </div>
+            <div th:each="addr : ${addresses}" class="address-item">
+                <label>
+                    <input type="radio"
+                           name="addressId"
+                           th:value="${addr.id}"
+                           th:checked="${defaultAddress != null and addr.id == defaultAddress.id}"/>
 
-    <form th:action="@{/checkout/confirm}" method="post">
-        <input type="hidden" name="addressId"
-               th:value="${defaultAddress != null ? defaultAddress.id : ''}">
-        <button type="submit" class="btn-order">ĐẶT HÀNG</button>
+                    <strong th:text="${addr.fullName}"></strong>
+                    | <span th:text="${addr.phone}"></span><br>
+
+                    <span th:text="${addr.addressLine}"></span>,
+                    <span th:text="${addr.district}"></span>,
+                    <span th:text="${addr.city}"></span>
+                </label>
+            </div>
+        </div>
+
+
+        <!-- ===== PAYMENT ===== -->
+        <div class="payment-box">
+            <h3>Phương thức thanh toán</h3>
+
+            <label class="payment-item">
+                <input type="radio" name="paymentMethod" value="COD" checked>
+                Thanh toán khi nhận hàng (COD)
+            </label>
+
+            <label class="payment-item">
+                <input type="radio" name="paymentMethod" value="VNPAY">
+                Thanh toán qua VNPAY
+            </label>
+        </div>
+
+        <button type="submit">ĐẶT HÀNG</button>
+
     </form>
 
 
