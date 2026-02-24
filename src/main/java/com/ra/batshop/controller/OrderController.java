@@ -3,10 +3,7 @@ package com.ra.batshop.controller;
 import com.ra.batshop.config.VnpayConfig;
 import com.ra.batshop.model.*;
 import com.ra.batshop.model.Enum.OrderStatus;
-import com.ra.batshop.repository.CartItemRepository;
-import com.ra.batshop.repository.OrderItemRepository;
-import com.ra.batshop.repository.OrderRepository;
-import com.ra.batshop.repository.UserAddressRepository;
+import com.ra.batshop.repository.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
@@ -28,16 +25,18 @@ public class OrderController {
     private UserAddressRepository userAddressRepository;
     private final OrderRepository orderRepository;
     private OrderItemRepository orderItemRepository;
-
+    private final ProductVariantRepository productVariantRepository;
     public OrderController(OrderRepository orderRepository,
                            OrderItemRepository orderItemRepository,
                            UserAddressRepository userAddressRepository,
-                           CartItemRepository cartItemRepository) {
+                           CartItemRepository cartItemRepository,
+                           ProductVariantRepository productVariantRepository) {
 
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
         this.userAddressRepository = userAddressRepository;
         this.cartItemRepository = cartItemRepository;
+        this.productVariantRepository = productVariantRepository;
     }
 
     // LIST
@@ -69,6 +68,25 @@ public class OrderController {
     }
 
     // phúc-thanh toán
+    private void reduceStock(Order order) {
+
+        List<OrderItem> items =
+                orderItemRepository.findByOrderId(order.getId());
+
+        for (OrderItem item : items) {
+
+            ProductVariant variant = item.getProductVariant();
+
+            int newStock = variant.getStock() - item.getQuantity();
+
+            if (newStock < 0) {
+                throw new RuntimeException("Sản phẩm không đủ hàng");
+            }
+
+            variant.setStock(newStock);
+            productVariantRepository.save(variant);
+        }
+    }
     @PostMapping("/confirm")
     public String confirmCheckout(@RequestParam Integer addressId,
                                   @RequestParam String paymentMethod,
@@ -165,6 +183,7 @@ public class OrderController {
         }
 
         // COD
+        reduceStock(order);
         cartItemRepository.deleteAll(cartItems);
         redirectAttributes.addFlashAttribute("successMessage",
                 "Đặt hàng thành công! Vui lòng chờ xác nhận.");
@@ -182,6 +201,8 @@ public class OrderController {
         if ("00".equals(responseCode)) {
             order.setPaymentStatus("PAID");
             order.setStatus(OrderStatus.CONFIRMED);
+            // TRỪ STOCK
+            reduceStock(order);
             redirectAttributes.addFlashAttribute("successMessage",
                     "Thanh toán VNPAY thành công!");            User user = (User) session.getAttribute("user");
             if (user != null) {

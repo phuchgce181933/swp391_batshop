@@ -26,15 +26,10 @@
             <p th:if="${item.productVariant.brand != null}"
                th:text="${item.productVariant.brand.name}">
             </p>
-        </div>
-        <div>
-            <p th:if="${item.productVariant.size != null}"
-            th:text="${item.productVariant.size.name}">
+            <p th:if="${item.productVariant.size != null}">
+                Size:
+                <span th:text="${item.productVariant.size.name}"></span>
             </p>
-        </div>
-
-        <div class="item-info">
-            <p th:text="${item.productVariant.brand.name}"></p>
         </div>
 
         <div class="item-price"
@@ -56,29 +51,72 @@
 
     <form th:action="@{/admin/orders/confirm}" method="post">
 
-        <!-- ===== ĐỊA CHỈ ===== -->
+        <!--ĐỊA CHỈ -->
         <div class="address-box">
             <h3>Địa chỉ giao hàng</h3>
+                <!-- Địa chỉ đang chọn -->
+                <div class="selected-address" onclick="toggleAddressList()">
+                    <div id="selectedAddressContent">
 
-            <div th:each="addr : ${addresses}" class="address-item">
-                <label>
-                    <input type="radio"
-                           name="addressId"
-                           th:value="${addr.id}"
-                           th:checked="${defaultAddress != null and addr.id == defaultAddress.id}"/>
+                        <strong th:text="${defaultAddress != null ? defaultAddress.fullName : addresses[0].fullName}"></strong>
+                        | <span th:text="${defaultAddress != null ? defaultAddress.phone : addresses[0].phone}"></span><br>
 
+                        <span th:text="${defaultAddress != null ? defaultAddress.addressLine : addresses[0].addressLine}"></span>,
+                        <span th:text="${defaultAddress != null ? defaultAddress.district : addresses[0].district}"></span>,
+                        <span th:text="${defaultAddress != null ? defaultAddress.city : addresses[0].city}"></span>
+
+                    </div>
+                    <span class="dropdown-icon">▼</span>
+                </div>
+
+                <!-- Danh sách địa chỉ -->
+                <div id="addressList" class="address-list">
+                    <div th:each="addr : ${addresses}" class="address-item">
+                        <label>
+                            <input type="radio"
+                                   name="addressId"
+                                   th:value="${addr.id}"
+                                   th:checked="${defaultAddress != null and addr.id == defaultAddress.id}"
+                                   onclick="selectAddress(this)" />
+
+                            <span class="addr-info">
                     <strong th:text="${addr.fullName}"></strong>
                     | <span th:text="${addr.phone}"></span><br>
 
                     <span th:text="${addr.addressLine}"></span>,
                     <span th:text="${addr.district}"></span>,
                     <span th:text="${addr.city}"></span>
-                </label>
+                </span>
+                        </label>
+                    </div>
+                </div>
             </div>
-        </div>
+            <script>
+                function toggleAddressList() {
+                    const list = document.getElementById("addressList");
+                    list.style.display = list.style.display === "block" ? "none" : "block";
+                }
 
+                function selectAddress(radio) {
+                    const content = radio.closest("label").querySelector(".addr-info").innerHTML;
 
-        <!-- ===== PAYMENT ===== -->
+                    document.getElementById("selectedAddressContent").innerHTML = content;
+
+                    // đóng dropdown sau khi chọn
+                    document.getElementById("addressList").style.display = "none";
+                }
+
+                // click ra ngoài thì tự đóng
+                document.addEventListener("click", function(event) {
+                    const box = document.querySelector(".address-box");
+                    const list = document.getElementById("addressList");
+
+                    if (!box.contains(event.target)) {
+                        list.style.display = "none";
+                    }
+                });
+            </script>
+        <!--PAYMENT-->
         <div class="payment-box">
             <h3>Phương thức thanh toán</h3>
 

@@ -1,0 +1,110 @@
+/* ===== CONTENT WRAPPER ===== */
+.admin-content {
+    padding: 30px;
+    background: #f5f6f8;
+    min-height: 100vh;
+}
+
+/* ===== CARD ===== */
+.form-card {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    max-width: 900px;
+}
+
+/* ===== TITLE ===== */
+.form-card h2 {
+    margin-bottom: 25px;
+    font-weight: 600;
+}
+
+/* ===== FORM GRID ===== */
+form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 30px;
+}
+
+/* Full width element */
+form textarea,
+form h3,
+form button {
+    grid-column: span 2;
+}
+
+/* ===== INPUT STYLE ===== */
+input[type="text"],
+input[type="number"],
+input[type="file"],
+select,
+textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid #d1d5db;
+    font-size: 14px;
+    transition: 0.2s;
+    background: #fff;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+}
+
+/* ===== IMAGE PREVIEW ===== */
+#previewImage {
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    padding: 8px;
+    background: #fafafa;
+    margin-top: 10px;
+}
+
+/* ===== VARIANT TITLE ===== */
+h3 {
+    margin-top: 30px;
+    font-weight: 600;
+    border-top: 1px solid #eee;
+    padding-top: 20px;
+}
+
+/* ===== BUTTON ===== */
+button {
+    margin-top: 20px;
+    padding: 12px;
+    border: none;
+    border-radius: 12px;
+    background: #6366f1;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+button:hover {
+    background: #4f46e5;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    form {
+        grid-template-columns: 1fr;
+    }
+
+    form textarea,
+    form h3,
+    form button {
+        grid-column: span 1;
+    }
+}
