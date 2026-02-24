@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" th:href="@{/css/admin/addproduct.css}">
 <body>
+<div class="admin-content">
+    <div class="form-card">
 <h2>Add Product</h2>
 
 <form th:action="@{/admin/products/add}" method="post" th:object="${product}" enctype="multipart/form-data">
@@ -80,6 +83,8 @@
     </select><br>
     <button type="submit">Save</button>
 </form>
+    </div>
+</div>
 <script>
     document.getElementById("imageInput")
         .addEventListener("change", function (event) {
