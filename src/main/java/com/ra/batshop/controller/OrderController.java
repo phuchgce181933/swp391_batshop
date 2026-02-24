@@ -196,4 +196,12 @@ public class OrderController {
 
         return "redirect:/home";
     }
+    @PostMapping("/edit/{id}")
+    public String editOrder(@PathVariable Integer id,
+                            @RequestParam OrderStatus status) {
+        Order order = orderRepository.findById(id).orElseThrow();
+        order.setStatus(status);
+        orderRepository.save(order);
+        return "redirect:/admin/orders";
+    }
 }
