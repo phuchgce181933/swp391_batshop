@@ -43,7 +43,7 @@ public class HomeController {
         List<Banner> banners = bannerRepository.findAllByStatusTrue();
         model.addAttribute("banners", banners);
         model.addAttribute("productvariant", productVariantRepository.findAll());
-        model.addAttribute("blogs", blogRepository.findAll());
+        model.addAttribute("blogs", blogRepository.findTop4ByStatusIsTrueOrderByCreatedAtDesc());
         model.addAttribute("categories", categoryRepository.findAll());
         return "home";
     }

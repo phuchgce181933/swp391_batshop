@@ -1,10 +1,26 @@
 <h2>Edit Category</h2>
 
-<form th:action="@{/admin/categories/edit}" method="post" th:object="${category}">
+<form th:action="@{/admin/categories/edit}" method="post" th:object="${category}" enctype="multipart/form-data">
     <input type="hidden" th:field="*{id}" />
 
-    Name:
-    <input type="text" th:field="*{name}" required />
-    <br><br>
+    <div style="margin-bottom: 15px;">
+        <label>Name:</label><br>
+        <input type="text" th:field="*{name}" required />
+    </div>
+
+    <div style="margin-bottom: 15px;">
+        <label>Current Image:</label><br>
+
+        <div th:if="${category.image != null and !#strings.isEmpty(category.image)}" style="margin-bottom: 10px;">
+            <img th:src="@{'/uploads/category/' + ${category.image}}" width="100" style="border: 1px solid #ddd; padding: 5px;">
+        </div>
+        <div th:if="${category.image == null or #strings.isEmpty(category.image)}" style="margin-bottom: 10px; color: #999;">
+            <i>No image currently</i>
+        </div>
+
+        <label>Upload New Image (Leave blank to keep current):</label><br>
+        <input type="file" name="file" accept="image/*" />
+    </div>
+
     <button type="submit">Update</button>
 </form>

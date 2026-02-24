@@ -1,8 +1,16 @@
 <h2>Add Category</h2>
 
-<form th:action="@{/admin/categories/add}" method="post" th:object="${category}">
-    Name:
-    <input type="text" th:field="*{name}" required />
-    <br><br>
+<form th:action="@{/admin/categories/add}" method="post" th:object="${category}" enctype="multipart/form-data">
+
+    <div style="margin-bottom: 15px;">
+        <label>Name:</label><br>
+        <input type="text" th:field="*{name}" required />
+    </div>
+
+    <div style="margin-bottom: 15px;">
+        <label>Image:</label><br>
+        <input type="file" name="file" accept="image/*" />
+    </div>
+
     <button type="submit">Save</button>
 </form>

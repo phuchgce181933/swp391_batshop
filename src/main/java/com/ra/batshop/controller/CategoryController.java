@@ -5,6 +5,12 @@ import com.ra.batshop.repository.CategoryRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 @Controller
 @RequestMapping("/admin/categories")
@@ -16,7 +22,6 @@ public class CategoryController {
         this.categoryRepository = categoryRepository;
     }
 
-    // LIST
     @GetMapping
     public String list(Model model) {
         model.addAttribute("categories", categoryRepository.findAll());
@@ -24,7 +29,6 @@ public class CategoryController {
         return "admin/layout";
     }
 
-    // ADD FORM
     @GetMapping("/add")
     public String addForm(Model model) {
         model.addAttribute("category", new Category());
@@ -32,14 +36,26 @@ public class CategoryController {
         return "admin/layout";
     }
 
-    // SAVE
+    // CẬP NHẬT: Xử lý upload ảnh khi thêm mới
     @PostMapping("/add")
-    public String save(@ModelAttribute Category category) {
+    public String save(@ModelAttribute Category category, @RequestParam("file") MultipartFile file) {
+        if (!file.isEmpty()) {
+            String fileName = file.getOriginalFilename();
+            try {
+                Path uploadDir = Paths.get("uploads/category");
+                if (!Files.exists(uploadDir)) {
+                    Files.createDirectories(uploadDir);
+                }
+                Files.copy(file.getInputStream(), uploadDir.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
+                category.setImage(fileName);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         categoryRepository.save(category);
         return "redirect:/admin/categories";
     }
 
-    // EDIT FORM
     @GetMapping("/edit/{id}")
     public String editForm(@PathVariable Integer id, Model model) {
         model.addAttribute("category", categoryRepository.findById(id).orElseThrow());
@@ -47,14 +63,32 @@ public class CategoryController {
         return "admin/layout";
     }
 
-    // UPDATE
+    // CẬP NHẬT: Xử lý upload ảnh khi sửa (Giữ ảnh cũ nếu không up ảnh mới)
     @PostMapping("/edit")
-    public String update(@ModelAttribute Category category) {
+    public String update(@ModelAttribute Category category, @RequestParam("file") MultipartFile file) {
+        Category old = categoryRepository.findById(category.getId()).orElseThrow();
+
+        if (!file.isEmpty()) {
+            String fileName = file.getOriginalFilename();
+            try {
+                Path uploadDir = Paths.get("uploads/category");
+                if (!Files.exists(uploadDir)) {
+                    Files.createDirectories(uploadDir);
+                }
+                Files.copy(file.getInputStream(), uploadDir.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
+                category.setImage(fileName);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            // Nếu không chọn file mới, giữ nguyên file cũ
+            category.setImage(old.getImage());
+        }
+
         categoryRepository.save(category);
         return "redirect:/admin/categories";
     }
 
-    // DELETE (CÓ CHECK PRODUCT)
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable Integer id, Model model) {
         Category category = categoryRepository.findById(id).orElseThrow();

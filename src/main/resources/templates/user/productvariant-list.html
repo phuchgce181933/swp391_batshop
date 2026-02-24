@@ -1,62 +1,44 @@
-<div th:fragment="productvariant-list">
+<div th:fragment="productvariant-list" class="product-grid">
 
-<h2>Sản phẩm cầu lông</h2>
+    <div th:each="v : ${productvariant}" class="product-card">
 
-<div style="display:flex; gap:20px; flex-wrap:wrap;">
-
-    <div th:each="v : ${productvariant}"
-         style="width:220px;border:1px solid #ddd;padding:10px;border-radius:10px;">
-
-        <!-- IMAGE -->
-        <div class="product-image">
-
-            <!-- Có ảnh -->
+        <a th:href="@{/productvariant/detail/{id}(id=${v.id})}" class="product-image">
             <img th:if="${v.product != null and v.product.images != null and !v.product.images.isEmpty()}"
                  th:src="@{/uploads/product/{img}(img=${v.product.images[0].image})}"
-                 alt="Product image"
-                 width="180">
+                 th:alt="${v.product.name}">
 
-            <!-- Không có ảnh -->
             <img th:if="${v.product == null or v.product.images == null or v.product.images.isEmpty()}"
-                 src="/img/no-image.png"
-                 alt="No image"
-                 width="180">
-
-        </div>
-
-        <!-- NAME -->
-        <h4 th:text="${v.product != null ? v.product.name : 'No name'}"></h4>
-
-        <!-- BRAND -->
-        <p th:text="${v.brand != null ? v.brand.name : 'No brand'}"></p>
-
-        <!-- SIZE -->
-        <p th:if="${v.size != null}"
-           th:text="'Size: ' + ${v.size.name}">
-        </p>
-
-
-        <!-- COLOR -->
-        <p th:text="${v.color != null ? v.color.name : 'No color'}"></p>
-
-        <!-- PRICE -->
-        <p style="color:red;font-weight:bold;"
-           th:text="${#numbers.formatDecimal(v.additionalPrice != null ? v.additionalPrice : 0, 0, 'COMMA', 0, 'POINT')} + ' ₫'">
-        </p>
-        <form th:action="@{/cart/add}" method="post">
-            <input type="hidden" name="productVariantId" th:value="${v.id}">
-            <input type="hidden" name="quantity" value="1">
-            <button type="submit">Thêm vào giỏ</button>
-        </form>
-
-
-        <!-- DETAIL -->
-        <a th:href="@{/productvariant/detail/{id}(id=${v.id})}">
-            Xem chi tiết
+                 th:src="@{/img/no-image.png}"
+                 alt="No image available">
         </a>
 
-    </div>
+        <div class="product-info">
+            <a th:href="@{/productvariant/detail/{id}(id=${v.id})}" style="text-decoration: none;">
+                <h3 th:text="${v.product != null ? v.product.name : 'Đang cập nhật'}"></h3>
+            </a>
 
-</div>
+            <div class="brand">
+                <span th:text="${v.brand != null ? v.brand.name : 'No brand'}"></span>
+                <span th:if="${v.size != null}" th:text="' - Size: ' + ${v.size.name}"></span>
+                <span th:if="${v.color != null}" th:text="' - ' + ${v.color.name}"></span>
+            </div>
+
+            <div class="price" th:text="${#numbers.formatDecimal(v.additionalPrice != null ? v.additionalPrice : 0, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></div>
+        </div>
+
+        <div class="product-actions">
+            <form th:action="@{/cart/add}" method="post" class="action-form">
+                <input type="hidden" name="productVariantId" th:value="${v.id}">
+                <input type="hidden" name="quantity" value="1">
+
+                <div class="action-buttons">
+                    <button type="submit" class="btn-cart">
+                        <i class="fa-solid fa-cart-shopping"></i> Mua ngay
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    </div>
 
 </div>

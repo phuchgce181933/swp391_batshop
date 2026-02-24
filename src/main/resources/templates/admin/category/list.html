@@ -10,7 +10,7 @@
     <thead>
     <tr>
         <th>ID</th>
-        <th>Name</th>
+        <th>Image</th> <th>Name</th>
         <th>Total Products</th>
         <th>Action</th>
     </tr>
@@ -18,9 +18,19 @@
     <tbody>
     <tr th:each="c : ${categories}">
         <td th:text="${c.id}"></td>
+
+        <td>
+            <img th:if="${c.image != null and !#strings.isEmpty(c.image)}"
+                 th:src="@{'/uploads/category/' + ${c.image}}"
+                 width="60" height="60" style="object-fit: contain; background: #f8f9fa; border-radius: 4px;">
+
+            <span th:if="${c.image == null or #strings.isEmpty(c.image)}" style="color: #999;">
+                No image
+            </span>
+        </td>
+
         <td th:text="${c.name}"></td>
 
-        <!-- tránh lỗi null -->
         <td th:text="${c.products != null ? c.products.size() : 0}"></td>
 
         <td>

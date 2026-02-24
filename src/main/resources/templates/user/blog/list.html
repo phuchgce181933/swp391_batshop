@@ -1,28 +1,30 @@
-<div th:fragment="blog">
-<h1>All Blogs</h1>
-<br><br>
-<table border="1" cellpadding="10">
-    <thead>
-    <tr>
-        <th>Image</th>
-        <th>Title</th>
-    </tr>
-    </thead>
+<div th:fragment="blog" class="blog-grid">
 
-    <tbody>
-    <tr th:each="b : ${blogs}">
-        <td>
-            <img th:if="${b.image != null and !#strings.isEmpty(b.image)}"
-                 th:src="@{/uploads/product/{img}(img=${b.image})}"
-                 width="120">
-            <span th:if="${b.image == null or #strings.isEmpty(b.image)}">
-                No image
+    <a th:href="@{/blog/{id}(id=${b.id})}" class="blog-card" th:each="b : ${blogs}">
+
+        <img th:if="${b.image != null and !#strings.isEmpty(b.image)}"
+             th:src="@{'/uploads/product/' + ${b.image}}"
+             class="blog-image"
+             th:alt="${b.title}">
+
+        <img th:if="${b.image == null or #strings.isEmpty(b.image)}"
+             th:src="@{/images/no-image-blog.png}"
+             class="blog-image"
+             alt="No image available">
+
+        <div class="blog-content">
+            <h3 class="blog-title" th:text="${b.title}">Tiêu đề bài viết</h3>
+
+            <span class="blog-date" th:if="${b.createdAt != null}"
+                  th:text="${#temporals.format(b.createdAt, 'dd-MM-yyyy HH:mm')}">
+                09-02-2026 09:47
             </span>
-        </td>
 
-        <td th:text="${b.title}"></td>
+            <p class="blog-excerpt" th:if="${b.content != null}"
+               th:text="${#strings.abbreviate(b.content, 80)}">
+                Đoạn mô tả ngắn gọn về bài viết sẽ nằm ở đây...
+            </p>
+        </div>
+    </a>
 
-    </tr>
-    </tbody>
-</table>
 </div>
