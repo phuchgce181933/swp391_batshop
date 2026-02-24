@@ -1,0 +1,51 @@
+    <!DOCTYPE html>
+    <html lang="en">
+    <link rel="stylesheet" th:href="@{/css/admin/order.css}">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+    </head>
+    <body>
+    <h2>Manager Orders Item</h2>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Image</th>
+            <th>Product</th>
+            <th>Size</th>
+            <th>Color</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Total</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="o : ${orderItems}">
+            <td th:text="${o.id}"></td>
+
+            <td>
+                <img th:if="${o.productVariant.product.images != null and !o.productVariant.product.images.isEmpty()}"
+                     th:src="@{/uploads/product/{img}(img=${o.productVariant.product.images[0].image})}"
+                     width="80"
+                     alt="product">
+            </td>
+
+            <td th:text="${o.productVariant.product.name}"></td>
+
+            <td th:text="${o.productVariant.size?.name}"></td>
+
+            <td th:text="${o.productVariant.color?.name}"></td>
+
+            <td th:text="${o.productVariant.brand?.name}"></td>
+
+            <td th:text="${#numbers.formatDecimal(o.price,0,'COMMA',0,'POINT')}"></td>
+
+            <td th:text="${o.quantity}"></td>
+
+        </tr>
+        </tbody>
+    </table>
+    </body>
+    </html>
