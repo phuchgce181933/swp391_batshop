@@ -17,6 +17,12 @@ public class AdminController {
         this.userRepository = userRepository;
     }
 
+    @GetMapping("/dashboard")
+    public String dashboard(Model model) {
+        model.addAttribute("content", "admin/dashboard-content");
+        return "admin/layout";
+    }
+
 //    @GetMapping("")
 //    public String dashboard(Model model) {
 //        model.addAttribute("content", "admin/dashboard");
