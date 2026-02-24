@@ -1,18 +1,18 @@
-<div th:fragment="category">
-<h1>All Categories</h1>
+<div th:fragment="category" class="category-grid">
+    <p th:if="${error}" th:text="${error}" style="color:red; grid-column: 1 / -1; text-align: center;"></p>
 
-<p th:if="${error}" th:text="${error}" style="color:red"></p>
+    <a th:href="@{/category/{id}(id=${c.id})}" class="category-card" th:each="c : ${categories}">
 
-<table>
-    <thead>
-    <tr>
-        <th>Name</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="c : ${categories}">
-        <td th:text="${c.name}"></td>
-    </tr>
-    </tbody>
-</table>
+        <img th:if="${c.image != null and !#strings.isEmpty(c.image)}"
+             th:src="@{'/uploads/category/' + ${c.image}}"
+             th:alt="${c.name}">
+
+        <img th:if="${c.image == null or #strings.isEmpty(c.image)}"
+             th:src="@{/images/default-category.png}"
+             th:alt="${c.name}">
+
+        <div class="category-label">
+            <span th:text="${c.name}">Tên danh mục</span>
+        </div>
+    </a>
 </div>

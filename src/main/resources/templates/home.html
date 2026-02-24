@@ -5,43 +5,87 @@
     <title>Home - BatShop</title>
     <link rel="stylesheet" th:href="@{/css/homeproduct.css}">
     <link rel="stylesheet" th:href="@{/css/user/banner.css}">
-
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
 <body>
 <div th:replace="layout/header :: header"></div>
+
 <div th:if="${successMessage}" class="alert success">
     <p th:text="${successMessage}"></p>
 </div>
-
 <div th:if="${errorMessage}" class="alert error">
     <p th:text="${errorMessage}"></p>
 </div>
+
 <div class="banner-container" th:if="${not #lists.isEmpty(banners)}">
-<!--    phước-->
     <div class="banner-track" id="bannerTrack">
         <div class="banner-slide" th:each="banner : ${banners}">
             <img th:src="@{'/uploads/product/' + ${banner.image}}" th:alt="${banner.name}">
         </div>
     </div>
-
     <button class="banner-btn prev-btn" id="prevBtn" th:if="${banners.size() > 1}">&#10094;</button>
     <button class="banner-btn next-btn" id="nextBtn" th:if="${banners.size() > 1}">&#10095;</button>
 </div>
-<!--phước-->
-<main style="padding:20px">
-    <h1>Welcome to BatShop</h1>
-    <div th:replace="user/category/list :: category"></div>
-    <div th:replace="user/productvariant-list :: productvariant-list"></div>
+
+<div class="policy-bar-container">
+    <div class="policy-bar">
+        <div class="policy-item">
+            <i class="fa-solid fa-truck-fast policy-icon"></i>
+            <div class="policy-text">
+                <strong>Vận chuyển TOÀN QUỐC</strong>
+                <span>Thanh toán khi nhận hàng</span>
+            </div>
+        </div>
+        <div class="policy-item">
+            <i class="fa-solid fa-medal policy-icon"></i>
+            <div class="policy-text">
+                <strong>Bảo đảm chất lượng</strong>
+                <span>Sản phẩm bảo đảm chất lượng</span>
+            </div>
+        </div>
+        <div class="policy-item">
+            <i class="fa-solid fa-credit-card policy-icon"></i>
+            <div class="policy-text">
+                <strong>Tiến hành THANH TOÁN</strong>
+                <span>Với nhiều PHƯƠNG THỨC</span>
+            </div>
+        </div>
+        <div class="policy-item">
+            <i class="fa-solid fa-box-open policy-icon"></i>
+            <div class="policy-text">
+                <strong>Đổi sản phẩm mới</strong>
+                <span>Nếu sản phẩm lỗi</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<main class="main-content">
+
+    <section class="section-container">
+        <h2 class="section-title">Sản phẩm mới</h2>
+        <div class="product-wrapper">
+            <div th:replace="user/productvariant-list :: productvariant-list"></div>
+        </div>
+    </section>
+
+    <section class="section-container">
+        <h2 class="section-title">Sản phẩm cầu lông</h2>
+        <div th:replace="user/category/list :: category"></div>
+    </section>
+
+    <section class="section-container">
+        <h2 class="section-title">Tin tức mới</h2>
+        <div th:replace="user/blog/list :: blog"></div>
+    </section>
+
 </main>
-<div th:replace="user/blog/list :: blog"></div>
+
 <div th:replace="layout/footer :: footer"></div>
 
 <script th:inline="javascript">
     const totalBanners = /*[[${banners.size()}]]*/ 0;
-
-    // Chỉ chạy script nếu có nhiều hơn 1 banner
     if (totalBanners > 1) {
         const track = document.getElementById('bannerTrack');
         const slides = document.querySelectorAll('.banner-slide');
@@ -50,10 +94,8 @@
 
         let currentIndex = 1;
         let slideInterval;
-        const intervalTime = 5000; // Thời gian chuyển slide (5 giây)
+        const intervalTime = 5000;
 
-        // LOGIC INFINITY LOOP (VÒNG LẶP VÔ TẬN)
-        // Clone slide đầu và cuối để tạo hiệu ứng trượt mượt mà khi quay vòng
         const firstClone = slides[0].cloneNode(true);
         const lastClone = slides[slides.length - 1].cloneNode(true);
 
@@ -63,12 +105,9 @@
         track.append(firstClone);
         track.prepend(lastClone);
 
-        const slideWidth = slides[0].clientWidth; // Lấy chiều rộng 1 slide
-
-        // Đặt vị trí ban đầu (bỏ qua bản clone đầu tiên)
+        const slideWidth = slides[0].clientWidth;
         track.style.transform = `translateX(${-slideWidth * currentIndex}px)`;
 
-        // Hàm chuyển slide
         const moveToSlide = (index) => {
             track.style.transition = 'transform 0.5s ease-in-out';
             track.style.transform = `translateX(${-slideWidth * index}px)`;
@@ -85,19 +124,9 @@
             moveToSlide(currentIndex - 1);
         };
 
-        // Sự kiện click nút
-        nextBtn.addEventListener('click', () => {
-            nextSlide();
-            resetTimer();
-        });
+        nextBtn.addEventListener('click', () => { nextSlide(); resetTimer(); });
+        prevBtn.addEventListener('click', () => { prevSlide(); resetTimer(); });
 
-        prevBtn.addEventListener('click', () => {
-            prevSlide();
-            resetTimer();
-        });
-
-        // Xử lý khi slide chạy hết animation (Transition End)
-        // Đây là bí mật của Infinity Loop: Khi chạy đến bản clone, nó sẽ nhảy tức thì về bản gốc
         track.addEventListener('transitionend', () => {
             const allSlides = document.querySelectorAll('.banner-slide');
             if (allSlides[currentIndex].id === 'first-clone') {
@@ -112,42 +141,28 @@
             }
         });
 
-        // Tự động chạy (Auto play)
-        const startSlide = () => {
-            slideInterval = setInterval(nextSlide, intervalTime);
-        };
+        const startSlide = () => { slideInterval = setInterval(nextSlide, intervalTime); };
+        const resetTimer = () => { clearInterval(slideInterval); startSlide(); };
 
-        const resetTimer = () => {
-            clearInterval(slideInterval);
-            startSlide();
-        };
-
-        // Xử lý resize cửa sổ (cập nhật lại chiều rộng slide)
         window.addEventListener('resize', () => {
             const newSlideWidth = document.querySelector('.banner-slide').clientWidth;
             track.style.transition = 'none';
             track.style.transform = `translateX(${-newSlideWidth * currentIndex}px)`;
         });
 
-        // Bắt đầu chạy
         startSlide();
     }
 </script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const alerts = document.querySelectorAll(".alert");
-
         if (alerts.length > 0) {
             setTimeout(() => {
                 alerts.forEach(alert => {
                     alert.classList.add("fade-out");
-
-                    // Ẩn hẳn sau khi fade
-                    setTimeout(() => {
-                        alert.style.display = "none";
-                    }, 500);
+                    setTimeout(() => { alert.style.display = "none"; }, 500);
                 });
-            }, 5000); // 5 giây
+            }, 5000);
         }
     });
 </script>
