@@ -1,41 +1,148 @@
-<h2>Manager Vouchers</h2>
+<!--<h2>Manager Vouchers</h2>-->
 
-<a th:href="@{/admin/vouchers/add}">+ Add Voucher</a>
+<!--<a th:href="@{/admin/vouchers/add}">+ Add Voucher</a>-->
 
-<table>
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>Code</th>
-        <th>Discount (%)</th>
-        <th>Status</th>
-        <th>Valid From</th>
-        <th>Valid To</th>
-        <th>Action</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="v : ${vouchers}">
-        <td th:text="${v.id}"></td>
-        <td th:text="${v.code}"></td>
-        <td th:text="${v.discountPercent}"></td>
+<!--<table>-->
+<!--    <thead>-->
+<!--    <tr>-->
+<!--        <th>ID</th>-->
+<!--        <th>Code</th>-->
+<!--        <th>Discount (%)</th>-->
+<!--        <th>Status</th>-->
+<!--        <th>Valid From</th>-->
+<!--        <th>Valid To</th>-->
+<!--        <th>Max</th>-->
+<!--        <th>Action</th>-->
+<!--    </tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    <tr th:each="v : ${vouchers}">-->
+<!--        <td th:text="${v.id}"></td>-->
+<!--        <td th:text="${v.code}"></td>-->
+<!--        <td th:text="${v.discountPercent}"></td>-->
 
-        <td th:text="${v.active ? 'Active' : 'Inactive'}"></td>
+<!--        <td th:text="${v.active ? 'Active' : 'Inactive'}"></td>-->
 
-        <td th:text="${v.validFrom != null
-            ? #temporals.format(v.validFrom,'dd/MM/yyyy') : ''}">
-        </td>
+<!--        <td th:text="${v.validFrom != null-->
+<!--            ? #temporals.format(v.validFrom,'dd/MM/yyyy') : ''}">-->
+<!--        </td>-->
 
-        <td th:text="${v.validTo != null
-            ? #temporals.format(v.validTo,'dd/MM/yyyy') : ''}">
-        </td>
+<!--        <td th:text="${v.validTo != null-->
+<!--            ? #temporals.format(v.validTo,'dd/MM/yyyy') : ''}">-->
+<!--        </td>-->
 
-        <td>
-            <a th:href="@{/admin/vouchers/edit/{id}(id=${v.id})}">Edit</a> |
-            <a th:href="@{/admin/vouchers/toggle/{id}(id=${v.id})}"
-               th:text="${v.active ? 'Deactivate' : 'Activate'}">
-            </a>
-        </td>
-    </tr>
-    </tbody>
-</table>
+<!--        <td th:text="${v.maxDiscountAmount}"></td>-->
+
+<!--        <td>-->
+<!--            <a th:href="@{/admin/vouchers/edit/{id}(id=${v.id})}">Edit</a> |-->
+<!--            <a th:href="@{/admin/vouchers/toggle/{id}(id=${v.id})}"-->
+<!--               th:text="${v.active ? 'Deactivate' : 'Activate'}">-->
+<!--            </a>-->
+<!--        </td>-->
+<!--    </tr>-->
+<!--    </tbody>-->
+<!--</table>-->
+
+<link rel="stylesheet" th:href="@{/css/admin/voucher.css}">
+
+<div class="voucher-container">
+
+    <div class="voucher-header">
+        <div>
+            <h2>Manager Vouchers</h2>
+        </div>
+
+        <a th:href="@{/admin/vouchers/add}" class="btn-add">
+            + Add Voucher
+        </a>
+    </div>
+
+    <div class="voucher-table-wrapper">
+        <table class="voucher-table">
+
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Code</th>
+                <th>Discount (%)</th>
+                <th>Status</th>
+                <th>Valid From</th>
+                <th>Valid To</th>
+                <th>Max</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="v : ${vouchers}">
+
+                <!-- ID -->
+                <td th:text="${v.id}"></td>
+
+                <!-- CODE -->
+                <td>
+                    <span class="voucher-code"
+                          th:text="${v.code}">
+                    </span>
+                </td>
+
+                <!-- DISCOUNT -->
+                <td th:text="${v.discountPercent + '%'}"></td>
+
+                <!-- STATUS -->
+                <td>
+                    <span th:classappend="${v.active}
+                          ? 'status status-active'
+                          : 'status status-inactive'"
+                          th:text="${v.active ? 'Active' : 'Inactive'}">
+                    </span>
+                </td>
+
+                <!-- VALID FROM -->
+                <td th:text="${v.validFrom != null
+                    ? #temporals.format(v.validFrom,'dd/MM/yyyy') : ''}">
+                </td>
+
+                <!-- VALID TO -->
+                <td th:text="${v.validTo != null
+                    ? #temporals.format(v.validTo,'dd/MM/yyyy') : ''}">
+                </td>
+
+                <!-- MAX -->
+                <td th:text="${#numbers.formatDecimal(v.maxDiscountAmount,0,'COMMA',0,'POINT')} + ' VND'">
+                </td>
+
+                <!-- ACTION -->
+                <td>
+                    <div class="action-buttons">
+
+                        <!-- EDIT -->
+                        <a th:href="@{/admin/vouchers/edit/{id}(id=${v.id})}"
+                           class="btn-edit">
+                            Edit
+                        </a>
+
+                        <!-- TOGGLE -->
+                        <a th:href="@{/admin/vouchers/toggle/{id}(id=${v.id})}"
+                           th:classappend="${v.active}
+                                ? 'btn-deactivate'
+                                : 'btn-activate'"
+                           class="btn-toggle">
+
+                            <span th:text="${v.active
+                                ? 'Deactivate'
+                                : 'Activate'}">
+                            </span>
+
+                        </a>
+
+                    </div>
+                </td>
+
+            </tr>
+            </tbody>
+
+        </table>
+    </div>
+
+</div>

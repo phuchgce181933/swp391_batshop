@@ -17,11 +17,11 @@ public class AdminController {
         this.userRepository = userRepository;
     }
 
-    @GetMapping("")
-    public String dashboard(Model model) {
-        model.addAttribute("content", "admin/dashboard");
-        return "admin/layout";
-    }
+//    @GetMapping("")
+//    public String dashboard(Model model) {
+//        model.addAttribute("content", "admin/dashboard");
+//        return "admin/layout";
+//    }
 
     @GetMapping("/manageruser")
     public String userPage(Model model) {

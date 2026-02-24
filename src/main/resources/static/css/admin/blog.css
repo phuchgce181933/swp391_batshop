@@ -1,0 +1,178 @@
+/* ===== PAGE WRAPPER ===== */
+body {
+    background-color: #f4f6f9;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.blog-container {
+    padding: 30px;
+}
+
+/* ===== PAGE HEADER ===== */
+.blog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.blog-header h2 {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.blog-header p {
+    color: #6c757d;
+    font-size: 14px;
+}
+
+/* ===== ADD BUTTON ===== */
+.btn-add {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-weight: 500;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: 0.3s;
+}
+
+.btn-add:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+/* ===== TABLE CARD ===== */
+.blog-table-wrapper {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+}
+
+/* ===== TABLE ===== */
+.blog-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.blog-table thead {
+    background-color: #f8f9fa;
+}
+
+.blog-table th {
+    text-align: left;
+    padding: 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.blog-table td {
+    padding: 16px;
+    border-top: 1px solid #f1f1f1;
+    vertical-align: middle;
+    font-size: 14px;
+}
+
+/* ===== IMAGE ===== */
+.blog-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    object-fit: cover;
+    background-color: #f1f1f1;
+}
+
+/* ===== STATUS BADGE ===== */
+.status {
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.status-active {
+    background-color: #d1fae5;
+    color: #059669;
+}
+
+.status-inactive {
+    background-color: #e5e7eb;
+    color: #6b7280;
+}
+
+/* ===== ACTION BUTTONS ===== */
+.action-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-edit,
+.btn-toggle,
+.btn-delete {
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: 0.2s ease-in-out;
+}
+
+/* Edit */
+.btn-edit {
+    background-color: #e0e7ff;
+    color: #2563eb;
+}
+
+.btn-edit:hover {
+    background-color: #c7d2fe;
+}
+
+/* Disable */
+.btn-disable {
+    background-color: #fff7ed;
+    color: #ea580c;
+}
+
+.btn-disable:hover {
+    background-color: #ffedd5;
+}
+
+/* Enable */
+.btn-enable {
+    background-color: #dcfce7;
+    color: #16a34a;
+}
+
+.btn-enable:hover {
+    background-color: #bbf7d0;
+}
+
+/* Delete */
+.btn-delete {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
+.btn-delete:hover {
+    background-color: #fecaca;
+}
+
+/* ===== ROW HOVER ===== */
+.blog-table tbody tr:hover {
+    background-color: #fafafa;
+    transition: 0.2s;
+}

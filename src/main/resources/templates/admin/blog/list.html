@@ -1,55 +1,147 @@
-<h2>Manager Blogs</h2>
+<!--<h2>Manager Blogs</h2>-->
 
-<a th:href="@{/admin/blogs/add}">+ Add Blog</a>
+<!--<a th:href="@{/admin/blogs/add}">+ Add Blog</a>-->
 
-<br><br>
+<!--<br><br>-->
 
-<table border="1" cellpadding="10">
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>Image</th>
-        <th>Title</th>
-        <th>Status</th>
-        <th>Created At</th>
-        <th>Action</th>
-    </tr>
-    </thead>
+<!--<table border="1" cellpadding="10">-->
+<!--    <thead>-->
+<!--    <tr>-->
+<!--        <th>ID</th>-->
+<!--        <th>Image</th>-->
+<!--        <th>Title</th>-->
+<!--        <th>Status</th>-->
+<!--        <th>Created At</th>-->
+<!--        <th>Action</th>-->
+<!--    </tr>-->
+<!--    </thead>-->
 
-    <tbody>
-    <tr th:each="b : ${blogs}">
-        <td th:text="${b.id}"></td>
+<!--    <tbody>-->
+<!--    <tr th:each="b : ${blogs}">-->
+<!--        <td th:text="${b.id}"></td>-->
 
-        <td>
-            <img th:if="${b.image != null and !#strings.isEmpty(b.image)}"
-                 th:src="@{/uploads/product/{img}(img=${b.image})}"
-                 width="120">
-            <span th:if="${b.image == null or #strings.isEmpty(b.image)}">
-                No image
-            </span>
-        </td>
+<!--        <td>-->
+<!--            <img th:if="${b.image != null and !#strings.isEmpty(b.image)}"-->
+<!--                 th:src="@{/uploads/product/{img}(img=${b.image})}"-->
+<!--                 width="120">-->
+<!--            <span th:if="${b.image == null or #strings.isEmpty(b.image)}">-->
+<!--                No image-->
+<!--            </span>-->
+<!--        </td>-->
 
-        <td th:text="${b.title}"></td>
+<!--        <td th:text="${b.title}"></td>-->
 
-        <td th:text="${b.status ? 'ACTIVE' : 'INACTIVE'}"></td>
+<!--        <td th:text="${b.status ? 'ACTIVE' : 'INACTIVE'}"></td>-->
 
-        <td th:text="${b.createdAt != null
-            ? #temporals.format(b.createdAt,'dd/MM/yyyy HH:mm')
-            : ''}">
-        </td>
+<!--        <td th:text="${b.createdAt != null-->
+<!--            ? #temporals.format(b.createdAt,'dd/MM/yyyy HH:mm')-->
+<!--            : ''}">-->
+<!--        </td>-->
 
-        <td>
-            <a th:href="@{/admin/blogs/edit/{id}(id=${b.id})}">Edit</a>
-            |
-            <a th:href="@{/admin/blogs/toggle/{id}(id=${b.id})}">
-                <span th:text="${b.status ? 'Disable' : 'Enable'}"></span>
-            </a>
-            |
-            <a th:href="@{/admin/blogs/delete/{id}(id=${b.id})}"
-               onclick="return confirm('Delete this blog?')">
-                Delete
-            </a>
-        </td>
-    </tr>
-    </tbody>
-</table>
+<!--        <td>-->
+<!--            <a th:href="@{/admin/blogs/edit/{id}(id=${b.id})}">Edit</a>-->
+<!--            |-->
+<!--            <a th:href="@{/admin/blogs/toggle/{id}(id=${b.id})}">-->
+<!--                <span th:text="${b.status ? 'Disable' : 'Enable'}"></span>-->
+<!--            </a>-->
+<!--            |-->
+<!--            <a th:href="@{/admin/blogs/delete/{id}(id=${b.id})}"-->
+<!--               onclick="return confirm('Delete this blog?')">-->
+<!--                Delete-->
+<!--            </a>-->
+<!--        </td>-->
+<!--    </tr>-->
+<!--    </tbody>-->
+<!--</table>-->
+
+<link rel="stylesheet" th:href="@{/css/admin/blog.css}">
+
+<div class="blog-container">
+
+    <div class="blog-header">
+        <div>
+            <h2>Manager Blogs</h2>
+        </div>
+
+        <a th:href="@{/admin/blogs/add}" class="btn-add">
+            + Add Blog
+        </a>
+    </div>
+
+    <div class="blog-table-wrapper">
+        <table class="blog-table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Image</th>
+                <th>Title</th>
+                <th>Status</th>
+                <th>Created At</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="b : ${blogs}">
+
+                <td th:text="${b.id}"></td>
+
+                <!-- IMAGE -->
+                <td>
+                    <img th:if="${b.image != null and !#strings.isEmpty(b.image)}"
+                         th:src="@{/uploads/product/{img}(img=${b.image})}"
+                         class="blog-image">
+
+                    <span th:if="${b.image == null or #strings.isEmpty(b.image)}"
+                          class="no-image">
+                        No image
+                    </span>
+                </td>
+
+                <!-- TITLE -->
+                <td th:text="${b.title}"></td>
+
+                <!-- STATUS -->
+                <td>
+                    <span th:classappend="${b.status} ? 'status status-active' : 'status status-inactive'"
+                          th:text="${b.status ? 'ACTIVE' : 'INACTIVE'}">
+                    </span>
+                </td>
+
+                <!-- CREATED AT -->
+                <td th:text="${b.createdAt != null
+                    ? #temporals.format(b.createdAt,'dd/MM/yyyy HH:mm')
+                    : ''}">
+                </td>
+
+                <!-- ACTION -->
+                <td>
+                    <div class="action-buttons">
+
+                        <a th:href="@{/admin/blogs/edit/{id}(id=${b.id})}"
+                           class="btn-edit">
+                            Edit
+                        </a>
+
+                        <a th:href="@{/admin/blogs/toggle/{id}(id=${b.id})}"
+                           th:classappend="${b.status} ? 'btn-disable' : 'btn-enable'"
+                           class="btn-toggle">
+
+                            <span th:text="${b.status ? 'Disable' : 'Enable'}"></span>
+                        </a>
+
+                        <a th:href="@{/admin/blogs/delete/{id}(id=${b.id})}"
+                           class="btn-delete"
+                           onclick="return confirm('Delete this blog?')">
+                            Delete
+                        </a>
+
+                    </div>
+                </td>
+
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
