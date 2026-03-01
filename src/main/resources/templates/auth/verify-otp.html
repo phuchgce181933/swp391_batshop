@@ -1,0 +1,44 @@
+// =========================
+// VERIFY OTP + RESET PASSWORD
+// =========================
+
+@PostMapping("/verify-otp")
+public String verifyOtp(
+@RequestParam String email,
+@RequestParam String code,
+@RequestParam String newPassword,
+Model model
+) {
+
+User user = userRepository.findByEmail(email).orElse(null);
+
+if (user == null) {
+model.addAttribute("error", "Email không tồn tại");
+return "auth/reset-password";
+}
+
+if (user.getResetCode() == null || !user.getResetCode().equals(code)) {
+model.addAttribute("error", "Mã OTP không đúng");
+model.addAttribute("email", email);
+return "auth/reset-password";
+}
+
+if (user.getResetCodeExpiredAt() == null ||
+user.getResetCodeExpiredAt().isBefore(LocalDateTime.now())) {
+
+model.addAttribute("error", "Mã OTP đã hết hạn");
+model.addAttribute("email", email);
+return "auth/reset-password";
+}
+
+// đổi mật khẩu
+user.setPasswordHash(passwordEncoder.encode(newPassword));
+
+// xoá OTP sau khi dùng
+user.setResetCode(null);
+user.setResetCodeExpiredAt(null);
+
+userRepository.save(user);
+
+return "redirect:/login?resetSuccess=true";
+}

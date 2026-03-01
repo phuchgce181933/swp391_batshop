@@ -143,3 +143,70 @@ header {
 .nav-right a:hover {
     background-color: #ff1744;
 }
+/* Đoạn này giúp menu "Địa chỉ" hiện ra khi đưa chuột vào "Tài Khoản" */
+.account-menu {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none; /* Mặc định ẩn đi */
+    position: absolute;
+    background-color: #ffffff;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+    z-index: 100;
+    right: 0;
+    border-radius: 4px;
+}
+
+.dropdown-content a {
+    color: #333 !important;
+    padding: 10px 15px !important;
+    text-decoration: none;
+    display: block !important;
+    font-size: 14px;
+    text-align: left;
+}
+
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+    color: #ff6600 !important; /* Màu cam giống tông web của bạn */
+}
+
+/* Khi rà chuột vào .account-menu thì hiện .dropdown-content */
+.account-menu:hover .dropdown-content {
+    display: block;
+}
+/* Style cho Icon Tài khoản */
+.user-action {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #333 !important;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.user-action i {
+    font-size: 18px; /* Kích thước icon con người */
+    color: #f15a22; /* Màu cam BatShop */
+}
+
+/* Hiệu ứng hover cho menu icon */
+.user-action:hover {
+    color: #f15a22 !important;
+}
+
+/* Chỉnh lại nút Đăng xuất trên menu chính */
+.logout-btn {
+    background-color: #ff4b4b !important;
+    color: white !important;
+    border-radius: 4px;
+    margin-left: auto; /* Đẩy về góc phải menu */
+}
+
+.logout-btn:hover {
+    background-color: #c40000 !important;
+}

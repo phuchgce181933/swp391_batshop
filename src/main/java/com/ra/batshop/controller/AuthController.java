@@ -1,9 +1,9 @@
 package com.ra.batshop.controller;
 
-
 import com.ra.batshop.model.Enum.Role;
 import com.ra.batshop.model.User;
 import com.ra.batshop.repository.UserRepository;
+import com.ra.batshop.service.EmailService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -14,17 +14,21 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDateTime;
+import java.util.Random;
 
 @Controller
 public class AuthController {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
     public AuthController(UserRepository userRepository,
-                          PasswordEncoder passwordEncoder) {
+                          PasswordEncoder passwordEncoder,
+                          EmailService emailService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.emailService = emailService;
     }
 
     @GetMapping("/register")
@@ -33,27 +37,22 @@ public class AuthController {
         return "auth/register";
     }
 
-
     @PostMapping("/register")
     public String register(
             @ModelAttribute("user") User user,
             Model model
     ) {
-
         if (userRepository.existsByEmail(user.getEmail())) {
             model.addAttribute("errorEmail", "Email đã tồn tại");
             return "auth/register";
         }
 
-        user.setPasswordHash(passwordEncoder.encode(user.getPasswordHash())
-        );
-
+        user.setPasswordHash(passwordEncoder.encode(user.getPasswordHash()));
         user.setRole(Role.USER);
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
 
         userRepository.save(user);
-
         return "redirect:/login";
     }
 
@@ -64,26 +63,33 @@ public class AuthController {
 
     @PostMapping("/login")
     public String doLogin(@RequestParam String email,
-                          @RequestParam String password, Model model, HttpSession session) {
+                          @RequestParam String password,
+                          Model model,
+                          HttpSession session) {
+
         User user = userRepository.findByEmail(email).orElse(null);
         if (user == null) {
             model.addAttribute("error", "User not found");
             return "auth/login";
         }
+
         if (!passwordEncoder.matches(password, user.getPasswordHash())) {
             model.addAttribute("error", "Wrong password");
             return "auth/login";
         }
+
         session.setAttribute("user", user);
         return "redirect:/home";
     }
+
     // =========================
-// CHANGE PASSWORD
-// =========================
+    // CHANGE PASSWORD
+    // =========================
     @GetMapping("/change-password")
     public String showChangePassword() {
         return "auth/change-password";
     }
+
     @PostMapping("/change-password")
     public String changePassword(
             @RequestParam String oldPass,
@@ -94,38 +100,30 @@ public class AuthController {
     ) {
 
         User user = (User) session.getAttribute("user");
-
         if (user == null) {
             return "redirect:/login";
         }
 
-        // check mật khẩu cũ
         if (!passwordEncoder.matches(oldPass, user.getPasswordHash())) {
             model.addAttribute("error", "Mật khẩu cũ không đúng");
             return "auth/change-password";
         }
 
-        // check xác nhận
         if (!newPass.equals(confirmPass)) {
             model.addAttribute("error", "Mật khẩu xác nhận không khớp");
             return "auth/change-password";
         }
 
-        // cập nhật mật khẩu
         user.setPasswordHash(passwordEncoder.encode(newPass));
         userRepository.save(user);
-
-        // ❗ logout user
         session.invalidate();
 
-        // ✅ redirect về login + flag success
         return "redirect:/login?changed=true";
     }
+
     @GetMapping("/profile/edit")
     public String editProfileForm(HttpSession session, Model model) {
-
         User currentUser = (User) session.getAttribute("user");
-
         if (currentUser == null) {
             return "redirect:/login";
         }
@@ -133,6 +131,7 @@ public class AuthController {
         model.addAttribute("user", currentUser);
         return "user/edit-profile";
     }
+
     @PostMapping("/profile/edit")
     public String editProfileSubmit(
             @ModelAttribute("user") User formUser,
@@ -140,43 +139,121 @@ public class AuthController {
             Model model
     ) {
         try {
-
             User currentUser = (User) session.getAttribute("user");
-
             if (currentUser == null) {
                 return "redirect:/login";
             }
 
             User dbUser = userRepository.findById(currentUser.getId())
                     .orElseThrow(() -> new RuntimeException("User không tồn tại"));
-            // check email trùng với user khác
+
             if (!dbUser.getEmail().equals(formUser.getEmail())
                     && userRepository.existsByEmail(formUser.getEmail())) {
-
                 model.addAttribute("error", "Email đã tồn tại");
                 model.addAttribute("user", dbUser);
                 return "user/edit-profile";
             }
 
             dbUser.setEmail(formUser.getEmail());
-
             dbUser.setFullName(formUser.getFullName());
             dbUser.setPhone(formUser.getPhone());
             dbUser.setUpdatedAt(LocalDateTime.now());
 
             userRepository.save(dbUser);
-
             session.setAttribute("user", dbUser);
 
             model.addAttribute("user", dbUser);
             model.addAttribute("success", "Cập nhật thành công");
-
             return "user/edit-profile";
 
         } catch (Exception e) {
             model.addAttribute("error", "Lỗi cập nhật: " + e.getMessage());
             return "user/edit-profile";
         }
+    }
+
+    // =========================
+    // FORGOT PASSWORD
+    // =========================
+
+    @GetMapping("/forgot-password")
+    public String forgotPasswordPage() {
+        return "auth/forgot-password";
+    }
+
+    @PostMapping("/forgot-password")
+    public String forgotPassword(@RequestParam String email, Model model) {
+
+        User user = userRepository.findByEmail(email).orElse(null);
+
+        if (user == null) {
+            model.addAttribute("error", "Email không tồn tại");
+            return "auth/forgot-password";
+        }
+
+        // Tạo mã 6 số
+        String code = String.valueOf((int)((Math.random() * 900000) + 100000));
+
+        user.setResetCode(code);
+        user.setResetCodeExpiredAt(LocalDateTime.now().plusMinutes(5));
+        userRepository.save(user);
+
+        emailService.sendEmail(
+                user.getEmail(),
+                "Mã đặt lại mật khẩu",
+                "Mã xác nhận của bạn là: " + code
+        );
+
+        model.addAttribute("email", email);
+        model.addAttribute("message", "Đã gửi mã về email");
+        return "auth/reset-password";
+    }
+
+
+    // =========================
+    // RESET PASSWORD
+    // =========================
+
+    @PostMapping("/reset-password")
+    public String resetPassword(
+            @RequestParam String email,
+            @RequestParam String code,
+            @RequestParam String newPassword,
+            Model model
+    ) {
+
+        User user = userRepository.findByEmail(email).orElse(null);
+
+        if (user == null) {
+            model.addAttribute("error", "Email không tồn tại");
+            model.addAttribute("email", email);
+            return "auth/reset-password";
+        }
+
+        if (!code.equals(user.getResetCode())) {
+            model.addAttribute("error", "Mã xác nhận không đúng");
+            model.addAttribute("email", email);
+            return "auth/reset-password";
+        }
+
+        if (user.getResetCodeExpiredAt() == null ||
+                user.getResetCodeExpiredAt().isBefore(LocalDateTime.now())) {
+
+            model.addAttribute("error", "Mã đã hết hạn");
+            model.addAttribute("email", email);
+            return "auth/reset-password";
+        }
+
+        // đổi mật khẩu
+        user.setPasswordHash(passwordEncoder.encode(newPassword));
+
+        // xoá mã sau khi dùng
+        user.setResetCode(null);
+        user.setResetCodeExpiredAt(null);
+
+        userRepository.save(user);
+
+        return "redirect:/login?resetSuccess=true";
     }
 
 }

@@ -33,14 +33,20 @@ public class User {
 
     @Column(length = 20)
     private String phone;
+
     @Enumerated(EnumType.STRING)
     private Role role;
-
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "user")
-    private List<UserAddress> addresses;
-}
+    private String resetCode;
+    private LocalDateTime resetCodeExpiredAt;
+    private String otp;
+    private LocalDateTime otpExpiry;
 
+    // PHẦN SỬA ĐÂY: Chỉ giữ lại 1 danh sách addresses duy nhất liên kết với Address class
+    // FetchType.EAGER giúp load dữ liệu ngay lập tức để tránh lỗi Whitelabel 500
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<Address> addresses;
+}

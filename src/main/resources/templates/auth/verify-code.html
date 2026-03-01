@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Nhập mã xác nhận</title>
+</head>
+<body>
+
+<h2>Nhập mã xác nhận</h2>
+
+<p style="color:red" th:text="${error}"></p>
+
+<form th:action="@{/verify-reset-code}" method="post">
+    <input type="hidden" name="email" th:value="${email}" />
+
+    <label>Mã xác nhận:</label>
+    <input type="text" name="code" required />
+
+    <button type="submit">Xác nhận</button>
+</form>
+
+</body>
+</html>

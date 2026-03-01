@@ -193,3 +193,24 @@ button:hover {
     text-align: center;
     animation: fadeSlideIn 0.35s ease;
 }
+/* Container để căn chỉnh vị trí */
+.forgot-container {
+    display: flex;
+    justify-content: flex-end; /* Đẩy sang bên phải */
+    margin-top: 10px;          /* Khoảng cách với ô mật khẩu */
+    margin-bottom: -10px;      /* Thu hẹp khoảng cách với nút bấm bên dưới */
+}
+
+/* Style cho cái link nhỏ xinh */
+.forgot-link {
+    font-size: 13px;            /* Làm chữ nhỏ lại */
+    color: #888;                /* Màu xám nhẹ nhàng, không bị quá nổi */
+    text-decoration: none;      /* Bỏ gạch chân mặc định */
+    font-weight: 500;
+    transition: 0.2s;           /* Hiệu ứng mượt mà */
+}
+
+.forgot-link:hover {
+    color: #ff4b4b;            /* Khi rê chuột vào thì hiện màu đỏ giống nút LOG IN */
+    text-decoration: underline; /* Hiện gạch chân khi hover cho chuyên nghiệp */
+}

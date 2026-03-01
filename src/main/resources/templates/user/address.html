@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Địa chỉ - BatShop</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    .address-container { margin-top: 50px; margin-bottom: 50px; }
+    .card { border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border: none; }
+    select:disabled { background-color: #f8f9fa; cursor: not-allowed; }
+    .btn-primary { background-color: #ff6600; border: none; }
+    .btn-primary:hover { background-color: #e65c00; }
+    /* Hiệu ứng cho badge mặc định */
+    .badge-default { background-color: #28a745; font-size: 0.75rem; padding: 5px 10px; }
+  </style>
+</head>
+<body>
+<div th:replace="layout/header :: header"></div>
+
+<div class="container address-container">
+  <div class="row">
+    <div class="col-md-6">
+      <h4 class="mb-4"><i class="fa-solid fa-map-location-dot"></i> Địa chỉ của tôi</h4>
+
+      <div th:if="${#lists.isEmpty(addresses)}" class="alert alert-light border">
+        Bạn chưa có địa chỉ nào được lưu.
+      </div>
+
+      <div th:each="addr : ${addresses}" class="card mb-3">
+        <div class="card-body d-flex justify-content-between align-items-center">
+          <div>
+            <span th:if="${addr.isDefault}" class="badge badge-default mb-2">
+               <i class="fa-solid fa-circle-check"></i> Địa chỉ mặc định
+            </span>
+
+            <p class="mb-1 fw-bold" th:text="${addr.detail}"></p>
+            <small class="text-muted" th:text="${addr.ward} + ', ' + ${addr.district} + ', ' + ${addr.city}"></small>
+          </div>
+          <div class="mt-2">
+            <button type="button" class="btn btn-outline-warning btn-sm" th:onclick="'editAddress(' + ${addr.id} + ')'">
+              <i class="fa-solid fa-pencil"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card p-4">
+        <form th:action="@{/address/save}" method="post" id="addressForm">
+          <h5 id="formTitle" class="mb-3">Thêm địa chỉ mới</h5>
+
+          <input type="hidden" name="id" id="addressId">
+
+          <div class="mb-3">
+            <label class="form-label small fw-bold">Tỉnh/Thành phố</label>
+            <select class="form-select" id="city" name="city" required>
+              <option value="" selected>-- Chọn Tỉnh/Thành --</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label small fw-bold">Quận/Huyện</label>
+            <select class="form-select" id="district" name="district" required disabled>
+              <option value="" selected>-- Chọn Huyện --</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label small fw-bold">Phường/Xã</label>
+            <select class="form-select" id="ward" name="ward" required disabled>
+              <option value="" selected>-- Chọn Xã --</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label small fw-bold">Số nhà, tên đường</label>
+            <input type="text" class="form-control" name="detail" id="detail" placeholder="Ví dụ: 123 Đường ABC" required>
+          </div>
+          <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" name="isDefault" id="isDefaultCheck">
+            <label class="form-check-label" for="isDefaultCheck">Đặt làm địa chỉ mặc định</label>
+          </div>
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary w-100">Lưu địa chỉ</button>
+            <button type="button" onclick="resetForm()" class="btn btn-light border">Hủy/Làm mới</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div th:replace="layout/footer :: footer"></div>
+
+<script>
+  const citis = document.getElementById("city");
+  const districts = document.getElementById("district");
+  const wards = document.getElementById("ward");
+  let provinceData = [];
+
+  fetch("https://provinces.open-api.vn/api/?depth=3")
+          .then(response => response.json())
+          .then(data => {
+            provinceData = data;
+            data.forEach(x => {
+              citis.options[citis.options.length] = new Option(x.name, x.name);
+            });
+          });
+
+  citis.onchange = () => {
+    districts.length = 1; wards.length = 1;
+    districts.disabled = true; wards.disabled = true;
+    if (citis.value !== "") {
+      const result = provinceData.find(n => n.name === citis.value);
+      result.districts.forEach(k => {
+        districts.options[districts.options.length] = new Option(k.name, k.name);
+      });
+      districts.disabled = false;
+    }
+  };
+
+  districts.onchange = () => {
+    wards.length = 1; wards.disabled = true;
+    if (districts.value !== "") {
+      const resultCity = provinceData.find(n => n.name === citis.value);
+      const resultDistrict = resultCity.districts.find(m => m.name === districts.value);
+      resultDistrict.wards.forEach(w => {
+        wards.options[wards.options.length] = new Option(w.name, w.name);
+      });
+      wards.disabled = false;
+    }
+  };
+
+  function editAddress(id) {
+    fetch('/address/get/' + id)
+            .then(res => res.json())
+            .then(data => {
+              document.getElementById('formTitle').innerText = "Cập nhật địa chỉ";
+              document.getElementById('addressId').value = data.id;
+              document.getElementById('detail').value = data.detail;
+
+              // Hiện tích xanh nếu là mặc định
+              document.getElementById('isDefaultCheck').checked = data.isDefault;
+
+              citis.value = data.city;
+              citis.onchange();
+
+              setTimeout(() => {
+                districts.value = data.district;
+                districts.onchange();
+
+                setTimeout(() => {
+                  wards.value = data.ward;
+                }, 300);
+              }, 300);
+
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+  }
+
+  function resetForm() {
+    document.getElementById('addressForm').reset();
+    document.getElementById('addressId').value = "";
+    document.getElementById('formTitle').innerText = "Thêm địa chỉ mới";
+    districts.disabled = true;
+    wards.disabled = true;
+  }
+</script>
+</body>
+</html>

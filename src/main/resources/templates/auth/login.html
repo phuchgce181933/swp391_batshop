@@ -10,7 +10,6 @@
 
 <div class="container">
 
-    <!-- LEFT PANEL -->
     <div class="left-panel">
         <a th:href="@{/home}" class="home-btn">← Home</a>
 
@@ -23,7 +22,6 @@
         </div>
     </div>
 
-    <!-- RIGHT PANEL -->
     <div class="right-panel">
 
         <div class="login-card">
@@ -32,7 +30,6 @@
 
             <form th:action="@{/login}" method="post">
 
-                <!-- EMAIL -->
                 <label>Email</label>
                 <input type="text"
                        name="email"
@@ -40,26 +37,26 @@
                        th:value="${email}"
                        th:classappend="${error} ? 'input-error' : ''">
 
-                <!-- PASSWORD -->
                 <label>Password</label>
-
-                <!-- ERROR BOX -->
-                <div class="error-box"
-                     th:if="${error}"
-                     th:text="${error}">
-                </div>
-
                 <input type="password"
                        name="password"
                        placeholder="Password"
                        th:classappend="${error} ? 'input-error' : ''">
 
-                <!-- BUTTON -->
-                <button type="submit">LOG IN</button>
+                <div class="error-box"
+                     th:if="${error}"
+                     th:text="${error}">
+                </div>
+
                 <div class="success-box" th:if="${param.changed}">
                     ✅ Đổi mật khẩu thành công — vui lòng đăng nhập lại
                 </div>
 
+                <div class="forgot-container">
+                    <a th:href="@{/forgot-password}" class="forgot-link">Quên mật khẩu?</a>
+                </div>
+
+                <button type="submit">LOG IN</button>
             </form>
         </div>
     </div>
