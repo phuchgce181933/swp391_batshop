@@ -175,19 +175,23 @@ public class AuthController {
     // =========================
     // FORGOT PASSWORD
     // =========================
-
     @GetMapping("/forgot-password")
-    public String forgotPasswordPage() {
+    public String showForgotPasswordForm() {
         return "auth/forgot-password";
     }
-
     @PostMapping("/forgot-password")
     public String forgotPassword(@RequestParam String email, Model model) {
+
+        // 🔒 CHỈ CHO PHÉP EMAIL NÀY
+        if (!email.equalsIgnoreCase("huydn2.ce190894@gmail.com")) {
+            model.addAttribute("error", "Email không hợp lệ hoặc không được phép đặt lại mật khẩu");
+            return "auth/forgot-password";
+        }
 
         User user = userRepository.findByEmail(email).orElse(null);
 
         if (user == null) {
-            model.addAttribute("error", "Email không tồn tại");
+            model.addAttribute("error", "Email không tồn tại trong hệ thống");
             return "auth/forgot-password";
         }
 
@@ -206,9 +210,9 @@ public class AuthController {
 
         model.addAttribute("email", email);
         model.addAttribute("message", "Đã gửi mã về email");
+
         return "auth/reset-password";
     }
-
 
     // =========================
     // RESET PASSWORD

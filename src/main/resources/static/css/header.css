@@ -1,14 +1,19 @@
+/* ================= RESET ================= */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: Arial, sans-serif;
 }
+
+/* ================= TOP HEADER ================= */
 .top-header {
     background: #fff;
     border-bottom: 1px solid #eee;
 }
-.container {
+
+/* CHỈ container trong top-header mới là flex */
+.top-header .container {
     max-width: 1200px;
     margin: auto;
     padding: 10px 15px;
@@ -17,21 +22,29 @@
     align-items: center;
     gap: 20px;
 }
+
+/* ================= LOGO ================= */
 .logo img {
     height: 40px;
 }
+
+/* ================= HOTLINE ================= */
 .hotline {
     color: #333;
     font-size: 14px;
 }
+
 .hotline span {
     color: #ff0000;
     font-weight: bold;
 }
+
+/* ================= SEARCH ================= */
 .search-box {
     flex: 1;
     display: flex;
 }
+
 .search-box input {
     width: 100%;
     padding: 8px 12px;
@@ -39,6 +52,7 @@
     border-radius: 20px 0 0 20px;
     outline: none;
 }
+
 .search-box button {
     padding: 0 16px;
     border: none;
@@ -47,22 +61,27 @@
     border-radius: 0 20px 20px 0;
     cursor: pointer;
 }
+
+/* ================= ICONS ================= */
 .top-icons {
     display: flex;
     gap: 18px;
     text-align: center;
 }
+
 .top-icons .icon {
     font-size: 16px;
     color: #333;
     position: relative;
     cursor: pointer;
 }
+
 .top-icons small {
     display: block;
     font-size: 11px;
 }
 
+/* ================= CART BADGE ================= */
 .cart .badge {
     position: absolute;
     top: -5px;
@@ -73,11 +92,14 @@
     padding: 2px 6px;
     border-radius: 50%;
 }
+
+/* ================= MAIN MENU ================= */
 .main-menu {
     background: #f15a22;
     display: flex;
     justify-content: center;
 }
+
 .main-menu a {
     color: #fff;
     text-decoration: none;
@@ -85,11 +107,12 @@
     font-weight: bold;
     font-size: 14px;
 }
+
 .main-menu a:hover {
     background: rgba(255, 255, 255, 0.15);
 }
 
-
+/* ================= HEADER NAV ================= */
 header {
     width: 100%;
     background-color: #f15a22;
@@ -143,14 +166,15 @@ header {
 .nav-right a:hover {
     background-color: #ff1744;
 }
-/* Đoạn này giúp menu "Địa chỉ" hiện ra khi đưa chuột vào "Tài Khoản" */
+
+/* ================= DROPDOWN ACCOUNT ================= */
 .account-menu {
     position: relative;
     display: inline-block;
 }
 
 .dropdown-content {
-    display: none; /* Mặc định ẩn đi */
+    display: none;
     position: absolute;
     background-color: #ffffff;
     min-width: 160px;
@@ -171,14 +195,14 @@ header {
 
 .dropdown-content a:hover {
     background-color: #f1f1f1;
-    color: #ff6600 !important; /* Màu cam giống tông web của bạn */
+    color: #ff6600 !important;
 }
 
-/* Khi rà chuột vào .account-menu thì hiện .dropdown-content */
 .account-menu:hover .dropdown-content {
     display: block;
 }
-/* Style cho Icon Tài khoản */
+
+/* ================= USER ICON ================= */
 .user-action {
     display: flex;
     align-items: center;
@@ -190,21 +214,20 @@ header {
 }
 
 .user-action i {
-    font-size: 18px; /* Kích thước icon con người */
-    color: #f15a22; /* Màu cam BatShop */
+    font-size: 18px;
+    color: #f15a22;
 }
 
-/* Hiệu ứng hover cho menu icon */
 .user-action:hover {
     color: #f15a22 !important;
 }
 
-/* Chỉnh lại nút Đăng xuất trên menu chính */
+/* ================= LOGOUT BUTTON ================= */
 .logout-btn {
     background-color: #ff4b4b !important;
     color: white !important;
     border-radius: 4px;
-    margin-left: auto; /* Đẩy về góc phải menu */
+    margin-left: auto;
 }
 
 .logout-btn:hover {
