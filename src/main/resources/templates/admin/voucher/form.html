@@ -1,25 +1,71 @@
+<!--<form th:action="@{/admin/vouchers/save}"-->
+<!--      th:object="${voucher}"-->
+<!--      method="post">-->
+
+<!--    &lt;!&ndash; ID &ndash;&gt;-->
+<!--    <input type="hidden"-->
+<!--           th:if="${voucher.id != null}"-->
+<!--           th:field="*{id}" />-->
+
+<!--    <label>Code</label><br>-->
+<!--    <input type="text" th:field="*{code}" required /><br><br>-->
+
+<!--    <label>Discount Percent</label><br>-->
+<!--    <input type="number" th:field="*{discountPercent}" min="1" max="100" /><br><br>-->
+
+<!--    <label>Valid From</label><br>-->
+<!--    <input type="datetime-local"-->
+<!--           th:field="*{validFrom}" /><br><br>-->
+
+<!--    <label>Valid To</label><br>-->
+<!--    <input type="datetime-local"-->
+<!--           th:field="*{validTo}" /><br><br>-->
+
+<!--    <button type="submit">Save</button>-->
+<!--</form>-->
+
 <form th:action="@{/admin/vouchers/save}"
       th:object="${voucher}"
       method="post">
 
-    <!-- ID -->
     <input type="hidden"
            th:if="${voucher.id != null}"
            th:field="*{id}" />
+
+    <p th:if="${error}"
+       th:text="${error}"
+       style="color:red; font-weight:bold;"></p>
 
     <label>Code</label><br>
     <input type="text" th:field="*{code}" required /><br><br>
 
     <label>Discount Percent</label><br>
-    <input type="number" th:field="*{discountPercent}" min="1" max="100" /><br><br>
+    <input type="number"
+           th:field="*{discountPercent}"
+           min="1" max="100" required /><br><br>
 
     <label>Valid From</label><br>
     <input type="datetime-local"
-           th:field="*{validFrom}" /><br><br>
+           th:field="*{validFrom}"
+           required /><br><br>
 
     <label>Valid To</label><br>
     <input type="datetime-local"
-           th:field="*{validTo}" /><br><br>
+           th:field="*{validTo}"
+           required /><br><br>
 
     <button type="submit">Save</button>
 </form>
+
+<script>
+    const form = document.querySelector("form");
+    const from = document.querySelector("[name='validFrom']");
+    const to = document.querySelector("[name='validTo']");
+
+    form.addEventListener("submit", function(e) {
+        if (from.value && to.value && to.value < from.value) {
+            alert("Valid To must be after Valid From!");
+            e.preventDefault();
+        }
+    });
+</script>
