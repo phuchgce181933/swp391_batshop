@@ -1,0 +1,148 @@
+/* ===============================
+   CONTAINER
+=================================*/
+.address-container {
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+/* ===============================
+   CARD
+=================================*/
+.card {
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    border: none;
+}
+
+/* ===============================
+   FIX KHÔNG CHO FLEX BỊ GIÃN
+   (QUAN TRỌNG NHẤT)
+=================================*/
+
+/* Cho phép cột Bootstrap co lại đúng cách */
+.col-md-6 {
+    min-width: 0;
+}
+
+/* Fix các flex con */
+.address-row-flex .flex-item {
+    min-width: 0;
+}
+
+/* ===============================
+   INPUT & SELECT
+=================================*/
+.form-control,
+.form-select {
+    height: 45px;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+/* Nếu text dài thì hiển thị ... */
+.form-select {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ===============================
+   QUẬN / XÃ LUÔN 50%
+=================================*/
+.address-row-flex {
+    display: flex;
+    gap: 15px;
+    width: 100%;
+}
+
+.address-row-flex .flex-item {
+    flex: 1;
+}
+
+/* ===============================
+   BUTTON CHÍNH
+=================================*/
+.btn-primary {
+    background-color: #ff6600;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #e65c00;
+}
+
+/* ===============================
+   BADGE MẶC ĐỊNH
+=================================*/
+.badge-default {
+    background-color: #28a745;
+    font-size: 0.75rem;
+    padding: 6px 12px;
+    border-radius: 20px;
+}
+
+/* ===============================
+   USER INFO
+=================================*/
+.user-info-row {
+    font-size: 0.95rem;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.user-info-row i {
+    width: 20px;
+    color: #ff6600;
+}
+
+/* ===============================
+   BUTTON THÊM ĐỊA CHỈ
+=================================*/
+.btn-add-new {
+    background-color: #28a745;
+    color: white;
+    border: none;
+}
+
+.btn-add-new:hover {
+    background-color: #218838;
+    color: white;
+}
+
+/* ===============================
+   RESPONSIVE
+=================================*/
+@media (max-width: 768px) {
+
+    .address-row-flex {
+        flex-direction: column;
+    }
+
+    .col-md-6 {
+        max-width: 100%;
+    }
+}
+/* ================= FIX SELECT KHÔNG GIÃN ================= */
+
+/* Bắt buộc flex item không được giãn theo nội dung */
+.col-md-6,
+.address-row-flex .flex-item {
+    min-width: 0 !important;
+}
+
+/* Cố định select */
+.form-select {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box;
+}
+
+/* Cắt chữ dài trong select */
+.form-select option {
+    white-space: normal;
+}
+.row {
+    flex-wrap: wrap !important;
+}
