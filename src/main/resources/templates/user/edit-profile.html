@@ -2,36 +2,63 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Cập nhật thông tin</title>
-    <link rel="stylesheet" th:href="@{/css/register.css}">
+    <title>Cập nhật thông tin - BatShop</title>
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+    <style>
+        .main-wrapper { background-color: #f4f7f6; min-height: 100vh; }
+        /* Giả lập Header trang Home của con */
+        .bat-header { background-color: #ff6600; padding: 12px 5%; color: white; display: flex; justify-content: space-between; align-items: center; }
+        .bat-header a { color: white; text-decoration: none; font-weight: bold; margin-left: 15px; font-size: 14px; }
+
+        .form-container { display: flex; justify-content: center; padding: 50px 0; }
+        .btn-group { display: flex; gap: 10px; margin-top: 20px; }
+        .btn-back {
+            flex: 1; display: flex; align-items: center; justify-content: center;
+            background: #fff; color: #666; border: 1px solid #ccc; border-radius: 10px;
+            text-decoration: none; font-weight: bold; font-size: 14px; transition: 0.2s;
+        }
+        .btn-back:hover { background: #f0f0f0; }
+        .btn-submit { flex: 1; margin-top: 0 !important; }
+    </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="right-panel" style="width:100%">
-        <div class="card">
+<div class="main-wrapper">
+    <div class="bat-header">
+        <div style="font-size: 24px; font-weight: bold;">BAT<span>SHOP</span>.</div>
+        <div class="nav-links">
+            <a th:href="@{/home}">Trang chủ</a>
+            <a th:href="@{/product}">Sản phẩm</a>
+            <a th:href="@{/logout}">Đăng xuất</a>
+        </div>
+    </div>
 
+    <div class="form-container">
+        <div class="login-card" style="width: 400px;">
             <h2>Cập nhật thông tin</h2>
+            <p class="sub">Quản lý hồ sơ cá nhân của bạn</p>
 
             <form th:action="@{/profile/edit}" method="post" th:object="${user}">
-
                 <label>Họ tên</label>
                 <input type="text" th:field="*{fullName}" required>
 
                 <label>Email</label>
                 <input type="email" th:field="*{email}">
 
-
                 <label>Số điện thoại</label>
                 <input type="text" th:field="*{phone}">
 
-                <button type="submit">CẬP NHẬT</button>
+                <div class="btn-group">
+                    <a th:href="@{/home}" class="btn-back">Hủy bỏ</a>
+                    <button type="submit" class="btn-submit">CẬP NHẬT</button>
+                </div>
 
                 <div class="error-box" th:if="${error}" th:text="${error}"></div>
                 <div class="success-box" th:if="${success}" th:text="${success}"></div>
-
             </form>
-            <a th:href="@{/change-password}">ChangePassword</a>
+            <div style="text-align: center; margin-top: 15px;">
+                <a th:href="@{/change-password}" style="font-size: 13px; color: #ff4b4b;">Đổi mật khẩu?</a>
+            </div>
         </div>
     </div>
 </div>
