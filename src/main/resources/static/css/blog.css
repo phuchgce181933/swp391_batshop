@@ -1,0 +1,258 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+}
+
+.blog-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.blog-header {
+    background-color: #f5f6f8;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+}
+
+.blog-header h2 {
+    font-size: 18px;
+    color: #333;
+    text-transform: uppercase;
+}
+
+.blog-search-bar form {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    padding: 15px;
+    margin-bottom: 30px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.blog-search-bar label {
+    font-weight: bold;
+    margin-right: 15px;
+    white-space: nowrap;
+}
+
+/* Container bọc input và nút X */
+.blog-search-bar .input-wrapper {
+    position: relative;
+    flex-grow: 1;
+    margin-right: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.blog-search-bar input {
+    width: 100%;
+    /* Thêm padding bên phải (35px) để chữ không bị đè lên nút X khi nhập dài */
+    padding: 10px 35px 10px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    outline: none;
+}
+
+/* Nút X xóa từ khóa */
+.blog-search-bar .clear-btn {
+    position: absolute;
+    right: 10px;
+    color: #999;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 5px; /* Tăng diện tích click */
+    transition: color 0.2s;
+}
+
+.blog-search-bar .clear-btn:hover {
+    color: #f26522; /* Đổi sang màu cam đồng bộ giao diện khi hover */
+}
+
+.blog-search-bar button {
+    padding: 10px 20px;
+    background-color: #f1f1f1;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #555;
+}
+
+.blog-search-bar button:hover {
+    background-color: #e2e2e2;
+}
+
+/* Lưới Blog - Đã sửa thành 4 cột */
+.blog-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px; /* Giảm khoảng cách để 4 cột vừa vặn và đẹp hơn */
+    margin-bottom: 40px;
+}
+
+.blog-card {
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    transition: transform 0.3s, box-shadow 0.3s;
+    display: flex;
+    flex-direction: column;
+}
+
+.blog-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+}
+
+.blog-img {
+    width: 100%;
+    height: 180px; /* Giảm chiều cao ảnh xuống để cân đối với chiều ngang của thẻ */
+    object-fit: cover;
+}
+
+.blog-content-box {
+    padding: 20px;
+    text-align: center;
+    flex-grow: 1;
+    position: relative;
+}
+
+.blog-title {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 15px;
+    line-height: 1.4;
+
+    /* Giới hạn hiển thị tối đa 2 dòng */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    /* Đảm bảo chiều cao tối thiểu cho 2 dòng (16px * 1.4 * 2 ≈ 44px)
+       giúp các thẻ card luôn bằng nhau dù tiêu đề chỉ có 1 dòng */
+    min-height: 44px;
+}
+
+.blog-date-wrapper {
+    margin: 10px 0;
+    position: relative;
+}
+
+.blog-date-wrapper::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    border-top: 2px solid #f26522;
+    z-index: 1;
+}
+
+.blog-date {
+    display: inline-block;
+    background-color: #f26522; /* Màu cam đặc trưng */
+    color: #fff;
+    padding: 4px 15px;
+    border-radius: 20px;
+    font-size: 13px;
+    position: relative;
+    z-index: 2;
+}
+
+.blog-excerpt {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.5;
+    margin-top: 15px;
+
+    /* Giới hạn hiển thị tối đa 3 dòng */
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Phân trang */
+.blog-pagination {
+    text-align: right;
+    margin-top: 20px;
+}
+
+.blog-pagination ul {
+    list-style: none;
+    display: inline-flex;
+}
+
+.blog-pagination li {
+    margin-left: 5px;
+}
+
+.blog-pagination a {
+    display: block;
+    padding: 8px 14px;
+    border: 1px solid #e0e0e0;
+    color: #f26522;
+    text-decoration: none;
+    border-radius: 4px;
+    background: #fff;
+    transition: all 0.2s;
+}
+
+.blog-pagination a:hover {
+    background: #fdf0ea;
+}
+
+.blog-pagination li.active a {
+    background-color: #f26522;
+    color: #fff;
+    border-color: #f26522;
+}
+
+.blog-pagination li.disabled a {
+    color: #ccc;
+    pointer-events: none;
+    border-color: #eee;
+}
+
+/* Responsive - Cập nhật cho giao diện 4 cột */
+@media (max-width: 1200px) {
+    .blog-grid {
+        grid-template-columns: repeat(3, 1fr); /* Màn hình vừa: 3 cột */
+    }
+}
+
+@media (max-width: 992px) {
+    .blog-grid {
+        grid-template-columns: repeat(2, 1fr); /* Tablet: 2 cột */
+    }
+}
+
+@media (max-width: 768px) {
+    .blog-grid {
+        grid-template-columns: 1fr; /* Mobile: 1 cột */
+    }
+    .blog-search-bar form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .blog-search-bar input {
+        margin-right: 0;
+        margin-bottom: 10px;
+        margin-top: 10px;
+    }
+}

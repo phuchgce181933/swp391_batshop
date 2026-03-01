@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thông Tin Tổng Hợp Cầu Lông - SmashSports</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/blog.css}">
+</head>
+<body>
+
+<div th:replace="layout/header :: header"></div>
+
+<div class="blog-container">
+    <div class="blog-header">
+        <h2>THÔNG TIN TỔNG HỢP CẦU LÔNG</h2>
+    </div>
+
+    <div class="blog-search-bar">
+        <form th:action="@{/blog}" method="get">
+            <label for="keyword">Từ khóa:</label>
+
+            <div class="input-wrapper">
+                <input type="text" id="keyword" name="keyword" th:value="${keyword}" placeholder="Nhập từ khóa tìm kiếm...">
+                <a th:if="${keyword != null and !keyword.isEmpty()}" th:href="@{/blog}" class="clear-btn" title="Xóa tìm kiếm">✕</a>
+            </div>
+
+            <button type="submit">Tìm kiếm</button>
+        </form>
+    </div>
+
+    <div class="blog-grid">
+        <div class="blog-card" th:each="blog : ${blogPage.content}">
+
+            <a th:href="@{/blog/{id}(id=${blog.id})}" style="display: block;">
+                <img th:src="@{'/uploads/product/' + ${blog.image}}" alt="Blog Image" class="blog-img">
+            </a>
+
+            <div class="blog-content-box">
+                <h3 class="blog-title">
+                    <a th:href="@{/blog/{id}(id=${blog.id})}" th:text="${blog.title}" style="color: inherit; text-decoration: none;">Tiêu đề bài viết</a>
+                </h3>
+
+                <div class="blog-date-wrapper">
+                    <span class="blog-date" th:text="${#temporals.format(blog.createdAt, 'dd-MM-yyyy HH:mm')}">16-01-2026 11:32</span>
+                </div>
+
+                <p class="blog-excerpt" th:text="${blog.content}">Mô tả ngắn gọn nội dung bài viết...</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="blog-pagination" th:if="${totalPages > 1}">
+        <ul>
+            <li th:classappend="${currentPage == 1} ? 'disabled'">
+                <a th:href="@{/blog(page=${currentPage - 1}, keyword=${keyword})}">«</a>
+            </li>
+
+            <li th:each="i : ${#numbers.sequence(1, totalPages)}"
+                th:classappend="${currentPage == i} ? 'active'">
+                <a th:href="@{/blog(page=${i}, keyword=${keyword})}" th:text="${i}">1</a>
+            </li>
+
+            <li th:classappend="${currentPage == totalPages} ? 'disabled'">
+                <a th:href="@{/blog(page=${currentPage + 1}, keyword=${keyword})}">»</a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div th:replace="layout/footer :: footer"></div>
+
+</body>
+</html>
