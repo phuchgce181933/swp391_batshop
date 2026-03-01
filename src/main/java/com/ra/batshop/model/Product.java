@@ -60,6 +60,9 @@ public class Product {
     private List<FlashSaleProduct> flashSales;
 
 
-    @OneToOne(mappedBy = "product")
-    private RacketDetail racketDetails;
+    @OneToOne(mappedBy = "product",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    private RacketDetail racketDetail;
+
 }
