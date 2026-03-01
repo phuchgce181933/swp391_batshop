@@ -1,9 +1,7 @@
 package com.ra.batshop.model;
 
 
-import com.ra.batshop.model.Enum.RacketLevel;
-import com.ra.batshop.model.Enum.RacketStyle;
-import com.ra.batshop.model.Enum.RacketWeight;
+import com.ra.batshop.model.Enum.*;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,8 +23,27 @@ public class RacketDetail {
     private RacketLevel level;
 
     @Enumerated(EnumType.STRING)
-    private RacketStyle style;
+    private RacketLength length;
 
     @Enumerated(EnumType.STRING)
-    private RacketWeight weight;
+    private RacketHandleLength racketHandleLength;
+
+
+    private String style;
+
+
+    private String technology;
+
+
+    private String gamecontent;
+
+    private String weight;
+
+    private String swingWeight;
+
+    @Enumerated(EnumType.STRING)
+    private EquilibriumPoint equilibriumPoint;
+
+    @Enumerated(EnumType.STRING)
+    private ChopstickHardness chopstickHardness;
 }

@@ -1,9 +1,8 @@
 package com.ra.batshop.controller;
 
-import com.ra.batshop.model.Product;
+import com.ra.batshop.model.*;
 //import com.ra.batshop.repository.BrandRepository;
-import com.ra.batshop.model.ProductImage;
-import com.ra.batshop.model.ProductVariant;
+import com.ra.batshop.model.Enum.*;
 import com.ra.batshop.repository.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -50,12 +49,18 @@ public class ProductController {
     // ADD FORM
     @GetMapping("/add")
     public String addForm(Model model) {
+        model.addAttribute("racketDetail", new RacketDetail());
         model.addAttribute("product", new Product());
         model.addAttribute("categories", categoryRepository.findAll());
         model.addAttribute("brands", brandRepository.findAll());
         model.addAttribute("content", "admin/product/add");
         model.addAttribute("sizes", sizeRepository.findAll());
         model.addAttribute("colors", colorRepository.findAll());
+        model.addAttribute("racketLevels", RacketLevel.values());
+        model.addAttribute("racketLengths", RacketLength.values());
+        model.addAttribute("handleLengths", RacketHandleLength.values());
+        model.addAttribute("equilibriumPoints", EquilibriumPoint.values());
+        model.addAttribute("chopstickHardnesses", ChopstickHardness.values());
         return "admin/layout";
     }
 
@@ -63,23 +68,23 @@ public class ProductController {
     @PostMapping("/add")
     public String save(@ModelAttribute Product product,
                        @RequestParam("imageFile") MultipartFile file,
-                       @RequestParam Integer stock,
-                       @RequestParam BigDecimal additionalPrice,
-                       @RequestParam Integer sizeId,
-                       @RequestParam Integer colorId,
-                       @RequestParam Long variantBrandId,
+                       @RequestParam(value = "racketStock", required = false) Integer racketStock,
+                       @RequestParam(value = "racketAdditionalPrice", required = false) BigDecimal racketAdditionalPrice,
                        Model model) {
 
         if (file == null || file.isEmpty()) {
             model.addAttribute("errorMessage", "Product must have at least 1 image!");
             model.addAttribute("categories", categoryRepository.findAll());
             model.addAttribute("brands", brandRepository.findAll());
+            model.addAttribute("sizes", sizeRepository.findAll());
+            model.addAttribute("colors", colorRepository.findAll());
             model.addAttribute("content", "admin/product/add");
             return "admin/layout";
         }
 
         try {
 
+            // ===== UPLOAD IMAGE =====
             String uploadDir = "uploads/product/";
             Path uploadPath = Paths.get(uploadDir);
 
@@ -88,29 +93,55 @@ public class ProductController {
             }
 
             String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-            Path filePath = uploadPath.resolve(fileName);
 
-            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(file.getInputStream(),
+                    uploadPath.resolve(fileName),
+                    StandardCopyOption.REPLACE_EXISTING);
 
             product.setCreatedAt(LocalDateTime.now());
             product.setStatus(true);
 
-            // tạo img
+            // ===== SET CATEGORY =====
+            Category category = categoryRepository
+                    .findById(product.getCategory().getId())
+                    .orElseThrow();
+
+            product.setCategory(category);
+
+            // ===== ADD IMAGE =====
             ProductImage image = new ProductImage();
             image.setImage(fileName);
-
-            // add vao
             product.addImage(image);
-            //add variant
-            ProductVariant variant = new ProductVariant();
-            variant.setStock(stock);
-            variant.setAdditionalPrice(additionalPrice);
-            variant.setSize(sizeRepository.findById(sizeId).orElseThrow());
-            variant.setColor(colorRepository.findById(colorId).orElseThrow());
-            variant.setBrand(brandRepository.findById(variantBrandId).orElseThrow());
 
-            product.addVariant(variant);
-            // save
+
+            // ===== CHECK CATEGORY TO DECIDE SAVE TYPE ==========
+
+            if (category.getName().equalsIgnoreCase("cầu lông")) {
+
+                // ===== SAVE RACKET DETAIL =====
+                RacketDetail detail = product.getRacketDetail();
+                detail.setProduct(product);
+                product.setRacketDetail(detail);
+
+                // ===== TẠO VARIANT CHỈ STOCK + PRICE =====
+                ProductVariant variant = new ProductVariant();
+                variant.setStock(racketStock);
+                variant.setAdditionalPrice(racketAdditionalPrice);
+                variant.setProduct(product);
+
+                variant.setBrand(
+                        brandRepository
+                                .findById(product.getBrand().getId())
+                                .orElseThrow()
+                );
+
+                variant.setSize(null);
+                variant.setColor(null);
+
+                product.addVariant(variant);
+            }
+
+            // ===== SAVE PRODUCT =====
             productRepository.save(product);
 
         } catch (Exception e) {
