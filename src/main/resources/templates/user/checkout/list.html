@@ -7,7 +7,7 @@
 </head>
 <body>
 
-<div th:replace="layout/header :: header"></div>
+<div th:replace="~{layout/header :: header}"></div>
 
 <div class="checkout-container">
 
@@ -54,68 +54,69 @@
         <!--ĐỊA CHỈ -->
         <div class="address-box">
             <h3>Địa chỉ giao hàng</h3>
-                <!-- Địa chỉ đang chọn -->
-                <div class="selected-address" onclick="toggleAddressList()">
-                    <div id="selectedAddressContent">
 
-                        <strong th:text="${defaultAddress != null ? defaultAddress.fullName : addresses[0].fullName}"></strong>
-                        | <span th:text="${defaultAddress != null ? defaultAddress.phone : addresses[0].phone}"></span><br>
+            <!-- Địa chỉ đang chọn -->
+            <div class="selected-address" onclick="toggleAddressList()">
 
-                        <span th:text="${defaultAddress != null ? defaultAddress.addressLine : addresses[0].addressLine}"></span>,
-                        <span th:text="${defaultAddress != null ? defaultAddress.district : addresses[0].district}"></span>,
-                        <span th:text="${defaultAddress != null ? defaultAddress.city : addresses[0].city}"></span>
+                <div id="selectedAddressContent"
+                     th:if="${addresses != null and !addresses.isEmpty()}">
 
-                    </div>
-                    <span class="dropdown-icon">▼</span>
+                    <span th:text="${defaultAddress != null ? defaultAddress.detail : addresses[0].detail}"></span>,
+                    <span th:text="${defaultAddress != null ? defaultAddress.ward : addresses[0].ward}"></span>,
+                    <span th:text="${defaultAddress != null ? defaultAddress.district : addresses[0].district}"></span>,
+                    <span th:text="${defaultAddress != null ? defaultAddress.city : addresses[0].city}"></span>
+
                 </div>
 
-                <!-- Danh sách địa chỉ -->
-                <div id="addressList" class="address-list">
-                    <div th:each="addr : ${addresses}" class="address-item">
-                        <label>
-                            <input type="radio"
-                                   name="addressId"
-                                   th:value="${addr.id}"
-                                   th:checked="${defaultAddress != null and addr.id == defaultAddress.id}"
-                                   onclick="selectAddress(this)" />
+                <span class="dropdown-icon">▼</span>
+            </div>
 
-                            <span class="addr-info">
-                    <strong th:text="${addr.fullName}"></strong>
-                    | <span th:text="${addr.phone}"></span><br>
+            <!-- Danh sách địa chỉ -->
+            <div id="addressList" class="address-list">
+                <div th:each="addr : ${addresses}" class="address-item">
+                    <label>
+                        <input type="radio"
+                               name="addressId"
+                               th:value="${addr.id}"
+                               th:checked="${defaultAddress != null and addr.id == defaultAddress.id}"
+                               onclick="selectAddress(this)"/>
 
-                    <span th:text="${addr.addressLine}"></span>,
+                        <span class="addr-info">
+                    <span th:text="${addr.detail}"></span>,
+                    <span th:text="${addr.ward}"></span>,
                     <span th:text="${addr.district}"></span>,
                     <span th:text="${addr.city}"></span>
                 </span>
-                        </label>
-                    </div>
+                    </label>
                 </div>
             </div>
-            <script>
-                function toggleAddressList() {
-                    const list = document.getElementById("addressList");
-                    list.style.display = list.style.display === "block" ? "none" : "block";
+
+        </div>
+        <script>
+            function toggleAddressList() {
+                const list = document.getElementById("addressList");
+                list.style.display = list.style.display === "block" ? "none" : "block";
+            }
+
+            function selectAddress(radio) {
+                const content = radio.closest("label").querySelector(".addr-info").innerHTML;
+
+                document.getElementById("selectedAddressContent").innerHTML = content;
+
+                // đóng dropdown sau khi chọn
+                document.getElementById("addressList").style.display = "none";
+            }
+
+            // click ra ngoài thì tự đóng
+            document.addEventListener("click", function (event) {
+                const box = document.querySelector(".address-box");
+                const list = document.getElementById("addressList");
+
+                if (!box.contains(event.target)) {
+                    list.style.display = "none";
                 }
-
-                function selectAddress(radio) {
-                    const content = radio.closest("label").querySelector(".addr-info").innerHTML;
-
-                    document.getElementById("selectedAddressContent").innerHTML = content;
-
-                    // đóng dropdown sau khi chọn
-                    document.getElementById("addressList").style.display = "none";
-                }
-
-                // click ra ngoài thì tự đóng
-                document.addEventListener("click", function(event) {
-                    const box = document.querySelector(".address-box");
-                    const list = document.getElementById("addressList");
-
-                    if (!box.contains(event.target)) {
-                        list.style.display = "none";
-                    }
-                });
-            </script>
+            });
+        </script>
         <!--PAYMENT-->
         <div class="payment-box">
             <h3>Phương thức thanh toán</h3>
