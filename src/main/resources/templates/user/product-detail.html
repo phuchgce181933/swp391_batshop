@@ -13,12 +13,18 @@
 
     <!-- IMAGE -->
     <div class="product-images">
+
         <img class="main-img"
-             th:src="@{/uploads/products/{img}(img=${product.images[0].image})}">
+             th:if="${product.images != null and !product.images.isEmpty()}"
+             th:src="@{/uploads/product/{img}(img=${product.images[0].image})}">
+
+        <img class="main-img"
+             th:if="${product.images == null or product.images.isEmpty()}"
+             src="/img/no-image.png">
 
         <div class="thumb-list">
             <img th:each="img : ${product.images}"
-                 th:src="@{/uploads/products/{img}(img=${img.image})}">
+                 th:src="@{/uploads/product/{img}(img=${img.image})}">
         </div>
     </div>
 
@@ -27,33 +33,65 @@
 
         <h1 th:text="${product.name}"></h1>
 
-        <p>Thương hiệu: <b th:text="${product.brand.name}"></b></p>
+        <p>Thương hiệu:
+            <b th:text="${product.brand != null ? product.brand.name : 'No brand'}"></b>
+        </p>
+
+        <p>Danh mục:
+            <b th:text="${product.category != null ? product.category.name : 'No category'}"></b>
+        </p>
+
         <p>Tình trạng:
             <span th:text="${product.status ? 'Còn hàng' : 'Hết hàng'}"></span>
         </p>
 
-        <h2 class="price">
-            <span th:text="${#numbers.formatDecimal(product.price,0,'COMMA',0,'POINT')} + ' ₫'"></span>
-        </h2>
+        <!-- VARIANT SELECT -->
+        <div class="variant-box"
+             th:if="${variants != null and !variants.isEmpty()}">
 
-        <!-- QUANTITY -->
-        <div class="qty-box">
-            <button onclick="minusQty()">-</button>
-            <input id="qty" type="number" value="1" min="1">
-            <button onclick="plusQty()">+</button>
-        </div>
+            <h3>Chọn phiên bản:</h3>
 
-        <!-- BUTTONS -->
-        <div class="btn-group">
             <form th:action="@{/cart/add}" method="post">
-                <input type="hidden" name="productId" th:value="${product.id}">
-                <input type="hidden" id="qtyInput" name="quantity" value="1">
 
-                <button type="submit" class="btn-cart">THÊM VÀO GIỎ HÀNG</button>
+                <div th:each="v, stat : ${variants}" class="variant-item">
+                    <label>
+                        <input type="radio"
+                               name="productVariantId"
+                               th:value="${v.id}"
+                               th:checked="${stat.index == 0}">
+
+                        <span>
+                    <span th:text="${v.brand.name}"></span>
+
+                    <span th:if="${v.size != null}"
+                          th:text="' - Size: ' + ${v.size.name}"></span>
+
+                    <span th:if="${v.color != null}"
+                          th:text="' - ' + ${v.color.name}"></span>
+
+                    -
+                    <b th:text="${#numbers.formatDecimal(
+                        product.price +
+                        (v.additionalPrice != null ? v.additionalPrice : 0),
+                        0,'COMMA',0,'POINT')} + ' ₫'">
+                    </b>
+                </span>
+                    </label>
+                </div>
+
+                <div class="qty-box">
+                    <button type="button" onclick="minusQty()">-</button>
+                    <input id="qty" type="number" name="quantity" value="1" min="1">
+                    <button type="button" onclick="plusQty()">+</button>
+                </div>
+
+                <button type="submit" class="btn-cart">
+                    THÊM VÀO GIỎ HÀNG
+                </button>
+
             </form>
-
-            <button class="btn-buy">MUA NGAY</button>
         </div>
+
     </div>
 
 </div>
@@ -70,13 +108,11 @@
     function plusQty() {
         let q = document.getElementById("qty");
         q.value = parseInt(q.value) + 1;
-        document.getElementById("qtyInput").value = q.value;
     }
 
     function minusQty() {
         let q = document.getElementById("qty");
         if (q.value > 1) q.value--;
-        document.getElementById("qtyInput").value = q.value;
     }
 </script>
 
