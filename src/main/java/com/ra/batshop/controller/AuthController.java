@@ -42,10 +42,18 @@ public class AuthController {
             @ModelAttribute("user") User user,
             Model model
     ) {
+        // Kiểm tra trùng Email
         if (userRepository.existsByEmail(user.getEmail())) {
             model.addAttribute("errorEmail", "Email đã tồn tại");
             return "auth/register";
         }
+
+        // --- PHẦN THÊM MỚI: Kiểm tra trùng số điện thoại ---
+        if (userRepository.existsByPhone(user.getPhone())) {
+            model.addAttribute("errorPhone", "Số điện thoại đã tồn tại");
+            return "auth/register";
+        }
+        // ------------------------------------------------
 
         user.setPasswordHash(passwordEncoder.encode(user.getPasswordHash()));
         user.setRole(Role.USER);
@@ -172,21 +180,16 @@ public class AuthController {
         }
     }
 
-    // =========================
-    // FORGOT PASSWORD
-    // =========================
+    // =========================================================================
+    // FORGOT PASSWORD - ĐÃ SỬA: Gửi đúng cho mọi người, dùng 1 mail hệ thống
+    // =========================================================================
     @GetMapping("/forgot-password")
     public String showForgotPasswordForm() {
         return "auth/forgot-password";
     }
+
     @PostMapping("/forgot-password")
     public String forgotPassword(@RequestParam String email, Model model) {
-
-        // 🔒 CHỈ CHO PHÉP EMAIL NÀY
-        if (!email.equalsIgnoreCase("huydn2.ce190894@gmail.com")) {
-            model.addAttribute("error", "Email không hợp lệ hoặc không được phép đặt lại mật khẩu");
-            return "auth/forgot-password";
-        }
 
         User user = userRepository.findByEmail(email).orElse(null);
 
@@ -195,7 +198,6 @@ public class AuthController {
             return "auth/forgot-password";
         }
 
-        // Tạo mã 6 số
         String code = String.valueOf((int)((Math.random() * 900000) + 100000));
 
         user.setResetCode(code);
@@ -204,19 +206,19 @@ public class AuthController {
 
         emailService.sendEmail(
                 user.getEmail(),
-                "Mã đặt lại mật khẩu",
-                "Mã xác nhận của bạn là: " + code
+                "Mã đặt lại mật khẩu - BatShop",
+                "Mã xác nhận của bạn là: " + code + ". Mã có hiệu lực trong 5 phút."
         );
 
         model.addAttribute("email", email);
-        model.addAttribute("message", "Đã gửi mã về email");
+        model.addAttribute("message", "Đã gửi mã xác nhận về hòm thư của bạn.");
 
         return "auth/reset-password";
     }
 
-    // =========================
-    // RESET PASSWORD
-    // =========================
+    // =========================================================================
+    // RESET PASSWORD - ĐÃ SỬA: Thêm bảo mật cơ bản
+    // =========================================================================
 
     @PostMapping("/reset-password")
     public String resetPassword(
@@ -243,17 +245,21 @@ public class AuthController {
         if (user.getResetCodeExpiredAt() == null ||
                 user.getResetCodeExpiredAt().isBefore(LocalDateTime.now())) {
 
-            model.addAttribute("error", "Mã đã hết hạn");
+            model.addAttribute("error", "Mã đã hết hạn, vui lòng yêu cầu lại");
             model.addAttribute("email", email);
             return "auth/reset-password";
         }
 
-        // đổi mật khẩu
-        user.setPasswordHash(passwordEncoder.encode(newPassword));
+        if (newPassword.length() < 6) {
+            model.addAttribute("error", "Mật khẩu phải có ít nhất 6 ký tự");
+            model.addAttribute("email", email);
+            return "auth/reset-password";
+        }
 
-        // xoá mã sau khi dùng
+        user.setPasswordHash(passwordEncoder.encode(newPassword));
         user.setResetCode(null);
         user.setResetCodeExpiredAt(null);
+        user.setUpdatedAt(LocalDateTime.now());
 
         userRepository.save(user);
 
