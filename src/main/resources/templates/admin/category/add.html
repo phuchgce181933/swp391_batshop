@@ -1,16 +1,39 @@
+<!--<h2>Add Category</h2>-->
+
+<!--<form th:action="@{/admin/categories/add}" method="post" th:object="${category}" enctype="multipart/form-data">-->
+
+<!--    <div style="margin-bottom: 15px;">-->
+<!--        <label>Name:</label><br>-->
+<!--        <input type="text" th:field="*{name}" required />-->
+<!--    </div>-->
+
+<!--    <div style="margin-bottom: 15px;">-->
+<!--        <label>Image:</label><br>-->
+<!--        <input type="file" name="file" accept="image/*" />-->
+<!--    </div>-->
+
+<!--    <button type="submit">Save</button>-->
+<!--</form>-->
+
+<link rel="stylesheet" th:href="@{/css/admin/category.css}">
+
 <h2>Add Category</h2>
 
-<form th:action="@{/admin/categories/add}" method="post" th:object="${category}" enctype="multipart/form-data">
+<form class="admin-form" method="post" enctype="multipart/form-data">
 
-    <div style="margin-bottom: 15px;">
-        <label>Name:</label><br>
-        <input type="text" th:field="*{name}" required />
+    <div class="form-group">
+        <label>Name</label>
+        <input type="text" name="name" required>
     </div>
 
-    <div style="margin-bottom: 15px;">
-        <label>Image:</label><br>
-        <input type="file" name="file" accept="image/*" />
+    <div class="form-group">
+        <label>Image</label>
+        <input type="file" name="image">
     </div>
 
-    <button type="submit">Save</button>
+    <div class="form-actions">
+        <button type="submit" class="btn-primary">Save</button>
+        <a th:href="@{/admin/categories}" class="btn-secondary">Back</a>
+    </div>
+
 </form>

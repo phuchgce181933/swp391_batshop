@@ -1,43 +1,41 @@
-<h2>Edit Banner</h2>
+<link rel="stylesheet" th:href="@{/css/admin/banner.css}">
 
-<form th:action="@{/admin/banners/edit}"
-      method="post"
-      th:object="${banner}"
-      enctype="multipart/form-data">
+<div class="form-container">
+  <h2>Edit Banner</h2>
 
-  <input type="hidden" th:field="*{id}"/>
+  <form th:action="@{/admin/banners/edit}" method="post" th:object="${banner}" enctype="multipart/form-data">
 
-  <div>
-    <label>Banner Name</label><br>
-    <input type="text" th:field="*{name}" required>
-  </div>
+    <input type="hidden" th:field="*{id}"/>
 
-  <br>
+    <div class="form-group">
+      <label>Banner Name</label>
+      <input type="text" th:field="*{name}" required>
+    </div>
 
-  <div th:if="${banner.image != null}">
-    <label>Current Image</label><br>
-    <img th:src="@{/uploads/product/{img}(img=${banner.image})}"
-         width="200">
-  </div>
+    <div class="form-group" th:if="${banner.image != null}">
+      <label>Current Image</label>
+      <div class="current-image">
+        <img th:src="@{/uploads/product/{img}(img=${banner.image})}">
+      </div>
+    </div>
 
-  <br>
+    <div class="form-group">
+      <label>Change Image (optional)</label>
+      <input type="file" name="file">
+    </div>
 
-  <div>
-    <label>Change Image (optional)</label><br>
-    <input type="file" name="file">
-  </div>
+    <div class="form-group">
+      <label>Status</label>
+      <select th:field="*{status}">
+        <option th:value="true">Active</option>
+        <option th:value="false">Inactive</option>
+      </select>
+    </div>
 
-  <br>
+    <div class="button-group">
+      <button type="submit" class="btn-save">Update</button>
+      <a th:href="@{/admin/banners}" class="btn-back">Back</a>
+    </div>
 
-  <div>
-    <label>Status</label><br>
-    <select th:field="*{status}">
-      <option th:value="true">Active</option>
-      <option th:value="false">Inactive</option>
-    </select>
-  </div>
-
-  <br>
-
-  <button type="submit">Update</button>
-</form>
+  </form>
+</div>

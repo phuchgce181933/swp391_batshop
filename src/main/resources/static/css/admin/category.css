@@ -120,3 +120,229 @@ a[href*="/admin/categories/add"]:hover {
 .admin-table td:last-child a[href*="delete"]:hover {
     background: #fee2e2;
 }
+
+/*ADD CATEGORY*/
+/* ===== TITLE ===== */
+h2 {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+/* ===== FORM CONTAINER ===== */
+.admin-form {
+    background: #ffffff;
+    padding: 28px;
+    border-radius: 14px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+    max-width: 450px;
+}
+
+/* ===== FORM GROUP ===== */
+.form-group {
+    margin-bottom: 18px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ===== LABEL ===== */
+.form-group label {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 6px;
+    color: #374151;
+}
+
+/* ===== INPUT TEXT ===== */
+.form-group input[type="text"],
+.form-group input[type="file"] {
+    padding: 10px 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+    transition: 0.2s;
+    background: #fff;
+}
+
+.form-group input:focus {
+    border-color: #4e73df;
+    box-shadow: 0 0 0 2px rgba(78, 115, 223, 0.15);
+}
+
+/* ===== BUTTON GROUP ===== */
+.form-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+/* ===== SAVE BUTTON ===== */
+.btn-primary {
+    padding: 10px 18px;
+    background: #4e73df;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-primary:hover {
+    background: #2e59d9;
+}
+
+/* ===== BACK BUTTON ===== */
+.btn-secondary {
+    padding: 10px 18px;
+    background: #e5e7eb;
+    color: #374151;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: 0.2s;
+    display: inline-flex;
+    align-items: center;
+}
+
+.btn-secondary:hover {
+    background: #d1d5db;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .admin-form {
+        width: 100%;
+    }
+}
+
+/*EDIT CATEGORY*/
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Background */
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f9;
+}
+
+/* Container */
+.form-container {
+    width: 600px;
+    margin: 60px auto;
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+
+/* Title */
+.form-container h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #333;
+}
+
+/* Form group */
+.form-group {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Label */
+.form-group label {
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #444;
+}
+
+/* Upload label */
+.upload-label {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #666;
+}
+
+/* Input fields */
+.form-group input[type="text"],
+.form-group input[type="file"] {
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+/* Focus effect */
+.form-group input[type="text"]:focus {
+    border-color: #4e73df;
+    outline: none;
+    box-shadow: 0 0 5px rgba(78,115,223,0.3);
+}
+
+/* Current image box */
+.current-image {
+    margin-bottom: 10px;
+}
+
+.current-image img {
+    width: 120px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    padding: 5px;
+    background: #f9f9f9;
+}
+
+/* No image */
+.no-image {
+    margin-bottom: 10px;
+    color: #999;
+    font-style: italic;
+}
+
+/* Button group */
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+/* Update button */
+.btn-save {
+    background: #4e73df;
+    color: white;
+    padding: 10px 25px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+    font-weight: 600;
+}
+
+.btn-save:hover {
+    background: #2e59d9;
+}
+
+/* Back button */
+.btn-back {
+    background: #858796;
+    color: white;
+    padding: 10px 25px;
+    border-radius: 8px;
+    text-decoration: none;
+    display: inline-block;
+    transition: 0.3s;
+    font-weight: 600;
+}
+
+.btn-back:hover {
+    background: #6c757d;
+}

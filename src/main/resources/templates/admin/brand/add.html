@@ -1,14 +1,25 @@
+<link rel="stylesheet" th:href="@{/css/admin/brand.css}">
+
 <h2>Add Brand</h2>
 
-<form th:action="@{/admin/brands/add}" method="post" th:object="${brand}">
-    <label>Name</label>
-    <input type="text" th:field="*{name}" required>
+<form class="admin-form" th:action="@{/admin/brands/add}" method="post" th:object="${brand}">
 
-    <label>Status</label>
-    <select th:field="*{status}">
-        <option th:value="true">Active</option>
-        <option th:value="false">Inactive</option>
-    </select>
+    <div class="form-group">
+        <label>Name</label>
+        <input type="text" th:field="*{name}" required>
+    </div>
 
-    <button type="submit">Save</button>
+    <div class="form-group">
+        <label>Status</label>
+        <select th:field="*{status}">
+            <option th:value="true">Active</option>
+            <option th:value="false">Inactive</option>
+        </select>
+    </div>
+
+    <div class="form-actions">
+        <button type="submit" class="btn-primary">Save</button>
+        <a th:href="@{/admin/brands}" class="btn-secondary">Back</a>
+    </div>
+
 </form>
