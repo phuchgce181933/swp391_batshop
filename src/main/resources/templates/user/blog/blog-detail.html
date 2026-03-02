@@ -2,7 +2,7 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Chi Tiết Bài Viết - SmashSports</title>
+    <title>Chi Tiết Bài Viết - BatShop</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/css/user/blog-detail.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -14,7 +14,7 @@
 <div class="blog-detail-container">
 
     <aside class="blog-sidebar">
-        <h3 class="sidebar-title">CÓ THỂ BẠN SẼ THÍCH</h3>
+        <h3 class="sidebar-title">BÀI VIẾT KHÁC</h3>
         <div class="suggested-list">
             <div class="suggested-item" th:each="sBlog : ${suggestedBlogs}">
                 <a th:href="@{/blog/{id}(id=${sBlog.id})}">
