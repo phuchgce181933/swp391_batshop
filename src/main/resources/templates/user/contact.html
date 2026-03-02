@@ -26,17 +26,47 @@
 
         <h3 class="contact-sub-title">LIÊN HỆ VỚI CHÚNG TÔI</h3>
 
-        <form th:action="@{/contact}" method="post" th:object="${contactSupport}" class="contact-form">
+        <form th:action="@{/contact}" method="post" th:object="${contactSupport}" class="contact-form" enctype="multipart/form-data">
+
             <div class="form-group-row">
-                <input type="text" th:field="*{name}" placeholder="Họ và tên" class="form-control" required>
-                <input type="email" th:field="*{email}" placeholder="Email" class="form-control" required>
+                <div style="flex: 1;">
+                    <input type="text" th:field="*{name}" placeholder="Họ và tên" class="form-control">
+                    <p class="error-text" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></p>
+                </div>
+                <div style="flex: 1;">
+                    <input type="email" th:field="*{email}" placeholder="Email" class="form-control">
+                    <p class="error-text" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
+                </div>
             </div>
+
+            <div class="form-group-row">
+                <div style="flex: 1;">
+                    <input type="text" th:field="*{phone}" placeholder="Điện thoại" class="form-control">
+                    <p class="error-text" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></p>
+                </div>
+                <div style="flex: 1;">
+                    <select th:field="*{topic}" class="form-control">
+                        <option value="">-- Chọn chủ đề liên hệ --</option>
+                        <option value="Tư vấn chọn vợt">Tư vấn chọn vợt</option>
+                        <option value="Hỏi đáp đơn hàng">Hỏi đáp đơn hàng</option>
+                        <option value="Yêu cầu bảo hành/Đổi trả">Yêu cầu bảo hành/Đổi trả</option>
+                        <option value="Góp ý khiếu nại">Góp ý khiếu nại</option>
+                        <option value="Khác">Khác</option>
+                    </select>
+                    <p class="error-text" th:if="${#fields.hasErrors('topic')}" th:errors="*{topic}"></p>
+                </div>
+            </div>
+
             <div class="form-group">
-                <input type="text" th:field="*{phone}" placeholder="Điện thoại" class="form-control">
+                <textarea th:field="*{message}" placeholder="Nội dung chi tiết (Vui lòng mô tả rõ tình trạng sản phẩm nếu yêu cầu bảo hành...)" rows="6" class="form-control"></textarea>
+                <p class="error-text" th:if="${#fields.hasErrors('message')}" th:errors="*{message}"></p>
             </div>
+
             <div class="form-group">
-                <textarea th:field="*{message}" placeholder="Nội dung" rows="6" class="form-control" required></textarea>
+                <label for="file" style="display: block; margin-bottom: 8px; font-weight: bold; color: #333;">Đính kèm hình ảnh/File (Tùy chọn):</label>
+                <input type="file" id="file" name="file" class="form-control" accept="image/*,.pdf,.doc,.docx" style="padding: 9px 15px;">
             </div>
+
             <button type="submit" class="submit-btn">Gửi thông tin</button>
         </form>
 

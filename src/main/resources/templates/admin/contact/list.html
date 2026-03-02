@@ -1,0 +1,58 @@
+<link rel="stylesheet" th:href="@{/css/admin/contact.css}">
+
+<div class="contact-wrapper">
+
+    <h2 class="page-title">Quản lý Liên hệ Hỗ trợ</h2>
+
+    <div class="modern-table-container">
+        <table class="modern-table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Khách hàng</th>
+                <th>Chủ đề</th>
+                <th>Ngày gửi</th>
+                <th>Trạng thái</th>
+                <th>Hành động</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="c : ${contacts}">
+                <td th:text="${'#' + c.id}"></td>
+
+                <td>
+                    <strong th:text="${c.name}" style="color: #0f172a; font-size: 15px;"></strong><br>
+                    <span th:text="${c.phone}" style="color: #475569;"></span><br>
+                    <span th:text="${c.email}" style="color: #64748b; font-size: 13px;"></span>
+                </td>
+
+                <td>
+                    <span style="font-weight: 500;" th:text="${c.topic}"></span>
+                </td>
+
+                <td th:text="${#temporals.format(c.createdAt,'dd/MM/yyyy HH:mm')}"></td>
+
+                <td>
+                    <form th:action="@{/admin/contacts/update-status/{id}(id=${c.id})}" method="post">
+                        <select name="status" onchange="this.form.submit()" class="status-select"
+                                th:style="${c.status?.name() == 'UNREAD' ? 'background:#fef2f2; border-color:#fca5a5; color:#ef4444;' : (c.status?.name() == 'PROCESSING' ? 'background:#fffbeb; border-color:#fcd34d; color:#f59e0b;' : 'background:#ecfdf5; border-color:#6ee7b7; color:#10b981;')}">
+                            <option th:each="s : ${T(com.ra.batshop.model.Enum.ContactStatus).values()}"
+                                    th:value="${s}"
+                                    th:text="${s.label}"
+                                    th:selected="${c.status?.name() == s.name()}">
+                            </option>
+                        </select>
+                    </form>
+                </td>
+
+                <td>
+                    <a class="btn-action" th:href="@{/admin/contacts/detail/{id}(id=${c.id})}">Chi tiết</a>
+                </td>
+
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>

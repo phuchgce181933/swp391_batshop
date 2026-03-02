@@ -225,3 +225,10 @@ textarea.form-control {
 .btn-close:hover {
     background-color: #e2e2e2;
 }
+
+.error-text {
+    color: #dc3545;
+    font-size: 13px;
+    margin-top: 5px;
+    margin-bottom: 0;
+}
