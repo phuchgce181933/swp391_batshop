@@ -1,226 +1,226 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <link rel="stylesheet" th:href="@{/css/admin/addproduct.css}">
-    <meta charset="UTF-8">
-    <title>Add Product</title>
-</head>
-<body>
+    <!DOCTYPE html>
+    <html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <link rel="stylesheet" th:href="@{/css/admin/addproduct.css}">
+        <meta charset="UTF-8">
+        <title>Add Product</title>
+    </head>
+    <body>
 
-<div class="admin-content">
-    <div class="form-card">
-        <h2>Add Product</h2>
+    <div class="admin-content">
+        <div class="form-card">
+            <h2>Add Product</h2>
 
-        <form th:action="@{/admin/products/add}"
-              method="post"
-              th:object="${product}"
-              enctype="multipart/form-data">
+            <form th:action="@{/admin/products/add}"
+                  method="post"
+                  th:object="${product}"
+                  enctype="multipart/form-data">
 
-            <!-- BASIC INFO -->
+                <!-- BASIC INFO -->
 
-            Name:
-            <input type="text" th:field="*{name}" required/><br>
+                Name:
+                <input type="text" th:field="*{name}" required/><br>
 
-            Description:
-            <textarea th:field="*{description}"></textarea><br>
+                Description:
+                <textarea th:field="*{description}"></textarea><br>
 
-            Price:
-            <input type="number" step="0.01" th:field="*{price}" required/><br>
+                Price:
+                <input type="number" step="0.01" th:field="*{price}" required/><br>
 
-            Category:
-            <select id="categorySelect" th:field="*{category.id}" required>
-                <option value="">-- Select Category --</option>
-                <option th:each="c : ${categories}"
-                        th:value="${c.id}"
-                        th:text="${c.name}">
-                </option>
-            </select>
-            <br>
+                Category:
+                <select id="categorySelect" th:field="*{category.id}" required>
+                    <option value="">-- Select Category --</option>
+                    <option th:each="c : ${categories}"
+                            th:value="${c.id}"
+                            th:text="${c.name}">
+                    </option>
+                </select>
+                <br>
 
-            Brand:
-            <select th:field="*{brand.id}" required>
-                <option value="">-- Select Brand --</option>
-                <option th:each="b : ${brands}"
-                        th:value="${b.id}"
-                        th:text="${b.name}">
-                </option>
-            </select>
-            <br><br>
+                Brand:
+                <select th:field="*{brand.id}" required>
+                    <option value="">-- Select Brand --</option>
+                    <option th:each="b : ${brands}"
+                            th:value="${b.id}"
+                            th:text="${b.name}">
+                    </option>
+                </select>
+                <br><br>
 
-            <!-- IMAGE -->
+                <!-- IMAGE -->
 
-            <label>Preview Image:</label><br>
-            <img id="previewImage"
-                 src="/images/no-image.png"
-                 width="150"
-                 style="border:1px solid #ccc; padding:5px;">
-            <br><br>
+                <label>Preview Image:</label><br>
+                <img id="previewImage"
+                     src="/images/no-image.png"
+                     width="150"
+                     style="border:1px solid #ccc; padding:5px;">
+                <br><br>
 
-            <label>Select Image:</label>
-            <input type="file"
-                   name="imageFile"
-                   id="imageInput"
-                   accept="image/*"
-                   required>
-            <br><br>
+                <label>Select Image:</label>
+                <input type="file"
+                       name="imageFile"
+                       id="imageInput"
+                       accept="image/*"
+                       required>
+                <br><br>
 
-            <!-- VARIANTS -->
+                <!-- VARIANTS -->
 
-            <h3>Product Variants</h3>
+                <h3>Product Variants</h3>
 
-            <div id="variantContainer">
+                <div id="variantContainer">
 
-                <!-- VARIANT 0 -->
-                <div class="variant-item">
-                    <hr>
+                    <!-- VARIANT 0 -->
+                    <div class="variant-item">
+                        <hr>
 
-                    Stock:
-                    <input type="number"
-                           name="variants[0].stock"
-                           required><br>
+                        Stock:
+                        <input type="number"
+                               name="variants[0].stock"
+                               required><br>
 
-                    Additional Price:
-                    <input type="number"
-                           step="0.01"
-                           name="variants[0].additionalPrice"
-                           required><br>
+                        Additional Price:
+                        <input type="number"
+                               step="0.01"
+                               name="variants[0].additionalPrice"
+                               required><br>
 
-                    <!-- NORMAL PRODUCT FIELDS -->
-                    <div class="normal-fields">
+                        <!-- NORMAL PRODUCT FIELDS -->
+                        <div class="normal-fields">
 
-                        Size:
-                        <select name="variants[0].size.id">
-                            <option th:each="s : ${sizes}"
-                                    th:value="${s.id}"
-                                    th:text="${s.name}">
-                            </option>
-                        </select><br>
+                            Size:
+                            <select name="variants[0].size.id">
+                                <option th:each="s : ${sizes}"
+                                        th:value="${s.id}"
+                                        th:text="${s.name}">
+                                </option>
+                            </select><br>
 
-                        Color:
-                        <select name="variants[0].color.id">
-                            <option th:each="c : ${colors}"
-                                    th:value="${c.id}"
-                                    th:text="${c.name}">
-                            </option>
-                        </select><br>
+                            Color:
+                            <select name="variants[0].color.id">
+                                <option th:each="c : ${colors}"
+                                        th:value="${c.id}"
+                                        th:text="${c.name}">
+                                </option>
+                            </select><br>
 
-                        Brand:
-                        <select name="variants[0].brand.id">
-                            <option th:each="b : ${brands}"
-                                    th:value="${b.id}"
-                                    th:text="${b.name}">
-                            </option>
-                        </select><br>
-                    </div>
+                            Brand:
+                            <select name="variants[0].brand.id">
+                                <option th:each="b : ${brands}"
+                                        th:value="${b.id}"
+                                        th:text="${b.name}">
+                                </option>
+                            </select><br>
+                        </div>
 
-                    <!-- RACKET DETAIL FIELDS -->
-                    <div class="racket-fields" style="display:none">
+                        <!-- RACKET DETAIL FIELDS -->
+                        <div class="racket-fields" style="display:none">
 
-                        Level:
-                        <select name="variants[0].racketDetail.level">
-                            <option value="">-- Select Level --</option>
-                            <option th:each="l : ${racketLevels}"
-                                    th:value="${l}"
-                                    th:text="${l}">
-                            </option>
-                        </select><br>
+                            Level:
+                            <select name="variants[0].racketDetail.level">
+                                <option value="">-- Select Level --</option>
+                                <option th:each="l : ${racketLevels}"
+                                        th:value="${l}"
+                                        th:text="${l}">
+                                </option>
+                            </select><br>
 
-                        Length:
-                        <select name="variants[0].racketDetail.length">
-                            <option value="">-- Select Length --</option>
-                            <option th:each="len : ${racketLengths}"
-                                    th:value="${len}"
-                                    th:text="${len}">
-                            </option>
-                        </select><br>
+                            Length:
+                            <select name="variants[0].racketDetail.length">
+                                <option value="">-- Select Length --</option>
+                                <option th:each="len : ${racketLengths}"
+                                        th:value="${len}"
+                                        th:text="${len}">
+                                </option>
+                            </select><br>
 
-                        Weight:
-                        <input type="text"
-                               name="variants[0].racketDetail.weight"><br>
+                            Weight:
+                            <input type="text"
+                                   name="variants[0].racketDetail.weight"><br>
 
-                        Technology:
-                        <input type="text"
-                               name="variants[0].racketDetail.technology"><br>
+                            Technology:
+                            <input type="text"
+                                   name="variants[0].racketDetail.technology"><br>
+                        </div>
+
                     </div>
 
                 </div>
 
-            </div>
+                <br>
+                <button type="button" onclick="addVariant()">+ Add Variant</button>
+                <br><br>
 
-            <br>
-            <button type="button" onclick="addVariant()">+ Add Variant</button>
-            <br><br>
+                <button type="submit">Save Product</button>
 
-            <button type="submit">Save Product</button>
-
-        </form>
+            </form>
+        </div>
     </div>
-</div>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
 
-        // IMAGE PREVIEW
-        document.getElementById("imageInput")
-            .addEventListener("change", function (event) {
+            // IMAGE PREVIEW
+            document.getElementById("imageInput")
+                .addEventListener("change", function (event) {
 
-                const file = event.target.files[0];
+                    const file = event.target.files[0];
 
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function (e) {
-                        document.getElementById("previewImage").src = e.target.result;
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            document.getElementById("previewImage").src = e.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
 
-        const categorySelect = document.getElementById("categorySelect");
-        let index = 1;
+            const categorySelect = document.getElementById("categorySelect");
+            let index = 1;
 
-        function toggleFields() {
+            function toggleFields() {
 
-            const selectedId = categorySelect.value;
+                const selectedId = categorySelect.value;
 
-            const isRacket = (selectedId === "3"); // đổi id nếu cần
+                const isRacket = (selectedId === "3"); // đổi id nếu cần
 
-            document.querySelectorAll(".variant-item").forEach(item => {
+                document.querySelectorAll(".variant-item").forEach(item => {
 
-                const normalFields = item.querySelector(".normal-fields");
-                const racketFields = item.querySelector(".racket-fields");
+                    const normalFields = item.querySelector(".normal-fields");
+                    const racketFields = item.querySelector(".racket-fields");
 
-                if (isRacket) {
-                    normalFields.style.display = "none";
-                    racketFields.style.display = "block";
-                } else {
-                    normalFields.style.display = "block";
-                    racketFields.style.display = "none";
-                }
-            });
-        }
+                    if (isRacket) {
+                        normalFields.style.display = "none";
+                        racketFields.style.display = "block";
+                    } else {
+                        normalFields.style.display = "block";
+                        racketFields.style.display = "none";
+                    }
+                });
+            }
 
-        window.addVariant = function () {
+            window.addVariant = function () {
 
-            const container = document.getElementById("variantContainer");
+                const container = document.getElementById("variantContainer");
 
-            const template = container.children[0].innerHTML;
-            const newHtml = template.replaceAll("[0]", "[" + index + "]");
+                const template = container.children[0].innerHTML;
+                const newHtml = template.replaceAll("[0]", "[" + index + "]");
 
-            const div = document.createElement("div");
-            div.className = "variant-item";
-            div.innerHTML = "<hr>" + newHtml;
+                const div = document.createElement("div");
+                div.className = "variant-item";
+                div.innerHTML = "<hr>" + newHtml;
 
-            container.appendChild(div);
+                container.appendChild(div);
 
-            index++;
+                index++;
+                toggleFields();
+            };
+
+            categorySelect.addEventListener("change", toggleFields);
             toggleFields();
-        };
 
-        categorySelect.addEventListener("change", toggleFields);
-        toggleFields();
+        });
+    </script>
 
-    });
-</script>
-
-</body>
-</html>
+    </body>
+    </html>

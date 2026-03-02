@@ -35,6 +35,7 @@ public class ProductVariant {
     @JoinColumn(name = "color_id")
     private Color color;
 
+
     @OneToOne(mappedBy = "variant", cascade = CascadeType.ALL)
     private RacketDetail racketDetail;
 }

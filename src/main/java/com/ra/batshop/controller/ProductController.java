@@ -236,6 +236,7 @@ public class ProductController {
             }
 
             // ===== UPDATE VARIANTS =====
+            // ===== UPDATE VARIANTS =====
             for (ProductVariant updated : product.getVariants()) {
 
                 ProductVariant dbVariant =
