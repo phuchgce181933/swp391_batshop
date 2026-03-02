@@ -4,50 +4,38 @@
     <meta charset="UTF-8">
     <title>BatShop Register</title>
     <link rel="stylesheet" th:href="@{/css/register.css}">
+    <style>
+        .error-message { color: #ff0000; font-size: 0.8rem; margin-bottom: 5px; font-weight: bold; }
+        .input-error { border: 1px solid #ff0000 !important; }
+    </style>
 </head>
 
 <body>
 
 <div class="container">
 
-    <!-- LEFT -->
     <div class="left-panel">
         <a href="/" class="home-btn">← Home</a>
-
         <div class="brand">
             <h1>BAT<span>SHOP</span>.</h1>
-            <p>
-                Join the BatShop community.<br>
-                Create your account today.
-            </p>
+            <p>Join the BatShop community.<br>Create your account today.</p>
         </div>
     </div>
 
-    <!-- RIGHT -->
     <div class="right-panel">
-
         <div class="card">
             <form th:action="@{/register}" th:object="${user}" method="post">
 
                 <label>Họ tên</label>
                 <input type="text" th:field="*{fullName}" required>
 
-                <!-- EMAIL -->
                 <label>Email</label>
+                <div class="error-message" th:if="${errorEmail}" th:text="${errorEmail}"></div>
+                <input type="email" th:field="*{email}" th:classappend="${errorEmail} ? 'input-error' : ''" required>
 
-                <div class="error-box"
-                     th:if="${errorEmail}"
-                     th:text="${errorEmail}">
-                </div>
-
-                <input type="email"
-                       th:field="*{email}"
-                       th:classappend="${errorEmail} ? 'input-error' : ''"
-                       required>
-
-                <!-- PHONE — không check trùng -->
                 <label>Số điện thoại</label>
-                <input type="text" th:field="*{phone}">
+                <div class="error-message" th:if="${errorPhone}" th:text="${errorPhone}"></div>
+                <input type="text" th:field="*{phone}" th:classappend="${errorPhone} ? 'input-error' : ''" required>
 
                 <label>Mật khẩu</label>
                 <input type="password" th:field="*{passwordHash}" required>
@@ -56,7 +44,6 @@
 
             </form>
         </div>
-
     </div>
 
 </div>
