@@ -20,7 +20,10 @@
         <td th:text="${u.email}"></td>
         <td th:text="${u.phone}"></td>
         <td>
-            <span class="badge" th:text="${u.role}"></span>
+            <span class="badge"
+                  th:class="'badge ' + (${u.role.name()} == 'ADMIN' ? 'badge-admin' : 'badge-user')"
+                  th:text="${u.role}">
+            </span>
         </td>
         <td th:text="${#temporals.format(u.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
     </tr>

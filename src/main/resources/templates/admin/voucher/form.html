@@ -1,61 +1,53 @@
-<!--<form th:action="@{/admin/vouchers/save}"-->
-<!--      th:object="${voucher}"-->
-<!--      method="post">-->
+<link rel="stylesheet" th:href="@{/css/admin/voucher.css}">
 
-<!--    &lt;!&ndash; ID &ndash;&gt;-->
-<!--    <input type="hidden"-->
-<!--           th:if="${voucher.id != null}"-->
-<!--           th:field="*{id}" />-->
+<div class="form-container">
+    <h2 th:text="${voucher.id != null} ? 'Edit Voucher' : 'Add Voucher'"></h2>
 
-<!--    <label>Code</label><br>-->
-<!--    <input type="text" th:field="*{code}" required /><br><br>-->
+    <form th:action="@{/admin/vouchers/save}"
+          th:object="${voucher}"
+          method="post">
 
-<!--    <label>Discount Percent</label><br>-->
-<!--    <input type="number" th:field="*{discountPercent}" min="1" max="100" /><br><br>-->
+        <input type="hidden"
+               th:if="${voucher.id != null}"
+               th:field="*{id}" />
 
-<!--    <label>Valid From</label><br>-->
-<!--    <input type="datetime-local"-->
-<!--           th:field="*{validFrom}" /><br><br>-->
+        <p th:if="${error}"
+           th:text="${error}"
+           class="error-message"></p>
 
-<!--    <label>Valid To</label><br>-->
-<!--    <input type="datetime-local"-->
-<!--           th:field="*{validTo}" /><br><br>-->
+        <div class="form-group">
+            <label>Code</label>
+            <input type="text" th:field="*{code}" required />
+        </div>
 
-<!--    <button type="submit">Save</button>-->
-<!--</form>-->
+        <div class="form-group">
+            <label>Discount Percent</label>
+            <input type="number"
+                   th:field="*{discountPercent}"
+                   min="1" max="100" required />
+        </div>
 
-<form th:action="@{/admin/vouchers/save}"
-      th:object="${voucher}"
-      method="post">
+        <div class="form-group">
+            <label>Valid From</label>
+            <input type="datetime-local"
+                   th:field="*{validFrom}"
+                   required />
+        </div>
 
-    <input type="hidden"
-           th:if="${voucher.id != null}"
-           th:field="*{id}" />
+        <div class="form-group">
+            <label>Valid To</label>
+            <input type="datetime-local"
+                   th:field="*{validTo}"
+                   required />
+        </div>
 
-    <p th:if="${error}"
-       th:text="${error}"
-       style="color:red; font-weight:bold;"></p>
+        <div class="button-group">
+            <button type="submit" class="btn-save">Save</button>
+            <a th:href="@{/admin/vouchers}" class="btn-back">Back</a>
+        </div>
 
-    <label>Code</label><br>
-    <input type="text" th:field="*{code}" required /><br><br>
-
-    <label>Discount Percent</label><br>
-    <input type="number"
-           th:field="*{discountPercent}"
-           min="1" max="100" required /><br><br>
-
-    <label>Valid From</label><br>
-    <input type="datetime-local"
-           th:field="*{validFrom}"
-           required /><br><br>
-
-    <label>Valid To</label><br>
-    <input type="datetime-local"
-           th:field="*{validTo}"
-           required /><br><br>
-
-    <button type="submit">Save</button>
-</form>
+    </form>
+</div>
 
 <script>
     const form = document.querySelector("form");
