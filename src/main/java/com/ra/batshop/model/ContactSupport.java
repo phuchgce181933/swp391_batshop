@@ -14,6 +14,8 @@ public class ContactSupport {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    private String name;
+    private String phone;
     private String email;
 
     @Column(columnDefinition = "TEXT")
@@ -21,6 +23,8 @@ public class ContactSupport {
 
     private LocalDateTime createdAt;
 
-    @ManyToOne
-    private User user;
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
 }

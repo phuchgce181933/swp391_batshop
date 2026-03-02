@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Chi Tiết Bài Viết - SmashSports</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
-    <link rel="stylesheet" th:href="@{/css/blog-detail.css}">
+    <link rel="stylesheet" th:href="@{/css/user/blog-detail.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
@@ -34,7 +34,7 @@
         <div class="article-meta">
             <span class="meta-item meta-date">
                 <i class="far fa-clock"></i>
-                <span th:text="${#temporals.format(blog.createdAt, 'dd-MM-yyyy HH:mm')}">16-01-2026 11:32</span>
+                <span th:text="${#temporals.format(blog.createdAt, 'dd-MM-yyyy HH:mm')}">12-12-2000 12:12</span>
             </span>
             <span class="meta-item meta-author">
                 <i class="fas fa-user"></i>
@@ -43,7 +43,7 @@
         </div>
 
         <p class="intro-text">
-            Bài viết được <a th:href="@{/home}" class="brand-link">BatShop- Hệ thống shop cầu lông</a> hàng đầu Việt Nam được kiểm duyệt và chia sẻ.
+            Bài viết được <a th:href="@{/home}" class="brand-link">BatShop - Hệ thống shop cầu lông</a> hàng đầu Việt Nam được kiểm duyệt và chia sẻ.
         </p>
 
         <div class="article-image-container">
