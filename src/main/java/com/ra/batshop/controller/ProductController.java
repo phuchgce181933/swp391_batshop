@@ -68,8 +68,6 @@ public class ProductController {
     @PostMapping("/add")
     public String save(@ModelAttribute Product product,
                        @RequestParam("imageFile") MultipartFile file,
-                       @RequestParam(value = "racketStock", required = false) Integer racketStock,
-                       @RequestParam(value = "racketAdditionalPrice", required = false) BigDecimal racketAdditionalPrice,
                        Model model) {
 
         if (file == null || file.isEmpty()) {
@@ -113,32 +111,43 @@ public class ProductController {
             image.setImage(fileName);
             product.addImage(image);
 
+            // ===== SET RELATION FOR VARIANTS =====
+            if (product.getVariants() != null) {
 
-            // ===== CHECK CATEGORY TO DECIDE SAVE TYPE ==========
+                for (ProductVariant variant : product.getVariants()) {
 
-            if (category.getName().equalsIgnoreCase("cầu lông")) {
+                    variant.setProduct(product);
 
-                // ===== SAVE RACKET DETAIL =====
-                RacketDetail detail = product.getRacketDetail();
-                detail.setProduct(product);
-                product.setRacketDetail(detail);
+                    // Nếu có racketDetail thì set quan hệ
+                    if (variant.getRacketDetail() != null) {
+                        variant.getRacketDetail().setVariant(variant);
+                    }
 
-                // ===== TẠO VARIANT CHỈ STOCK + PRICE =====
-                ProductVariant variant = new ProductVariant();
-                variant.setStock(racketStock);
-                variant.setAdditionalPrice(racketAdditionalPrice);
-                variant.setProduct(product);
+                    // set brand lại cho chắc
+                    if (variant.getBrand() != null) {
+                        variant.setBrand(
+                                brandRepository
+                                        .findById(variant.getBrand().getId())
+                                        .orElseThrow()
+                        );
+                    }
 
-                variant.setBrand(
-                        brandRepository
-                                .findById(product.getBrand().getId())
-                                .orElseThrow()
-                );
+                    if (variant.getSize() != null && variant.getSize().getId() != null) {
+                        variant.setSize(
+                                sizeRepository
+                                        .findById(variant.getSize().getId())
+                                        .orElse(null)
+                        );
+                    }
 
-                variant.setSize(null);
-                variant.setColor(null);
-
-                product.addVariant(variant);
+                    if (variant.getColor() != null && variant.getColor().getId() != null) {
+                        variant.setColor(
+                                colorRepository
+                                        .findById(variant.getColor().getId())
+                                        .orElse(null)
+                        );
+                    }
+                }
             }
 
             // ===== SAVE PRODUCT =====
