@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Chi Tiết Bài Viết - SmashSports</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/blog-detail.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+<div th:replace="layout/header :: header"></div>
+
+<div class="blog-detail-container">
+
+    <aside class="blog-sidebar">
+        <h3 class="sidebar-title">CÓ THỂ BẠN SẼ THÍCH</h3>
+        <div class="suggested-list">
+            <div class="suggested-item" th:each="sBlog : ${suggestedBlogs}">
+                <a th:href="@{/blog/{id}(id=${sBlog.id})}">
+                    <img th:src="@{'/uploads/product/' + ${sBlog.image}}" alt="Suggested Blog" class="suggested-img">
+                    <div class="suggested-info">
+                        <h4 class="suggested-title" th:text="${sBlog.title}">Tiêu đề</h4>
+                        <span class="suggested-date" th:text="${#temporals.format(sBlog.createdAt, 'dd-MM-yyyy HH:mm')}">Date</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <article class="blog-article">
+        <h1 class="article-title" th:text="${blog.title}">Tiêu đề bài viết full</h1>
+
+        <div class="article-meta">
+            <span class="meta-item meta-date">
+                <i class="far fa-clock"></i>
+                <span th:text="${#temporals.format(blog.createdAt, 'dd-MM-yyyy HH:mm')}">16-01-2026 11:32</span>
+            </span>
+            <span class="meta-item meta-author">
+                <i class="fas fa-user"></i>
+                <span>BatShop</span>
+            </span>
+        </div>
+
+        <p class="intro-text">
+            Bài viết được <a th:href="@{/home}" class="brand-link">BatShop- Hệ thống shop cầu lông</a> hàng đầu Việt Nam được kiểm duyệt và chia sẻ.
+        </p>
+
+        <div class="article-image-container">
+            <img th:src="@{'/uploads/product/' + ${blog.image}}" alt="Blog Detail Image" class="article-main-image">
+        </div>
+
+        <div class="article-content" th:utext="${blog.content}">
+            <p>Nội dung chi tiết bài viết sẽ được hiển thị đầy đủ ở đây...</p>
+        </div>
+    </article>
+</div>
+
+<div th:replace="layout/footer :: footer"></div>
+
+</body>
+</html>
