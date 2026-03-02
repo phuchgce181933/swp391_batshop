@@ -1,79 +1,50 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <header th:fragment="header">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" th:href="@{/css/header.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <div class="top-header">
         <div class="container">
             <div class="logo">
-                <a th:href="@{/home}">
-                    <img src="/images/logo.png" alt="Logo">
-                </a>
+                <img src="/images/logo.png" alt="Logo">
             </div>
 
             <div class="hotline">
-                <i class="fa-solid fa-headset"></i> HOTLINE:
-                <span>0909090909 | 0909090909</span>
+                HOTLINE: <span>0905087335</span> | <span>0905087335</span>
             </div>
 
             <div class="search-box">
                 <input type="text" placeholder="Tìm sản phẩm...">
-                <button type="submit">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                </button>
+                <button>🔍</button>
             </div>
 
             <div class="top-icons">
-                <div class="icon-item">
-                    <span class="icon-circle">
-                        <i class="fa-solid fa-binoculars"></i>
-                    </span>
-                    <small>TRA CỨU</small>
+                <div class="account-menu">
+                    <a th:href="@{/profile/edit}" class="user-action">
+                        <i class="fa-solid fa-circle-user"></i>
+                        <span>Tài khoản</span>
+                    </a>
+                    <div class="dropdown-content">
+                        <a th:href="@{/profile/edit}"><i class="fa-solid fa-user-pen"></i> Hồ sơ của tôi</a>
+                        <a th:href="@{/address/list}"><i class="fa-solid fa-location-dot"></i> Địa chỉ của tôi</a>
+                    </div>
                 </div>
-
-                <a th:href="@{/profile/edit}" class="icon-item">
-                    <span class="icon-circle">
-                        <i class="fa-solid fa-user"></i>
-                    </span>
-                    <small>TÀI KHOẢN</small>
-                </a>
-
-                <a th:href="@{/cart/list}" class="icon-item cart">
-                    <span class="icon-circle">
-                        <i class="fa-solid fa-cart-shopping"></i>
-                        <b class="badge">0</b>
-                    </span>
-                    <small>GIỎ HÀNG</small>
+                <a th:href="@{/cart/list}" class="cart-link">
+                    <i class="fa-solid fa-cart-shopping"></i> giỏ hàng
                 </a>
             </div>
         </div>
     </div>
 
-    <nav class="main-menu">
-        <div class="container-nav">
-            <a th:href="@{/home}">TRANG CHỦ</a>
-
-            <div class="dropdown">
-                <a th:href="@{/products}" class="dropbtn">
-                    SẢN PHẨM <i class="fa-solid fa-chevron-down" style="font-size: 10px; margin-left: 5px;"></i>
-                </a>
-                <div class="dropdown-content">
-                    <a th:each="cat : ${categories}"
-                       th:href="@{/products/category/{id}(id=${cat.id})}"
-                       th:text="${cat.name}">Tên danh mục</a>
-                </div>
-            </div>
-
-            <a th:href="@{/sale}">SALE OFF</a>
-            <a th:href="@{/blog}">TIN TỨC</a>
-            <a th:href="@{/about}">GIỚI THIỆU</a>
-            <a th:href="@{/contact}">LIÊN HỆ</a>
-
-            <a th:href="@{/logout}" class="logout-btn">
-                <i class="fa-solid fa-right-from-bracket"></i> ĐĂNG XUẤT
-            </a>
-        </div>
+    <nav class="main-nav">
+        <a th:href="@{/home}">Trang chủ</a>
+        <a th:href="@{/products}">Sản phẩm</a>
+        <a th:href="@{/sale}">Sale off</a>
+        <a th:href="@{/news}">Tin tức</a>
+        <a th:href="@{/about}">Giới thiệu</a>
+        <a th:href="@{/contact}">Liên hệ</a>
+        <a th:href="@{/logout}" class="logout-btn">Đăng xuất</a>
     </nav>
 </header>
 </html>
