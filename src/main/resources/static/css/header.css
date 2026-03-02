@@ -256,7 +256,6 @@
     display: flex !important;
     align-items: center;
     gap: 5px;
-    /* Căn giữa nút trong thanh nav */
     margin-top: auto;
     margin-bottom: auto;
 }
