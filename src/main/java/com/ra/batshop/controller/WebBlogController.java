@@ -41,7 +41,7 @@ public class WebBlogController {
         model.addAttribute("totalPages", blogPage.getTotalPages());
 
         // Thay đổi đường dẫn này tùy thuộc vào cách bạn setup layout cho trang user
-        return "user/blog";
+        return "user/blog/blog";
     }
 
     // --- Xử lý trang chi tiết bài viết ---
@@ -56,6 +56,6 @@ public class WebBlogController {
         model.addAttribute("blog", blog);
         model.addAttribute("suggestedBlogs", suggestedBlogs); // Đẩy ra View
 
-        return "user/blog-detail";
+        return "user/blog/blog-detail";
     }
 }
