@@ -3,6 +3,7 @@ package com.ra.batshop.controller;
 import com.ra.batshop.model.ContactSupport;
 import com.ra.batshop.model.Enum.ContactStatus;
 import com.ra.batshop.repository.ContactRepository;
+import com.ra.batshop.service.EmailService; // Import EmailService của bạn
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -10,6 +11,13 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.util.StringUtils;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.UUID;
 
 import java.util.List;
 
@@ -18,6 +26,10 @@ public class ContactController {
 
     @Autowired
     private ContactRepository contactRepository;
+
+    // Tiêm (Inject) EmailService vào Controller
+    @Autowired
+    private EmailService emailService;
 
     // ==========================================
     // KHU VỰC DÀNH CHO NGƯỜI DÙNG (USER)
@@ -41,7 +53,38 @@ public class ContactController {
         // Mặc định gán trạng thái Chưa đọc khi khách hàng vừa gửi form
         contactSupport.setStatus(ContactStatus.UNREAD);
 
-        // (Khu vực dự trữ): Logic xử lý lưu file vật lý sẽ được code ở đây
+        // ========================================================
+        // LOGIC XỬ LÝ UPLOAD FILE
+        // ========================================================
+        if (file != null && !file.isEmpty()) {
+            try {
+                // 1. Lấy tên file gốc
+                String originalFilename = StringUtils.cleanPath(file.getOriginalFilename());
+
+                // 2. Tạo tên file duy nhất (Dùng UUID để tránh trùng tên file khi 2 người tải lên cùng tên ảnh)
+                String uniqueFilename = UUID.randomUUID().toString() + "_" + originalFilename;
+
+                // 3. Đường dẫn lưu thư mục "uploads" ở thư mục gốc của project
+                Path uploadPath = Paths.get("uploads/");
+
+                // 4. Nếu thư mục chưa tồn tại thì tự động tạo mới
+                if (!Files.exists(uploadPath)) {
+                    Files.createDirectories(uploadPath);
+                }
+
+                // 5. Lưu file vào ổ cứng
+                Path filePath = uploadPath.resolve(uniqueFilename);
+                Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+                // 6. Lưu đường dẫn vào Database (Đường dẫn này khớp với WebConfig của bạn)
+                contactSupport.setAttachmentUrl("/uploads/" + uniqueFilename);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                // Nếu lưu file thất bại, bạn có thể báo lỗi hoặc vẫn cho phép gửi form nhưng không có file
+                System.out.println("Lỗi lưu file đính kèm: " + e.getMessage());
+            }
+        }
 
         contactRepository.save(contactSupport);
         return "redirect:/contact?success=true";
@@ -107,8 +150,9 @@ public class ContactController {
             // Nếu admin có nhập nội dung vào ô Email
             if (emailReply != null && !emailReply.trim().isEmpty()) {
 
-                // TODO: Gọi hàm JavaMailSender để gửi Email thực tế tại đây
-                // emailService.sendEmail(contact.getEmail(), "Phản hồi hỗ trợ từ BatShop", emailReply);
+                // GỌI HÀM GỬI EMAIL THỰC TẾ
+                String subject = "BatShop - Phản hồi yêu cầu hỗ trợ #" + contact.getId();
+                emailService.sendEmail(contact.getEmail(), subject, emailReply);
 
                 // Sau khi phản hồi email xong, tự động đánh dấu là Đã giải quyết
                 contact.setStatus(ContactStatus.RESOLVED);

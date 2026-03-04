@@ -34,16 +34,10 @@
                 <td th:text="${#temporals.format(c.createdAt,'dd/MM/yyyy HH:mm')}"></td>
 
                 <td>
-                    <form th:action="@{/admin/contacts/update-status/{id}(id=${c.id})}" method="post">
-                        <select name="status" onchange="this.form.submit()" class="status-select"
-                                th:style="${c.status?.name() == 'UNREAD' ? 'background:#fef2f2; border-color:#fca5a5; color:#ef4444;' : (c.status?.name() == 'PROCESSING' ? 'background:#fffbeb; border-color:#fcd34d; color:#f59e0b;' : 'background:#ecfdf5; border-color:#6ee7b7; color:#10b981;')}">
-                            <option th:each="s : ${T(com.ra.batshop.model.Enum.ContactStatus).values()}"
-                                    th:value="${s}"
-                                    th:text="${s.label}"
-                                    th:selected="${c.status?.name() == s.name()}">
-                            </option>
-                        </select>
-                    </form>
+    <span class="badge-status"
+          th:text="${c.status != null ? c.status.label : 'Chưa phân loại'}"
+          th:style="${c.status?.name() == 'UNREAD' ? 'background:#fef2f2; color:#ef4444;' : (c.status?.name() == 'PROCESSING' ? 'background:#fffbeb; color:#f59e0b;' : 'background:#ecfdf5; color:#10b981;')}">
+    </span>
                 </td>
 
                 <td>
