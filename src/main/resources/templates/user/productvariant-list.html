@@ -18,16 +18,16 @@
     <!-- GRID PRODUCTS -->
     <div class="product-grid">
 
-        <div th:each="v : ${productvariant}" class="product-card">
+        <div th:each="p : ${products}" class="product-card">
 
             <!-- IMAGE -->
-            <a th:href="@{/product/detail/{id}(id=${v.product.id})}" class="product-image">
+            <a th:href="@{/product/detail/{id}(id=${p.id})}" class="product-image">
 
-                <img th:if="${v.product != null and v.product.images != null and !v.product.images.isEmpty()}"
-                     th:src="@{/uploads/product/{img}(img=${v.product.images[0].image})}"
-                     th:alt="${v.product.name}">
+                <img th:if="${p.images != null and !p.images.isEmpty()}"
+                     th:src="@{/uploads/product/{img}(img=${p.images[0].image})}"
+                     th:alt="${p.name}">
 
-                <img th:if="${v.product == null or v.product.images == null or v.product.images.isEmpty()}"
+                <img th:if="${p.images == null or p.images.isEmpty()}"
                      th:src="@{/img/no-image.png}"
                      alt="No image available">
 
@@ -36,24 +36,18 @@
             <!-- INFO -->
             <div class="product-info">
 
-                <a th:href="@{/product/detail/{id}(id=${v.product.id})}"
+                <a th:href="@{/product/detail/{id}(id=${p.id})}"
                    style="text-decoration: none;">
-                    <h3 th:text="${v.product != null ? v.product.name : 'Đang cập nhật'}"></h3>
+                    <h3 th:text="${p.name}"></h3>
                 </a>
 
                 <div class="brand">
-                    <span th:text="${v.brand != null ? v.brand.name : 'No brand'}"></span>
-
-                    <span th:if="${v.size != null}"
-                          th:text="' - Size: ' + ${v.size.name}"></span>
-
-                    <span th:if="${v.color != null}"
-                          th:text="' - ' + ${v.color.name}"></span>
+                    <span th:text="${p.brand != null ? p.brand.name : 'No brand'}"></span>
                 </div>
 
                 <div class="price"
                      th:text="${#numbers.formatDecimal(
-                     (v.product.price + (v.additionalPrice != null ? v.additionalPrice : 0)),
+                     p.price,
                      0,'COMMA',0,'POINT')} + ' ₫'">
                 </div>
 
@@ -61,14 +55,10 @@
 
             <!-- ACTION -->
             <div class="product-actions">
-                <form th:action="@{/cart/add}" method="post">
-                    <input type="hidden" name="productVariantId" th:value="${v.id}">
-                    <input type="hidden" name="quantity" value="1">
-
-                    <button type="submit" class="btn-cart">
-                        <i class="fa-solid fa-cart-shopping"></i> Thêm Giỏ Hàng
-                    </button>
-                </form>
+                <a th:href="@{/product/detail/{id}(id=${p.id})}"
+                   class="btn-cart">
+                    Xem chi tiết
+                </a>
             </div>
 
         </div>

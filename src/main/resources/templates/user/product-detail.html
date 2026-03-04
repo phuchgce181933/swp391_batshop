@@ -70,9 +70,8 @@
                           th:text="' - ' + ${v.color.name}"></span>
 
                     -
-                    <b th:text="${#numbers.formatDecimal(
-                        product.price +
-                        (v.additionalPrice != null ? v.additionalPrice : 0),
+                   <b th:text="${#numbers.formatDecimal(
+                        v.additionalPrice != null ? v.additionalPrice : product.price,
                         0,'COMMA',0,'POINT')} + ' ₫'">
                     </b>
                 </span>
@@ -101,6 +100,61 @@
     <h3>Mô tả sản phẩm</h3>
     <p th:text="${product.description}"></p>
 </div>
+<hr>
+
+<div class="review-section">
+
+    <h3>Đánh giá sản phẩm</h3>
+
+    <!-- FORM LUÔN HIỂN THỊ -->
+    <form th:action="@{/product/review}" method="post">
+
+        <input type="hidden"
+               name="productId"
+               th:value="${product.id}">
+
+        <input type="text"
+               name="title"
+               placeholder="Tiêu đề"
+               required>
+
+        <textarea name="content"
+                  placeholder="Nội dung đánh giá"
+                  required></textarea>
+
+        <button type="submit">Gửi đánh giá</button>
+
+        <!-- Hiển thị thông báo nếu chưa login -->
+        <p style="color:red;"
+           th:if="${param.error != null}">
+            Bạn phải đăng nhập để gửi đánh giá.
+        </p>
+
+    </form>
+
+    <hr>
+
+    <!-- LIST REVIEW -->
+    <div th:each="r : ${reviews}">
+        <div th:if="${r.title != 'ADMIN_REPLY'}"
+             class="review-item">
+
+            <h4 th:text="${r.title}"></h4>
+
+            <p>
+                <b th:text="${r.user != null ? (r.user.fullName != null ? r.user.fullName : r.user.email) : 'Unknown'}"></b>
+                -
+                <span th:text="${r.createdAt}"></span>
+            </p>
+
+            <p th:text="${r.content}"></p>
+
+            <hr>
+
+        </div>
+    </div>
+
+</div>
 
 <div th:replace="layout/footer :: footer"></div>
 
@@ -115,6 +169,5 @@
         if (q.value > 1) q.value--;
     }
 </script>
-
 </body>
 </html>

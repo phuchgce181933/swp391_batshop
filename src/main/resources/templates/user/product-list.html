@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Tất cả sản phẩm</title>
+    <link rel="stylesheet" th:href="@{/css/homeproduct.css}">
+    <link rel="stylesheet" th:href="@{/css/user/product-list.css}">
+</head>
+<body>
+
+<div th:replace="layout/header :: header"></div>
+
+<section class="section-container">
+
+    <h2 class="section-title">Tất cả sản phẩm</h2>
+
+    <!-- FORM FILTER + SEARCH -->
+    <form method="get" th:action="@{/products}" class="filter-form">
+
+        <!-- SEARCH BOX -->
+        <div class="search-box">
+            <input type="text"
+                   name="keyword"
+                   placeholder="Tìm sản phẩm..."
+                   th:value="${keyword}">
+            <button type="submit">🔍</button>
+        </div>
+
+        <!-- CATEGORY -->
+        <select name="categoryId">
+            <option value="">-- Tất cả danh mục --</option>
+            <option th:each="c : ${categories}"
+                    th:value="${c.id}"
+                    th:text="${c.name}"
+                    th:selected="${selectedCategory == c.id}">
+            </option>
+        </select>
+
+        <!-- BRAND -->
+        <select name="brandId">
+            <option value="">-- Tất cả thương hiệu --</option>
+            <option th:each="b : ${brands}"
+                    th:value="${b.id}"
+                    th:text="${b.name}"
+                    th:selected="${selectedBrand == b.id}">
+            </option>
+        </select>
+
+        <!-- SORT -->
+        <select name="sort">
+            <option value="default">Sắp xếp mặc định</option>
+            <option value="priceAsc"
+                    th:selected="${selectedSort == 'priceAsc'}">
+                Giá tăng dần
+            </option>
+            <option value="priceDesc"
+                    th:selected="${selectedSort == 'priceDesc'}">
+                Giá giảm dần
+            </option>
+        </select>
+
+        <button type="submit">Lọc</button>
+
+    </form>
+
+    <!-- GRID -->
+    <div class="product-grid">
+
+        <div th:each="p : ${products}" class="product-card">
+
+            <a th:href="@{/product/detail/{id}(id=${p.id})}">
+
+                <img th:if="${p.images != null and !p.images.isEmpty()}"
+                     th:src="@{/uploads/product/{img}(img=${p.images[0].image})}"
+                     th:alt="${p.name}">
+
+                <img th:if="${p.images == null or p.images.isEmpty()}"
+                     src="/img/no-image.png">
+            </a>
+
+            <h3 th:text="${p.name}"></h3>
+
+            <p th:text="${p.brand != null ? p.brand.name : 'No brand'}"></p>
+
+            <div class="price"
+                 th:text="${#numbers.formatDecimal(
+                p.price,
+                0,'COMMA',0,'POINT')} + ' ₫'">
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- PAGINATION -->
+    <div class="pagination" th:if="${totalPages > 1}">
+
+        <a th:if="${currentPage > 0}"
+           th:href="@{/products(page=${currentPage-1}, categoryId=${selectedCategory}, brandId=${selectedBrand}, keyword=${keyword}, sort=${selectedSort})}">
+            ←
+        </a>
+
+        <span th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+            <a th:href="@{/products(page=${i}, categoryId=${selectedCategory}, brandId=${selectedBrand}, keyword=${keyword}, sort=${selectedSort})}"
+               th:text="${i+1}"
+               th:classappend="${i==currentPage} ? 'active'">
+            </a>
+        </span>
+
+        <a th:if="${currentPage < totalPages-1}"
+           th:href="@{/products(page=${currentPage+1}, categoryId=${selectedCategory}, brandId=${selectedBrand}, keyword=${keyword}, sort=${selectedSort})}">
+            →
+        </a>
+
+    </div>
+
+</section>
+
+<div th:replace="layout/footer :: footer"></div>
+
+</body>
+</html>
