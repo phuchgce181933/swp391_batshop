@@ -167,3 +167,11 @@
     color: #065f46; padding: 16px 20px; border-radius: 8px;
     margin-bottom: 24px; font-weight: 500;
 }
+.form-desc {
+    font-size: 13px;
+    color: #94a3b8; /* Chữ mờ đi (Màu xám nhạt) */
+    font-style: italic; /* Chữ in nghiêng */
+    margin-top: 4px;
+    margin-bottom: 12px;
+    display: block;
+}

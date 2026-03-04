@@ -53,14 +53,14 @@
             <form th:action="@{/admin/contacts/reply/{id}(id=${contact.id})}" method="post">
 
                 <div style="margin-bottom: 24px;">
-                    <label class="form-label">Ghi chú nội bộ:</label>
-                    <p class="form-desc">(Chỉ Admin thấy. Ghi chú lại kết quả cuộc gọi hoặc thông tin bảo hành.)</p>
-                    <textarea name="adminNote" rows="4" class="custom-textarea" placeholder="Ví dụ: Đã hẹn khách hàng mang vợt qua shop kiểm tra..." th:text="${contact.adminNote}"></textarea>
+                    <label class="form-label">Ghi chú:</label>
+                    <p class="form-desc">(Chỉ Admin thấy. Trạng thái tự động chuyển thành "Đang xử lý" nếu không soạn Email trả lời khách hàng)</p>
+                    <textarea name="adminNote" rows="4" class="custom-textarea" placeholder="Note:..." th:text="${contact.adminNote}"></textarea>
                 </div>
 
                 <div>
                     <label class="form-label">Soạn Email trả lời khách hàng:</label>
-                    <p class="form-desc">(Email sẽ được gửi trực tiếp đến hộp thư của khách hàng. Trạng thái tự động chuyển thành "Đã giải quyết".)</p>
+                    <p class="form-desc">(Email sẽ được gửi trực tiếp đến hộp thư email của khách hàng. Trạng thái tự động chuyển thành "Đã giải quyết".)</p>
                     <textarea name="emailReply" rows="7" class="custom-textarea" placeholder="Chào bạn, BatShop đã nhận được yêu cầu của bạn..."></textarea>
                 </div>
 

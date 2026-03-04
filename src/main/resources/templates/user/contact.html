@@ -47,11 +47,11 @@
                 <div style="flex: 1;">
                     <select th:field="*{topic}" class="form-control">
                         <option value="">-- Chọn chủ đề liên hệ --</option>
-                        <option value="Tư vấn chọn vợt">Tư vấn chọn vợt</option>
+                        <option value="Tư vấn chọn sản phẩm">Tư vấn chọn sản phẩm</option>
                         <option value="Hỏi đáp đơn hàng">Hỏi đáp đơn hàng</option>
                         <option value="Yêu cầu bảo hành/Đổi trả">Yêu cầu bảo hành/Đổi trả</option>
                         <option value="Góp ý khiếu nại">Góp ý khiếu nại</option>
-                        <option value="Khác">Khác</option>
+                        <option value="Khác...">Khác...</option>
                     </select>
                     <p class="error-text" th:if="${#fields.hasErrors('topic')}" th:errors="*{topic}"></p>
                 </div>
@@ -84,7 +84,7 @@
             <i class="fas fa-check-circle"></i>
         </div>
         <h3 class="popup-title">Thành công!</h3>
-        <p class="popup-message">Thông tin liên hệ đã được gửi đi thành công.</p>
+        <p class="popup-message">Thông tin liên hệ đã được gửi đi thành công. <br>Chúng tôi đã tiếp nhận yêu cầu và sẽ phản hồi đến bạn trong thời gian sớm nhất.</p>
         <div class="popup-actions">
             <a th:href="@{/home}" class="btn-home">Trang chủ</a>
             <a th:href="@{/contact}" class="btn-close">Tiếp tục</a>
