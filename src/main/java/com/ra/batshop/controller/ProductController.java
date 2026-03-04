@@ -168,6 +168,9 @@ public class ProductController {
         model.addAttribute("brands", brandRepository.findAll());
         model.addAttribute("sizes", sizeRepository.findAll());
         model.addAttribute("colors", colorRepository.findAll());
+        model.addAttribute("racketCategoryId", 3);
+        model.addAttribute("racketLevels", RacketLevel.values());
+        model.addAttribute("racketLengths", RacketLength.values());
         model.addAttribute("content", "admin/product/edit");
         return "admin/layout";
     }
@@ -236,7 +239,6 @@ public class ProductController {
             }
 
             // ===== UPDATE VARIANTS =====
-            // ===== UPDATE VARIANTS =====
             for (ProductVariant updated : product.getVariants()) {
 
                 ProductVariant dbVariant =
@@ -249,17 +251,21 @@ public class ProductController {
                 dbVariant.setStock(updated.getStock());
                 dbVariant.setAdditionalPrice(updated.getAdditionalPrice());
 
-                dbVariant.setSize(
-                        sizeRepository
-                                .findById(updated.getSize().getId())
-                                .orElseThrow()
-                );
+                //Nếu KHÔNG phải RACKET (id != 3) thì mới set size + color
+                if (!existing.getCategory().getId().equals(3)) {
 
-                dbVariant.setColor(
-                        colorRepository
-                                .findById(updated.getColor().getId())
-                                .orElseThrow()
-                );
+                    dbVariant.setSize(
+                            sizeRepository
+                                    .findById(updated.getSize().getId())
+                                    .orElseThrow()
+                    );
+
+                    dbVariant.setColor(
+                            colorRepository
+                                    .findById(updated.getColor().getId())
+                                    .orElseThrow()
+                    );
+                }
 
                 dbVariant.setBrand(
                         brandRepository
@@ -282,5 +288,39 @@ public class ProductController {
     public String delete(@PathVariable Integer id) {
         productRepository.deleteById(id);
         return "redirect:/admin/products";
+    }
+    // variant trong sản phẩm
+    @GetMapping("/{id}/variants")
+    public String viewVariants(@PathVariable Integer id, Model model) {
+
+        Product product = productRepository.findById(id).orElseThrow();
+
+        boolean hasSize = product.getVariants()
+                .stream()
+                .anyMatch(v -> v.getSize() != null);
+
+        boolean hasColor = product.getVariants()
+                .stream()
+                .anyMatch(v -> v.getColor() != null);
+
+        boolean hasRacketLevel = product.getVariants()
+                .stream()
+                .anyMatch(v -> v.getRacketDetail() != null && v.getRacketDetail().getLevel() != null);
+
+        boolean hasRacketLength = product.getVariants()
+                .stream()
+                .anyMatch(v -> v.getRacketDetail() != null && v.getRacketDetail().getLength() != null);
+
+        model.addAttribute("product", product);
+        model.addAttribute("variants", product.getVariants());
+
+        model.addAttribute("hasSize", hasSize);
+        model.addAttribute("hasColor", hasColor);
+        model.addAttribute("hasRacketLevel", hasRacketLevel);
+        model.addAttribute("hasRacketLength", hasRacketLength);
+
+        model.addAttribute("content", "admin/product/variant-list");
+
+        return "admin/layout";
     }
 }

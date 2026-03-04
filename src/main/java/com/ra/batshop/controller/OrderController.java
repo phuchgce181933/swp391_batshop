@@ -25,18 +25,21 @@ public class OrderController {
     private UserAddressRepository userAddressRepository;
     private final OrderRepository orderRepository;
     private OrderItemRepository orderItemRepository;
+    private final AddressRepository addressRepository;
     private final ProductVariantRepository productVariantRepository;
     public OrderController(OrderRepository orderRepository,
                            OrderItemRepository orderItemRepository,
                            UserAddressRepository userAddressRepository,
                            CartItemRepository cartItemRepository,
-                           ProductVariantRepository productVariantRepository) {
+                           ProductVariantRepository productVariantRepository,
+                           AddressRepository addressRepository) {
 
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
         this.userAddressRepository = userAddressRepository;
         this.cartItemRepository = cartItemRepository;
         this.productVariantRepository = productVariantRepository;
+        this.addressRepository = addressRepository;
     }
 
     // LIST
@@ -88,7 +91,7 @@ public class OrderController {
         }
     }
     @PostMapping("/confirm")
-    public String confirmCheckout(@RequestParam Integer addressId,
+    public String confirmCheckout(@RequestParam Long addressId,
                                   @RequestParam String paymentMethod,
                                   HttpSession session,
                                   HttpServletRequest request,
@@ -100,8 +103,8 @@ public class OrderController {
         List<CartItem> cartItems = cartItemRepository.findByUserId(user.getId());
         if (cartItems.isEmpty()) return "redirect:/cart/list";
 
-        UserAddress address = userAddressRepository.findById(addressId).orElseThrow();
-
+       // UserAddress address = userAddressRepository.findById(addressId).orElseThrow();
+        Address address = addressRepository.findById(Long.valueOf(addressId)).orElseThrow();
         Double total = cartItemRepository.calculateTotalByUserId(user.getId()) + 30000d;
 
         // TẠO ORDER
@@ -219,10 +222,40 @@ public class OrderController {
     }
     @PostMapping("/edit/{id}")
     public String editOrder(@PathVariable Integer id,
-                            @RequestParam OrderStatus status) {
+                            @RequestParam OrderStatus status,
+                            RedirectAttributes redirectAttributes) {
         Order order = orderRepository.findById(id).orElseThrow();
+        //  éo cho sửa if can
+        if (order.getStatus() == OrderStatus.CANCELLED) {
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "Đơn hàng đã bị huỷ, không thể chỉnh sửa.");
+            return "redirect:/admin/orders";
+        }
+        // if chuyển sang can hoàn stock
+        if (status == OrderStatus.CANCELLED) {
+
+            // chỉ cho nếu chưa can
+            if (order.getStatus() != OrderStatus.CANCELLED) {
+                restoreStock(order);
+            }
+        }
         order.setStatus(status);
         orderRepository.save(order);
         return "redirect:/admin/orders";
+    }
+    private void restoreStock(Order order) {
+
+        List<OrderItem> items =
+                orderItemRepository.findByOrderId(order.getId());
+
+        for (OrderItem item : items) {
+
+            ProductVariant variant = item.getProductVariant();
+
+            int newStock = variant.getStock() + item.getQuantity();
+
+            variant.setStock(newStock);
+            productVariantRepository.save(variant);
+        }
     }
 }

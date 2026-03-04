@@ -1,0 +1,65 @@
+.order-container {
+    font-family: Arial, sans-serif;
+    background-color: #f5f6fa;
+    padding: 40px;
+    min-height: 100vh;
+}
+h2 {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+th {
+    background-color: #2f3640;
+    color: white;
+    padding: 12px;
+    text-align: center;
+}
+
+td {
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+}
+
+tr:hover {
+    background-color: #f1f2f6;
+}
+
+.status {
+    padding: 5px 10px;
+    border-radius: 20px;
+    color: white;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.PENDING { background-color: orange; }
+.CONFIRMED { background-color: #3498db; }
+.PACKED { background-color: #8e44ad; }
+.SHIPPING { background-color: #f39c12; }
+.COMPLETED { background-color: #27ae60; }
+.CANCELLED { background-color: red; }
+
+.track-btn {
+    padding: 6px 12px;
+    background-color: #0984e3;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+.track-btn:hover {
+    background-color: #0652DD;
+}

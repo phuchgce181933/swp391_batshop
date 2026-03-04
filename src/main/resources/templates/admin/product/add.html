@@ -181,20 +181,30 @@
             function toggleFields() {
 
                 const selectedId = categorySelect.value;
-
-                const isRacket = (selectedId === "3"); // đổi id nếu cần
+                const isRacket = (selectedId === "3");
 
                 document.querySelectorAll(".variant-item").forEach(item => {
 
                     const normalFields = item.querySelector(".normal-fields");
                     const racketFields = item.querySelector(".racket-fields");
 
+                    const sizeSelect = normalFields.querySelector("select[name*='size']");
+                    const colorSelect = normalFields.querySelector("select[name*='color']");
+
                     if (isRacket) {
                         normalFields.style.display = "none";
                         racketFields.style.display = "block";
+
+                        // 🔥 QUAN TRỌNG
+                        sizeSelect.disabled = true;
+                        colorSelect.disabled = true;
+
                     } else {
                         normalFields.style.display = "block";
                         racketFields.style.display = "none";
+
+                        sizeSelect.disabled = false;
+                        colorSelect.disabled = false;
                     }
                 });
             }

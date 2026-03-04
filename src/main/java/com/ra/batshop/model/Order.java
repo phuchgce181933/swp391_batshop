@@ -27,6 +27,7 @@ public class Order {
     //private String vnpTxnRef;
     //private LocalDateTime paidAt;
     @Enumerated(EnumType.STRING)
+    @Column(length = 20)
     private OrderStatus status;
 
     private LocalDateTime createdAt;
@@ -37,7 +38,11 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems;
 
+//    @ManyToOne
+//    private UserAddress shippingAddress;
+
     @ManyToOne
-    private UserAddress shippingAddress;
+    @JoinColumn(name = "address_id")
+    private Address shippingAddress;
 }
 

@@ -34,9 +34,14 @@
                     <div th:if="${o.shippingAddress != null}">
                         <strong th:text="${o.shippingAddress.fullName}"></strong><br>
                         <span th:text="${o.shippingAddress.phone}"></span><br>
-                        <span th:text="${o.shippingAddress.addressLine}"></span><br>
-                        <span th:text="${o.shippingAddress.district + ', ' + o.shippingAddress.city}"></span>
+
+                        <span th:text="${o.shippingAddress.detail}"></span><br>
+                        <span th:text="${o.shippingAddress.ward + ', '
+                        + o.shippingAddress.district + ', '
+                        + o.shippingAddress.city}">
+        </span>
                     </div>
+
                     <span th:if="${o.shippingAddress == null}">
         No address
     </span>
@@ -49,9 +54,18 @@
                 <td th:text="${o.paymentStatus}"></td>
 
                 <td th:text="${#temporals.format(o.createdAt,'dd/MM/yyyy HH:mm')}"></td>
-
                 <td>
-                    <form th:action="@{/admin/orders/edit/{id}(id=${o.id})}" method="post">
+                    <a th:href="@{/orders_item/admin/{id}(id=${o.id})}">View</a>
+                </td>
+                <td>
+                    <div th:if="${o.status.name() == 'CANCELLED'}">
+                        <span style="color:red;font-weight:600;">CANCELLED</span>
+                    </div>
+
+                    <form th:if="${o.status.name() != 'CANCELLED'}"
+                          th:action="@{/admin/orders/edit/{id}(id=${o.id})}"
+                          method="post">
+
                         <select name="status" onchange="this.form.submit()">
                             <option th:each="s : ${T(com.ra.batshop.model.Enum.OrderStatus).values()}"
                                     th:value="${s}"
@@ -61,11 +75,6 @@
                         </select>
                     </form>
                 </td>
-
-                <td>
-                    <a th:href="@{/orders_item/admin/{id}(id=${o.id})}">View</a>
-                </td>
-
             </tr>
             </tbody>
         </table>

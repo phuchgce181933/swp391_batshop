@@ -1,0 +1,86 @@
+/* ===== Page Title ===== */
+h2 {
+    margin-bottom: 10px;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+p {
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+
+/* ===== Table Style ===== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #ffffff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Header */
+thead {
+    background-color: #1e293b;
+    color: white;
+}
+
+th {
+    padding: 12px 15px;
+    text-align: center;
+    font-weight: 500;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+/* Body */
+td {
+    padding: 12px 15px;
+    text-align: center;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 14px;
+}
+
+/* Zebra row */
+tbody tr:nth-child(even) {
+    background-color: #f8fafc;
+}
+
+/* Hover */
+tbody tr:hover {
+    background-color: #e0f2fe;
+    transition: 0.2s;
+}
+
+/* ===== Price Column (Fix lệch giá) ===== */
+.price-col {
+    text-align: right;
+    min-width: 120px;
+    font-weight: 600;
+    color: white;
+}
+
+/* Fix width một số cột nhỏ */
+th:first-child,
+td:first-child {
+    width: 60px;
+}
+
+th:nth-child(2),
+td:nth-child(2) {
+    width: 80px;
+}
+
+/* Back button */
+a {
+    display: inline-block;
+    margin-top: 15px;
+    text-decoration: none;
+    color: #2563eb;
+    font-weight: 500;
+}
+
+a:hover {
+    text-decoration: underline;
+}
