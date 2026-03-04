@@ -3,7 +3,7 @@ package com.ra.batshop.controller;
 import com.ra.batshop.model.Banner;
 import com.ra.batshop.model.ProductVariant;
 import com.ra.batshop.repository.*;
-
+import com.ra.batshop.model.Product;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -50,7 +50,13 @@ public class HomeController {
                     .findByProduct_StatusTrue();
         }
 
-        model.addAttribute("productvariant", variants);
+        // ===== CHỈ LẤY PRODUCT KHÔNG TRÙNG =====
+        List<Product> products = variants.stream()
+                .map(ProductVariant::getProduct)
+                .distinct()
+                .toList();
+
+        model.addAttribute("products", products);
         model.addAttribute("categories", categoryRepository.findAll());
         model.addAttribute("selectedCategory", categoryId);
         model.addAttribute("banners", bannerRepository.findAllByStatusTrue());

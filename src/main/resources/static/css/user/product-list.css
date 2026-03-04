@@ -1,0 +1,39 @@
+.product-grid {
+    display: grid;
+    gap: 20px;
+}
+
+@media (min-width: 1200px) {
+    .product-grid { grid-template-columns: repeat(5, 1fr); }
+}
+
+@media (max-width: 1199px) {
+    .product-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+@media (max-width: 992px) {
+    .product-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 768px) {
+    .product-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 480px) {
+    .product-grid { grid-template-columns: repeat(1, 1fr); }
+}
+/* Card */
+.product-card {
+    border: 1px solid #eee;
+    padding: 15px;
+    background: #fff;
+    text-align: center;
+}
+
+/* Image wrapper */
+.product-card img {
+    width: 100%;
+    height: 250px;       /* fix chiều cao */
+    object-fit: cover;   /* cắt ảnh vừa khung */
+    border-radius: 6px;
+}

@@ -1,0 +1,30 @@
+<h2>Quản lý Review</h2>
+
+<div th:each="r : ${reviews}"
+     th:if="${r.title != 'ADMIN_REPLY'}"
+     style="margin-bottom:20px; border-bottom:1px solid #ccc; padding:10px;">
+
+    <p>
+        <b th:text="${r.user != null ? r.user.fullName : 'Unknown'}"></b>
+    </p>
+
+    <p>
+        <b th:text="${r.title}"></b>
+    </p>
+
+    <p th:text="${r.content}"></p>
+
+    <form th:action="@{/admin/reviews/reply}" method="post">
+        <input type="hidden"
+               name="reviewId"
+               th:value="${r.id}">
+
+        <textarea name="content"
+                  placeholder="Trả lời..."
+                  required></textarea>
+
+        <br>
+        <button type="submit">Trả lời</button>
+    </form>
+
+</div>
