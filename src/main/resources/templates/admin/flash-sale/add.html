@@ -4,10 +4,15 @@
   <div class="container-fluid">
     <div class="fs-admin-header mt-3">
       <h2 class="fs-admin-title">Thêm Flash Sale Mới</h2>
-      <a th:href="@{/admin/flash-sales}" class="fs-btn fs-btn-secondary"><i class="fas fa-arrow-left"></i> Quay lại</a>
+      <a th:href="@{/admin/flash-sales}" class="fs-btn fs-btn-secondary"><i class="fas fa-arrow-left"></i>&larr; Quay lại danh sách</a>
     </div>
 
     <div class="fs-admin-card">
+
+      <div th:if="${errorMessage}" class="alert alert-danger" style="background-color: #f8d7da; color: #721c24; padding: 12px; border-radius: 6px; border: 1px solid #f5c6cb; font-weight: 500; margin-bottom: 20px;">
+        <i class="fas fa-exclamation-triangle"></i> <span th:text="${errorMessage}"></span>
+      </div>
+
       <form id="flashSaleForm" th:action="@{/admin/flash-sales/add}" th:object="${flashSale}" method="POST">
 
         <div class="fs-form-group mb-3">
@@ -16,13 +21,20 @@
         </div>
 
         <div class="fs-form-group mb-3">
-          <label class="fs-form-label">Thời gian bắt đầu</label>
-          <input type="datetime-local" class="fs-form-control" th:field="*{startDate}" required>
+          <label class="fs-form-label">Ngày diễn ra Sale</label>
+          <input type="date" class="fs-form-control" name="saleDate" id="saleDate" required>
         </div>
 
-        <div class="fs-form-group mb-4">
-          <label class="fs-form-label">Thời gian kết thúc</label>
-          <input type="datetime-local" class="fs-form-control" th:field="*{endDate}" required>
+        <div class="row">
+          <div class="col-md-6 fs-form-group mb-3">
+            <label class="fs-form-label">Giờ bắt đầu</label>
+            <input type="time" class="fs-form-control" name="startTime" id="startTime" required>
+          </div>
+
+          <div class="col-md-6 fs-form-group mb-4">
+            <label class="fs-form-label">Giờ kết thúc</label>
+            <input type="time" class="fs-form-control" name="endTime" id="endTime" required>
+          </div>
         </div>
 
         <div class="d-flex gap-2">
@@ -36,33 +48,15 @@
   <script>
     document.addEventListener("DOMContentLoaded", function () {
         const form = document.getElementById("flashSaleForm");
-        const startDateInput = document.getElementById("startDate");
-        const endDateInput = document.getElementById("endDate");
+        form.addEventListener("submit", function (event) {
+            const startTime = document.getElementById("startTime").value;
+            const endTime = document.getElementById("endTime").value;
 
-        if (form && startDateInput && endDateInput) {
-            // Kiểm tra khi submit form
-            form.addEventListener("submit", function (event) {
-                const startDate = new Date(startDateInput.value);
-                const endDate = new Date(endDateInput.value);
-
-                if (endDate <= startDate) {
-                    event.preventDefault(); // Ngăn không cho form submit về server
-                    alert("Lỗi: Thời gian kết thúc phải sau thời gian bắt đầu!");
-                    endDateInput.focus();
-                }
-            });
-
-            // Cảnh báo ngay khi Admin vừa chọn xong ngày kết thúc sai
-            endDateInput.addEventListener("change", function () {
-                const start = new Date(startDateInput.value);
-                const end = new Date(this.value);
-
-                if (startDateInput.value && end <= start) {
-                    alert("Thời gian kết thúc không hợp lệ (phải lớn hơn thời gian bắt đầu). Vui lòng chọn lại!");
-                    this.value = ""; // Xóa ngày sai đi để Admin chọn lại
-                }
-            });
-        }
+            if (startTime && endTime && startTime >= endTime) {
+                event.preventDefault();
+                alert("Lỗi: Giờ kết thúc phải lớn hơn giờ bắt đầu!");
+            }
+        });
     });
   </script>
 </div>
