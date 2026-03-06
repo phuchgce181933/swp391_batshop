@@ -1,0 +1,221 @@
+/* ====================================================
+   ADMIN FLASH SALE - CUSTOM STYLES
+   (Dùng chung cho list.html, add.html, edit.html)
+   ==================================================== */
+
+/* ================= 1. HEADER & LAYOUT BẢN ================= */
+.fs-admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #f0f2f5;
+}
+
+.fs-admin-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin: 0;
+}
+
+/* Card chứa nội dung (Dùng cho form add, thông tin edit, bảng dữ liệu) */
+.fs-admin-card {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    border: 1px solid #eef0f2;
+    padding: 25px;
+    margin-bottom: 25px;
+}
+
+.fs-admin-card h2, .fs-admin-card h4 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #34495e;
+    margin-bottom: 20px;
+    border-left: 4px solid #f15a22; /* Màu cam VNB cho đồng bộ */
+    padding-left: 10px;
+}
+
+/* ================= 2. FORM STYLES (Add & Edit) ================= */
+.fs-form-group {
+    margin-bottom: 1.2rem;
+}
+
+.fs-form-label {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    display: inline-block;
+}
+
+/* Làm đẹp các ô input nhập liệu */
+.fs-form-control {
+    display: block;
+    width: 100%;
+    padding: 10px 15px;
+    font-size: 0.95rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #212529;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 2px solid #e0e0e0;
+    appearance: none;
+    border-radius: 6px;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.fs-form-control:focus {
+    color: #212529;
+    background-color: #fff;
+    border-color: #f15a22;
+    outline: 0;
+    box-shadow: 0 0 5px rgba(241, 90, 34, 0.2);
+}
+
+/* ================= 3. BẢNG DỮ LIỆU (List & Edit) ================= */
+.fs-table-wrapper {
+    overflow-x: auto; /* Bảng có thể cuộn ngang nếu màn hình quá nhỏ */
+}
+
+.fs-table {
+    width: 100%;
+    margin-bottom: 0;
+    border-collapse: collapse;
+}
+
+.fs-table thead th {
+    background-color: #34495e;
+    color: #ffffff;
+    font-weight: 600;
+    text-align: center;
+    vertical-align: middle;
+    border: 1px solid #2c3e50;
+    padding: 15px 12px;
+    white-space: nowrap;
+}
+
+.fs-table tbody td {
+    vertical-align: middle;
+    text-align: center;
+    padding: 15px 12px;
+    border: 1px solid #f0f2f5;
+    background-color: #fff;
+    transition: background-color 0.2s;
+}
+
+/* Hiệu ứng highlight khi rê chuột vào hàng của bảng */
+.fs-table tbody tr:hover td {
+    background-color: #f8f9fa;
+}
+
+/* Cột giá đặc biệt */
+.fs-price-original {
+    color: #7f8c8d;
+    text-decoration: line-through;
+    font-size: 0.95rem;
+}
+
+.fs-price-sale {
+    color: #e74c3c;
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+/* Căn chỉnh các nút hành động trong bảng (Sửa / Xóa) ngang nhau */
+.fs-action-btns {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+/* ================= 4. KHU VỰC THÊM SẢN PHẨM (Edit) ================= */
+.fs-select-wrapper {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+    margin-bottom: 20px;
+}
+
+.fs-select-wrapper select {
+    flex-grow: 1;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 10px 15px;
+    font-size: 0.95rem;
+    transition: border-color 0.3s ease;
+}
+
+.fs-select-wrapper select:focus {
+    border-color: #f15a22;
+    outline: none;
+    box-shadow: 0 0 5px rgba(241, 90, 34, 0.2);
+}
+
+.btn-add-product {
+    padding: 10px 20px;
+    font-weight: 600;
+    border-radius: 6px;
+    white-space: nowrap;
+    background-color: #2ecc71;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-add-product:hover {
+    background-color: #27ae60;
+}
+
+/* ================= 5. NÚT BẤM (BUTTONS) ================= */
+.fs-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 20px;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    text-decoration: none;
+}
+
+.fs-btn-primary { background-color: #f15a22; color: #fff; }
+.fs-btn-primary:hover { background-color: #d14818; color: #fff; }
+
+.fs-btn-secondary { background-color: #95a5a6; color: #fff; }
+.fs-btn-secondary:hover { background-color: #7f8c8d; color: #fff; }
+
+.fs-btn-sm {
+    padding: 6px 12px;
+    font-size: 0.875rem;
+    border-radius: 4px;
+}
+
+/* ================= 6. RESPONSIVE ================= */
+@media (max-width: 768px) {
+    .fs-select-wrapper {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .btn-add-product {
+        width: 100%;
+    }
+
+    .fs-admin-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+}

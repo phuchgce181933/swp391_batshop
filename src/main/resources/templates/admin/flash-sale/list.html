@@ -1,0 +1,45 @@
+<div th:fragment="content">
+    <link rel="stylesheet" th:href="@{/css/admin/flash-sale.css}">
+
+    <div class="container-fluid">
+        <div class="fs-admin-header mt-3">
+            <h2 class="fs-admin-title">Quản lý Flash Sale</h2>
+            <a th:href="@{/admin/flash-sales/add}" class="fs-btn fs-btn-primary"><i class="fas fa-plus"></i> Thêm Flash Sale Mới</a>
+        </div>
+
+        <div class="fs-admin-card fs-table-wrapper">
+            <table class="fs-table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>% Giảm Giá</th>
+                    <th>Thời gian bắt đầu</th>
+                    <th>Thời gian kết thúc</th>
+                    <th>Hành động</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="fs : ${flashSales}">
+                    <td th:text="${fs.id}" class="fw-bold"></td>
+                    <td th:text="${fs.discountPercent} + '%'" class="text-danger fw-bold"></td>
+                    <td th:text="${#temporals.format(fs.startDate, 'dd/MM/yyyy HH:mm')}"></td>
+                    <td th:text="${#temporals.format(fs.endDate, 'dd/MM/yyyy HH:mm')}"></td>
+                    <td>
+                        <div class="fs-action-btns">
+                            <a th:href="@{/admin/flash-sales/edit/{id}(id=${fs.id})}" class="fs-btn fs-btn-sm" style="background-color: #f39c12; color: white;">
+                                <i class="fas fa-edit"></i> Sửa
+                            </a>
+                            <a th:href="@{/admin/flash-sales/delete/{id}(id=${fs.id})}" class="fs-btn fs-btn-sm" style="background-color: #e74c3c; color: white;" onclick="return confirm('Bạn có chắc chắn muốn xóa Flash Sale này không?');">
+                                <i class="fas fa-trash"></i> Xóa
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                <tr th:if="${flashSales.isEmpty()}">
+                    <td colspan="5" class="text-center py-4 text-muted">Chưa có chương trình Flash Sale nào.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
