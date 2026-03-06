@@ -6,6 +6,7 @@ import com.ra.batshop.repository.ContactRepository;
 import com.ra.batshop.service.EmailService; // Import EmailService của bạn
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -99,8 +100,7 @@ public class ContactController {
     @GetMapping("/admin/contacts")
     public String listContacts(Model model) {
         // Lấy toàn bộ danh sách liên hệ từ Database
-        List<ContactSupport> contacts = contactRepository.findAll();
-
+        List<ContactSupport> contacts = contactRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
         model.addAttribute("contacts", contacts);
 
         // Truyền đường dẫn file HTML mảnh ghép của list contact

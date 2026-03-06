@@ -1,7 +1,6 @@
 package com.ra.batshop.controller;
 
 import com.ra.batshop.model.*;
-//import com.ra.batshop.repository.BrandRepository;
 import com.ra.batshop.model.Enum.*;
 import com.ra.batshop.repository.*;
 import org.springframework.stereotype.Controller;
@@ -25,17 +24,24 @@ public class ProductController {
     private final BrandRepository brandRepository;
     private final SizeRepository sizeRepository;
     private final ColorRepository colorRepository;
+
+    // 1. KHAI BÁO THÊM REPOSITORY CỦA FLASH SALE
+    private final FlashSaleProductRepository flashSaleProductRepository;
+
+    // 2. INJECT VÀO CONSTRUCTOR
     public ProductController(ProductRepository productRepository,
-                                  CategoryRepository categoryRepository,
-                                  BrandRepository brandRepository,
+                             CategoryRepository categoryRepository,
+                             BrandRepository brandRepository,
                              SizeRepository sizeRepository,
-                             ColorRepository colorRepository) {
+                             ColorRepository colorRepository,
+                             FlashSaleProductRepository flashSaleProductRepository) {
 
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.brandRepository = brandRepository;
         this.sizeRepository = sizeRepository;
         this.colorRepository = colorRepository;
+        this.flashSaleProductRepository = flashSaleProductRepository;
     }
 
     // LIST
@@ -185,6 +191,9 @@ public class ProductController {
             Product existing =
                     productRepository.findById(product.getId()).orElseThrow();
 
+            // 3. KIỂM TRA XEM GIÁ CÓ BỊ THAY ĐỔI KHÔNG
+            boolean isPriceChanged = existing.getPrice().compareTo(product.getPrice()) != 0;
+
             // ===== UPDATE BASIC INFO =====
             existing.setName(product.getName());
             existing.setDescription(product.getDescription());
@@ -251,7 +260,7 @@ public class ProductController {
                 dbVariant.setStock(updated.getStock());
                 dbVariant.setAdditionalPrice(updated.getAdditionalPrice());
 
-                //Nếu KHÔNG phải RACKET (id != 3) thì mới set size + color
+                // Nếu KHÔNG phải RACKET (id != 3) thì mới set size + color
                 if (!existing.getCategory().getId().equals(3)) {
 
                     dbVariant.setSize(
@@ -274,7 +283,27 @@ public class ProductController {
                 );
             }
 
+            // Lưu sản phẩm
             productRepository.save(existing);
+
+            // =========================================================
+            // 4. LOGIC ĐỒNG BỘ: TỰ ĐỘNG CẬP NHẬT LẠI GIÁ FLASH SALE
+            // =========================================================
+            if (isPriceChanged && existing.getFlashSales() != null) {
+                for (FlashSaleProduct fsp : existing.getFlashSales()) {
+                    FlashSale fs = fsp.getFlashSale();
+
+                    if (fs != null) {
+                        // Tính lại giá sale dựa trên giá gốc mới và % giảm của đợt sale đó
+                        BigDecimal discount = new BigDecimal(fs.getDiscountPercent()).divide(new BigDecimal(100));
+                        BigDecimal discountAmount = existing.getPrice().multiply(discount);
+                        BigDecimal newSalePrice = existing.getPrice().subtract(discountAmount);
+
+                        fsp.setSalePrice(newSalePrice);
+                        flashSaleProductRepository.save(fsp);
+                    }
+                }
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -289,6 +318,7 @@ public class ProductController {
         productRepository.deleteById(id);
         return "redirect:/admin/products";
     }
+
     // variant trong sản phẩm
     @GetMapping("/{id}/variants")
     public String viewVariants(@PathVariable Integer id, Model model) {

@@ -6,7 +6,6 @@
     <title>Flash Sale - BatShop</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <link rel="stylesheet" th:href="@{/css/user/header.css}">
     <link rel="stylesheet" th:href="@{/css/user/flash-sale.css}">
     <link rel="stylesheet" th:href="@{/css/user/footer.css}">
@@ -16,77 +15,134 @@
 <div th:replace="~{layout/header :: header}"></div>
 
 <div class="flash-sale-container">
-    <div class="flash-sale-banner">
-        <h2>⚡ FLASH SALE ⚡</h2>
 
-        <div th:if="${flashSale != null}" class="countdown-wrapper">
-            <p>Kết thúc trong:</p>
-            <div id="countdown" class="countdown-timer" th:data-endtime="${flashSale.endDate}">
-                <span id="days">00</span> Ngày
-                <span id="hours">00</span> Giờ
-                <span id="minutes">00</span> Phút
-                <span id="seconds">00</span> Giây
-            </div>
-        </div>
-        <div th:if="${flashSale == null}">
-            <p>Hiện tại không có chương trình Flash Sale nào đang diễn ra.</p>
-        </div>
-    </div>
-
-    <div th:if="${flashSale != null}" class="flash-sale-products">
-        <div class="product-grid">
-            <div th:each="fsp : ${flashSaleProducts}" class="product-card">
-
-                <div class="product-image">
-                    <img th:if="${!fsp.product.images.isEmpty()}"
-                         th:src="@{'/uploads/product/' + ${fsp.product.images[0].image}}"
-                         alt="Product Image">
-                    <div class="discount-badge">
-                        -<span th:text="${flashSale.discountPercent}"></span>%
-                    </div>
-                </div>
-
-                <div class="product-info">
-                    <h3 th:text="${fsp.product.name}">Tên vợt</h3>
-
-                    <div class="price-section">
-                        <span class="sale-price" th:text="${#numbers.formatDecimal(fsp.salePrice, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></span>
-                        <span class="original-price" th:text="${#numbers.formatDecimal(fsp.product.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></span>
-                    </div>
-
-                    <a th:href="@{/product/{id}(id=${fsp.product.id})}" class="btn-buy-now">Mua Ngay</a>
+    <th:block th:if="${activeFlashSale != null and !activeFlashSale.products.isEmpty()}">
+        <div class="flash-sale-banner">
+            <h2>⚡ FLASH SALE ⚡</h2>
+            <div class="countdown-wrapper">
+                <p>Kết thúc trong:</p>
+                <div class="countdown-timer fs-countdown-box" th:data-endtime="${activeFlashSale.endDate}">
+                    <span class="fs-days">00</span> Ngày
+                    <span class="fs-hours">00</span> Giờ
+                    <span class="fs-minutes">00</span> Phút
+                    <span class="fs-seconds">00</span> Giây
                 </div>
             </div>
         </div>
-    </div>
 
-    <script th:if="${flashSale != null}">
-        document.addEventListener('DOMContentLoaded', function() {
-            const countdownElement = document.getElementById('countdown');
-            const endTimeStr = countdownElement.getAttribute('data-endtime');
+        <div class="flash-sale-products">
+            <div class="product-grid">
+                <div th:each="fsp : ${activeFlashSale.products}" class="product-card">
 
-            const countDownDate = new Date(endTimeStr).getTime();
+                    <div class="product-image">
+                        <img th:if="${!fsp.product.images.isEmpty()}"
+                             th:src="@{'/uploads/product/' + ${fsp.product.images[0].image}}"
+                             alt="Product Image">
+                        <div class="discount-badge">
+                            -<span th:text="${activeFlashSale.discountPercent}"></span>%
+                        </div>
+                    </div>
 
-            const x = setInterval(function() {
-                const now = new Date().getTime();
-                const distance = countDownDate - now;
+                    <div class="product-info">
+                        <h3 th:text="${fsp.product.name}">Tên vợt</h3>
 
-                if (distance < 0) {
-                    clearInterval(x);
-                    countdownElement.innerHTML = "Đã kết thúc";
-                    return;
-                }
+                        <div class="price-section">
+                            <span class="sale-price" th:text="${#numbers.formatDecimal(fsp.salePrice, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></span>
+                            <span class="original-price" th:text="${#numbers.formatDecimal(fsp.product.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></span>
+                        </div>
 
-                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                        <a th:href="@{/product/detail/{id}(id=${fsp.product.id})}" class="btn-buy-now">Mua Ngay</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </th:block>
 
-                document.getElementById("days").innerText = days.toString().padStart(2, '0');
-                document.getElementById("hours").innerText = hours.toString().padStart(2, '0');
-                document.getElementById("minutes").innerText = minutes.toString().padStart(2, '0');
-                document.getElementById("seconds").innerText = seconds.toString().padStart(2, '0');
-            }, 1000);
+    <th:block th:if="${upcomingFlashSale != null and !upcomingFlashSale.products.isEmpty()}">
+        <div class="flash-sale-banner" style="background: linear-gradient(90deg, #f39c12 0%, #e67e22 100%);">
+            <h2>⏳ SẮP DIỄN RA ⏳</h2>
+            <div class="countdown-wrapper">
+                <p>Bắt đầu sau:</p>
+                <div class="countdown-timer fs-countdown-box" th:data-endtime="${upcomingFlashSale.startDate}">
+                    <span class="fs-days">00</span> Ngày
+                    <span class="fs-hours">00</span> Giờ
+                    <span class="fs-minutes">00</span> Phút
+                    <span class="fs-seconds">00</span> Giây
+                </div>
+            </div>
+        </div>
+
+        <div class="flash-sale-products">
+            <div class="product-grid">
+                <div th:each="fsp : ${upcomingFlashSale.products}" class="product-card" style="border-color: #f39c12;">
+
+                    <div class="product-image">
+                        <img th:if="${!fsp.product.images.isEmpty()}"
+                             th:src="@{'/uploads/product/' + ${fsp.product.images[0].image}}"
+                             alt="Product Image">
+                        <div class="discount-badge" style="background: #f39c12;">
+                            Sắp giảm <span th:text="${upcomingFlashSale.discountPercent}"></span>%
+                        </div>
+                    </div>
+
+                    <div class="product-info">
+                        <h3 th:text="${fsp.product.name}">Tên vợt</h3>
+
+                        <div class="price-section">
+                            <span class="sale-price" style="color: #333;" th:text="${#numbers.formatDecimal(fsp.product.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></span>
+                        </div>
+
+                        <a th:href="@{/product/detail/{id}(id=${fsp.product.id})}" class="btn-buy-now" style="background: #f39c12;">Xem Trước</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </th:block>
+
+    <th:block th:if="${activeFlashSale == null and upcomingFlashSale == null}">
+        <div class="flash-sale-banner" style="background: linear-gradient(90deg, #95a5a6 0%, #7f8c8d 100%);">
+            <h2>⚡ FLASH SALE ⚡</h2>
+            <div style="padding: 20px; font-size: 1.2rem;">
+                <p>Hiện tại không có chương trình Flash Sale nào đang hoặc sắp diễn ra.</p>
+                <p>Quý khách vui lòng quay lại sau nhé!</p>
+            </div>
+        </div>
+    </th:block>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Tìm tất cả các hộp đếm ngược (đang diễn ra HOẶC sắp diễn ra)
+            const fsBoxes = document.querySelectorAll('.fs-countdown-box');
+
+            fsBoxes.forEach(fsBox => {
+                const endTimeStr = fsBox.getAttribute('data-endtime');
+                if(!endTimeStr) return;
+
+                const countDownDate = new Date(endTimeStr).getTime();
+
+                const timerInterval = setInterval(function() {
+                    const now = new Date().getTime();
+                    const distance = countDownDate - now;
+
+                    if (distance < 0) {
+                        clearInterval(timerInterval);
+                        // Khi đếm lùi về 0, trang tự động reload lại để đổi trạng thái
+                        location.reload();
+                        return;
+                    }
+
+                    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                    // Gán dữ liệu vào các thẻ thông qua Class
+                    fsBox.querySelector(".fs-days").innerText = days.toString().padStart(2, '0');
+                    fsBox.querySelector(".fs-hours").innerText = hours.toString().padStart(2, '0');
+                    fsBox.querySelector(".fs-minutes").innerText = minutes.toString().padStart(2, '0');
+                    fsBox.querySelector(".fs-seconds").innerText = seconds.toString().padStart(2, '0');
+                }, 1000);
+            });
         });
     </script>
 </div>
