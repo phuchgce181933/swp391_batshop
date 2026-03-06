@@ -1,0 +1,119 @@
+<div th:fragment="content">
+    <link rel="stylesheet" th:href="@{/css/admin/flash-sale.css}">
+
+    <div class="container-fluid">
+        <div class="fs-admin-header mt-3">
+            <h2 class="fs-admin-title">Cập Nhật Flash Sale #<span th:text="${flashSale.id}"></span></h2>
+            <a th:href="@{/admin/flash-sales}" class="fs-btn fs-btn-secondary"><i class="fas fa-arrow-left"></i> Quay lại</a>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-md-4">
+                <div class="fs-admin-card">
+                    <h4>Cài đặt thông số</h4>
+                    <form id="flashSaleForm" th:action="@{/admin/flash-sales/edit}" th:object="${flashSale}" method="POST">
+                        <input type="hidden" th:field="*{id}">
+
+                        <div class="fs-form-group mb-3">
+                            <label class="fs-form-label">Phần trăm giảm (%)</label>
+                            <input type="number" class="fs-form-control" th:field="*{discountPercent}" min="1" max="100" required>
+                        </div>
+                        <div class="fs-form-group mb-3">
+                            <label class="fs-form-label">Thời gian bắt đầu</label>
+                            <input type="datetime-local" class="fs-form-control" th:field="*{startDate}" required>
+                        </div>
+                        <div class="fs-form-group mb-4">
+                            <label class="fs-form-label">Thời gian kết thúc</label>
+                            <input type="datetime-local" class="fs-form-control" th:field="*{endDate}" required>
+                        </div>
+                        <button type="submit" class="fs-btn fs-btn-primary w-100">Cập nhật thông số</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <div class="fs-admin-card">
+                    <h4>Danh sách sản phẩm trong đợt Sale</h4>
+
+                    <form th:action="@{/admin/flash-sales/{id}/add-product(id=${flashSale.id})}" method="POST" class="fs-select-wrapper">
+                        <select name="productId" required>
+                            <option value="">-- Chọn sản phẩm để đưa vào Flash Sale --</option>
+                            <option th:each="p : ${products}"
+                                    th:value="${p.id}"
+                                    th:text="${p.name} + ' (Gốc: ' + ${#numbers.formatDecimal(p.price, 0, 'COMMA', 0, 'POINT')} + ' đ)'">
+                            </option>
+                        </select>
+                        <button type="submit" class="btn-add-product">
+                            <i class="fas fa-plus"></i> Thêm SP
+                        </button>
+                    </form>
+
+                    <div class="fs-table-wrapper">
+                        <table class="fs-table">
+                            <thead>
+                            <tr>
+                                <th class="text-start">Tên sản phẩm</th>
+                                <th>Giá gốc</th>
+                                <th>Giá Sale (Tự tính)</th>
+                                <th>Hành động</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="fsp : ${flashSale.products}">
+                                <td class="text-start fw-bold" th:text="${fsp.product.name}"></td>
+                                <td class="fs-price-original" th:text="${#numbers.formatDecimal(fsp.product.price, 0, 'COMMA', 0, 'POINT')} + ' đ'"></td>
+                                <td class="fs-price-sale" th:text="${#numbers.formatDecimal(fsp.salePrice, 0, 'COMMA', 0, 'POINT')} + ' đ'"></td>
+                                <td>
+                                    <div class="fs-action-btns">
+                                        <a th:href="@{/admin/flash-sales/{fsId}/remove-product/{fspId}(fsId=${flashSale.id}, fspId=${fsp.id})}"
+                                           class="fs-btn fs-btn-sm" style="background-color: #e74c3c; color: white;"
+                                           onclick="return confirm('Loại sản phẩm này khỏi Flash Sale?');">
+                                            <i class="fas fa-trash"></i> Xóa
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr th:if="${flashSale.products.isEmpty()}">
+                                <td colspan="4" class="text-center py-4 text-muted">
+                                    <i>Chưa có sản phẩm nào được chọn cho đợt Sale này.</i>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById("flashSaleForm");
+            const startDateInput = document.getElementById("startDate");
+            const endDateInput = document.getElementById("endDate");
+
+            if (form && startDateInput && endDateInput) {
+                form.addEventListener("submit", function (event) {
+                    const startDate = new Date(startDateInput.value);
+                    const endDate = new Date(endDateInput.value);
+
+                    if (endDate <= startDate) {
+                        event.preventDefault();
+                        alert("Lỗi: Thời gian kết thúc phải diễn ra sau thời gian bắt đầu!");
+                        endDateInput.focus();
+                    }
+                });
+
+                endDateInput.addEventListener("change", function () {
+                    const start = new Date(startDateInput.value);
+                    const end = new Date(this.value);
+
+                    if (startDateInput.value && end <= start) {
+                        alert("Thời gian kết thúc không hợp lệ. Hãy kiểm tra lại!");
+                        this.value = "";
+                    }
+                });
+            }
+        });
+    </script>
+</div>
