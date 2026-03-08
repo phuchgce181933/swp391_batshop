@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title th:text="${product.name}"></title>
     <link rel="stylesheet" th:href="@{/css/product-detail.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         .fs-badge {
             background: linear-gradient(90deg, #ff416c 0%, #ff4b2b 100%);
@@ -32,6 +33,44 @@
             font-weight: bold;
             font-size: 1.1em;
         }
+
+        /* CSS Mới: Tạo hàng cho các nút hành động */
+        .action-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .btn-cart {
+            background-color: #f15a22;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: bold;
+            flex: 1; /* Để nút giỏ hàng tự giãn rộng */
+            height: 50px;
+        }
+
+        .btn-wishlist {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border: 2px solid #ff4757;
+            border-radius: 4px;
+            background: white;
+            transition: 0.3s;
+            text-decoration: none;
+        }
+
+        .btn-wishlist:hover {
+            background-color: #fff1f2;
+            transform: scale(1.05);
+        }
     </style>
 </head>
 <body>
@@ -43,7 +82,7 @@
     <div class="product-images">
         <img class="main-img"
              th:if="${product.images != null and !product.images.isEmpty()}"
-             th:src="@{/uploads/product/{img}(img=${product.images[0].image})}">
+             th:src="@{/uploads/products/{img}(img=${product.images[0].image})}">
 
         <img class="main-img"
              th:if="${product.images == null or product.images.isEmpty()}"
@@ -51,7 +90,7 @@
 
         <div class="thumb-list">
             <img th:each="img : ${product.images}"
-                 th:src="@{/uploads/product/{img}(img=${img.image})}">
+                 th:src="@{/uploads/products/{img}(img=${img.image})}">
         </div>
     </div>
 
@@ -118,9 +157,15 @@
                     <button type="button" onclick="plusQty()">+</button>
                 </div>
 
-                <button type="submit" id="btnAddToCart" class="btn-cart mt-3" style="background-color: #f15a22; color: white; padding: 10px 20px; border: none; cursor: pointer; transition: 0.3s;">
-                    THÊM VÀO GIỎ HÀNG
-                </button>
+                <div class="action-group">
+                    <button type="submit" id="btnAddToCart" class="btn-cart">
+                        THÊM VÀO GIỎ HÀNG
+                    </button>
+
+                    <a th:href="@{'/wishlist/add/' + ${product.id}}" class="btn-wishlist" title="Thêm vào yêu thích">
+                        <i class="fa-solid fa-heart" style="color: #ff4757; font-size: 1.5rem;"></i>
+                    </a>
+                </div>
 
             </form>
         </div>
@@ -136,50 +181,25 @@
 <hr>
 
 <div class="review-section">
-
     <h3>Đánh giá sản phẩm</h3>
-
     <form th:action="@{/product/review}" method="post">
-
-        <input type="hidden"
-               name="productId"
-               th:value="${product.id}">
-
-        <input type="text"
-               name="title"
-               placeholder="Tiêu đề"
-               required style="display: block; margin-bottom: 10px; width: 100%; max-width: 400px; padding: 8px;">
-
-        <textarea name="content"
-                  placeholder="Nội dung đánh giá"
-                  required style="display: block; margin-bottom: 10px; width: 100%; max-width: 400px; padding: 8px; height: 100px;"></textarea>
-
+        <input type="hidden" name="productId" th:value="${product.id}">
+        <input type="text" name="title" placeholder="Tiêu đề" required style="display: block; margin-bottom: 10px; width: 100%; max-width: 400px; padding: 8px;">
+        <textarea name="content" placeholder="Nội dung đánh giá" required style="display: block; margin-bottom: 10px; width: 100%; max-width: 400px; padding: 8px; height: 100px;"></textarea>
         <button type="submit" style="background-color: #333; color: white; padding: 8px 15px; border: none; cursor: pointer;">Gửi đánh giá</button>
-
-        <p style="color:red; margin-top: 10px;" th:if="${param.error != null}">
-            Bạn phải đăng nhập để gửi đánh giá.
-        </p>
-
+        <p style="color:red; margin-top: 10px;" th:if="${param.error != null}">Bạn phải đăng nhập để gửi đánh giá.</p>
     </form>
-
     <hr>
-
     <div th:each="r : ${reviews}">
         <div th:if="${r.title != 'ADMIN_REPLY'}" class="review-item" style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px dashed #ddd;">
-
             <h4 th:text="${r.title}" style="margin-bottom: 5px;"></h4>
-
             <p style="font-size: 0.9em; color: #666;">
-                <b th:text="${r.user != null ? (r.user.fullName != null ? r.user.fullName : r.user.email) : 'Unknown'}"></b>
-                -
+                <b th:text="${r.user != null ? (r.user.fullName != null ? r.user.fullName : r.user.email) : 'Unknown'}"></b> -
                 <span th:text="${#temporals.format(r.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
             </p>
-
             <p th:text="${r.content}"></p>
-
         </div>
     </div>
-
 </div>
 
 <div th:replace="~{layout/footer :: footer}"></div>
@@ -190,54 +210,41 @@
         const btnAddToCart = document.getElementById('btnAddToCart');
         const qtyInput = document.getElementById('qty');
 
-        // Hàm cập nhật trạng thái của nút Mua Hàng
         function updateCartState() {
             const selectedRadio = document.querySelector('.variant-radio:checked');
             if (selectedRadio) {
-                // Lấy số lượng tồn kho từ biến thể đang được chọn
                 const stock = parseInt(selectedRadio.getAttribute('data-stock'));
-
                 if (stock <= 0) {
-                    // Trạng thái: HẾT HÀNG
                     btnAddToCart.disabled = true;
                     btnAddToCart.style.backgroundColor = '#ccc';
                     btnAddToCart.style.cursor = 'not-allowed';
                     btnAddToCart.innerText = 'ĐÃ HẾT HÀNG';
                     qtyInput.disabled = true;
                 } else {
-                    // Trạng thái: CÒN HÀNG
                     btnAddToCart.disabled = false;
                     btnAddToCart.style.backgroundColor = '#f15a22';
                     btnAddToCart.style.cursor = 'pointer';
                     btnAddToCart.innerText = 'THÊM VÀO GIỎ HÀNG';
                     qtyInput.disabled = false;
-
-                    // Giới hạn max để khách không nhập quá số lượng tồn kho
                     qtyInput.max = stock;
                     if (parseInt(qtyInput.value) > stock) {
-                        qtyInput.value = stock; // Tự động giảm số lượng về mức tồn kho thực tế
+                        qtyInput.value = stock;
                     }
                 }
             }
         }
 
-        // Chạy ngay lúc vừa load trang để check biến thể đầu tiên
         if(radios.length > 0) updateCartState();
-
-        // Lắng nghe sự kiện mỗi khi người dùng đổi biến thể khác (đổi Size, Màu...)
         radios.forEach(radio => {
             radio.addEventListener('change', updateCartState);
         });
     });
 
-    // Cập nhật lại 2 hàm tăng giảm số lượng an toàn hơn
     function plusQty() {
         let q = document.getElementById("qty");
-        if(q.disabled) return; // Nếu hết hàng thì không cho bấm
-
+        if(q.disabled) return;
         let currentVal = parseInt(q.value);
-        let maxVal = parseInt(q.max); // Lấy max từ JS đã set ở trên
-
+        let maxVal = parseInt(q.max) || 999;
         if (currentVal < maxVal) {
             q.value = currentVal + 1;
         } else {
@@ -248,7 +255,6 @@
     function minusQty() {
         let q = document.getElementById("qty");
         if(q.disabled) return;
-
         if (parseInt(q.value) > 1) {
             q.value = parseInt(q.value) - 1;
         }
