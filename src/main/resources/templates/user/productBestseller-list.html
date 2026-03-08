@@ -1,0 +1,36 @@
+<div th:fragment="productBestseller-list" class="product-grid">
+    <div th:each="product : ${topSellingProducts}" class="product-card">
+
+        <a th:href="@{/product/detail/{id}(id=${product.id})}" class="product-image" style="position: relative; display: block;">
+            <div class="top-selling-badge">HOT</div>
+
+            <img th:if="${product.images != null and !product.images.isEmpty()}"
+                 th:src="@{/uploads/product/{img}(img=${product.images[0].image})}"
+                 th:alt="${product.name}">
+
+            <img th:if="${product.images == null or product.images.isEmpty()}"
+                 th:src="@{/img/no-image.png}"
+                 alt="No image available">
+        </a>
+
+        <div class="product-info" style="text-align: center;">
+            <a th:href="@{/product/detail/{id}(id=${product.id})}" style="text-decoration: none;">
+                <h3 th:text="${product.name}"></h3>
+            </a>
+
+            <div class="brand">
+                <span th:text="${product.brand != null ? product.brand.name : 'No brand'}"></span>
+            </div>
+
+            <div class="price" style="margin-bottom: 15px;">
+                <span th:text="${#numbers.formatDecimal(product.price, 0,'COMMA',0,'POINT')} + ' ₫'"></span>
+            </div>
+        </div>
+
+        <div class="product-actions">
+            <a th:href="@{/product/detail/{id}(id=${product.id})}" class="btn-cart">
+                Mua ngay
+            </a>
+        </div>
+    </div>
+</div>

@@ -30,6 +30,13 @@
                     <small>TRA CỨU</small>
                 </div>
 
+                <a th:href="@{/wishlist/list}" class="icon-item" style="text-decoration: none; color: inherit;">
+                    <span class="icon-circle">
+                        <i class="fa-solid fa-heart" style="color: #ff4757;"></i>
+                    </span>
+                    <small>YÊU THÍCH</small>
+                </a>
+
                 <div class="icon-item account-menu">
                     <a th:href="@{/profile/edit}" class="user-action">
                         <span class="icon-circle"><i class="fa-solid fa-user"></i></span>
@@ -62,7 +69,7 @@
                 </a>
                 <div class="dropdown-content-product">
                     <a th:each="cat : ${categories}"
-                       th:href="@{/products/category/{id}(id=${cat.id})}"
+                       th:href="@{/category(id=${cat.id})}"
                        th:text="${cat.name}">Tên danh mục</a>
                 </div>
             </div>

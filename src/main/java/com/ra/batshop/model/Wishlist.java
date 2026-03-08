@@ -1,26 +1,21 @@
 package com.ra.batshop.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.time.LocalDateTime;
+import lombok.*;
 
 @Entity
-@Getter
-@Setter
+@Table(name = "wishlists")
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class Wishlist {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-
-    private LocalDateTime createdAt;
+    private Long id;
 
     @ManyToOne
-    private User user;
+    @JoinColumn(name = "user_id")
+    private User user; // Người dùng nào thích?
 
     @ManyToOne
-    private Product product;
+    @JoinColumn(name = "product_id")
+    private Product product; // Thích sản phẩm nào?
 }
-

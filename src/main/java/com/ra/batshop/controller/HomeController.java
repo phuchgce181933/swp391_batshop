@@ -6,6 +6,8 @@ import com.ra.batshop.model.ProductVariant;
 import com.ra.batshop.repository.*;
 import com.ra.batshop.model.Product;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,7 +44,7 @@ public class HomeController {
         this.flashSaleRepository = flashSaleRepository;
     }
     // ==========================================
-    // HÀM TRỢ GIÚP KIỂM TRA FLASH SALE
+    // KIỂM TRA FLASH SALE
     // ==========================================
     private void checkAndAddFlashSale(Model model) {
         LocalDateTime now = LocalDateTime.now();
@@ -89,6 +91,12 @@ public class HomeController {
 
         // 3. Gọi hàm kiểm tra Flash Sale
         checkAndAddFlashSale(model);
+
+        // LẤY 8 SẢN PHẨM BÁN CHẠY NHẤT THỰC TẾ
+        // ==========================================
+        Pageable topSellingPageable = PageRequest.of(0, 8);
+        List<Product> topSellingProducts = productRepository.findTopSellingProducts(topSellingPageable);
+        model.addAttribute("topSellingProducts", topSellingProducts);
 
         return "home";
     }

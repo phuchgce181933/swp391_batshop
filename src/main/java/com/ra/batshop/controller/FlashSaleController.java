@@ -53,7 +53,7 @@ public class FlashSaleController {
             }
         }
 
-        return "user/flash-sale";
+        return "user/flash-sale/flash-sale";
     }
 
     // =======================================================
