@@ -48,7 +48,12 @@
                 </option>
             </select>
             <br><br>
-
+            Status:
+            <select th:field="*{status}">
+                <option th:value="true">Active</option>
+                <option th:value="false">Inactive</option>
+            </select>
+            <br><br>
             <!-- IMAGE -->
 
             <label>Current Image:</label><br>

@@ -6,6 +6,9 @@ import com.ra.batshop.model.Enum.OrderStatus;
 import com.ra.batshop.repository.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +20,8 @@ import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
+
+
 
 @Controller
 @RequestMapping("/admin/orders")
@@ -44,10 +49,34 @@ public class OrderController {
 
     // LIST
     @GetMapping
-    public String list(Model model) {
-        model.addAttribute("orders", orderRepository.findAll());
+    public String list(Model model,
+                       @RequestParam(defaultValue = "0") int page,
+                       @RequestParam(defaultValue = "5") int size,
+                       @RequestParam(required = false) String paymentMethod,
+                       @RequestParam(required = false) String paymentStatus,
+                       @RequestParam(required = false) OrderStatus status) {
+
+        if (paymentMethod != null && paymentMethod.trim().isEmpty()) {
+            paymentMethod = null;
+        }
+
+        if (paymentStatus != null && paymentStatus.trim().isEmpty()) {
+            paymentStatus = null;
+        }
+        Page<Order> orderPage = orderRepository.filterOrders(paymentMethod, paymentStatus, status, PageRequest.of(page, size));
+        model.addAttribute("orders", orderPage.getContent());
         model.addAttribute("statuses", OrderStatus.values());
+        model.addAttribute("selectedMethod", paymentMethod);
+        model.addAttribute("selectedPaymentStatus", paymentStatus);
+        model.addAttribute("size", size);
+        model.addAttribute("selectedStatus", status);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", orderPage.getTotalPages());
         model.addAttribute("content", "admin/order/list");
+        System.out.println("page = " + page);
+        System.out.println("paymentMethod = " + paymentMethod);
+        System.out.println("paymentStatus = " + paymentStatus);
+        System.out.println("status = " + status);
         return "admin/layout";
     }
 

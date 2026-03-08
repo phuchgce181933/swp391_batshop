@@ -42,6 +42,15 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
             "ORDER BY SUM(oi.quantity) DESC")
     List<Product> findTopSellingProducts(Pageable pageable);
 
+
+    @Query("""
+        SELECT p FROM Product p
+        WHERE (:keyword IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%')))
+        AND (:categoryId IS NULL OR p.category.id = :categoryId)
+        AND (:brandId IS NULL OR p.brand.id = :brandId)
+    """)
+    Page<Product> searchProduct(String keyword, Integer categoryId, Long brandId, Pageable pageable);
+
     // Lọc sản phẩm
     @Query("SELECT p FROM Product p WHERE p.status = true " +
             "AND (:categoryId IS NULL OR p.category.id = :categoryId) " +
@@ -70,4 +79,5 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
             @Param("minPrice") BigDecimal minPrice,
             @Param("maxPrice") BigDecimal maxPrice,
             Pageable pageable);
+
 }

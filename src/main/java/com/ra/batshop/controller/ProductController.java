@@ -3,6 +3,9 @@ package com.ra.batshop.controller;
 import com.ra.batshop.model.*;
 import com.ra.batshop.model.Enum.*;
 import com.ra.batshop.repository.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -46,8 +49,24 @@ public class ProductController {
 
     // LIST
     @GetMapping
-    public String list(Model model) {
-        model.addAttribute("products", productRepository.findAll());
+    public String list(Model model,
+                       @RequestParam(defaultValue = "0") int page,
+                        @RequestParam(defaultValue = "5") int size,
+                       @RequestParam(required = false) String keyword,
+                       @RequestParam(required = false) Integer categoryId,
+                       @RequestParam(required = false) Long brandId) {
+        Page<Product> productPage = productRepository.searchProduct(
+                keyword, categoryId, brandId,
+                PageRequest.of(page, size, Sort.by("id").descending())
+        );
+        model.addAttribute("products", productPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", productPage.getTotalPages());
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("categoryId", categoryId);
+        model.addAttribute("brandId", brandId);
+        model.addAttribute("categories", categoryRepository.findAll());
+        model.addAttribute("brands", brandRepository.findAll());
         model.addAttribute("content", "admin/product/list");
         return "admin/layout";
     }
@@ -199,7 +218,7 @@ public class ProductController {
             existing.setDescription(product.getDescription());
             existing.setPrice(product.getPrice());
             existing.setUpdatedAt(LocalDateTime.now());
-
+            existing.setStatus(product.getStatus());
             existing.setCategory(
                     categoryRepository
                             .findById(product.getCategory().getId())
@@ -309,13 +328,6 @@ public class ProductController {
             e.printStackTrace();
         }
 
-        return "redirect:/admin/products";
-    }
-
-    // DELETE
-    @GetMapping("/delete/{id}")
-    public String delete(@PathVariable Integer id) {
-        productRepository.deleteById(id);
         return "redirect:/admin/products";
     }
 
