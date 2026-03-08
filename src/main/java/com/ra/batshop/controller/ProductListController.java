@@ -37,7 +37,7 @@ public class ProductListController {
             @RequestParam(value = "keyword", required = false) String keyword,
             @RequestParam(value = "sort", defaultValue = "default") String sort,
             @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "8") int size,
+            @RequestParam(value = "size", defaultValue = "20") int size,
             Model model) {
 
         Sort sortObj;

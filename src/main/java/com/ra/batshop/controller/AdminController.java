@@ -4,6 +4,7 @@ import com.ra.batshop.model.User;
 import com.ra.batshop.repository.UserRepository;
 import com.ra.batshop.repository.ProductRepository;
 import com.ra.batshop.repository.OrderRepository;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,8 +27,10 @@ public class AdminController {
     }
 
     @GetMapping("/dashboard")
-    public String dashboard(Model model) {
-
+    public String dashboard(Model model, HttpSession session) {
+        if (session.getAttribute("user") == null) {
+            return "redirect:/login";
+        }
         long totalUsers = userRepository.count();
         long totalProducts = productRepository.count();
         long totalOrders = orderRepository.count();
