@@ -5,7 +5,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param; // Import Param cho code gọn hơn
 
+import java.math.BigDecimal; // Chú ý import BigDecimal
 import java.util.List;
 
 public interface ProductRepository extends JpaRepository<Product, Integer> {
@@ -40,6 +42,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
             "ORDER BY SUM(oi.quantity) DESC")
     List<Product> findTopSellingProducts(Pageable pageable);
 
+
     @Query("""
         SELECT p FROM Product p
         WHERE (:keyword IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%')))
@@ -47,4 +50,34 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
         AND (:brandId IS NULL OR p.brand.id = :brandId)
     """)
     Page<Product> searchProduct(String keyword, Integer categoryId, Long brandId, Pageable pageable);
+
+    // Lọc sản phẩm
+    @Query("SELECT p FROM Product p WHERE p.status = true " +
+            "AND (:categoryId IS NULL OR p.category.id = :categoryId) " +
+            "AND (:brandIds IS NULL OR p.brand.id IN :brandIds) " +
+            "AND (p.price >= :minPrice AND p.price <= :maxPrice)")
+    Page<Product> filterProducts(
+            @Param("categoryId") Integer categoryId,
+            @Param("brandIds") List<Long> brandIds,
+            @Param("minPrice") BigDecimal minPrice,
+            @Param("maxPrice") BigDecimal maxPrice,
+            Pageable pageable);
+
+    // LỌC KẾT HỢP SẮP XẾP BÁN CHẠY NHẤT
+    @Query("SELECT p FROM Product p " +
+            "LEFT JOIN p.variants v " +
+            "LEFT JOIN OrderItem oi ON oi.productVariant = v " +
+            "WHERE p.status = true " +
+            "AND (:categoryId IS NULL OR p.category.id = :categoryId) " +
+            "AND (:brandIds IS NULL OR p.brand.id IN :brandIds) " +
+            "AND (p.price >= :minPrice AND p.price <= :maxPrice) " +
+            "GROUP BY p " +
+            "ORDER BY COALESCE(SUM(oi.quantity), 0) DESC") // COALESCE(..., 0) để xử lý các sản phẩm chưa bán được cái nào (NULL)
+    Page<Product> filterAndSortBestSellingProducts(
+            @Param("categoryId") Integer categoryId,
+            @Param("brandIds") List<Long> brandIds,
+            @Param("minPrice") BigDecimal minPrice,
+            @Param("maxPrice") BigDecimal maxPrice,
+            Pageable pageable);
+
 }
