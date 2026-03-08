@@ -62,16 +62,30 @@
                         <span style="color:red;font-weight:600;">CANCELLED</span>
                     </div>
 
-                    <form th:if="${o.status.name() != 'CANCELLED'}"
+                    <form th:if="${o.status.name() != 'CANCELLED' && o.status.name() != 'COMPLETED'}"
                           th:action="@{/admin/orders/edit/{id}(id=${o.id})}"
                           method="post">
 
                         <select name="status" onchange="this.form.submit()">
-                            <option th:each="s : ${T(com.ra.batshop.model.Enum.OrderStatus).values()}"
-                                    th:value="${s}"
-                                    th:text="${s}"
-                                    th:selected="${s.name() == o.status.name()}">
+
+                            <option th:value="${o.status}"
+                                    th:text="${o.status}"
+                                    selected>
                             </option>
+
+                            <option th:if="${o.status.name() == 'PENDING'}" value="CONFIRMED">CONFIRMED</option>
+
+                            <option th:if="${o.status.name() == 'CONFIRMED'}" value="PACKED">PACKED</option>
+
+                            <option th:if="${o.status.name() == 'PACKED'}" value="SHIPPING">SHIPPING</option>
+
+                            <option th:if="${o.status.name() == 'SHIPPING'}" value="COMPLETED">COMPLETED</option>
+
+                            <option th:if="${o.status.name() == 'PENDING' || o.status.name() == 'CONFIRMED'}"
+                                    value="CANCELLED">
+                                CANCELLED
+                            </option>
+
                         </select>
                     </form>
                 </td>
