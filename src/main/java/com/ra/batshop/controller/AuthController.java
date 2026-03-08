@@ -85,9 +85,12 @@ public class AuthController {
             model.addAttribute("error", "Wrong password");
             return "auth/login";
         }
-
         session.setAttribute("user", user);
-        return "redirect:/home";
+        if (user.getRole() == Role.ADMIN) {
+            return "redirect:/admin/dashboard";
+        } else {
+            return "redirect:/home";
+        }
     }
 
     // =========================
