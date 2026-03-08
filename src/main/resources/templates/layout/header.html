@@ -62,7 +62,7 @@
                 </a>
                 <div class="dropdown-content-product">
                     <a th:each="cat : ${categories}"
-                       th:href="@{/products/category/{id}(id=${cat.id})}"
+                       th:href="@{/category(id=${cat.id})}"
                        th:text="${cat.name}">Tên danh mục</a>
                 </div>
             </div>
