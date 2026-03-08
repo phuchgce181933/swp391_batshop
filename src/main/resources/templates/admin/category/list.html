@@ -4,6 +4,12 @@
 
 <p th:if="${error}" th:text="${error}" style="color:red"></p>
 
+<form th:action="@{/admin/categories}" method="get" class="search-bar">
+    <input type="text" name="keyword" placeholder="Search category..."
+           th:value="${keyword}">
+    <button type="submit">Search</button>
+</form>
+
 <a th:href="@{/admin/categories/add}">+ Add Category</a>
 
 <table class="admin-table">

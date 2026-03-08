@@ -8,7 +8,11 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/admin")
@@ -60,11 +64,38 @@ public class AdminController {
         return "admin/layout";
     }
 
-    @GetMapping("/manageruser")
-    public String userPage(Model model) {
-        model.addAttribute("users", userRepository.findAll());
+    @GetMapping("/users")
+    public String listUsers(
+            @RequestParam(required = false) String keyword,
+            Model model) {
+
+        List<User> users;
+
+        if (keyword != null && !keyword.isEmpty()) {
+            users = userRepository
+                    .findByFullNameContainingIgnoreCaseOrEmailContainingIgnoreCase(keyword, keyword);
+        } else {
+            users = userRepository.findAll();
+        }
+
+        model.addAttribute("users", users);
+        model.addAttribute("keyword", keyword);
         model.addAttribute("content", "admin/user/list");
+
         return "admin/layout";
+    }
+
+    @GetMapping("/users/toggle-status/{id}")
+    public String toggleUserStatus(@PathVariable Integer id) {
+
+        User user = userRepository.findById(id).orElse(null);
+
+        if (user != null) {
+            user.setStatus(!user.getStatus());
+            userRepository.save(user);
+        }
+
+        return "redirect:/admin/users";
     }
 
 }

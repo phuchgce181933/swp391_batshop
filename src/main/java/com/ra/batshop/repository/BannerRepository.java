@@ -7,4 +7,5 @@ import java.util.List;
 public interface BannerRepository extends JpaRepository<Banner, Integer> {
     // Lấy tất cả banner có status = true
     List<Banner> findAllByStatusTrue();
+    List<Banner> findByNameContainingIgnoreCase(String keyword);
 }

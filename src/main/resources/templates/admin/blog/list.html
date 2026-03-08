@@ -61,6 +61,16 @@
     <div class="blog-header">
         <div>
             <h2>Manager Blogs</h2>
+
+            <form th:action="@{/admin/blogs}" method="get" style="margin-bottom:15px;">
+                <input type="text"
+                       name="keyword"
+                       th:value="${keyword}"
+                       placeholder=" Search blog..."
+                       class="search-input">
+
+                <button type="submit">Search</button>
+            </form>
         </div>
 
         <a th:href="@{/admin/blogs/add}" class="btn-add">
