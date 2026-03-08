@@ -2,6 +2,16 @@
 
 <h2 class="page-title">Manager Brands</h2>
 
+<form th:action="@{/admin/brands}" method="get" style="margin-bottom:10px;">
+    <input type="text"
+           name="keyword"
+           th:value="${keyword}"
+           placeholder="Search brand..."
+           class="search-input">
+
+    <button type="submit">Search</button>
+</form>
+
 <div class="page-actions right">
     <a th:href="@{/admin/brands/add}" class="btn btn-primary">
         + Add Brand

@@ -1,0 +1,32 @@
+/* ================= KHU VỰC SẢN PHẨM BÁN CHẠY ================= */
+
+.top-selling-title {
+    color: #ff4757 !important;
+}
+
+.top-selling-title::after {
+    background-color: #ff4757 !important;
+}
+
+/* Khung bọc riêng biệt cho top-selling */
+.top-selling-wrapper {
+    background-color: #fff;
+    border: 2px solid #ff4757;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(255, 71, 87, 0.1);
+}
+
+/* Huy hiệu HOT góc trái */
+.top-selling-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: #ff4757;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    z-index: 2;
+    box-shadow: 0 2px 5px rgba(255, 71, 87, 0.4);
+}

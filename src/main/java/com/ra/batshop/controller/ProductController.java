@@ -1,9 +1,11 @@
 package com.ra.batshop.controller;
 
 import com.ra.batshop.model.*;
-//import com.ra.batshop.repository.BrandRepository;
 import com.ra.batshop.model.Enum.*;
 import com.ra.batshop.repository.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -25,23 +27,46 @@ public class ProductController {
     private final BrandRepository brandRepository;
     private final SizeRepository sizeRepository;
     private final ColorRepository colorRepository;
+
+    // 1. KHAI BÁO THÊM REPOSITORY CỦA FLASH SALE
+    private final FlashSaleProductRepository flashSaleProductRepository;
+
+    // 2. INJECT VÀO CONSTRUCTOR
     public ProductController(ProductRepository productRepository,
-                                  CategoryRepository categoryRepository,
-                                  BrandRepository brandRepository,
+                             CategoryRepository categoryRepository,
+                             BrandRepository brandRepository,
                              SizeRepository sizeRepository,
-                             ColorRepository colorRepository) {
+                             ColorRepository colorRepository,
+                             FlashSaleProductRepository flashSaleProductRepository) {
 
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.brandRepository = brandRepository;
         this.sizeRepository = sizeRepository;
         this.colorRepository = colorRepository;
+        this.flashSaleProductRepository = flashSaleProductRepository;
     }
 
     // LIST
     @GetMapping
-    public String list(Model model) {
-        model.addAttribute("products", productRepository.findAll());
+    public String list(Model model,
+                       @RequestParam(defaultValue = "0") int page,
+                        @RequestParam(defaultValue = "5") int size,
+                       @RequestParam(required = false) String keyword,
+                       @RequestParam(required = false) Integer categoryId,
+                       @RequestParam(required = false) Long brandId) {
+        Page<Product> productPage = productRepository.searchProduct(
+                keyword, categoryId, brandId,
+                PageRequest.of(page, size, Sort.by("id").descending())
+        );
+        model.addAttribute("products", productPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", productPage.getTotalPages());
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("categoryId", categoryId);
+        model.addAttribute("brandId", brandId);
+        model.addAttribute("categories", categoryRepository.findAll());
+        model.addAttribute("brands", brandRepository.findAll());
         model.addAttribute("content", "admin/product/list");
         return "admin/layout";
     }
@@ -68,8 +93,6 @@ public class ProductController {
     @PostMapping("/add")
     public String save(@ModelAttribute Product product,
                        @RequestParam("imageFile") MultipartFile file,
-                       @RequestParam(value = "racketStock", required = false) Integer racketStock,
-                       @RequestParam(value = "racketAdditionalPrice", required = false) BigDecimal racketAdditionalPrice,
                        Model model) {
 
         if (file == null || file.isEmpty()) {
@@ -113,32 +136,43 @@ public class ProductController {
             image.setImage(fileName);
             product.addImage(image);
 
+            // ===== SET RELATION FOR VARIANTS =====
+            if (product.getVariants() != null) {
 
-            // ===== CHECK CATEGORY TO DECIDE SAVE TYPE ==========
+                for (ProductVariant variant : product.getVariants()) {
 
-            if (category.getName().equalsIgnoreCase("cầu lông")) {
+                    variant.setProduct(product);
 
-                // ===== SAVE RACKET DETAIL =====
-                RacketDetail detail = product.getRacketDetail();
-                detail.setProduct(product);
-                product.setRacketDetail(detail);
+                    // Nếu có racketDetail thì set quan hệ
+                    if (variant.getRacketDetail() != null) {
+                        variant.getRacketDetail().setVariant(variant);
+                    }
 
-                // ===== TẠO VARIANT CHỈ STOCK + PRICE =====
-                ProductVariant variant = new ProductVariant();
-                variant.setStock(racketStock);
-                variant.setAdditionalPrice(racketAdditionalPrice);
-                variant.setProduct(product);
+                    // set brand lại cho chắc
+                    if (variant.getBrand() != null) {
+                        variant.setBrand(
+                                brandRepository
+                                        .findById(variant.getBrand().getId())
+                                        .orElseThrow()
+                        );
+                    }
 
-                variant.setBrand(
-                        brandRepository
-                                .findById(product.getBrand().getId())
-                                .orElseThrow()
-                );
+                    if (variant.getSize() != null && variant.getSize().getId() != null) {
+                        variant.setSize(
+                                sizeRepository
+                                        .findById(variant.getSize().getId())
+                                        .orElse(null)
+                        );
+                    }
 
-                variant.setSize(null);
-                variant.setColor(null);
-
-                product.addVariant(variant);
+                    if (variant.getColor() != null && variant.getColor().getId() != null) {
+                        variant.setColor(
+                                colorRepository
+                                        .findById(variant.getColor().getId())
+                                        .orElse(null)
+                        );
+                    }
+                }
             }
 
             // ===== SAVE PRODUCT =====
@@ -159,6 +193,9 @@ public class ProductController {
         model.addAttribute("brands", brandRepository.findAll());
         model.addAttribute("sizes", sizeRepository.findAll());
         model.addAttribute("colors", colorRepository.findAll());
+        model.addAttribute("racketCategoryId", 3);
+        model.addAttribute("racketLevels", RacketLevel.values());
+        model.addAttribute("racketLengths", RacketLength.values());
         model.addAttribute("content", "admin/product/edit");
         return "admin/layout";
     }
@@ -173,12 +210,15 @@ public class ProductController {
             Product existing =
                     productRepository.findById(product.getId()).orElseThrow();
 
+            // 3. KIỂM TRA XEM GIÁ CÓ BỊ THAY ĐỔI KHÔNG
+            boolean isPriceChanged = existing.getPrice().compareTo(product.getPrice()) != 0;
+
             // ===== UPDATE BASIC INFO =====
             existing.setName(product.getName());
             existing.setDescription(product.getDescription());
             existing.setPrice(product.getPrice());
             existing.setUpdatedAt(LocalDateTime.now());
-
+            existing.setStatus(product.getStatus());
             existing.setCategory(
                     categoryRepository
                             .findById(product.getCategory().getId())
@@ -239,17 +279,21 @@ public class ProductController {
                 dbVariant.setStock(updated.getStock());
                 dbVariant.setAdditionalPrice(updated.getAdditionalPrice());
 
-                dbVariant.setSize(
-                        sizeRepository
-                                .findById(updated.getSize().getId())
-                                .orElseThrow()
-                );
+                // Nếu KHÔNG phải RACKET (id != 3) thì mới set size + color
+                if (!existing.getCategory().getId().equals(3)) {
 
-                dbVariant.setColor(
-                        colorRepository
-                                .findById(updated.getColor().getId())
-                                .orElseThrow()
-                );
+                    dbVariant.setSize(
+                            sizeRepository
+                                    .findById(updated.getSize().getId())
+                                    .orElseThrow()
+                    );
+
+                    dbVariant.setColor(
+                            colorRepository
+                                    .findById(updated.getColor().getId())
+                                    .orElseThrow()
+                    );
+                }
 
                 dbVariant.setBrand(
                         brandRepository
@@ -258,7 +302,27 @@ public class ProductController {
                 );
             }
 
+            // Lưu sản phẩm
             productRepository.save(existing);
+
+            // =========================================================
+            // 4. LOGIC ĐỒNG BỘ: TỰ ĐỘNG CẬP NHẬT LẠI GIÁ FLASH SALE
+            // =========================================================
+            if (isPriceChanged && existing.getFlashSales() != null) {
+                for (FlashSaleProduct fsp : existing.getFlashSales()) {
+                    FlashSale fs = fsp.getFlashSale();
+
+                    if (fs != null) {
+                        // Tính lại giá sale dựa trên giá gốc mới và % giảm của đợt sale đó
+                        BigDecimal discount = new BigDecimal(fs.getDiscountPercent()).divide(new BigDecimal(100));
+                        BigDecimal discountAmount = existing.getPrice().multiply(discount);
+                        BigDecimal newSalePrice = existing.getPrice().subtract(discountAmount);
+
+                        fsp.setSalePrice(newSalePrice);
+                        flashSaleProductRepository.save(fsp);
+                    }
+                }
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -267,10 +331,38 @@ public class ProductController {
         return "redirect:/admin/products";
     }
 
-    // DELETE
-    @GetMapping("/delete/{id}")
-    public String delete(@PathVariable Integer id) {
-        productRepository.deleteById(id);
-        return "redirect:/admin/products";
+    // variant trong sản phẩm
+    @GetMapping("/{id}/variants")
+    public String viewVariants(@PathVariable Integer id, Model model) {
+
+        Product product = productRepository.findById(id).orElseThrow();
+
+        boolean hasSize = product.getVariants()
+                .stream()
+                .anyMatch(v -> v.getSize() != null);
+
+        boolean hasColor = product.getVariants()
+                .stream()
+                .anyMatch(v -> v.getColor() != null);
+
+        boolean hasRacketLevel = product.getVariants()
+                .stream()
+                .anyMatch(v -> v.getRacketDetail() != null && v.getRacketDetail().getLevel() != null);
+
+        boolean hasRacketLength = product.getVariants()
+                .stream()
+                .anyMatch(v -> v.getRacketDetail() != null && v.getRacketDetail().getLength() != null);
+
+        model.addAttribute("product", product);
+        model.addAttribute("variants", product.getVariants());
+
+        model.addAttribute("hasSize", hasSize);
+        model.addAttribute("hasColor", hasColor);
+        model.addAttribute("hasRacketLevel", hasRacketLevel);
+        model.addAttribute("hasRacketLength", hasRacketLength);
+
+        model.addAttribute("content", "admin/product/variant-list");
+
+        return "admin/layout";
     }
 }

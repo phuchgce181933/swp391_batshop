@@ -1,26 +1,39 @@
-<h2>Edit Category</h2>
+<link rel="stylesheet" th:href="@{/css/admin/category.css}">
 
-<form th:action="@{/admin/categories/edit}" method="post" th:object="${category}" enctype="multipart/form-data">
-    <input type="hidden" th:field="*{id}" />
+<div class="form-container">
+    <h2>Edit Category</h2>
 
-    <div style="margin-bottom: 15px;">
-        <label>Name:</label><br>
-        <input type="text" th:field="*{name}" required />
-    </div>
+    <form th:action="@{/admin/categories/edit}" method="post" th:object="${category}" enctype="multipart/form-data">
 
-    <div style="margin-bottom: 15px;">
-        <label>Current Image:</label><br>
+        <input type="hidden" th:field="*{id}" />
 
-        <div th:if="${category.image != null and !#strings.isEmpty(category.image)}" style="margin-bottom: 10px;">
-            <img th:src="@{'/uploads/category/' + ${category.image}}" width="100" style="border: 1px solid #ddd; padding: 5px;">
-        </div>
-        <div th:if="${category.image == null or #strings.isEmpty(category.image)}" style="margin-bottom: 10px; color: #999;">
-            <i>No image currently</i>
+        <div class="form-group">
+            <label>Name</label>
+            <input type="text" th:field="*{name}" required />
         </div>
 
-        <label>Upload New Image (Leave blank to keep current):</label><br>
-        <input type="file" name="file" accept="image/*" />
-    </div>
+        <div class="form-group">
+            <label>Current Image</label>
 
-    <button type="submit">Update</button>
-</form>
+            <div th:if="${category.image != null and !#strings.isEmpty(category.image)}" class="current-image">
+                <img th:src="@{'/uploads/category/' + ${category.image}}">
+            </div>
+
+            <div th:if="${category.image == null or #strings.isEmpty(category.image)}"
+                 class="no-image">
+                No image currently
+            </div>
+
+            <label class="upload-label">
+                Upload New Image (Leave blank to keep current)
+            </label>
+            <input type="file" name="file" accept="image/*" />
+        </div>
+
+        <div class="button-group">
+            <button type="submit" class="btn-save">Update</button>
+            <a th:href="@{/admin/categories}" class="btn-back">Back</a>
+        </div>
+
+    </form>
+</div>

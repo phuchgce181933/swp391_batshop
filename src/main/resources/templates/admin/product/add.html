@@ -1,316 +1,236 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <link rel="stylesheet" th:href="@{/css/admin/addproduct.css}">
-    <meta charset="UTF-8">
-    <title>Add Product</title>
-</head>
-<body>
+    <!DOCTYPE html>
+    <html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <link rel="stylesheet" th:href="@{/css/admin/addproduct.css}">
+        <meta charset="UTF-8">
+        <title>Add Product</title>
+    </head>
+    <body>
 
-<div class="admin-content">
-    <div class="form-card">
-        <h2>Add Product</h2>
+    <div class="admin-content">
+        <div class="form-card">
+            <h2>Add Product</h2>
 
-        <form th:action="@{/admin/products/add}"
-              method="post"
-              th:object="${product}"
-              enctype="multipart/form-data">
+            <form th:action="@{/admin/products/add}"
+                  method="post"
+                  th:object="${product}"
+                  enctype="multipart/form-data">
 
-            <!-- ===== BASIC INFO ===== -->
+                <!-- BASIC INFO -->
 
-            Name:
-            <input type="text" th:field="*{name}" required/><br>
+                Name:
+                <input type="text" th:field="*{name}" required/><br>
 
-            Description:
-            <textarea th:field="*{description}"></textarea><br>
+                Description:
+                <textarea th:field="*{description}"></textarea><br>
 
-            Price:
-            <input type="number" step="0.01" th:field="*{price}" required/><br>
+                Price:
+                <input type="number" step="0.01" th:field="*{price}" required/><br>
 
-            Category:
-            <select id="categorySelect" th:field="*{category.id}" required>
-                <option value="">-- Select Category --</option>
-                <option th:each="c : ${categories}"
-                        th:value="${c.id}"
-                        th:text="${c.name}">
-                </option>
-            </select>
-            <br>
+                Category:
+                <select id="categorySelect" th:field="*{category.id}" required>
+                    <option value="">-- Select Category --</option>
+                    <option th:each="c : ${categories}"
+                            th:value="${c.id}"
+                            th:text="${c.name}">
+                    </option>
+                </select>
+                <br>
 
-            Brand:
-            <select th:field="*{brand.id}" required>
-                <option value="">-- Select Brand --</option>
-                <option th:each="b : ${brands}"
-                        th:value="${b.id}"
-                        th:text="${b.name}">
-                </option>
-            </select>
-            <br><br>
+                Brand:
+                <select th:field="*{brand.id}" required>
+                    <option value="">-- Select Brand --</option>
+                    <option th:each="b : ${brands}"
+                            th:value="${b.id}"
+                            th:text="${b.name}">
+                    </option>
+                </select>
+                <br><br>
 
-            <!-- ===== IMAGE ===== -->
+                <!-- IMAGE -->
 
-            <label>Preview Image:</label><br>
-            <img id="previewImage"
-                 src="/images/no-image.png"
-                 width="150"
-                 style="border:1px solid #ccc; padding:5px;">
-            <br><br>
+                <label>Preview Image:</label><br>
+                <img id="previewImage"
+                     src="/images/no-image.png"
+                     width="150"
+                     style="border:1px solid #ccc; padding:5px;">
+                <br><br>
 
-            <label>Select Image:</label>
-            <input type="file"
-                   name="imageFile"
-                   id="imageInput"
-                   accept="image/*"
-                   required>
-            <br><br>
+                <label>Select Image:</label>
+                <input type="file"
+                       name="imageFile"
+                       id="imageInput"
+                       accept="image/*"
+                       required>
+                <br><br>
 
-            <!-- ===== VARIANTS ===== -->
-            <div id="variantBlock">
-            <h3>Product Variants</h3>
+                <!-- VARIANTS -->
 
-            <div id="variantContainer">
+                <h3>Product Variants</h3>
 
-                <!-- VARIANT 0 -->
-                <div class="variant-item">
-                    <hr>
+                <div id="variantContainer">
 
-                    Stock:
-                    <input type="number"
-                           name="variants[0].stock"
-                           required><br>
+                    <!-- VARIANT 0 -->
+                    <div class="variant-item">
+                        <hr>
 
-                    Additional Price:
-                    <input type="number"
-                           step="0.01"
-                           name="variants[0].additionalPrice"
-                           required><br>
+                        Stock:
+                        <input type="number"
+                               name="variants[0].stock"
+                               required><br>
 
-                    Size:
-                    <select name="variants[0].size.id" required>
-                        <option th:each="s : ${sizes}"
-                                th:value="${s.id}"
-                                th:text="${s.name}">
-                        </option>
-                    </select><br>
+                        Additional Price:
+                        <input type="number"
+                               step="0.01"
+                               name="variants[0].additionalPrice"
+                               required><br>
 
-                    Color:
-                    <select name="variants[0].color.id" required>
-                        <option th:each="c : ${colors}"
-                                th:value="${c.id}"
-                                th:text="${c.name}">
-                        </option>
-                    </select><br>
+                        <!-- NORMAL PRODUCT FIELDS -->
+                        <div class="normal-fields">
 
-                    Brand:
-                    <select name="variants[0].brand.id" required>
-                        <option th:each="b : ${brands}"
-                                th:value="${b.id}"
-                                th:text="${b.name}">
-                        </option>
-                    </select><br>
+                            Size:
+                            <select name="variants[0].size.id">
+                                <option th:each="s : ${sizes}"
+                                        th:value="${s.id}"
+                                        th:text="${s.name}">
+                                </option>
+                            </select><br>
+
+                            Color:
+                            <select name="variants[0].color.id">
+                                <option th:each="c : ${colors}"
+                                        th:value="${c.id}"
+                                        th:text="${c.name}">
+                                </option>
+                            </select><br>
+
+                            Brand:
+                            <select name="variants[0].brand.id">
+                                <option th:each="b : ${brands}"
+                                        th:value="${b.id}"
+                                        th:text="${b.name}">
+                                </option>
+                            </select><br>
+                        </div>
+
+                        <!-- RACKET DETAIL FIELDS -->
+                        <div class="racket-fields" style="display:none">
+
+                            Level:
+                            <select name="variants[0].racketDetail.level">
+                                <option value="">-- Select Level --</option>
+                                <option th:each="l : ${racketLevels}"
+                                        th:value="${l}"
+                                        th:text="${l}">
+                                </option>
+                            </select><br>
+
+                            Length:
+                            <select name="variants[0].racketDetail.length">
+                                <option value="">-- Select Length --</option>
+                                <option th:each="len : ${racketLengths}"
+                                        th:value="${len}"
+                                        th:text="${len}">
+                                </option>
+                            </select><br>
+
+                            Weight:
+                            <input type="text"
+                                   name="variants[0].racketDetail.weight"><br>
+
+                            Technology:
+                            <input type="text"
+                                   name="variants[0].racketDetail.technology"><br>
+                        </div>
+
+                    </div>
+
                 </div>
 
-            </div>
-            </div>
-            <br>
-            <div id="racketBlock" style="display:none">
+                <br>
+                <button type="button" onclick="addVariant()">+ Add Variant</button>
+                <br><br>
 
-                <h3>Racket Detail</h3>
+                <button type="submit">Save Product</button>
 
-                Stock:
-                <input type="number"
-                       name="racketStock"><br>
-
-                Additional Price:
-                <input type="number"
-                       step="0.01"
-                       name="racketAdditionalPrice"><br><br>
-
-                <!-- LEVEL -->
-                Level:
-                <select name="racketDetail.level">
-                    <option value="">-- Select Level --</option>
-                    <option th:each="l : ${racketLevels}"
-                            th:value="${l}"
-                            th:text="${l}">
-                    </option>
-                </select><br>
-
-                <!-- LENGTH -->
-                Length:
-                <select name="racketDetail.length">
-                    <option value="">-- Select Length --</option>
-                    <option th:each="len : ${racketLengths}"
-                            th:value="${len}"
-                            th:text="${len}">
-                    </option>
-                </select><br>
-
-                <!-- HANDLE LENGTH -->
-                Handle Length:
-                <select name="racketDetail.racketHandleLength">
-                    <option value="">-- Select Handle Length --</option>
-                    <option th:each="h : ${handleLengths}"
-                            th:value="${h}"
-                            th:text="${h}">
-                    </option>
-                </select><br>
-
-                <!-- EQUILIBRIUM -->
-                Equilibrium Point:
-                <select name="racketDetail.equilibriumPoint">
-                    <option value="">-- Select Balance --</option>
-                    <option th:each="e : ${equilibriumPoints}"
-                            th:value="${e}"
-                            th:text="${e}">
-                    </option>
-                </select><br>
-
-                <!-- HARDNESS -->
-                Chopstick Hardness:
-                <select name="racketDetail.chopstickHardness">
-                    <option value="">-- Select Hardness --</option>
-                    <option th:each="c : ${chopstickHardnesses}"
-                            th:value="${c}"
-                            th:text="${c}">
-                    </option>
-                </select><br>
-
-                Weight:
-                <input type="text" name="racketDetail.weight"><br>
-
-                Swing Weight:
-                <input type="text" name="racketDetail.swingweight"><br>
-
-                Style:
-                <input type="text" name="racketDetail.style"><br>
-
-                Technology:
-                <input type="text" name="racketDetail.technology"><br>
-
-                Game Content:
-                <input type="text" name="racketDetail.gamecontent"><br>
-
-            </div>
-            <button type="button" onclick="addVariant()">+ Add Variant</button>
-            <br><br>
-
-            <button type="submit">Save Product</button>
-
-        </form>
-    </div>
-</div>
-
-<!-- ===== JS ===== -->
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-
-        // ===== IMAGE PREVIEW =====
-        document.getElementById("imageInput")
-            .addEventListener("change", function (event) {
-
-                const file = event.target.files[0];
-
-                if (file) {
-                    const reader = new FileReader();
-
-                    reader.onload = function (e) {
-                        document.getElementById("previewImage")
-                            .src = e.target.result;
-                    };
-
-                    reader.readAsDataURL(file);
-                }
-            });
-
-        // ===== ADD VARIANT =====
-        let index = 1;
-
-        window.addVariant = function () {
-
-            const container = document.getElementById("variantContainer");
-
-            const sizeOptions =
-                document.querySelector("select[name='variants[0].size.id']").innerHTML;
-
-            const colorOptions =
-                document.querySelector("select[name='variants[0].color.id']").innerHTML;
-
-            const brandOptions =
-                document.querySelector("select[name='variants[0].brand.id']").innerHTML;
-
-            const html = `
-        <div class="variant-item">
-            <hr>
-
-            Stock:
-            <input type="number"
-                   name="variants[${index}].stock"
-                   required><br>
-
-            Additional Price:
-            <input type="number"
-                   step="0.01"
-                   name="variants[${index}].additionalPrice"
-                   required><br>
-
-            Size:
-            <select name="variants[${index}].size.id" required>
-                ${sizeOptions}
-            </select><br>
-
-            Color:
-            <select name="variants[${index}].color.id" required>
-                ${colorOptions}
-            </select><br>
-
-            Brand:
-            <select name="variants[${index}].brand.id" required>
-                ${brandOptions}
-            </select><br>
+            </form>
         </div>
-        `;
+    </div>
 
-            container.insertAdjacentHTML("beforeend", html);
-            index++;
-        };
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
 
-        // ===== TOGGLE FORM =====
-        const categorySelect = document.getElementById("categorySelect");
-        const variantBlock = document.getElementById("variantBlock");
-        const racketBlock = document.getElementById("racketBlock");
+            // IMAGE PREVIEW
+            document.getElementById("imageInput")
+                .addEventListener("change", function (event) {
 
-        function toggleForm() {
+                    const file = event.target.files[0];
 
-            const selectedId = categorySelect.value;
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            document.getElementById("previewImage").src = e.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
 
-            const variantInputs = variantBlock.querySelectorAll("input, select");
-            const racketInputs = racketBlock.querySelectorAll("input, select");
+            const categorySelect = document.getElementById("categorySelect");
+            let index = 1;
 
-            if (selectedId === "3") {
+            function toggleFields() {
 
-                variantBlock.style.display = "none";
-                racketBlock.style.display = "block";
+                const selectedId = categorySelect.value;
+                const isRacket = (selectedId === "3");
 
-                // disable variant required
-                variantInputs.forEach(el => el.disabled = true);
-                racketInputs.forEach(el => el.disabled = false);
+                document.querySelectorAll(".variant-item").forEach(item => {
 
-            } else {
+                    const normalFields = item.querySelector(".normal-fields");
+                    const racketFields = item.querySelector(".racket-fields");
 
-                variantBlock.style.display = "block";
-                racketBlock.style.display = "none";
+                    const sizeSelect = normalFields.querySelector("select[name*='size']");
+                    const colorSelect = normalFields.querySelector("select[name*='color']");
 
-                variantInputs.forEach(el => el.disabled = false);
-                racketInputs.forEach(el => el.disabled = true);
+                    if (isRacket) {
+                        normalFields.style.display = "none";
+                        racketFields.style.display = "block";
+
+                        // 🔥 QUAN TRỌNG
+                        sizeSelect.disabled = true;
+                        colorSelect.disabled = true;
+
+                    } else {
+                        normalFields.style.display = "block";
+                        racketFields.style.display = "none";
+
+                        sizeSelect.disabled = false;
+                        colorSelect.disabled = false;
+                    }
+                });
             }
-        }
 
-        categorySelect.addEventListener("change", toggleForm);
+            window.addVariant = function () {
 
-        toggleForm();
-    });
-</script>
-</body>
-</html>
+                const container = document.getElementById("variantContainer");
+
+                const template = container.children[0].innerHTML;
+                const newHtml = template.replaceAll("[0]", "[" + index + "]");
+
+                const div = document.createElement("div");
+                div.className = "variant-item";
+                div.innerHTML = "<hr>" + newHtml;
+
+                container.appendChild(div);
+
+                index++;
+                toggleFields();
+            };
+
+            categorySelect.addEventListener("change", toggleFields);
+            toggleFields();
+
+        });
+    </script>
+
+    </body>
+    </html>

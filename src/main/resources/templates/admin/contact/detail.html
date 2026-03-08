@@ -1,0 +1,72 @@
+<link rel="stylesheet" th:href="@{/css/admin/contact.css}">
+
+<div class="contact-wrapper">
+
+    <a th:href="@{/admin/contacts}" style="color: #64748b; text-decoration: none; font-weight: 600; display: inline-block; margin-bottom: 20px;">
+        &larr; Quay lại danh sách
+    </a>
+
+    <div th:if="${param.success}" class="alert-success">
+        <strong>Thành công!</strong> Đã lưu thay đổi hoặc gửi email phản hồi thành công.
+    </div>
+
+    <div class="detail-grid">
+        <div class="detail-card">
+            <h3 class="detail-card-title">Thông tin người gửi</h3>
+
+            <div style="display: flex; gap: 40px; margin-bottom: 20px;">
+                <div>
+                    <span class="info-label">Họ Tên</span>
+                    <span class="info-value" th:text="${contact.name}"></span>
+                </div>
+                <div>
+                    <span class="info-label">Số Điện Thoại</span>
+                    <span class="info-value" th:text="${contact.phone}"></span>
+                </div>
+            </div>
+
+            <span class="info-label">Email</span>
+            <span class="info-value" th:text="${contact.email}"></span>
+
+            <span class="info-label">Trạng Thái</span>
+            <span class="badge-status" style="margin-bottom: 16px;"
+                  th:text="${contact.status != null ? contact.status.label : 'Chưa đọc'}"
+                  th:style="${contact.status?.name() == 'UNREAD' ? 'background:#fef2f2; color:#ef4444;' : (contact.status?.name() == 'PROCESSING' ? 'background:#fffbeb; color:#f59e0b;' : 'background:#ecfdf5; color:#10b981;')}">
+            </span>
+
+            <h3 class="detail-card-title" style="margin-top: 30px;">Nội dung yêu cầu</h3>
+            <span class="info-label">Chủ đề liên hệ</span>
+            <span class="info-value" th:text="${contact.topic}"></span>
+
+            <span class="info-label">Chi tiết nội dung</span>
+            <div class="message-box" th:text="${contact.message}"></div>
+
+            <div th:if="${contact.attachmentUrl != null && contact.attachmentUrl != ''}" style="margin-top: 20px;">
+                <span class="info-label">File đính kèm</span>
+                <a class="btn-action" th:href="@{${contact.attachmentUrl}}" target="_blank">Xem File Hình Ảnh</a>
+            </div>
+        </div>
+
+        <div class="detail-card">
+            <h3 class="detail-card-title">Xử lý & Phản hồi</h3>
+
+            <form th:action="@{/admin/contacts/reply/{id}(id=${contact.id})}" method="post">
+
+                <div style="margin-bottom: 24px;">
+                    <label class="form-label">Ghi chú:</label>
+                    <p class="form-desc">(Chỉ Admin thấy. Trạng thái tự động chuyển thành "Đang xử lý" nếu không soạn Email trả lời khách hàng)</p>
+                    <textarea name="adminNote" rows="4" class="custom-textarea" placeholder="Note:..." th:text="${contact.adminNote}"></textarea>
+                </div>
+
+                <div>
+                    <label class="form-label">Soạn Email trả lời khách hàng:</label>
+                    <p class="form-desc">(Email sẽ được gửi trực tiếp đến hộp thư email của khách hàng. Trạng thái tự động chuyển thành "Đã giải quyết".)</p>
+                    <textarea name="emailReply" rows="7" class="custom-textarea" placeholder="Chào bạn, BatShop đã nhận được yêu cầu của bạn..."></textarea>
+                </div>
+
+                <button type="submit" class="btn-submit">Lưu Ghi Chú & Gửi Email</button>
+            </form>
+        </div>
+    </div>
+
+</div>

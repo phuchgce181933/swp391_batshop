@@ -1,7 +1,14 @@
 package com.ra.batshop.controller;
 
+
 import com.ra.batshop.model.*;
 import com.ra.batshop.repository.CommentRepository;
+import com.ra.batshop.model.FlashSale;
+import com.ra.batshop.model.Product;
+import com.ra.batshop.model.ProductVariant;
+import com.ra.batshop.model.Review;
+import com.ra.batshop.model.User;
+import com.ra.batshop.repository.FlashSaleRepository;
 import com.ra.batshop.repository.ProductRepository;
 import com.ra.batshop.repository.ProductVariantRepository;
 import com.ra.batshop.repository.ReviewRepository;
@@ -14,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/product")
@@ -22,11 +30,16 @@ public class ProductDetailController {
     private final ProductRepository productRepository;
     private final ProductVariantRepository variantRepository;
     private final ReviewRepository reviewRepository;
-    private final CommentRepository commentRepository;
 
+    private final CommentRepository commentRepository;
+    // 1. Khai báo thêm FlashSaleRepository
+    private final FlashSaleRepository flashSaleRepository;
+
+    // 2. Inject vào Constructor
     public ProductDetailController(ProductRepository productRepository,
                                    ProductVariantRepository variantRepository,
                                    ReviewRepository reviewRepository,
+
                                    CommentRepository commentRepository) {
         this.productRepository = productRepository;
         this.variantRepository = variantRepository;
@@ -37,15 +50,25 @@ public class ProductDetailController {
     // =========================
     // PRODUCT VARIANT LIST
     // =========================
+                                   FlashSaleRepository flashSaleRepository) {
+        this.productRepository = productRepository;
+        this.variantRepository = variantRepository;
+        this.reviewRepository = reviewRepository;
+        this.flashSaleRepository = flashSaleRepository;
+    }
+
     @GetMapping("/productvariant/list")
     public String ProductVariantList(Model model) {
         model.addAttribute("productvariant", variantRepository.findAll());
         return "user/productvariant-list";
     }
 
+
     // =========================
     // PRODUCT DETAIL
     // =========================
+    // VIEW PRODUCT DETAIL
+
     @GetMapping("/detail/{id}")
     public String productDetail(@PathVariable Integer id,
                                 @RequestParam(defaultValue = "0") int page, // ⭐ NEW
@@ -77,6 +100,23 @@ public class ProductDetailController {
         model.addAttribute("totalPages", reviewPage.getTotalPages());
         model.addAttribute("avgRating", avgRating);
         model.addAttribute("reviews", reviewPage.getContent());
+
+        // ==========================================
+        // 3. KIỂM TRA LOGIC FLASH SALE TẠI ĐÂY
+        // ==========================================
+        Optional<FlashSale> activeSale = flashSaleRepository.findActiveFlashSales(LocalDateTime.now()).stream().findFirst();
+
+        if (activeSale.isPresent()) {
+            FlashSale sale = activeSale.get();
+            // Kiểm tra xem sản phẩm này có nằm trong danh sách Flash Sale không
+            boolean isInSale = sale.getProducts().stream()
+                    .anyMatch(fsp -> fsp.getProduct().getId().equals(product.getId()));
+
+            if (isInSale) {
+                // Nếu có, đẩy object flash sale sang View để Thymeleaf tự động tính giá giảm
+                model.addAttribute("activeFlashSale", sale);
+            }
+        }
 
         return "user/product-detail";
     }

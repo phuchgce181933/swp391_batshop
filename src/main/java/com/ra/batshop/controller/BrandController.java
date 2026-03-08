@@ -6,6 +6,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/admin/brands")
 public class BrandController {
@@ -18,8 +20,21 @@ public class BrandController {
 
     // LIST
     @GetMapping
-    public String list(Model model) {
-        model.addAttribute("brands", brandRepository.findAll());
+    public String listBrands(
+            @RequestParam(required = false) String keyword,
+            Model model) {
+
+        List<Brand> brands;
+
+        if (keyword != null && !keyword.isEmpty()) {
+            brands = brandRepository.findByNameContainingIgnoreCase(keyword);
+        } else {
+            brands = brandRepository.findAll();
+        }
+
+        model.addAttribute("brands", brands);
+        model.addAttribute("keyword", keyword);
+
         model.addAttribute("content", "admin/brand/list");
         return "admin/layout";
     }

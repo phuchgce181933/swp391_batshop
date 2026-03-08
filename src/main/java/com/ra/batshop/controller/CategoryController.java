@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 
 @Controller
 @RequestMapping("/admin/categories")
@@ -23,8 +24,21 @@ public class CategoryController {
     }
 
     @GetMapping
-    public String list(Model model) {
-        model.addAttribute("categories", categoryRepository.findAll());
+    public String listCategories(
+            @RequestParam(required = false) String keyword,
+            Model model) {
+
+        List<Category> categories;
+
+        if (keyword != null && !keyword.isEmpty()) {
+            categories = categoryRepository.findByNameContainingIgnoreCase(keyword);
+        } else {
+            categories = categoryRepository.findAll();
+        }
+
+        model.addAttribute("categories", categories);
+        model.addAttribute("keyword", keyword);
+
         model.addAttribute("content", "admin/category/list");
         return "admin/layout";
     }

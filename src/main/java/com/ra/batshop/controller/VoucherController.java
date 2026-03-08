@@ -76,6 +76,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -90,9 +91,22 @@ public class VoucherController {
 
     // LIST
     @GetMapping
-    public String list(Model model) {
-        model.addAttribute("vouchers", voucherRepository.findAll());
+    public String listVouchers(
+            @RequestParam(required = false) String keyword,
+            Model model) {
+
+        List<Voucher> vouchers;
+
+        if (keyword != null && !keyword.isEmpty()) {
+            vouchers = voucherRepository.findByCodeContainingIgnoreCase(keyword);
+        } else {
+            vouchers = voucherRepository.findAll();
+        }
+
+        model.addAttribute("vouchers", vouchers);
+        model.addAttribute("keyword", keyword);
         model.addAttribute("content", "admin/voucher/list");
+
         return "admin/layout";
     }
 

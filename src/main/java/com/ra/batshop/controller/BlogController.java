@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 
 
 @Controller
@@ -24,9 +25,22 @@ public class BlogController {
     }
 
     @GetMapping
-    public String list(Model model) {
-        model.addAttribute("blogs", blogRepository.findAll());
+    public String listBlogs(
+            @RequestParam(required = false) String keyword,
+            Model model) {
+
+        List<Blog> blogs;
+
+        if (keyword != null && !keyword.isEmpty()) {
+            blogs = blogRepository.findByTitleContainingIgnoreCase(keyword);
+        } else {
+            blogs = blogRepository.findAll();
+        }
+
+        model.addAttribute("blogs", blogs);
+        model.addAttribute("keyword", keyword);
         model.addAttribute("content", "admin/blog/list");
+
         return "admin/layout";
     }
 

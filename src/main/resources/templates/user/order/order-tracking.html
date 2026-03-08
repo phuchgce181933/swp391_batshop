@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Order Tracking</title>
+    <link rel="stylesheet" th:href="@{/css/homeproduct.css}">
+    <link rel="stylesheet" th:href="@{/css/user/order-tracking.css}">
+</head>
+<body>
+<div th:replace="layout/header :: header"></div>
+<div class="tracking-container">
+<h2>Order Tracking</h2>
+
+<div class="box">
+    <p><strong>Order ID:</strong> <span th:text="${order.id}"></span></p>
+    <p><strong>Created At:</strong> <span th:text="${order.createdAt}"></span></p>
+    <p><strong>Total Price:</strong> <span th:text="${order.totalPrice}"></span></p>
+    <p><strong>Payment Method:</strong> <span th:text="${order.paymentMethod}"></span></p>
+    <p><strong>Status:</strong>
+        <span th:text="${order.status}"></span>
+    </p>
+</div>
+
+<!-- Timeline trạng thái -->
+<div class="box">
+    <h3>Tracking Progress</h3>
+
+    <div class="timeline">
+
+        <div class="step"
+             th:classappend="${order.status.ordinal() >= 0} ? 'active'">
+            <div class="circle">1</div>
+            <p>PENDING</p>
+        </div>
+
+        <div class="step"
+             th:classappend="${order.status.ordinal() >= 1} ? 'active'">
+            <div class="circle">2</div>
+            <p>CONFIRMED</p>
+        </div>
+
+        <div class="step"
+             th:classappend="${order.status.ordinal() >= 2} ? 'active'">
+            <div class="circle">3</div>
+            <p>PACKED</p>
+        </div>
+
+        <div class="step"
+             th:classappend="${order.status.ordinal() >= 3} ? 'active'">
+            <div class="circle">4</div>
+            <p>SHIPPING</p>
+        </div>
+
+        <div class="step"
+             th:classappend="${order.status.ordinal() >= 4} ? 'active'">
+            <div class="circle">5</div>
+            <p>COMPLETED</p>
+        </div>
+
+    </div>
+</div>
+
+<!-- Danh sách sản phẩm -->
+<div class="box">
+    <h3>Order Items</h3>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Total</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${order.orderItems}">
+            <td th:text="${item.productVariant.product.name}"></td>
+            <td th:text="${item.quantity}"></td>
+            <td th:text="${item.price}"></td>
+            <td th:text="${item.price.multiply(item.quantity)}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<a href="/user/orders">← Back to Orders</a>
+</div>
+</body>
+</html>

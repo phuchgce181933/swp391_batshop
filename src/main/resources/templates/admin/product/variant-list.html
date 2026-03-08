@@ -1,0 +1,45 @@
+<link rel="stylesheet" th:href="@{/css/admin/variant-list.css}">
+<h2>Product Variants</h2>
+
+<p>
+    Product:
+    <strong th:text="${product.name}"></strong>
+</p>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Stock</th>
+        <th>Additional Price</th>
+
+        <th th:if="${hasSize}">Size</th>
+        <th th:if="${hasColor}">Color</th>
+        <th th:if="${hasRacketLevel}">Racket Level</th>
+        <th th:if="${hasRacketLength}">Racket Length</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr th:each="v : ${variants}">
+        <td th:text="${v.id}"></td>
+        <td th:text="${v.stock}"></td>
+        <td th:text="${v.additionalPrice}"></td>
+
+        <td th:if="${hasSize}"
+            th:text="${v.size != null ? v.size.name : '-'}"></td>
+
+        <td th:if="${hasColor}"
+            th:text="${v.color != null ? v.color.name : '-'}"></td>
+
+        <td th:if="${hasRacketLevel}"
+            th:text="${v.racketDetail != null ? v.racketDetail.level : '-'}"></td>
+
+        <td th:if="${hasRacketLength}"
+            th:text="${v.racketDetail != null ? v.racketDetail.length : '-'}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<br>
+<a th:href="@{/admin/products}">← Back</a>

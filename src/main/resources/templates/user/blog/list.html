@@ -1,30 +1,36 @@
 <div th:fragment="blog" class="blog-grid">
 
-    <a th:href="@{/blog/{id}(id=${b.id})}" class="blog-card" th:each="b : ${blogs}">
+    <div class="blog-card" th:each="b : ${blogs}">
 
-        <img th:if="${b.image != null and !#strings.isEmpty(b.image)}"
-             th:src="@{'/uploads/product/' + ${b.image}}"
-             class="blog-image"
-             th:alt="${b.title}">
+        <a th:href="@{/blog/{id}(id=${b.id})}" style="display: block;">
+            <img th:if="${b.image != null and !#strings.isEmpty(b.image)}"
+                 th:src="@{'/uploads/product/' + ${b.image}}"
+                 class="blog-img"
+                 th:alt="${b.title}">
 
-        <img th:if="${b.image == null or #strings.isEmpty(b.image)}"
-             th:src="@{/images/no-image-blog.png}"
-             class="blog-image"
-             alt="No image available">
+            <img th:if="${b.image == null or #strings.isEmpty(b.image)}"
+                 th:src="@{/images/no-image-blog.png}"
+                 class="blog-img"
+                 alt="No image available">
+        </a>
 
-        <div class="blog-content">
-            <h3 class="blog-title" th:text="${b.title}">Tiêu đề bài viết</h3>
+        <div class="blog-content-box">
+            <h3 class="blog-title">
+                <a th:href="@{/blog/{id}(id=${b.id})}" th:text="${b.title}" style="color: inherit; text-decoration: none;">Tiêu đề bài viết</a>
+            </h3>
 
-            <span class="blog-date" th:if="${b.createdAt != null}"
-                  th:text="${#temporals.format(b.createdAt, 'dd-MM-yyyy HH:mm')}">
-                09-02-2026 09:47
-            </span>
+            <div class="blog-date-wrapper">
+                <span class="blog-date" th:if="${b.createdAt != null}"
+                      th:text="${#temporals.format(b.createdAt, 'dd-MM-yyyy HH:mm')}">
+                    12-12-2000 12:12
+                </span>
+            </div>
 
             <p class="blog-excerpt" th:if="${b.content != null}"
                th:text="${#strings.abbreviate(b.content, 80)}">
                 Đoạn mô tả ngắn gọn về bài viết sẽ nằm ở đây...
             </p>
         </div>
-    </a>
+    </div>
 
 </div>

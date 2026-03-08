@@ -1,0 +1,128 @@
+<div th:fragment="content">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" th:href="@{/css/admin/flash-sale.css}">
+
+    <div class="container-fluid">
+        <div class="fs-admin-header mt-3 d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
+            <h2 class="fs-admin-title m-0">Cập Nhật Flash Sale #<span th:text="${flashSale.id}"></span></h2>
+            <a th:href="@{/admin/flash-sales}" class="fs-btn fs-btn-secondary text-decoration-none">
+                <i class="fas fa-arrow-left"></i>&larr; Quay lại danh sách
+            </a>
+        </div>
+
+        <div class="row align-items-start">
+            <div th:if="${errorMessage}" class="alert alert-danger d-flex align-items-center" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <span th:text="${errorMessage}"></span>
+            </div>
+
+            <div th:if="${successMessage}" class="alert alert-success d-flex align-items-center" role="alert">
+                <i class="fas fa-check-circle me-2"></i>
+                <span th:text="${successMessage}"></span>
+            </div>
+
+            <div class="col-12 col-lg-4 mb-4">
+                <div class="fs-admin-card p-4 bg-white rounded shadow-sm border">
+                    <h4 class="mb-4 text-primary border-bottom pb-2">Cài đặt thông số</h4>
+
+                    <form id="flashSaleForm" th:action="@{/admin/flash-sales/edit}" th:object="${flashSale}" method="POST">
+                        <input type="hidden" th:field="*{id}">
+
+                        <div class="fs-form-group mb-3">
+                            <label class="fs-form-label fw-bold">Giảm Giá (%)</label>
+                            <input type="number" class="form-control" th:field="*{discountPercent}" min="1" max="100" required>
+                        </div>
+
+                        <div class="fs-form-group mb-3">
+                            <label class="fs-form-label fw-bold">Ngày Sale</label>
+                            <input type="date" class="form-control" name="saleDate" id="saleDate" required
+                                   th:value="${#temporals.format(flashSale.startDate, 'yyyy-MM-dd')}">
+                        </div>
+
+                        <div class="row">
+                            <div class="col-6 fs-form-group mb-3">
+                                <label class="fs-form-label fw-bold">Giờ bắt đầu</label>
+                                <input type="time" class="form-control" name="startTime" id="startTime" required
+                                       th:value="${#temporals.format(flashSale.startDate, 'HH:mm')}">
+                            </div>
+
+                            <div class="col-6 fs-form-group mb-4">
+                                <label class="fs-form-label fw-bold">Giờ kết thúc</label>
+                                <input type="time" class="form-control" name="endTime" id="endTime" required
+                                       th:value="${#temporals.format(flashSale.endDate, 'HH:mm')}">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 fw-bold py-2 mt-2">Cập nhật thông số</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-8">
+                <div class="fs-admin-card p-4 bg-white rounded shadow-sm border">
+                    <h4 class="mb-4 text-success border-bottom pb-2">Danh sách sản phẩm trong đợt Sale</h4>
+
+                    <form th:action="@{/admin/flash-sales/{id}/add-product(id=${flashSale.id})}" method="POST" class="d-flex gap-2 mb-4 bg-light p-3 rounded border">
+                        <select name="productId" class="form-select" required>
+                            <option value="">-- Chọn sản phẩm để đưa vào Flash Sale --</option>
+                            <option th:each="p : ${products}" th:value="${p.id}" th:text="${p.name} + ' (Gốc: ' + ${#numbers.formatDecimal(p.price, 0, 'COMMA', 0, 'POINT')} + ' đ)'"></option>
+                        </select>
+                        <button type="submit" class="btn btn-success text-nowrap px-4">
+                            <i class="fas fa-plus me-1"></i> Thêm Sản Phẩm
+                        </button>
+                    </form>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover table-bordered align-middle mb-0">
+                            <thead class="table-dark text-center">
+                            <tr>
+                                <th class="text-start">Tên sản phẩm</th>
+                                <th>Giá gốc</th>
+                                <th>Giá Sale (Tự tính)</th>
+                                <th>Hành động</th>
+                            </tr>
+                            </thead>
+                            <tbody class="text-center bg-white">
+                            <tr th:each="fsp : ${flashSale.products}">
+                                <td class="text-start fw-bold" th:text="${fsp.product.name}"></td>
+                                <td class="text-muted text-decoration-line-through" th:text="${#numbers.formatDecimal(fsp.product.price, 0, 'COMMA', 0, 'POINT')} + ' đ'"></td>
+                                <td class="text-danger fw-bold fs-5" th:text="${#numbers.formatDecimal(fsp.salePrice, 0, 'COMMA', 0, 'POINT')} + ' đ'"></td>
+                                <td>
+                                    <a th:href="@{/admin/flash-sales/{fsId}/remove-product/{fspId}(fsId=${flashSale.id}, fspId=${fsp.id})}"
+                                       class="btn btn-outline-danger btn-sm"
+                                       onclick="return confirm('Loại sản phẩm này khỏi Flash Sale?');">
+                                        <i class="fas fa-trash me-1"></i> Xóa
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr th:if="${flashSale.products.isEmpty()}">
+                                <td colspan="4" class="text-center py-4 text-muted">
+                                    <i class="fas fa-box-open fs-4 d-block mb-2 text-black-50"></i>
+                                    <i>Chưa có sản phẩm nào được chọn.</i>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById("flashSaleForm");
+            form.addEventListener("submit", function (event) {
+                const startTime = document.getElementById("startTime").value;
+                const endTime = document.getElementById("endTime").value;
+
+                if (startTime && endTime && startTime >= endTime) {
+                    event.preventDefault();
+                    alert("Lỗi: Giờ kết thúc phải diễn ra sau giờ bắt đầu!");
+                }
+            });
+        });
+    </script>
+</div>

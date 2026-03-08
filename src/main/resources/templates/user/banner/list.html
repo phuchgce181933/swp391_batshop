@@ -1,0 +1,82 @@
+<th:block th:fragment="banner-list">
+
+    <div class="banner-container" th:if="${not #lists.isEmpty(banners)}">
+        <div class="banner-track" id="bannerTrack">
+            <div class="banner-slide" th:each="banner : ${banners}">
+                <img th:src="@{'/uploads/product/' + ${banner.image}}" th:alt="${banner.name}">
+            </div>
+        </div>
+        <button class="banner-btn prev-btn" id="prevBtn" th:if="${banners.size() > 1}">&#10094;</button>
+        <button class="banner-btn next-btn" id="nextBtn" th:if="${banners.size() > 1}">&#10095;</button>
+    </div>
+
+    <script th:inline="javascript">
+        const totalBanners = /*[[${banners.size()}]]*/ 0;
+        if (totalBanners > 1) {
+            const track = document.getElementById('bannerTrack');
+            const slides = document.querySelectorAll('.banner-slide');
+            const nextBtn = document.getElementById('nextBtn');
+            const prevBtn = document.getElementById('prevBtn');
+
+            let currentIndex = 1;
+            let slideInterval;
+            const intervalTime = 5000;
+
+            const firstClone = slides[0].cloneNode(true);
+            const lastClone = slides[slides.length - 1].cloneNode(true);
+
+            firstClone.id = 'first-clone';
+            lastClone.id = 'last-clone';
+
+            track.append(firstClone);
+            track.prepend(lastClone);
+
+            const slideWidth = slides[0].clientWidth;
+            track.style.transform = `translateX(${-slideWidth * currentIndex}px)`;
+
+            const moveToSlide = (index) => {
+                track.style.transition = 'transform 0.5s ease-in-out';
+                track.style.transform = `translateX(${-slideWidth * index}px)`;
+                currentIndex = index;
+            };
+
+            const nextSlide = () => {
+                if (currentIndex >= slides.length + 1) return;
+                moveToSlide(currentIndex + 1);
+            };
+
+            const prevSlide = () => {
+                if (currentIndex <= 0) return;
+                moveToSlide(currentIndex - 1);
+            };
+
+            nextBtn.addEventListener('click', () => { nextSlide(); resetTimer(); });
+            prevBtn.addEventListener('click', () => { prevSlide(); resetTimer(); });
+
+            track.addEventListener('transitionend', () => {
+                const allSlides = document.querySelectorAll('.banner-slide');
+                if (allSlides[currentIndex].id === 'first-clone') {
+                    track.style.transition = 'none';
+                    currentIndex = 1;
+                    track.style.transform = `translateX(${-slideWidth * currentIndex}px)`;
+                }
+                if (allSlides[currentIndex].id === 'last-clone') {
+                    track.style.transition = 'none';
+                    currentIndex = slides.length;
+                    track.style.transform = `translateX(${-slideWidth * currentIndex}px)`;
+                }
+            });
+
+            const startSlide = () => { slideInterval = setInterval(nextSlide, intervalTime); };
+            const resetTimer = () => { clearInterval(slideInterval); startSlide(); };
+
+            window.addEventListener('resize', () => {
+                const newSlideWidth = document.querySelector('.banner-slide').clientWidth;
+                track.style.transition = 'none';
+                track.style.transform = `translateX(${-newSlideWidth * currentIndex}px)`;
+            });
+
+            startSlide();
+        }
+    </script>
+</th:block>

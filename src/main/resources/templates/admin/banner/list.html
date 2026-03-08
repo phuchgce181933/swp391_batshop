@@ -53,6 +53,16 @@
   <div class="banner-header">
     <div>
       <h2>Manager Banners</h2>
+
+      <form th:action="@{/admin/banners}" method="get" style="margin-bottom:15px;">
+        <input type="text"
+               name="keyword"
+               th:value="${keyword}"
+               placeholder=" Search banner..."
+               class="search-input">
+
+        <button type="submit">Search</button>
+      </form>
     </div>
 
     <a th:href="@{/admin/banners/add}" class="btn-add">

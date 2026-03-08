@@ -1,0 +1,234 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    color: #333;
+    background-color: #fff;
+}
+
+.contact-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+    font-size: 14px;
+    margin-bottom: 30px;
+}
+
+.breadcrumb a {
+    color: #333;
+    text-decoration: none;
+}
+
+.breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+.breadcrumb .separator {
+    margin: 0 5px;
+    color: #666;
+}
+
+.breadcrumb .current {
+    color: #f26522; /* Màu cam */
+}
+
+/* Tiêu đề & Thông tin */
+.contact-main-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+.contact-info {
+    margin-bottom: 30px;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+.contact-info .highlight {
+    color: #f26522; /* Màu cam */
+    font-weight: bold;
+}
+
+.contact-sub-title {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+/* Form Styles */
+.contact-form {
+    margin-bottom: 30px;
+}
+
+.form-group-row {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 15px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.form-control:focus {
+    border-color: #0056b3; /* Đổi màu viền khi focus */
+}
+
+/* Fix độ rộng 2 cột trên cùng */
+.form-group-row .form-control {
+    flex: 1;
+}
+
+textarea.form-control {
+    resize: vertical;
+}
+
+.submit-btn {
+    background-color: #006699; /* Màu xanh biển đậm như hình */
+    color: #fff;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 4px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.submit-btn:hover {
+    background-color: #004d73;
+}
+
+/* Map */
+.map-container {
+    width: 100%;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .form-group-row {
+        flex-direction: column;
+        gap: 15px;
+    }
+}
+
+/* ================= POPUP STYLES ================= */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Nền đen mờ 50% */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999; /* Luôn nổi trên cùng */
+}
+
+.popup-content {
+    background-color: #fff;
+    padding: 30px 40px;
+    border-radius: 8px;
+    text-align: center;
+    max-width: 450px;
+    width: 90%;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    /* Hiệu ứng trượt từ trên xuống */
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.popup-icon {
+    font-size: 60px;
+    color: #28a745; /* Icon check màu xanh báo thành công */
+    margin-bottom: 15px;
+}
+
+.popup-title {
+    font-size: 22px;
+    color: #333;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.popup-message {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 25px;
+    line-height: 1.5;
+}
+
+.popup-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.btn-home {
+    padding: 10px 25px;
+    background-color: #f26522; /* Màu cam chủ đạo của web */
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.btn-home:hover {
+    background-color: #d9531e;
+}
+
+.btn-close {
+    padding: 10px 25px;
+    background-color: #f1f1f1; /* Nút xám nhạt */
+    color: #333;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.btn-close:hover {
+    background-color: #e2e2e2;
+}
+
+.error-text {
+    color: #dc3545;
+    font-size: 13px;
+    margin-top: 5px;
+    margin-bottom: 0;
+}

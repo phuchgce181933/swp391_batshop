@@ -1,0 +1,62 @@
+<div th:fragment="content">
+  <link rel="stylesheet" th:href="@{/css/admin/flash-sale.css}">
+
+  <div class="container-fluid">
+    <div class="fs-admin-header mt-3">
+      <h2 class="fs-admin-title">Thêm Flash Sale Mới</h2>
+      <a th:href="@{/admin/flash-sales}" class="fs-btn fs-btn-secondary"><i class="fas fa-arrow-left"></i>&larr; Quay lại danh sách</a>
+    </div>
+
+    <div class="fs-admin-card">
+
+      <div th:if="${errorMessage}" class="alert alert-danger" style="background-color: #f8d7da; color: #721c24; padding: 12px; border-radius: 6px; border: 1px solid #f5c6cb; font-weight: 500; margin-bottom: 20px;">
+        <i class="fas fa-exclamation-triangle"></i> <span th:text="${errorMessage}"></span>
+      </div>
+
+      <form id="flashSaleForm" th:action="@{/admin/flash-sales/add}" th:object="${flashSale}" method="POST">
+
+        <div class="fs-form-group mb-3">
+          <label class="fs-form-label">Phần trăm giảm giá (%)</label>
+          <input type="number" class="fs-form-control" th:field="*{discountPercent}" required min="1" max="100">
+        </div>
+
+        <div class="fs-form-group mb-3">
+          <label class="fs-form-label">Ngày diễn ra Sale</label>
+          <input type="date" class="fs-form-control" name="saleDate" id="saleDate" required>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 fs-form-group mb-3">
+            <label class="fs-form-label">Giờ bắt đầu</label>
+            <input type="time" class="fs-form-control" name="startTime" id="startTime" required>
+          </div>
+
+          <div class="col-md-6 fs-form-group mb-4">
+            <label class="fs-form-label">Giờ kết thúc</label>
+            <input type="time" class="fs-form-control" name="endTime" id="endTime" required>
+          </div>
+        </div>
+
+        <div class="d-flex gap-2">
+          <button type="submit" class="fs-btn fs-btn-primary">Lưu Flash Sale</button>
+          <a th:href="@{/admin/flash-sales}" class="fs-btn fs-btn-secondary">Hủy</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("flashSaleForm");
+        form.addEventListener("submit", function (event) {
+            const startTime = document.getElementById("startTime").value;
+            const endTime = document.getElementById("endTime").value;
+
+            if (startTime && endTime && startTime >= endTime) {
+                event.preventDefault();
+                alert("Lỗi: Giờ kết thúc phải lớn hơn giờ bắt đầu!");
+            }
+        });
+    });
+  </script>
+</div>

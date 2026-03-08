@@ -1,17 +1,22 @@
 package com.ra.batshop.controller;
 
 import com.ra.batshop.model.Banner;
+import com.ra.batshop.model.FlashSale;
 import com.ra.batshop.model.ProductVariant;
 import com.ra.batshop.repository.*;
 import com.ra.batshop.model.Product;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @RequestMapping("/home")
 @Controller
@@ -20,19 +25,40 @@ public class HomeController {
     private final CategoryRepository categoryRepository;
     private final BlogRepository blogRepository;
     private final ProductVariantRepository productVariantRepository;
-    private final BannerRepository bannerRepository; // 1. Khai báo
+    private final BannerRepository bannerRepository;
+    // 1. Thêm FlashSaleRepository
+    private final FlashSaleRepository flashSaleRepository;
 
     // 2. Inject vào Constructor
-    public HomeController(ProductRepository productRepository, CategoryRepository categoryRepository, BlogRepository blogRepository,
+    public HomeController(ProductRepository productRepository,
+                          CategoryRepository categoryRepository,
+                          BlogRepository blogRepository,
                           ProductVariantRepository productVariantRepository,
-                          BannerRepository bannerRepository
-                          ) {
+                          BannerRepository bannerRepository,
+                          FlashSaleRepository flashSaleRepository) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.blogRepository = blogRepository;
         this.productVariantRepository = productVariantRepository;
         this.bannerRepository = bannerRepository;
+        this.flashSaleRepository = flashSaleRepository;
+    }
+    // ==========================================
+    // KIỂM TRA FLASH SALE
+    // ==========================================
+    private void checkAndAddFlashSale(Model model) {
+        LocalDateTime now = LocalDateTime.now();
 
+        // 1. Tìm xem có đợt nào ĐANG diễn ra không
+        Optional<FlashSale> activeSale = flashSaleRepository.findActiveFlashSales(now).stream().findFirst();        if (activeSale.isPresent()) {
+            model.addAttribute("activeFlashSale", activeSale.get());
+        } else {
+            // 2. Nếu không có đợt nào đang chạy, tìm đợt SẮP diễn ra gần nhất
+            Optional<FlashSale> upcomingSale = flashSaleRepository.findFirstByStartDateAfterOrderByStartDateAsc(now);
+            if (upcomingSale.isPresent()) {
+                model.addAttribute("upcomingFlashSale", upcomingSale.get());
+            }
+        }
     }
 
     @GetMapping()
@@ -63,6 +89,15 @@ public class HomeController {
         model.addAttribute("blogs",
                 blogRepository.findTop4ByStatusIsTrueOrderByCreatedAtDesc());
 
+        // 3. Gọi hàm kiểm tra Flash Sale
+        checkAndAddFlashSale(model);
+
+        // LẤY 8 SẢN PHẨM BÁN CHẠY NHẤT THỰC TẾ
+        // ==========================================
+        Pageable topSellingPageable = PageRequest.of(0, 8);
+        List<Product> topSellingProducts = productRepository.findTopSellingProducts(topSellingPageable);
+        model.addAttribute("topSellingProducts", topSellingProducts);
+
         return "home";
     }
 
@@ -82,8 +117,12 @@ public class HomeController {
         model.addAttribute("categories", categoryRepository.findAll());
         model.addAttribute("selectedCategory", categoryId);
 
+        // 3. Gọi hàm kiểm tra Flash Sale
+        checkAndAddFlashSale(model);
+
         return "user/product";
     }
+
     // LIST
     @GetMapping("/category")
     public String listCategory(Model model) {
@@ -94,8 +133,6 @@ public class HomeController {
     @GetMapping("/blog")
     public String listBlog(Model model) {
         model.addAttribute("blogs", blogRepository.findAll());
-
-       return "user/blog/list";
-
+        return "user/blog/list";
     }
 }

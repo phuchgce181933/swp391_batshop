@@ -1,53 +1,169 @@
-<link rel="stylesheet" th:href="@{/css/admin/order.css}">
-<h2>Manager Orders</h2>
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
 
-<table>
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>User</th>
-        <th>Total Price</th>
-        <th>Payment Method</th>
-        <th>Created At</th>
-        <th>Action</th>
-        <th>Status</th>
-        <th>Order item</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="o : ${orders}">
-        <td th:text="${o.id}"></td>
+<div >
 
-        <td th:text="${o.user?.fullName} ?: 'Guest'"></td>
+    <div th:fragment="content">
 
-        <td th:text="${#numbers.formatDecimal(o.totalPrice,0,'COMMA',0,'POINT')}"></td>
+        <link rel="stylesheet" th:href="@{/css/admin/order.css}">
+        <h2>Manager Orders</h2>
+        <form method="get" th:action="@{/admin/orders}">
 
-        <td th:text="${o.paymentMethod}"></td>
+            Payment Method:
+            <select name="paymentMethod">
+                <option value="">All</option>
+                <option value="COD" th:selected="${selectedMethod=='COD'}">COD</option>
+                <option value="VNPAY" th:selected="${selectedMethod=='VNPAY'}">VNPAY</option>
+            </select>
 
-        <td th:text="${o.paymentStatus}"></td>
+            Payment Status:
+            <select name="paymentStatus">
+                <option value="">All</option>
+                <option value="PAID" th:selected="${selectedPaymentStatus=='PAID'}">PAID</option>
+                <option value="UNPAID" th:selected="${selectedPaymentStatus=='UNPAID'}">UNPAID</option>
+            </select>
 
-        <td th:text="${#temporals.format(o.createdAt,'dd/MM/yyyy HH:mm')}"></td>
+            Order Status:
+            <select name="status">
+                <option value="">All</option>
+                <option th:each="s : ${statuses}"
+                        th:value="${s}"
+                        th:text="${s}"
+                        th:selected="${s == selectedStatus}">
+                </option>
+            </select>
 
-        <td>
-            <form th:action="@{/admin/orders/edit/{id}(id=${o.id})}"
-                  method="post">
+            <button type="submit">Filter</button>
 
-                <select name="status" onchange="this.form.submit()">
+        </form>
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>User</th>
+                <th>Shipping Address</th>
+                <th>Total Price</th>
+                <th>Payment Method</th>
+                <th>Payment Status</th>
+                <th>Created At</th>
+                <th>Status</th>
+                <th>Order Item</th>
+            </tr>
+            </thead>
 
-                    <option th:each="s : ${T(com.ra.batshop.model.Enum.OrderStatus).values()}"
-                            th:value="${s}"
-                            th:text="${s}"
-                            th:selected="${s.name() == o.status.name()}">
-                    </option>
+            <tbody>
+            <tr th:each="o : ${orders}">
+                <td th:text="${o.id}"></td>
 
-                </select>
+                <td th:text="${o.user != null ? o.user.fullName : 'Guest'}"></td>
 
-            </form>
-        </td>
+                <td>
+                    <div th:if="${o.shippingAddress != null}">
+                        <strong th:text="${o.shippingAddress.fullName}"></strong><br>
+                        <span th:text="${o.shippingAddress.phone}"></span><br>
 
-        <td>
-            <a th:href="@{/orders_item/admin/{id}(id=${o.id})}">View</a>
-        </td>
-    </tr>
-    </tbody>
-</table>
+                        <span th:text="${o.shippingAddress.detail}"></span><br>
+                        <span th:text="${o.shippingAddress.ward + ', '
+                        + o.shippingAddress.district + ', '
+                        + o.shippingAddress.city}">
+        </span>
+                    </div>
+
+                    <span th:if="${o.shippingAddress == null}">
+        No address
+    </span>
+                </td>
+
+                <td th:text="${#numbers.formatDecimal(o.totalPrice,0,'COMMA',0,'POINT')}"></td>
+
+                <td th:text="${o.paymentMethod}"></td>
+
+                <td th:text="${o.paymentStatus}"></td>
+
+                <td th:text="${#temporals.format(o.createdAt,'dd/MM/yyyy HH:mm')}"></td>
+                <td>
+                    <a th:href="@{/orders_item/admin/{id}(id=${o.id})}">View</a>
+                </td>
+                <td>
+
+                    <div th:if="${o.status.name() == 'CANCELLED'}">
+                        <span style="color:red;font-weight:600;">CANCELLED</span>
+                    </div>
+
+                    <form th:if="${o.status.name() != 'CANCELLED' && o.status.name() != 'COMPLETED'}"
+                          th:action="@{/admin/orders/edit/{id}(id=${o.id})}"
+                          method="post">
+
+                        <select name="status" onchange="this.form.submit()">
+
+                            <option th:value="${o.status}"
+                                    th:text="${o.status}"
+                                    selected>
+                            </option>
+
+                            <option th:if="${o.status.name() == 'PENDING'}" value="CONFIRMED">CONFIRMED</option>
+                            <option th:if="${o.status.name() == 'CONFIRMED'}" value="PACKED">PACKED</option>
+                            <option th:if="${o.status.name() == 'PACKED'}" value="SHIPPING">SHIPPING</option>
+                            <option th:if="${o.status.name() == 'SHIPPING'}" value="COMPLETED">COMPLETED</option>
+
+                            <option th:if="${o.status.name() == 'PENDING' || o.status.name() == 'CONFIRMED'}"
+                                    value="CANCELLED">
+                                CANCELLED
+                            </option>
+
+                        </select>
+                    </form>
+
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="pagination">
+
+            <!-- PREVIOUS -->
+
+            <a th:if="${currentPage > 0}"
+               th:href="@{/admin/orders(
+        page=${currentPage - 1},
+        size=5,
+        paymentMethod=${selectedMethod},
+        paymentStatus=${selectedPaymentStatus},
+        status=${selectedStatus}
+   )}">
+                Previous
+            </a>
+
+            <!-- PAGE NUMBER -->
+            <span th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+        <a th:href="@{/admin/orders(
+                page=${i},
+                size=5,
+                paymentMethod=${selectedMethod},
+                paymentStatus=${selectedPaymentStatus},
+                status=${selectedStatus}
+        )}"
+           th:text="${i + 1}"
+           th:classappend="${i == currentPage} ? 'active' : ''">
+        </a>
+    </span>
+
+            <!-- NEXT -->
+            <a th:if="${currentPage < totalPages - 1}"
+               th:href="@{/admin/orders(
+            page=${currentPage + 1},
+            size=5,
+            paymentMethod=${selectedMethod},
+            paymentStatus=${selectedPaymentStatus},
+            status=${selectedStatus}
+       )}">
+                Next
+            </a>
+
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

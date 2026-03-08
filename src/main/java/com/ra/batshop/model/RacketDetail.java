@@ -46,4 +46,8 @@ public class RacketDetail {
 
     @Enumerated(EnumType.STRING)
     private ChopstickHardness chopstickHardness;
+
+    @OneToOne
+    @JoinColumn(name = "variant_id")
+    private ProductVariant variant;
 }

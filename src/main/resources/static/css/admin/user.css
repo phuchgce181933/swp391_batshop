@@ -50,8 +50,18 @@ h2 {
     border-radius: 999px;
     font-size: 13px;
     font-weight: 500;
+}
+
+/* USER - xanh */
+.badge-user {
     background: #e0ecff;
     color: #2563eb;
+}
+
+/* ADMIN - đỏ giống nút delete */
+.badge-admin {
+    background-color: #fee2e2;
+    color: #dc2626;
 }
 
 /* ROLE COLORS (OPTIONAL – AUTO BY TEXT) */

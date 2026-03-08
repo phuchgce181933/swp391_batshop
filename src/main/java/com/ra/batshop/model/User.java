@@ -37,6 +37,8 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    private Boolean status;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 

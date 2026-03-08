@@ -93,3 +93,6 @@ button:hover {
     margin-bottom: 15px;
     border: 1px solid #e3e6f0;
 }
+.racket-fields {
+    display: none;
+}

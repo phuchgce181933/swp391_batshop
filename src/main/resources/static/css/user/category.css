@@ -1,0 +1,247 @@
+/* Khởi tạo cơ bản */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+.breadcrumb {
+    padding: 15px 5%;
+    font-size: 14px;
+    background-color: #f9f9f9;
+}
+
+.breadcrumb a {
+    text-decoration: none;
+    color: #555;
+}
+
+/* Layout chính */
+.category-container {
+    display: flex;
+    padding: 0 5%;
+    gap: 30px;
+    max-width: 1400px;
+    margin: 0 auto;
+    background-color: #fff;
+    padding-top: 20px;
+}
+
+/* Sidebar - Bộ Lọc */
+.sidebar {
+    width: 250px;
+    flex-shrink: 0;
+}
+
+.filter-group {
+    margin-bottom: 25px;
+}
+
+.filter-group h3 {
+    font-size: 16px;
+    text-transform: uppercase;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.filter-group label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    color: #555;
+}
+
+.filter-group label input {
+    margin-right: 8px;
+}
+
+.btn-filter {
+    width: 100%;
+    padding: 10px;
+    background-color: #e3001b; /* Màu đỏ thể thao */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-filter:hover {
+    background-color: #cc0018;
+}
+
+/* Main Content */
+.main-content {
+    flex-grow: 1;
+}
+
+.category-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f5f6f8;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+}
+
+.category-title {
+    font-size: 18px;
+    text-transform: uppercase;
+    color: #333;
+}
+
+/* Phần Dropdown sắp xếp */
+.sort-dropdown {
+    font-size: 14px;
+}
+
+.sort-dropdown select {
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
+}
+
+/* Lưới Sản Phẩm */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 sản phẩm 1 hàng giống ảnh */
+    gap: 20px;
+}
+
+/* Card Sản Phẩm */
+.product-card {
+    position: relative;
+    background: #fff;
+    padding: 10px;
+    transition: box-shadow 0.3s ease;
+    text-align: center;
+}
+
+.product-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.badge-contact {
+    position: absolute;
+    top: 10px;
+    left: 0;
+    background-color: #e3001b;
+    color: white;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: bold;
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+    z-index: 10;
+}
+
+/* Tìm và sửa lại phần này trong category.css */
+.product-image {
+    width: 100%;
+    height: 220px; /* Hoặc 300px tùy bạn muốn thẻ sản phẩm cao bao nhiêu */
+    overflow: hidden; /* Giấu phần ảnh thừa nếu có */
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f8f8f8; /* Màu nền nhẹ cho các ảnh có nền trong suốt */
+}
+
+.product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Đảm bảo ảnh luôn lấp đầy khung 100% x 250px mà không bị méo */
+    transition: transform 0.3s ease; /* Thêm hiệu ứng hover cho đẹp */
+}
+
+/* Thêm chút hiệu ứng zoom nhẹ khi trỏ chuột vào card */
+.product-card:hover .product-image img {
+    transform: scale(1.01);
+}
+
+.product-name {
+    font-size: 14px;
+    font-weight: normal;
+    color: #333;
+    margin-bottom: 10px;
+    height: 40px; /* Cố định chiều cao để không lệch hàng */
+    overflow: hidden;
+}
+
+.product-price {
+    font-size: 16px;
+    color: #e3001b;
+    font-weight: bold;
+}
+
+/* Responsive cơ bản */
+@media (max-width: 1024px) {
+    .product-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 768px) {
+    .category-container { flex-direction: column; }
+    .sidebar { width: 100%; }
+    .product-grid { grid-template-columns: repeat(2, 1fr); }
+    .category-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+}
+/* Phân trang (Pagination) */
+.pagination {
+    display: flex;
+    justify-content: flex-end; /* Căn phải màn hình như ảnh */
+    margin-top: 40px;
+    gap: 8px; /* Khoảng cách giữa các nút */
+}
+
+.page-item {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 35px;
+    height: 35px;
+    padding: 0 10px;
+    text-decoration: none;
+    color: #ed5527; /* Màu cam đỏ */
+    border: 1px solid #ed5527;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    background-color: #fff;
+}
+
+/* Trạng thái trang hiện tại (Active) hoặc khi hover */
+.page-item.active,
+.page-item:hover {
+    background-color: #ed5527;
+    color: #fff;
+}
+/* Loại bỏ định dạng mặc định của thẻ a trong product-card */
+.product-link {
+    text-decoration: none;
+    color: inherit; /* Lấy màu chữ từ phần tử cha (đen/xám) */
+    display: block; /* Để thẻ a bao phủ toàn bộ vùng ảnh và tên */
+}
+
+.product-link:hover .product-name {
+    color: #ed5527; /* Đổi màu tên sản phẩm khi hover giống như ảnh mẫu của bạn */
+    transition: 0.3s;
+}
+
+.product-card {
+    transition: transform 0.2s;
+}
+
+.product-card:hover {
+    transform: translateY(-5px); /* Hiệu ứng nổi lên nhẹ khi hover vào card */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}

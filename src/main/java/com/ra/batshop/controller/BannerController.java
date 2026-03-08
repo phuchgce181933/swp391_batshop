@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 @Controller
 @RequestMapping("/admin/banners")
@@ -25,9 +26,22 @@ public class BannerController {
     }
 
     @GetMapping
-    public String list(Model model) {
-        model.addAttribute("banners", bannerRepository.findAll());
+    public String listBanners(
+            @RequestParam(required = false) String keyword,
+            Model model) {
+
+        List<Banner> banners;
+
+        if (keyword != null && !keyword.isEmpty()) {
+            banners = bannerRepository.findByNameContainingIgnoreCase(keyword);
+        } else {
+            banners = bannerRepository.findAll();
+        }
+
+        model.addAttribute("banners", banners);
+        model.addAttribute("keyword", keyword);
         model.addAttribute("content", "admin/banner/list");
+
         return "admin/layout";
     }
 

@@ -47,6 +47,11 @@ public class AuthController {
             return "auth/register";
         }
 
+        if (userRepository.existsByPhone(user.getPhone())) {
+            model.addAttribute("errorPhone", "Số điện thoại đã tồn tại");
+            return "auth/register";
+        }
+
         user.setPasswordHash(passwordEncoder.encode(user.getPasswordHash()));
         user.setRole(Role.USER);
         user.setCreatedAt(LocalDateTime.now());
@@ -77,9 +82,12 @@ public class AuthController {
             model.addAttribute("error", "Wrong password");
             return "auth/login";
         }
-
         session.setAttribute("user", user);
-        return "redirect:/home";
+        if (user.getRole() == Role.ADMIN) {
+            return "redirect:/admin/dashboard";
+        } else {
+            return "redirect:/home";
+        }
     }
 
     // =========================
@@ -87,7 +95,7 @@ public class AuthController {
     // =========================
     @GetMapping("/change-password")
     public String showChangePassword() {
-        return "auth/change-password";
+        return "profile/change-password";
     }
 
     @PostMapping("/change-password")
@@ -106,12 +114,12 @@ public class AuthController {
 
         if (!passwordEncoder.matches(oldPass, user.getPasswordHash())) {
             model.addAttribute("error", "Mật khẩu cũ không đúng");
-            return "auth/change-password";
+            return "profile/change-password";
         }
 
         if (!newPass.equals(confirmPass)) {
             model.addAttribute("error", "Mật khẩu xác nhận không khớp");
-            return "auth/change-password";
+            return "profile/change-password";
         }
 
         user.setPasswordHash(passwordEncoder.encode(newPass));
@@ -121,15 +129,17 @@ public class AuthController {
         return "redirect:/login?changed=true";
     }
 
+    // =========================
+    // EDIT PROFILE
+    // =========================
     @GetMapping("/profile/edit")
     public String editProfileForm(HttpSession session, Model model) {
         User currentUser = (User) session.getAttribute("user");
         if (currentUser == null) {
             return "redirect:/login";
         }
-
         model.addAttribute("user", currentUser);
-        return "user/edit-profile";
+        return "profile/edit-profile"; // Đã sửa đường dẫn có thư mục user/
     }
 
     @PostMapping("/profile/edit")
@@ -147,11 +157,12 @@ public class AuthController {
             User dbUser = userRepository.findById(currentUser.getId())
                     .orElseThrow(() -> new RuntimeException("User không tồn tại"));
 
+            // Check trùng email khi cập nhật
             if (!dbUser.getEmail().equals(formUser.getEmail())
                     && userRepository.existsByEmail(formUser.getEmail())) {
                 model.addAttribute("error", "Email đã tồn tại");
                 model.addAttribute("user", dbUser);
-                return "user/edit-profile";
+                return "profile/edit-profile";
             }
 
             dbUser.setEmail(formUser.getEmail());
@@ -164,11 +175,11 @@ public class AuthController {
 
             model.addAttribute("user", dbUser);
             model.addAttribute("success", "Cập nhật thành công");
-            return "user/edit-profile";
+            return "profile/edit-profile";
 
         } catch (Exception e) {
             model.addAttribute("error", "Lỗi cập nhật: " + e.getMessage());
-            return "user/edit-profile";
+            return "profile/edit-profile";
         }
     }
 
@@ -179,14 +190,9 @@ public class AuthController {
     public String showForgotPasswordForm() {
         return "auth/forgot-password";
     }
+
     @PostMapping("/forgot-password")
     public String forgotPassword(@RequestParam String email, Model model) {
-
-        // 🔒 CHỈ CHO PHÉP EMAIL NÀY
-        if (!email.equalsIgnoreCase("huydn2.ce190894@gmail.com")) {
-            model.addAttribute("error", "Email không hợp lệ hoặc không được phép đặt lại mật khẩu");
-            return "auth/forgot-password";
-        }
 
         User user = userRepository.findByEmail(email).orElse(null);
 
@@ -195,7 +201,6 @@ public class AuthController {
             return "auth/forgot-password";
         }
 
-        // Tạo mã 6 số
         String code = String.valueOf((int)((Math.random() * 900000) + 100000));
 
         user.setResetCode(code);
@@ -204,19 +209,15 @@ public class AuthController {
 
         emailService.sendEmail(
                 user.getEmail(),
-                "Mã đặt lại mật khẩu",
-                "Mã xác nhận của bạn là: " + code
+                "Mã đặt lại mật khẩu - BatShop",
+                "Mã xác nhận của bạn là: " + code + ". Mã có hiệu lực trong 5 phút."
         );
 
         model.addAttribute("email", email);
-        model.addAttribute("message", "Đã gửi mã về email");
+        model.addAttribute("message", "Đã gửi mã xác nhận về hòm thư của bạn.");
 
         return "auth/reset-password";
     }
-
-    // =========================
-    // RESET PASSWORD
-    // =========================
 
     @PostMapping("/reset-password")
     public String resetPassword(
@@ -225,7 +226,6 @@ public class AuthController {
             @RequestParam String newPassword,
             Model model
     ) {
-
         User user = userRepository.findByEmail(email).orElse(null);
 
         if (user == null) {
@@ -242,22 +242,24 @@ public class AuthController {
 
         if (user.getResetCodeExpiredAt() == null ||
                 user.getResetCodeExpiredAt().isBefore(LocalDateTime.now())) {
-
-            model.addAttribute("error", "Mã đã hết hạn");
+            model.addAttribute("error", "Mã đã hết hạn, vui lòng yêu cầu lại");
             model.addAttribute("email", email);
             return "auth/reset-password";
         }
 
-        // đổi mật khẩu
-        user.setPasswordHash(passwordEncoder.encode(newPassword));
+        if (newPassword.length() < 6) {
+            model.addAttribute("error", "Mật khẩu phải có ít nhất 6 ký tự");
+            model.addAttribute("email", email);
+            return "auth/reset-password";
+        }
 
-        // xoá mã sau khi dùng
+        user.setPasswordHash(passwordEncoder.encode(newPassword));
         user.setResetCode(null);
         user.setResetCodeExpiredAt(null);
+        user.setUpdatedAt(LocalDateTime.now());
 
         userRepository.save(user);
 
         return "redirect:/login?resetSuccess=true";
     }
-
 }

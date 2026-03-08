@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh Mục Sản Phẩm</title>
+    <link rel="stylesheet" th:href="@{/css/user/category.css}">
+</head>
+
+<body>
+<div th:replace="~{layout/header :: header}"></div>
+
+<div class="breadcrumb">
+    <a href="/home">Trang chủ</a> >
+    <span th:text="${category != null ? category.name : 'Tất cả sản phẩm'}">...</span>
+</div>
+
+<div class="category-container">
+    <aside class="sidebar">
+        <form id="filterForm" action="/category" method="GET">
+            <input type="hidden" name="id" th:value="${category?.id}">
+            <input type="hidden" name="sort" id="sortInput" th:value="${currentSort}">
+            <input type="hidden" name="page" id="pageInput" th:value="${currentPage != null ? currentPage : 0}">
+
+            <div class="filter-group">
+                <h3>CHỌN MỨC GIÁ</h3>
+                <label>
+                    <input type="checkbox" name="price" value="under-500"
+                           th:checked="${selectedPrices != null and #lists.contains(selectedPrices, 'under-500')}">
+                    Giá dưới 500.000đ
+                </label>
+                <label>
+                    <input type="checkbox" name="price" value="500-1000"
+                           th:checked="${selectedPrices != null and #lists.contains(selectedPrices, '500-1000')}">
+                    500.000đ - 1 triệu
+                </label>
+                <label>
+                    <input type="checkbox" name="price" value="1000-2000"
+                           th:checked="${selectedPrices != null and #lists.contains(selectedPrices, '1000-2000')}">
+                    1 - 2 triệu
+                </label>
+                <label>
+                    <input type="checkbox" name="price" value="2000-3000"
+                           th:checked="${selectedPrices != null and #lists.contains(selectedPrices, '2000-3000')}">
+                    2 - 3 triệu
+                </label>
+                <label>
+                    <input type="checkbox" name="price" value="over-3000"
+                           th:checked="${selectedPrices != null and #lists.contains(selectedPrices, 'over-3000')}">
+                    Giá trên 3 triệu
+                </label>
+            </div>
+
+            <div class="filter-group">
+                <h3>THƯƠNG HIỆU</h3>
+                <label th:each="b : ${brands}">
+                    <input type="checkbox" name="brand" th:value="${b.id}"
+                           th:checked="${selectedBrands != null and #lists.contains(selectedBrands, b.id)}">
+                    <span th:text="${b.name}">Tên thương hiệu</span>
+                </label>
+            </div>
+        </form>
+    </aside>
+
+    <main class="main-content">
+        <div class="category-header">
+            <h2 class="category-title" th:text="${category != null ? category.name : 'TẤT CẢ SẢN PHẨM'}">ÁO CẦU LÔNG ALIEN ARMOUR</h2>
+
+            <div class="sort-dropdown">
+                <label for="sortSelect">Sắp xếp: </label>
+                <select id="sortSelect" onchange="applySort(this.value)">
+                    <option value="default" th:selected="${currentSort == 'default'}">Mặc định</option>
+                    <option value="price_asc" th:selected="${currentSort == 'price_asc'}">Giá tăng dần</option>
+                    <option value="price_desc" th:selected="${currentSort == 'price_desc'}">Giá giảm dần</option>
+                    <option value="newest" th:selected="${currentSort == 'newest'}">Hàng mới nhất</option>
+                    <option value="best_selling" th:selected="${currentSort == 'best_selling'}">Bán chạy nhất</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="product-grid">
+            <div class="product-card" th:each="product : ${products}">
+                <a th:href="@{/product/detail/{id}(id=${product.id})}" class="product-link">
+                    <div class="product-image">
+                        <img th:if="${not #lists.isEmpty(product.images)}"
+                             th:src="@{'/uploads/product/' + ${product.images[0].image}}"
+                             th:alt="${product.name}"
+                             onerror="this.src='https://via.placeholder.com/200x250?text=No+Image'">
+
+                        <img th:if="${#lists.isEmpty(product.images)}"
+                             src="https://via.placeholder.com/200x250?text=No+Image"
+                             th:alt="${product.name}">
+                    </div>
+
+                    <h4 class="product-name" th:text="${product.name}">Product-Name</h4>
+                </a>
+
+                <p class="product-price" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' ₫'">123.000 ₫</p>
+            </div>
+
+            <div th:if="${products == null or products.isEmpty()}">
+                <h4 class="product-name">Không tìm thấy sản phẩm nào.</h4>
+            </div>
+        </div>
+
+        <div class="pagination" th:if="${totalPages != null and totalPages > 1}">
+            <a href="javascript:void(0)"
+               th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+               th:onclick="'changePage(' + ${i} + ')'"
+               th:text="${i + 1}"
+               class="page-item"
+               th:classappend="${currentPage == i ? 'active' : ''}">
+            </a>
+
+            <a href="javascript:void(0)"
+               th:if="${currentPage < totalPages - 1}"
+               th:onclick="'changePage(' + ${currentPage + 1} + ')'"
+               class="page-item">&raquo;</a>
+        </div>
+
+    </main>
+</div>
+<div th:replace="~{layout/footer :: footer}"></div>
+
+<script>
+    // 1. Hàm xử lý Sắp xếp
+    function applySort(sortValue) {
+        document.getElementById('sortInput').value = sortValue;
+        document.getElementById('pageInput').value = 0;
+        document.getElementById('filterForm').submit();
+    }
+
+    // 2. Hàm xử lý chuyển trang
+    function changePage(pageNumber) {
+        document.getElementById('pageInput').value = pageNumber;
+        document.getElementById('filterForm').submit();
+    }
+
+    // 3. Xử lý tự động Submit khi tick Checkbox
+    document.addEventListener("DOMContentLoaded", function() {
+        const checkboxes = document.querySelectorAll('#filterForm input[type="checkbox"]');
+        checkboxes.forEach(function(checkbox) {
+            checkbox.addEventListener('change', function() {
+                document.getElementById('pageInput').value = 0;
+                document.getElementById('filterForm').submit();
+            });
+        });
+    });
+</script>
+
+</body>
+</html>
