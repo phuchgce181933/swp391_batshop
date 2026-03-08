@@ -1,8 +1,7 @@
 package com.ra.batshop.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -10,40 +9,34 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-@Table(name = "review")
-public class Review {
+@NoArgsConstructor
+@AllArgsConstructor
+public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(length = 100)
     private String name;
-
-    @Column(length = 20)
-    private String phone;
 
     @Column(columnDefinition = "TEXT")
     private String message;
 
-    private Integer rating;
-
-    private Boolean verifiedPurchase = false;
+    private Boolean admin = false;
 
     private LocalDateTime createdAt;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
 
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
 
+    // comment cha
     @ManyToOne
     @JoinColumn(name = "parent_id")
-    private Review parent;
+    private Comment parent;
 
+    // reply con
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
-    private List<Review> replies;
+    private List<Comment> replies;
+
 }

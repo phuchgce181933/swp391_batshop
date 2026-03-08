@@ -2,8 +2,9 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${product.name}"></title>
+    <title th:text="${product.name}">Product</title>
     <link rel="stylesheet" th:href="@{/css/product-detail.css}">
+    <link rel="stylesheet" th:href="@{/css/user/review.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         .fs-badge {
@@ -80,6 +81,8 @@
 <div class="product-detail-container">
 
     <div class="product-images">
+
+        <!-- MAIN IMAGE -->
         <img class="main-img"
              th:if="${product.images != null and !product.images.isEmpty()}"
              th:src="@{/uploads/products/{img}(img=${product.images[0].image})}">
@@ -88,29 +91,38 @@
              th:if="${product.images == null or product.images.isEmpty()}"
              src="/img/no-image.png">
 
+        <!-- THUMB LIST -->
         <div class="thumb-list">
             <img th:each="img : ${product.images}"
                  th:src="@{/uploads/products/{img}(img=${img.image})}">
         </div>
+
     </div>
 
     <div class="product-info">
 
         <h1 th:text="${product.name}"></h1>
 
+
+        <p>
+            Thương hiệu:
+
         <div th:if="${activeFlashSale != null}" class="fs-badge">
             ⚡ FLASH SALE ĐANG DIỄN RA: GIẢM <span th:text="${activeFlashSale.discountPercent}"></span>%
         </div>
 
         <p>Thương hiệu:
+
             <b th:text="${product.brand != null ? product.brand.name : 'No brand'}"></b>
         </p>
 
-        <p>Danh mục:
+        <p>
+            Danh mục:
             <b th:text="${product.category != null ? product.category.name : 'No category'}"></b>
         </p>
 
-        <p>Tình trạng:
+        <p>
+            Tình trạng:
             <span th:text="${product.status ? 'Còn hàng' : 'Hết hàng'}"></span>
         </p>
 
@@ -123,6 +135,11 @@
                 <div th:each="v, stat : ${variants}" class="variant-item" style="margin-bottom: 8px;">
                     <label th:style="${v.stock == null or v.stock <= 0} ? 'color: #aaa;' : 'cursor: pointer;'">
 
+
+                <div th:each="v, stat : ${variants}" class="variant-item">
+
+                    <label>
+
                         <input type="radio"
                                class="variant-radio"
                                name="productVariantId"
@@ -131,6 +148,29 @@
                                th:data-stock="${v.stock != null ? v.stock : 0}">
 
                         <span>
+
+
+                            <span th:text="${v.brand != null ? v.brand.name : ''}"></span>
+
+                            <span th:if="${v.size != null}"
+                                  th:text="' - Size: ' + ${v.size.name}"></span>
+
+                            <span th:if="${v.color != null}"
+                                  th:text="' - ' + ${v.color.name}"></span>
+
+                            -
+
+                            <b th:text="${#numbers.formatDecimal(
+                            (v.additionalPrice != null ? v.additionalPrice : product.price),
+                            0,
+                            'COMMA',
+                            0,
+                            'POINT')} + ' ₫'">
+                            </b>
+
+                        </span>
+
+
                             <span th:text="${v.brand != null ? v.brand.name : ''}"></span>
                             <span th:if="${v.size != null}" th:text="' - Size: ' + ${v.size.name}"></span>
                             <span th:if="${v.color != null}" th:text="' - ' + ${v.color.name}"></span>
@@ -148,8 +188,21 @@
                                 (Hết hàng)
                             </span>
                         </span>
+
                     </label>
+
                 </div>
+
+
+                <!-- QUANTITY -->
+                <div class="qty-box">
+                    <button type="button" onclick="minusQty()">-</button>
+
+                    <input id="qty"
+                           type="number"
+                           name="quantity"
+                           value="1"
+                           min="1">
 
                 <div class="qty-box mt-3">
                     <button type="button" onclick="minusQty()">-</button>
@@ -168,19 +221,206 @@
                 </div>
 
             </form>
+
         </div>
 
     </div>
 
 </div>
 
+
+<!-- DESCRIPTION -->
+
+<div class="product-desc">
+
 <div class="product-desc mt-5">
     <h3>Mô tả sản phẩm</h3>
+
     <p th:text="${product.description}"></p>
+
 </div>
+
 <hr>
 
+<div th:if="${reviews == null or reviews.isEmpty()}"
+     style="text-align:center;color:#888;margin-top:20px;">
+
+    Chưa có đánh giá nào cho sản phẩm này.
+
+</div>
+<!-- ================= REVIEW SECTION ================= -->
+
 <div class="review-section">
+
+    <h3>
+        Đánh giá & nhận xét
+        <span th:text="${product.name}"></span>
+    </h3>
+
+    <!-- ===== RATING SUMMARY ===== -->
+
+    <div class="review-summary">
+
+        <div class="avg-rating">
+
+            <h2 th:text="${avgRating != null ? #numbers.formatDecimal(avgRating,1,1) : '0.0'} + '/5'"></h2>
+
+            <div class="stars">
+                ⭐ ⭐ ⭐ ⭐ ⭐
+            </div>
+
+            <p th:text="${reviews.size()} + ' đánh giá và nhận xét'"></p>
+
+        </div>
+
+    </div>
+
+
+    <!-- ===== REVIEW BUTTON ===== -->
+
+    <div class="review-action">
+
+        <p>Bạn đánh giá sao sản phẩm này?</p>
+
+        <button onclick="document.getElementById('reviewForm').style.display='block'">
+            Đánh giá ngay
+        </button>
+
+    </div>
+
+
+    <!-- ===== REVIEW FORM ===== -->
+
+    <form id="reviewForm"
+          th:action="@{/product/review}"
+          method="post"
+          style="display:none">
+
+        <input type="hidden"
+               name="productId"
+               th:value="${product.id}">
+
+        <label>Tên</label>
+        <input type="text" name="name" required>
+
+        <label>Số điện thoại</label>
+        <input type="text" name="phone" required>
+
+        <label>Đánh giá</label>
+        <select name="rating">
+            <option value="5">5 ⭐</option>
+            <option value="4">4 ⭐</option>
+            <option value="3">3 ⭐</option>
+            <option value="2">2 ⭐</option>
+            <option value="1">1 ⭐</option>
+        </select>
+
+        <label>Nhận xét</label>
+        <textarea name="message"></textarea>
+
+        <button type="submit">
+            Gửi đánh giá
+        </button>
+
+    </form>
+
+
+
+    <!-- ===== REVIEW LIST ===== -->
+
+    <div class="review-item"
+         th:each="r : ${reviews}">
+
+        <h4 th:text="${r.name}"></h4>
+
+        <p>
+
+            Đánh giá:
+
+            <span th:each="i : ${#numbers.sequence(1,r.rating)}">
+⭐
+</span>
+
+        </p>
+
+        <p>
+
+            <b>Nhận xét :</b>
+
+            <span th:text="${r.message}"></span>
+
+        </p>
+
+        <p class="review-date"
+           th:text="${#temporals.format(r.createdAt,'dd/MM/yyyy')}"></p>
+
+
+
+        <!-- ADMIN REPLY -->
+
+        <div th:each="rep : ${r.replies}">
+
+            <b>Admin:</b>
+
+            <p th:text="${rep.message}"></p>
+
+        </div>
+
+    </div>
+
+
+    <!-- ===== PAGINATION ===== -->
+
+    <div class="pagination"
+         th:if="${totalPages > 1}">
+
+        <a th:if="${currentPage > 0}"
+           th:href="@{/product/detail/{id}(id=${product.id},page=${currentPage-1})}">
+            Prev
+        </a>
+
+        <span th:each="i : ${#numbers.sequence(0,totalPages-1)}">
+
+<a th:href="@{/product/detail/{id}(id=${product.id},page=${i})}"
+   th:text="${i+1}"
+   th:classappend="${i == currentPage} ? 'active'">
+</a>
+
+</span>
+
+        <a th:if="${currentPage < totalPages-1}"
+           th:href="@{/product/detail/{id}(id=${product.id},page=${currentPage+1})}">
+            Next
+        </a>
+
+    </div>
+
+</div>
+
+<div class="comment-section">
+
+    <h3>Bình luận</h3>
+
+    <form th:action="@{/product/comment}" method="post">
+
+        <input type="hidden"
+               name="productId"
+               th:value="${product.id}">
+
+        <input type="text"
+               name="name"
+               placeholder="Tên của bạn"
+               required>
+
+        <textarea name="message"
+                  placeholder="Nhập bình luận..."
+                  required></textarea>
+
+        <button type="submit">
+            Gửi
+        </button>
+
+
     <h3>Đánh giá sản phẩm</h3>
     <form th:action="@{/product/review}" method="post">
         <input type="hidden" name="productId" th:value="${product.id}">
@@ -188,8 +428,64 @@
         <textarea name="content" placeholder="Nội dung đánh giá" required style="display: block; margin-bottom: 10px; width: 100%; max-width: 400px; padding: 8px; height: 100px;"></textarea>
         <button type="submit" style="background-color: #333; color: white; padding: 8px 15px; border: none; cursor: pointer;">Gửi đánh giá</button>
         <p style="color:red; margin-top: 10px;" th:if="${param.error != null}">Bạn phải đăng nhập để gửi đánh giá.</p>
+
     </form>
     <hr>
+
+    <div class="comment-item"
+         th:each="c : ${comments}">
+
+        <div class="comment-header">
+
+            <b th:text="${c.name}"></b>
+
+            <span th:if="${c.admin}" class="admin-badge">
+QTV
+</span>
+
+        </div>
+
+        <p th:text="${c.message}"></p>
+
+        <!-- reply form -->
+
+        <form th:action="@{/product/comment/reply}" method="post">
+
+            <input type="hidden"
+                   name="productId"
+                   th:value="${product.id}">
+
+            <input type="hidden"
+                   name="parentId"
+                   th:value="${c.id}">
+
+            <input type="text"
+                   name="name"
+                   placeholder="Tên">
+
+            <textarea name="message"
+                      placeholder="Trả lời..."></textarea>
+
+            <button type="submit">
+                Trả lời
+            </button>
+
+        </form>
+
+
+        <!-- replies -->
+
+        <div class="reply-item"
+             th:each="rep : ${c.replies}">
+
+            <b th:text="${rep.name}"></b>
+
+            <span th:if="${rep.admin}" class="admin-badge">
+QTV
+</span>
+
+            <p th:text="${rep.message}"></p>
+
     <div th:each="r : ${reviews}">
         <div th:if="${r.title != 'ADMIN_REPLY'}" class="review-item" style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px dashed #ddd;">
             <h4 th:text="${r.title}" style="margin-bottom: 5px;"></h4>
@@ -199,10 +495,14 @@
             </p>
             <p th:text="${r.content}"></p>
         </div>
+
     </div>
 </div>
+<!-- FOOTER -->
 
 <div th:replace="~{layout/footer :: footer}"></div>
+
+<!-- JS -->
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -241,7 +541,11 @@
     });
 
     function plusQty() {
+
         let q = document.getElementById("qty");
+
+        q.value = parseInt(q.value) + 1;
+
         if(q.disabled) return;
         let currentVal = parseInt(q.value);
         let maxVal = parseInt(q.max) || 999;
@@ -254,11 +558,18 @@
 
     function minusQty() {
         let q = document.getElementById("qty");
+
+
+        if (q.value > 1) {
+            q.value--;
+        }
         if(q.disabled) return;
         if (parseInt(q.value) > 1) {
             q.value = parseInt(q.value) - 1;
         }
     }
+
 </script>
+
 </body>
 </html>

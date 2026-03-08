@@ -1,0 +1,224 @@
+/* ================= REVIEW SECTION ================= */
+
+.review-section{
+    max-width: 900px;
+    margin: 40px auto;
+    font-family: Arial, sans-serif;
+}
+
+.review-section h3{
+    font-size: 22px;
+    margin-bottom: 15px;
+}
+
+/* ===== AVG RATING ===== */
+
+.review-section > p{
+    font-size: 18px;
+    font-weight: bold;
+    color: #ff9800;
+    margin-bottom: 20px;
+}
+
+/* ================= REVIEW FORM ================= */
+
+.review-section form{
+    background: #fafafa;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #eee;
+    margin-bottom: 25px;
+}
+
+.review-section input[type="text"],
+.review-section textarea,
+.review-section select{
+
+    width: 100%;
+    padding: 10px;
+    margin-top: 8px;
+    margin-bottom: 12px;
+
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+.review-section textarea{
+    min-height: 90px;
+    resize: vertical;
+}
+
+.review-section button{
+    background: #ff5722;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.review-section button:hover{
+    background: #e64a19;
+}
+
+/* ================= REVIEW ITEM ================= */
+
+.review-item{
+
+    background: white;
+    border: 1px solid #eee;
+    border-radius: 10px;
+
+    padding: 18px;
+    margin-bottom: 20px;
+
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.review-item h4{
+    margin-bottom: 6px;
+    font-size: 16px;
+}
+
+.review-item p{
+    margin: 6px 0;
+}
+
+/* ===== USER NAME ===== */
+
+.review-item b{
+    color: #333;
+}
+
+/* ===== STAR RATING ===== */
+
+.review-item span{
+    color: #ff9800;
+    font-size: 16px;
+}
+
+.review-item form button:hover{
+
+    background: #e0e0e0;
+}
+
+/* ================= ADMIN REPLY ================= */
+
+.review-item div{
+
+    margin-top: 10px;
+
+    border-left: 4px solid #2196f3;
+
+    background: #f0f7ff;
+
+    padding: 12px;
+    border-radius: 6px;
+}
+
+.review-item div b{
+
+    color: #2196f3;
+}
+
+/* ================= PAGINATION ================= */
+
+.pagination{
+    text-align: center;
+    margin-top: 30px;
+}
+
+.pagination a{
+
+    display: inline-block;
+
+    padding: 6px 12px;
+    margin: 4px;
+
+    border-radius: 6px;
+
+    background: #f5f5f5;
+    color: #333;
+    text-decoration: none;
+}
+
+.pagination a:hover{
+
+    background: #ff5722;
+    color: white;
+}
+/* ===== REVIEW SUMMARY ===== */
+
+.review-summary{
+    display:flex;
+    background:#f7f7f7;
+    border-radius:12px;
+    padding:25px;
+    margin-bottom:25px;
+}
+
+.avg-rating{
+    text-align:center;
+    width:200px;
+}
+
+.avg-rating h2{
+    font-size:40px;
+    color:#ff9800;
+    margin:0;
+}
+
+.avg-rating .stars{
+    color:#ff9800;
+    font-size:20px;
+}
+
+/* ===== ACTION ===== */
+
+.review-action{
+    text-align:center;
+    margin-bottom:25px;
+}
+
+.review-action button{
+
+    background:#ff5722;
+    color:white;
+
+    border:none;
+
+    padding:12px 40px;
+
+    border-radius:8px;
+
+    font-size:16px;
+    cursor:pointer;
+}
+
+.review-action button:hover{
+    background:#e64a19;
+}
+
+/* ===== REVIEW DATE ===== */
+
+.review-date{
+    font-size:13px;
+    color:#999;
+}
+
+/* ===== ADMIN REPLY ===== */
+
+.review-item div{
+
+    margin-top:10px;
+
+    border-left:4px solid #2196f3;
+
+    background:#f0f7ff;
+
+    padding:12px;
+
+    border-radius:6px;
+}

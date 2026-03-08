@@ -1,0 +1,46 @@
+.comment-section{
+
+    margin-top:40px;
+    background:#f7f7f7;
+    padding:20px;
+    border-radius:10px;
+
+}
+
+.comment-item{
+
+    background:white;
+    padding:15px;
+    margin-top:15px;
+
+    border-radius:8px;
+
+}
+
+.reply-item{
+
+    margin-left:30px;
+    margin-top:10px;
+
+    background:#f1f8ff;
+
+    padding:10px;
+
+    border-left:3px solid #2196f3;
+
+}
+
+.admin-badge{
+
+    background:#ff5722;
+    color:white;
+
+    padding:2px 6px;
+
+    font-size:11px;
+
+    border-radius:4px;
+
+    margin-left:5px;
+
+}

@@ -1,30 +1,129 @@
-<h2>Quản lý Review</h2>
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
 
-<div th:each="r : ${reviews}"
-     th:if="${r.title != 'ADMIN_REPLY'}"
-     style="margin-bottom:20px; border-bottom:1px solid #ccc; padding:10px;">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - Review Management</title>
+    <link rel="stylesheet" th:href="@{/css/admin/admin-review.css}">
+</head>
 
-    <p>
-        <b th:text="${r.user != null ? r.user.fullName : 'Unknown'}"></b>
-    </p>
+<body>
 
-    <p>
-        <b th:text="${r.title}"></b>
-    </p>
+<div class="page">
 
-    <p th:text="${r.content}"></p>
+    <h2>Quản lý Review</h2>
 
-    <form th:action="@{/admin/reviews/reply}" method="post">
-        <input type="hidden"
-               name="reviewId"
-               th:value="${r.id}">
+    <!-- REVIEW LIST -->
+    <div class="review-list">
 
-        <textarea name="content"
-                  placeholder="Trả lời..."
-                  required></textarea>
+        <div class="review-box" th:each="r : ${reviews}">
 
-        <br>
-        <button type="submit">Trả lời</button>
-    </form>
+            <!-- HEADER -->
+            <div class="review-header">
+
+                <div class="product">
+                    <span class="label">Sản phẩm:</span>
+                    <b th:text="${r.product.name}"></b>
+                </div>
+
+                <div class="date"
+                     th:text="${#temporals.format(r.createdAt,'dd/MM/yyyy HH:mm')}">
+                </div>
+
+            </div>
+
+            <!-- USER + RATING -->
+            <div class="review-meta">
+
+                <div class="review-user">
+                    <span class="label">Người dùng:</span>
+                    <b th:text="${r.name}"></b>
+                </div>
+
+                <div class="rating">
+                    <span th:if="${r.rating != null}"
+                          th:each="i : ${#numbers.sequence(1,r.rating)}">⭐</span>
+                </div>
+
+            </div>
+
+            <!-- MESSAGE -->
+            <div class="review-message"
+                 th:text="${r.message}">
+            </div>
+
+            <!-- ADMIN REPLY -->
+            <div class="reply-list">
+
+                <div class="admin-reply"
+                     th:each="rep : ${r.replies}">
+
+                    <div class="reply-header">
+
+                        <b>Admin</b>
+
+                        <span class="reply-date"
+                              th:text="${#temporals.format(rep.createdAt,'dd/MM/yyyy HH:mm')}">
+                        </span>
+
+                    </div>
+
+                    <p th:text="${rep.message}"></p>
+
+                </div>
+
+            </div>
+
+            <!-- REPLY FORM -->
+            <form class="reply-form"
+                  th:action="@{/admin/reviews/reply}"
+                  method="post">
+
+                <input type="hidden"
+                       name="reviewId"
+                       th:value="${r.id}">
+
+                <textarea name="message"
+                          placeholder="Trả lời review..."
+                          required></textarea>
+
+                <button type="submit">
+                    Trả lời
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- PAGINATION -->
+    <div class="pagination"
+         th:if="${totalPages > 1}">
+
+        <a th:if="${currentPage > 0}"
+           th:href="@{/admin/reviews(page=${currentPage-1})}">
+            ← Prev
+        </a>
+
+        <span th:each="i : ${#numbers.sequence(0,totalPages-1)}">
+
+            <a th:href="@{/admin/reviews(page=${i})}"
+               th:text="${i+1}"
+               th:classappend="${i == currentPage} ? 'active'">
+            </a>
+
+        </span>
+
+        <a th:if="${currentPage < totalPages-1}"
+           th:href="@{/admin/reviews(page=${currentPage+1})}">
+            Next →
+        </a>
+
+    </div>
 
 </div>
+
+</body>
+</html>

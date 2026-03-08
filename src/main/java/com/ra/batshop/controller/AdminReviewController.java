@@ -4,12 +4,13 @@ import com.ra.batshop.model.Review;
 import com.ra.batshop.model.User;
 import com.ra.batshop.repository.ReviewRepository;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Controller
 @RequestMapping("/admin/reviews")
@@ -22,23 +23,28 @@ public class AdminReviewController {
     }
 
     // =========================
-    // LIST REVIEW
+    // LIST REVIEW + PAGINATION
     // =========================
     @GetMapping
-    public String list(Model model, HttpSession session) {
+    public String list(
+            @RequestParam(defaultValue = "0") int page,
+            Model model,
+            HttpSession session) {
 
         User admin = (User) session.getAttribute("user");
 
-        // Kiểm tra đăng nhập admin
         if (admin == null) {
             return "redirect:/login";
         }
 
-        List<Review> reviews = reviewRepository.findAll();
+        Page<Review> reviewPage =
+                reviewRepository.findByParentIsNull(
+                        PageRequest.of(page,5));
 
-        model.addAttribute("reviews", reviews);
+        model.addAttribute("reviews", reviewPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", reviewPage.getTotalPages());
 
-        // truyền path view trực tiếp (không dùng fragment)
         model.addAttribute("content", "admin/review/list");
 
         return "admin/layout";
@@ -49,7 +55,7 @@ public class AdminReviewController {
     // =========================
     @PostMapping("/reply")
     public String reply(@RequestParam Integer reviewId,
-                        @RequestParam String content,
+                        @RequestParam String message,
                         HttpSession session) {
 
         User admin = (User) session.getAttribute("user");
@@ -58,15 +64,19 @@ public class AdminReviewController {
             return "redirect:/login";
         }
 
-        Review original = reviewRepository.findById(reviewId)
-                .orElseThrow();
+        Review original = reviewRepository
+                .findById(reviewId)
+                .orElseThrow(() -> new RuntimeException("Review not found"));
 
         Review reply = new Review();
-        reply.setTitle("ADMIN_REPLY");
-        reply.setContent(content);
+
+        reply.setName("ADMIN");
+        reply.setMessage(message);
         reply.setCreatedAt(LocalDateTime.now());
-        reply.setUser(admin);
+        reply.setRating(null);
+
         reply.setProduct(original.getProduct());
+        reply.setParent(original);
 
         reviewRepository.save(reply);
 
