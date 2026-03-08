@@ -39,23 +39,15 @@ public class ProductDetailController {
     public ProductDetailController(ProductRepository productRepository,
                                    ProductVariantRepository variantRepository,
                                    ReviewRepository reviewRepository,
-
+                                   FlashSaleRepository flashSaleRepository,
                                    CommentRepository commentRepository) {
         this.productRepository = productRepository;
         this.variantRepository = variantRepository;
         this.reviewRepository = reviewRepository;
         this.commentRepository = commentRepository;
-    }
-
-    // =========================
-    // PRODUCT VARIANT LIST
-    // =========================
-                                   FlashSaleRepository flashSaleRepository) {
-        this.productRepository = productRepository;
-        this.variantRepository = variantRepository;
-        this.reviewRepository = reviewRepository;
         this.flashSaleRepository = flashSaleRepository;
     }
+
 
     @GetMapping("/productvariant/list")
     public String ProductVariantList(Model model) {

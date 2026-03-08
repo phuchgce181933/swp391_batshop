@@ -5,87 +5,21 @@
     <title th:text="${product.name}">Product</title>
     <link rel="stylesheet" th:href="@{/css/product-detail.css}">
     <link rel="stylesheet" th:href="@{/css/user/review.css}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-        .fs-badge {
-            background: linear-gradient(90deg, #ff416c 0%, #ff4b2b 100%);
-            color: white;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: bold;
-            display: inline-block;
-            margin-bottom: 15px;
-            animation: pulse 1.5s infinite;
-        }
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-        .price-original {
-            color: #95a5a6;
-            text-decoration: line-through;
-            font-size: 0.9em;
-            margin-right: 8px;
-        }
-        .price-sale {
-            color: #e74c3c;
-            font-weight: bold;
-            font-size: 1.1em;
-        }
 
-        /* CSS Mới: Tạo hàng cho các nút hành động */
-        .action-group {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-top: 20px;
-        }
-
-        .btn-cart {
-            background-color: #f15a22;
-            color: white;
-            padding: 12px 25px;
-            border: none;
-            cursor: pointer;
-            transition: 0.3s;
-            font-weight: bold;
-            flex: 1; /* Để nút giỏ hàng tự giãn rộng */
-            height: 50px;
-        }
-
-        .btn-wishlist {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 50px;
-            height: 50px;
-            border: 2px solid #ff4757;
-            border-radius: 4px;
-            background: white;
-            transition: 0.3s;
-            text-decoration: none;
-        }
-
-        .btn-wishlist:hover {
-            background-color: #fff1f2;
-            transform: scale(1.05);
-        }
-    </style>
 </head>
 <body>
 
-<div th:replace="~{layout/header :: header}"></div>
+<div th:replace="layout/header :: header"></div>
 
 <div class="product-detail-container">
 
+    <!-- IMAGE -->
     <div class="product-images">
 
         <!-- MAIN IMAGE -->
         <img class="main-img"
              th:if="${product.images != null and !product.images.isEmpty()}"
-             th:src="@{/uploads/products/{img}(img=${product.images[0].image})}">
+             th:src="@{/uploads/product/{img}(img=${product.images[0].image})}">
 
         <img class="main-img"
              th:if="${product.images == null or product.images.isEmpty()}"
@@ -94,25 +28,18 @@
         <!-- THUMB LIST -->
         <div class="thumb-list">
             <img th:each="img : ${product.images}"
-                 th:src="@{/uploads/products/{img}(img=${img.image})}">
+                 th:src="@{/uploads/product/{img}(img=${img.image})}">
         </div>
 
     </div>
 
+    <!-- INFO -->
     <div class="product-info">
 
         <h1 th:text="${product.name}"></h1>
 
-
         <p>
             Thương hiệu:
-
-        <div th:if="${activeFlashSale != null}" class="fs-badge">
-            ⚡ FLASH SALE ĐANG DIỄN RA: GIẢM <span th:text="${activeFlashSale.discountPercent}"></span>%
-        </div>
-
-        <p>Thương hiệu:
-
             <b th:text="${product.brand != null ? product.brand.name : 'No brand'}"></b>
         </p>
 
@@ -126,29 +53,24 @@
             <span th:text="${product.status ? 'Còn hàng' : 'Hết hàng'}"></span>
         </p>
 
-        <div class="variant-box" th:if="${variants != null and !variants.isEmpty()}">
+        <!-- VARIANT SELECT -->
+        <div class="variant-box"
+             th:if="${variants != null and !variants.isEmpty()}">
 
             <h3>Chọn phiên bản:</h3>
 
-            <form th:action="@{/cart/add}" method="post" id="addToCartForm">
-
-                <div th:each="v, stat : ${variants}" class="variant-item" style="margin-bottom: 8px;">
-                    <label th:style="${v.stock == null or v.stock <= 0} ? 'color: #aaa;' : 'cursor: pointer;'">
-
+            <form th:action="@{/cart/add}" method="post">
 
                 <div th:each="v, stat : ${variants}" class="variant-item">
 
                     <label>
 
                         <input type="radio"
-                               class="variant-radio"
                                name="productVariantId"
                                th:value="${v.id}"
-                               th:checked="${stat.index == 0}"
-                               th:data-stock="${v.stock != null ? v.stock : 0}">
+                               th:checked="${stat.index == 0}">
 
                         <span>
-
 
                             <span th:text="${v.brand != null ? v.brand.name : ''}"></span>
 
@@ -170,30 +92,9 @@
 
                         </span>
 
-
-                            <span th:text="${v.brand != null ? v.brand.name : ''}"></span>
-                            <span th:if="${v.size != null}" th:text="' - Size: ' + ${v.size.name}"></span>
-                            <span th:if="${v.color != null}" th:text="' - ' + ${v.color.name}"></span>
-                            -
-
-                            <th:block th:if="${activeFlashSale != null}">
-                                <span class="price-original" th:text="${#numbers.formatDecimal(v.additionalPrice != null ? v.additionalPrice : product.price, 0,'COMMA',0,'POINT')} + ' ₫'"></span>
-                                <b class="price-sale" th:text="${#numbers.formatDecimal((v.additionalPrice != null ? v.additionalPrice : product.price) - ((v.additionalPrice != null ? v.additionalPrice : product.price) * activeFlashSale.discountPercent / 100.0), 0,'COMMA',0,'POINT')} + ' ₫'"></b>
-                            </th:block>
-                            <th:block th:unless="${activeFlashSale != null}">
-                                <b th:text="${#numbers.formatDecimal(v.additionalPrice != null ? v.additionalPrice : product.price, 0,'COMMA',0,'POINT')} + ' ₫'"></b>
-                            </th:block>
-
-                            <span th:if="${v.stock == null or v.stock <= 0}" style="color: red; font-size: 0.85rem; font-weight: bold; margin-left: 5px;">
-                                (Hết hàng)
-                            </span>
-                        </span>
-
                     </label>
 
                 </div>
-
-
                 <!-- QUANTITY -->
                 <div class="qty-box">
                     <button type="button" onclick="minusQty()">-</button>
@@ -204,22 +105,15 @@
                            value="1"
                            min="1">
 
-                <div class="qty-box mt-3">
-                    <button type="button" onclick="minusQty()">-</button>
-                    <input id="qty" class="qty-input" type="number" name="quantity" value="1" min="1" style="width: 50px; text-align: center;">
                     <button type="button" onclick="plusQty()">+</button>
                 </div>
 
-                <div class="action-group">
-                    <button type="submit" id="btnAddToCart" class="btn-cart">
-                        THÊM VÀO GIỎ HÀNG
-                    </button>
-
-                    <a th:href="@{'/wishlist/add/' + ${product.id}}" class="btn-wishlist" title="Thêm vào yêu thích">
-                        <i class="fa-solid fa-heart" style="color: #ff4757; font-size: 1.5rem;"></i>
-                    </a>
-                </div>
-
+                <button type="submit" class="btn-cart">
+                    THÊM VÀO GIỎ HÀNG
+                </button>
+                <a th:href="@{'/wishlist/add/' + ${product.id}}" class="btn-wishlist" title="Thêm vào yêu thích">
+                    <i class="fa-solid fa-heart" style="color: #ff4757; font-size: 1.5rem;"></i>
+                </a>
             </form>
 
         </div>
@@ -228,12 +122,10 @@
 
 </div>
 
-
 <!-- DESCRIPTION -->
 
 <div class="product-desc">
 
-<div class="product-desc mt-5">
     <h3>Mô tả sản phẩm</h3>
 
     <p th:text="${product.description}"></p>
@@ -325,7 +217,6 @@
     </form>
 
 
-
     <!-- ===== REVIEW LIST ===== -->
 
     <div class="review-item"
@@ -344,7 +235,6 @@
         </p>
 
         <p>
-
             <b>Nhận xét :</b>
 
             <span th:text="${r.message}"></span>
@@ -353,7 +243,6 @@
 
         <p class="review-date"
            th:text="${#temporals.format(r.createdAt,'dd/MM/yyyy')}"></p>
-
 
 
         <!-- ADMIN REPLY -->
@@ -371,29 +260,29 @@
 
     <!-- ===== PAGINATION ===== -->
 
-    <div class="pagination"
-         th:if="${totalPages > 1}">
+<!--    <div class="pagination"-->
+<!--         th:if="${totalPages > 1}">-->
 
-        <a th:if="${currentPage > 0}"
-           th:href="@{/product/detail/{id}(id=${product.id},page=${currentPage-1})}">
-            Prev
-        </a>
+<!--        <a th:if="${currentPage > 0}"-->
+<!--           th:href="@{/product/detail/{id}(id=${product.id},page=${currentPage-1})}">-->
+<!--            Prev-->
+<!--        </a>-->
 
-        <span th:each="i : ${#numbers.sequence(0,totalPages-1)}">
+<!--        <span th:each="i : ${#numbers.sequence(0,totalPages-1)}">-->
 
-<a th:href="@{/product/detail/{id}(id=${product.id},page=${i})}"
-   th:text="${i+1}"
-   th:classappend="${i == currentPage} ? 'active'">
-</a>
+<!--<a th:href="@{/product/detail/{id}(id=${product.id},page=${i})}"-->
+<!--   th:text="${i+1}"-->
+<!--   th:classappend="${i == currentPage} ? 'active'">-->
+<!--</a>-->
 
-</span>
+<!--</span>-->
 
-        <a th:if="${currentPage < totalPages-1}"
-           th:href="@{/product/detail/{id}(id=${product.id},page=${currentPage+1})}">
-            Next
-        </a>
+<!--        <a th:if="${currentPage < totalPages-1}"-->
+<!--           th:href="@{/product/detail/{id}(id=${product.id},page=${currentPage+1})}">-->
+<!--            Next-->
+<!--        </a>-->
 
-    </div>
+<!--    </div>-->
 
 </div>
 
@@ -420,16 +309,8 @@
             Gửi
         </button>
 
-
-    <h3>Đánh giá sản phẩm</h3>
-    <form th:action="@{/product/review}" method="post">
-        <input type="hidden" name="productId" th:value="${product.id}">
-        <input type="text" name="title" placeholder="Tiêu đề" required style="display: block; margin-bottom: 10px; width: 100%; max-width: 400px; padding: 8px;">
-        <textarea name="content" placeholder="Nội dung đánh giá" required style="display: block; margin-bottom: 10px; width: 100%; max-width: 400px; padding: 8px; height: 100px;"></textarea>
-        <button type="submit" style="background-color: #333; color: white; padding: 8px 15px; border: none; cursor: pointer;">Gửi đánh giá</button>
-        <p style="color:red; margin-top: 10px;" th:if="${param.error != null}">Bạn phải đăng nhập để gửi đánh giá.</p>
-
     </form>
+
     <hr>
 
     <div class="comment-item"
@@ -486,87 +367,34 @@ QTV
 
             <p th:text="${rep.message}"></p>
 
-    <div th:each="r : ${reviews}">
-        <div th:if="${r.title != 'ADMIN_REPLY'}" class="review-item" style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px dashed #ddd;">
-            <h4 th:text="${r.title}" style="margin-bottom: 5px;"></h4>
-            <p style="font-size: 0.9em; color: #666;">
-                <b th:text="${r.user != null ? (r.user.fullName != null ? r.user.fullName : r.user.email) : 'Unknown'}"></b> -
-                <span th:text="${#temporals.format(r.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
-            </p>
-            <p th:text="${r.content}"></p>
         </div>
 
     </div>
+
 </div>
 <!-- FOOTER -->
 
-<div th:replace="~{layout/footer :: footer}"></div>
+<div th:replace="layout/footer :: footer"></div>
 
 <!-- JS -->
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const radios = document.querySelectorAll('.variant-radio');
-        const btnAddToCart = document.getElementById('btnAddToCart');
-        const qtyInput = document.getElementById('qty');
-
-        function updateCartState() {
-            const selectedRadio = document.querySelector('.variant-radio:checked');
-            if (selectedRadio) {
-                const stock = parseInt(selectedRadio.getAttribute('data-stock'));
-                if (stock <= 0) {
-                    btnAddToCart.disabled = true;
-                    btnAddToCart.style.backgroundColor = '#ccc';
-                    btnAddToCart.style.cursor = 'not-allowed';
-                    btnAddToCart.innerText = 'ĐÃ HẾT HÀNG';
-                    qtyInput.disabled = true;
-                } else {
-                    btnAddToCart.disabled = false;
-                    btnAddToCart.style.backgroundColor = '#f15a22';
-                    btnAddToCart.style.cursor = 'pointer';
-                    btnAddToCart.innerText = 'THÊM VÀO GIỎ HÀNG';
-                    qtyInput.disabled = false;
-                    qtyInput.max = stock;
-                    if (parseInt(qtyInput.value) > stock) {
-                        qtyInput.value = stock;
-                    }
-                }
-            }
-        }
-
-        if(radios.length > 0) updateCartState();
-        radios.forEach(radio => {
-            radio.addEventListener('change', updateCartState);
-        });
-    });
 
     function plusQty() {
 
         let q = document.getElementById("qty");
 
         q.value = parseInt(q.value) + 1;
-
-        if(q.disabled) return;
-        let currentVal = parseInt(q.value);
-        let maxVal = parseInt(q.max) || 999;
-        if (currentVal < maxVal) {
-            q.value = currentVal + 1;
-        } else {
-            alert("Số lượng sản phẩm trong kho chỉ còn " + maxVal);
-        }
     }
 
     function minusQty() {
-        let q = document.getElementById("qty");
 
+        let q = document.getElementById("qty");
 
         if (q.value > 1) {
             q.value--;
         }
-        if(q.disabled) return;
-        if (parseInt(q.value) > 1) {
-            q.value = parseInt(q.value) - 1;
-        }
+
     }
 
 </script>
