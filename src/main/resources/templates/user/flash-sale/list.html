@@ -1,0 +1,157 @@
+<th:block th:fragment="flash-sale-list">
+
+    <section class="section-container" th:if="${activeFlashSale != null and !activeFlashSale.products.isEmpty()}">
+
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+            <h2 class="section-title flash-sale-title" style="margin-bottom: 0;">
+                <i class="fa-solid fa-bolt" style="color: #fca311;"></i> GIỜ VÀNG GIÁ SỐC
+            </h2>
+
+            <div class="fs-countdown-box" th:data-endtime="${activeFlashSale.endDate}">
+                <span>Kết thúc trong: </span>
+                <div class="fs-timer">
+                    <span class="fs-days">00</span>d :
+                    <span class="fs-hours">00</span>h :
+                    <span class="fs-minutes">00</span>m :
+                    <span class="fs-seconds">00</span>s
+                </div>
+            </div>
+        </div>
+
+        <div class="product-wrapper flash-sale-wrapper">
+            <div class="product-grid">
+                <div th:each="fsp : ${activeFlashSale.products}" class="product-card">
+
+                    <a th:href="@{/product/detail/{id}(id=${fsp.product.id})}" class="product-image" style="position: relative; display: block;">
+                        <div class="fs-badge-home">
+                            -<span th:text="${activeFlashSale.discountPercent}"></span>%
+                        </div>
+
+                        <img th:if="${fsp.product.images != null and !fsp.product.images.isEmpty()}"
+                             th:src="@{/uploads/product/{img}(img=${fsp.product.images[0].image})}"
+                             th:alt="${fsp.product.name}">
+
+                        <img th:if="${fsp.product.images == null or fsp.product.images.isEmpty()}"
+                             th:src="@{/img/no-image.png}"
+                             alt="No image available">
+                    </a>
+
+                    <div class="product-info" style="text-align: center;">
+                        <a th:href="@{/product/detail/{id}(id=${fsp.product.id})}" style="text-decoration: none;">
+                            <h3 th:text="${fsp.product.name}"></h3>
+                        </a>
+
+                        <div class="brand">
+                            <span th:text="${fsp.product.brand != null ? fsp.product.brand.name : 'No brand'}"></span>
+                        </div>
+
+                        <div class="price" style="margin-bottom: 15px;">
+                            <span class="fs-original-price" th:text="${#numbers.formatDecimal(fsp.product.price, 0,'COMMA',0,'POINT')} + ' ₫'"></span>
+                            <span th:text="${#numbers.formatDecimal(fsp.salePrice, 0,'COMMA',0,'POINT')} + ' ₫'"></span>
+                        </div>
+                    </div>
+
+                    <div class="product-actions">
+                        <a th:href="@{/product/detail/{id}(id=${fsp.product.id})}" class="btn-cart">
+                            Xem chi tiết
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-container" th:if="${upcomingFlashSale != null and !upcomingFlashSale.products.isEmpty()}">
+
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+            <h2 class="section-title flash-sale-title-upcoming" style="margin-bottom: 0; color: #f39c12 !important;">
+                <i class="fa-solid fa-clock" style="color: #f39c12;"></i> SẮP DIỄN RA: GIỜ VÀNG GIÁ SỐC
+            </h2>
+            <style>
+                .flash-sale-title-upcoming::after { background-color: #f39c12 !important; }
+            </style>
+
+            <div class="fs-countdown-box" th:data-endtime="${upcomingFlashSale.startDate}" style="color: #f39c12; font-weight: bold; display: flex; align-items: center; gap: 10px;">
+                <span>Sẽ bắt đầu sau: </span>
+                <div class="fs-timer" style="background: #f39c12; color: white; padding: 5px 15px; border-radius: 20px;">
+                    <span class="fs-days">00</span>d :
+                    <span class="fs-hours">00</span>h :
+                    <span class="fs-minutes">00</span>m :
+                    <span class="fs-seconds">00</span>s
+                </div>
+            </div>
+        </div>
+
+        <div class="product-wrapper flash-sale-wrapper" style="border-color: #f39c12; background-color: #fffaf0;">
+            <div class="product-grid">
+                <div th:each="fsp : ${upcomingFlashSale.products}" class="product-card">
+
+                    <a th:href="@{/product/detail/{id}(id=${fsp.product.id})}" class="product-image" style="position: relative; display: block;">
+                        <div class="fs-badge-home" style="background: #f39c12; box-shadow: 0 2px 5px rgba(243, 156, 18, 0.4);">
+                            Sắp giảm <span th:text="${upcomingFlashSale.discountPercent}"></span>%
+                        </div>
+
+                        <img th:if="${fsp.product.images != null and !fsp.product.images.isEmpty()}"
+                             th:src="@{/uploads/product/{img}(img=${fsp.product.images[0].image})}" th:alt="${fsp.product.name}">
+                        <img th:if="${fsp.product.images == null or fsp.product.images.isEmpty()}"
+                             th:src="@{/img/no-image.png}" alt="No image available">
+                    </a>
+
+                    <div class="product-info" style="text-align: center;">
+                        <a th:href="@{/product/detail/{id}(id=${fsp.product.id})}" style="text-decoration: none;">
+                            <h3 th:text="${fsp.product.name}"></h3>
+                        </a>
+                        <div class="price" style="margin-bottom: 15px;">
+                            <span style="font-weight: bold; font-size: 1.1rem; color: #333;" th:text="${#numbers.formatDecimal(fsp.product.price, 0,'COMMA',0,'POINT')} + ' ₫'"></span>
+                        </div>
+                    </div>
+
+                    <div class="product-actions">
+                        <a th:href="@{/product/detail/{id}(id=${fsp.product.id})}" class="btn-cart" style="background-color: #f39c12;">
+                            Xem trước
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Tìm tất cả các hộp đếm ngược (đang diễn ra HOẶC sắp diễn ra)
+        const fsBoxes = document.querySelectorAll('.fs-countdown-box');
+
+        fsBoxes.forEach(fsBox => {
+            const endTimeStr = fsBox.getAttribute('data-endtime');
+            if(!endTimeStr) return;
+
+            const countDownDate = new Date(endTimeStr).getTime();
+
+            const timerInterval = setInterval(function() {
+                const now = new Date().getTime();
+                const distance = countDownDate - now;
+
+                if (distance < 0) {
+                    clearInterval(timerInterval);
+                    // Khi đếm lùi về 0, trang tự động reload lại để hiển thị Sale thật/ Kết thúc Sale
+                    location.reload();
+                    return;
+                }
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                // Gán dữ liệu vào các thẻ thông qua Class thay vì ID
+                fsBox.querySelector(".fs-days").innerText = days.toString().padStart(2, '0');
+                fsBox.querySelector(".fs-hours").innerText = hours.toString().padStart(2, '0');
+                fsBox.querySelector(".fs-minutes").innerText = minutes.toString().padStart(2, '0');
+                fsBox.querySelector(".fs-seconds").innerText = seconds.toString().padStart(2, '0');
+            }, 1000);
+        });
+    });
+</script>
+
+</th:block>

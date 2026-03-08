@@ -4,6 +4,7 @@ import com.ra.batshop.model.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
@@ -29,4 +30,13 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     Page<Product> findByNameContainingIgnoreCaseAndStatusTrue(
             String keyword,
             Pageable pageable);
+
+    // LẤY SẢN PHẨM BÁN CHẠY NHẤT DỰA TRÊN SỐ LƯỢNG (ORDER ITEM)
+    @Query("SELECT p FROM Product p " +
+            "JOIN p.variants v " +
+            "JOIN OrderItem oi ON oi.productVariant = v " +
+            "WHERE p.status = true " +
+            "GROUP BY p " +
+            "ORDER BY SUM(oi.quantity) DESC")
+    List<Product> findTopSellingProducts(Pageable pageable);
 }
