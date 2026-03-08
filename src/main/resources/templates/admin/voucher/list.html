@@ -50,6 +50,16 @@
     <div class="voucher-header">
         <div>
             <h2>Manager Vouchers</h2>
+
+            <form th:action="@{/admin/vouchers}" method="get" style="margin-bottom:15px;">
+                <input type="text"
+                       name="keyword"
+                       th:value="${keyword}"
+                       placeholder=" Search voucher..."
+                       class="search-input">
+
+                <button type="submit">Search</button>
+            </form>
         </div>
 
         <a th:href="@{/admin/vouchers/add}" class="btn-add">

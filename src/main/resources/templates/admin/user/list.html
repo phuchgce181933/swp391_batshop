@@ -1,6 +1,67 @@
+<!--<link rel="stylesheet" th:href="@{/css/admin/user.css}">-->
+
+<!--<h2>Manager Users</h2>-->
+
+<!--<form th:action="@{/admin/users}" method="get" style="margin-bottom:15px;">-->
+<!--    <input type="text"-->
+<!--           name="keyword"-->
+<!--           th:value="${keyword}"-->
+<!--           placeholder="Search user..."-->
+<!--           class="search-input">-->
+
+<!--    <button type="submit">Search</button>-->
+<!--</form>-->
+
+<!--<table class="admin-table">-->
+<!--    <thead>-->
+<!--    <tr>-->
+<!--        <th>ID</th>-->
+<!--        <th>Họ tên</th>-->
+<!--        <th>Email</th>-->
+<!--        <th>Phone</th>-->
+<!--        <th>Role</th>-->
+<!--        <th>Status</th>-->
+<!--        <th>Created At</th>-->
+<!--        <th>Action</th>-->
+<!--    </tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    <tr th:each="u : ${users}">-->
+<!--        <td th:text="${u.id}"></td>-->
+<!--        <td th:text="${u.fullName}"></td>-->
+<!--        <td th:text="${u.email}"></td>-->
+<!--        <td th:text="${u.phone}"></td>-->
+<!--        <td>-->
+<!--            <span class="badge"-->
+<!--                  th:class="'badge ' + (${u.role.name()} == 'ADMIN' ? 'badge-admin' : 'badge-user')"-->
+<!--                  th:text="${u.role}">-->
+<!--            </span>-->
+<!--        </td>-->
+<!--        <td>-->
+<!--            <span class="badge"-->
+<!--                  th:class="'badge ' + (${u.status} ? 'badge-active' : 'badge-block')"-->
+<!--                  th:text="${u.status} ? 'ACTIVE' : 'BLOCKED'">-->
+<!--            </span>-->
+<!--        </td>-->
+<!--        <td th:text="${#temporals.format(u.createdAt, 'dd/MM/yyyy HH:mm')}"></td>-->
+<!--    </tr>-->
+<!--    </tbody>-->
+<!--</table>-->
+
 <link rel="stylesheet" th:href="@{/css/admin/user.css}">
 
 <h2>Manager Users</h2>
+
+<!-- SEARCH -->
+<form th:action="@{/admin/users}" method="get" style="margin-bottom:15px;">
+    <input type="text"
+           name="keyword"
+           th:value="${keyword}"
+           placeholder="Search user..."
+           class="search-input">
+
+    <button type="submit">Search</button>
+</form>
 
 <table class="admin-table">
     <thead>
@@ -10,22 +71,71 @@
         <th>Email</th>
         <th>Phone</th>
         <th>Role</th>
+        <th>Status</th>
         <th>Created At</th>
+        <th>Action</th>
     </tr>
     </thead>
+
     <tbody>
+
+    <!-- USER LIST -->
     <tr th:each="u : ${users}">
         <td th:text="${u.id}"></td>
         <td th:text="${u.fullName}"></td>
         <td th:text="${u.email}"></td>
         <td th:text="${u.phone}"></td>
+
+        <!-- ROLE -->
         <td>
             <span class="badge"
                   th:class="'badge ' + (${u.role.name()} == 'ADMIN' ? 'badge-admin' : 'badge-user')"
                   th:text="${u.role}">
             </span>
         </td>
+
+        <!-- STATUS -->
+        <td>
+            <span class="badge"
+                  th:class="'badge ' + (${u.status} ? 'badge-active' : 'badge-block')"
+                  th:text="${u.status} ? 'ACTIVE' : 'BLOCKED'">
+            </span>
+        </td>
+
+        <!-- CREATED -->
         <td th:text="${#temporals.format(u.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+
+        <!-- ACTION -->
+        <td>
+
+            <!-- BLOCK / UNBLOCK -->
+            <a th:href="@{/admin/users/toggle-status/{id}(id=${u.id})}"
+               class="btn-status"
+               onclick="return confirm('Change user status?')">
+
+                <span th:text="${u.status} ? 'Block' : 'Unblock'"></span>
+
+            </a>
+
+            |
+
+            <!-- DELETE -->
+            <a th:href="@{/admin/users/delete/{id}(id=${u.id})}"
+               class="btn-delete"
+               onclick="return confirm('Delete this user?')">
+                Delete
+            </a>
+
+        </td>
+
     </tr>
+
+    <!-- EMPTY LIST -->
+    <tr th:if="${#lists.isEmpty(users)}">
+        <td colspan="8" style="text-align:center; color:#888;">
+            No users found
+        </td>
+    </tr>
+
     </tbody>
 </table>

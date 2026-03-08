@@ -31,4 +31,6 @@ public interface BlogRepository extends JpaRepository<Blog, Integer> {
     @Query(value = "SELECT * FROM blog WHERE status = true AND id != :currentId ORDER BY RAND() LIMIT 5", nativeQuery = true)
     List<Blog> findRandom5Blogs(@Param("currentId") Integer currentId);
 
+    List<Blog> findByTitleContainingIgnoreCase(String keyword);
+
 }
