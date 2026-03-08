@@ -2,6 +2,34 @@
 
 <a th:href="@{/admin/products/add}">+ Add Product</a>
 <link rel="stylesheet" th:href="@{/css/admin/product.css}">
+<form method="get" th:action="@{/admin/products}">
+
+    <input type="text"
+           name="keyword"
+           placeholder="Search product..."
+           th:value="${keyword}">
+
+    <select name="categoryId">
+        <option value="">All Categories</option>
+        <option th:each="c : ${categories}"
+                th:value="${c.id}"
+                th:text="${c.name}"
+                th:selected="${c.id == categoryId}">
+        </option>
+    </select>
+
+    <select name="brandId">
+        <option value="">All Brands</option>
+        <option th:each="b : ${brands}"
+                th:value="${b.id}"
+                th:text="${b.name}"
+                th:selected="${b.id == brandId}">
+        </option>
+    </select>
+
+    <button type="submit">Search</button>
+
+</form>
 <table>
     <thead>
     <tr>
@@ -31,9 +59,7 @@
         <td th:text="${#numbers.formatDecimal(p.price,0,'COMMA',0,'POINT')}"></td>
         <td th:text="${p.status ? 'Active' : 'Inactive'}"></td>
         <td>
-            <a th:href="@{/admin/products/edit/{id}(id=${p.id})}">Edit</a> |
-            <a th:href="@{/admin/products/delete/{id}(id=${p.id})}"
-               onclick="return confirm('Delete product?')">Delete</a>
+            <a th:href="@{/admin/products/edit/{id}(id=${p.id})}">Edit</a>
         </td>
         <td>
             <a th:href="@{/admin/products/{id}/variants(id=${p.id})}">
@@ -43,3 +69,23 @@
     </tr>
     </tbody>
 </table>
+<div class="pagination">
+
+    <a th:if="${currentPage > 0}"
+       th:href="@{/admin/products(page=${currentPage - 1})}">
+        Previous
+    </a>
+
+    <span th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+        <a th:href="@{/admin/products(page=${i})}"
+           th:text="${i + 1}"
+           th:classappend="${i == currentPage} ? 'active' : ''">
+        </a>
+    </span>
+
+    <a th:if="${currentPage < totalPages - 1}"
+       th:href="@{/admin/products(page=${currentPage + 1})}">
+        Next
+    </a>
+
+</div>
