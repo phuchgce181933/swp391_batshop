@@ -26,7 +26,11 @@ public class Address {
     private String district;
     private String ward;
     private String detail;
+    // Thêm vào class Address.java
+    private String receiverName;
+    private String receiverPhone;
 
+    // Đừng quên tạo Getter và Setter cho 2 trường này (hoặc dùng @Data nếu có Lombok)
     private boolean isDefault;
 
     @ManyToOne
