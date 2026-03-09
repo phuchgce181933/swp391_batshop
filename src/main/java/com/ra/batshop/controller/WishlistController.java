@@ -1,8 +1,10 @@
 package com.ra.batshop.controller;
 
+import com.ra.batshop.model.Category;
 import com.ra.batshop.model.Product;
 import com.ra.batshop.model.User;
 import com.ra.batshop.model.Wishlist;
+import com.ra.batshop.repository.CategoryRepository;
 import com.ra.batshop.repository.ProductRepository;
 import com.ra.batshop.repository.WishlistRepository;
 import jakarta.servlet.http.HttpSession;
@@ -12,8 +14,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/wishlist")
@@ -25,13 +29,14 @@ public class WishlistController {
     @Autowired
     private ProductRepository productRepository;
 
-    // Đổi productId từ Long thành Integer để khớp với Product.java
+    @Autowired
+    private CategoryRepository categoryRepository;
+
     @GetMapping("/add/{productId}")
     public String addToWishlist(@PathVariable Integer productId, HttpSession session) {
         User user = (User) session.getAttribute("user");
         if (user == null) return "redirect:/login";
 
-        // Bây giờ findById sẽ nhận Integer và không còn báo lỗi đỏ nữa
         Product product = productRepository.findById(productId).orElse(null);
         if (product != null) {
             if (wishlistRepository.findByUserAndProduct(user, product).isEmpty()) {
@@ -45,12 +50,28 @@ public class WishlistController {
     }
 
     @GetMapping("/list")
-    public String showWishlist(HttpSession session, Model model) {
+    public String showWishlist(HttpSession session,
+                               Model model,
+                               @RequestParam(name = "categoryId", required = false) Integer categoryId) {
         User user = (User) session.getAttribute("user");
         if (user == null) return "redirect:/login";
 
+        // 1. Lấy tất cả danh sách yêu thích của user
         List<Wishlist> items = wishlistRepository.findByUser(user);
+
+        // 2. Nếu có chọn categoryId, tiến hành lọc danh sách
+        if (categoryId != null) {
+            items = items.stream()
+                    .filter(item -> item.getProduct().getCategory() != null &&
+                            item.getProduct().getCategory().getId().equals(categoryId))
+                    .collect(Collectors.toList());
+        }
+
+        // 3. Gửi dữ liệu ra view
         model.addAttribute("wishlistItems", items);
+        model.addAttribute("categories", categoryRepository.findAll()); // Để đổ vào Dropdown
+        model.addAttribute("selectedCategory", categoryId); // Để giữ trạng thái đã chọn
+
         return "profile/wishlist";
     }
 
