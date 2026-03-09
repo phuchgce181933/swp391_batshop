@@ -5,34 +5,94 @@
     <title>Sản phẩm yêu thích - BatShop</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .card-img-top {
+            height: 220px;
+            object-fit: contain;
+            padding: 15px;
+            background-color: #f8f9fa;
+        }
+        .card {
+            transition: all 0.3s ease;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .product-name {
+            font-size: 1rem;
+            font-weight: 600;
+            height: 3rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .filter-select {
+            max-width: 250px;
+            border-radius: 8px;
+        }
+    </style>
 </head>
 <body>
-<div th:replace="layout/header :: header"></div>
+<div th:replace="~{layout/header :: header}"></div>
 
-<div class="container my-5">
-    <h4 class="mb-4"><i class="fa-solid fa-heart text-danger"></i> Danh sách yêu thích</h4>
+<div class="container my-5" style="min-height: 60vh;">
 
-    <div th:if="${#lists.isEmpty(wishlistItems)}" class="alert alert-light border text-center">
-        <p>Bạn chưa có sản phẩm yêu thích nào.</p>
-        <a href="/product/list" class="btn btn-primary">Tiếp tục mua sắm</a>
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+        <h4 class="m-0"><i class="fa-solid fa-heart text-danger"></i> Danh sách yêu thích của bạn</h4>
+
+        <div class="d-flex align-items-center gap-2">
+            <label class="fw-bold text-nowrap">Phân loại:</label>
+            <form th:action="@{/wishlist/list}" method="get" id="filterForm">
+                <select name="categoryId" class="form-select filter-select" onchange="this.form.submit()">
+                    <option value="">-- Tất cả sản phẩm --</option>
+                    <option th:each="cat : ${categories}"
+                            th:value="${cat.id}"
+                            th:text="${cat.name}"
+                            th:selected="${cat.id == selectedCategory}">
+                    </option>
+                </select>
+            </form>
+        </div>
     </div>
 
-    <div class="row">
-        <div th:each="item : ${wishlistItems}" class="col-md-3 mb-4">
+    <div th:if="${#lists.isEmpty(wishlistItems)}" class="alert alert-light border text-center py-5 shadow-sm">
+        <i class="fa-solid fa-bag-shopping fa-3x mb-3 text-muted"></i>
+        <p class="mb-3 fs-5">Không tìm thấy sản phẩm nào phù hợp.</p>
+        <a th:href="@{/home}" class="btn btn-primary px-4 py-2">Khám phá ngay</a>
+    </div>
+
+    <div class="row" th:if="${!#lists.isEmpty(wishlistItems)}">
+        <div th:each="item : ${wishlistItems}" class="col-lg-3 col-md-4 col-sm-6 mb-4">
             <div class="card h-100 border-0 shadow-sm">
-                <img th:if="${!item.product.images.isEmpty()}"
-                     th:src="@{'/upload/' + ${item.product.images[0].image}}"
-                     class="card-img-top" alt="Product Image">
 
-                <div class="card-body text-center">
-                    <h6 class="card-title" th:text="${item.product.name}"></h6>
-                    <p class="text-danger fw-bold" th:text="${#numbers.formatDecimal(item.product.price, 0, 'COMMA', 0, 'POINT')} + ' đ'"></p>
+                <div class="position-relative">
+                    <img th:if="${item.product.images != null and !#lists.isEmpty(item.product.images)}"
+                         th:src="@{'/uploads/product/' + ${item.product.images[0].image}}"
+                         class="card-img-top" th:alt="${item.product.name}">
 
-                    <div class="d-grid gap-2">
-                        <a th:href="@{'/product/detail/' + ${item.product.id}}" class="btn btn-sm btn-outline-primary">Xem chi tiết</a>
-                        <button class="btn btn-sm btn-outline-danger" th:onclick="'confirmDelete(' + ${item.id} + ')'">
-                            <i class="fa-solid fa-trash"></i> Xóa
-                        </button>
+                    <img th:unless="${item.product.images != null and !#lists.isEmpty(item.product.images)}"
+                         th:src="@{/images/no-image.png}"
+                         class="card-img-top" alt="No Image Available">
+                </div>
+
+                <div class="card-body text-center d-flex flex-column">
+                    <h6 class="product-name mb-2" th:text="${item.product.name}"></h6>
+                    <p class="text-danger fw-bold fs-5 mt-auto"
+                       th:text="${#numbers.formatDecimal(item.product.price, 0, 'COMMA', 0, 'POINT')} + ' đ'"></p>
+
+                    <div class="d-grid gap-2 mt-3">
+                        <a th:href="@{'/product/detail/' + ${item.product.id}}" class="btn btn-sm btn-primary">
+                            <i class="fa-solid fa-eye"></i> Chi tiết
+                        </a>
+                        <a th:href="@{'/wishlist/delete/' + ${item.id}}"
+                           class="btn btn-sm btn-outline-danger"
+                           onclick="return confirm('Bạn chắc chắn muốn bỏ sản phẩm này?')">
+                            <i class="fa-solid fa-trash-can"></i> Xóa
+                        </a>
                     </div>
                 </div>
             </div>
@@ -40,17 +100,7 @@
     </div>
 </div>
 
-<div th:replace="layout/footer :: footer"></div>
+<div th:replace="~{layout/footer :: footer}"></div>
 
-<form id="deleteForm" method="get" style="display:none;"></form>
-<script>
-    function confirmDelete(id) {
-        if (confirm('Bỏ sản phẩm này khỏi danh sách yêu thích?')) {
-            const form = document.getElementById('deleteForm');
-            form.action = '/wishlist/delete/' + id;
-            form.submit();
-        }
-    }
-</script>
 </body>
 </html>
