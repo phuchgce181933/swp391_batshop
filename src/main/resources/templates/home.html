@@ -7,6 +7,7 @@
     <link rel="stylesheet" th:href="@{/css/user/banner.css}">
     <link rel="stylesheet" th:href="@{/css/user/home-flash-sale.css}">
     <link rel="stylesheet" th:href="@{/css/user/home-bestseller.css}">
+    <link rel="stylesheet" th:href="@{/css/user/homeproduct.css}">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -62,7 +63,7 @@
     <section class="section-container">
         <h2 class="section-title">Sản phẩm mới</h2>
         <div class="product-wrapper">
-            <div th:replace="~{user/productvariant-list :: productvariant-list}"></div>
+            <div th:replace="~{user/product-list :: product-list}"></div>
         </div>
     </section>
 

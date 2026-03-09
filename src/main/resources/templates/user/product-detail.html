@@ -165,7 +165,7 @@
                 ⭐ ⭐ ⭐ ⭐ ⭐
             </div>
 
-            <p th:text="${reviews.size()} + ' đánh giá và nhận xét'"></p>
+            <p th:text="${reviewCount} + ' đánh giá và nhận xét'"></p>
 
         </div>
 
@@ -184,23 +184,21 @@
 
     </div>
 
+    <div th:if="${param.error == 'notPurchased'}"
+         style="color:red;margin-bottom:10px;font-weight:bold;">
+        Bạn cần mua sản phẩm và hoàn thành đơn hàng trước khi đánh giá.
+    </div>
+
+    <div th:if="${param.error == 'reviewed'}"
+         style="color:red;margin-bottom:10px;font-weight:bold;">
+        Bạn đã đánh giá sản phẩm này rồi.
+    </div>
 
     <!-- ===== REVIEW FORM ===== -->
 
-    <form id="reviewForm"
-          th:action="@{/product/review}"
-          method="post"
-          style="display:none">
+    <form th:action="@{/product/review}" method="post">
 
-        <input type="hidden"
-               name="productId"
-               th:value="${product.id}">
-
-        <label>Tên</label>
-        <input type="text" name="name" required>
-
-        <label>Số điện thoại</label>
-        <input type="text" name="phone" required>
+        <input type="hidden" name="productId" th:value="${product.id}">
 
         <label>Đánh giá</label>
         <select name="rating">
@@ -290,92 +288,6 @@
 
 </div>
 
-<div class="comment-section">
-
-    <h3>Bình luận</h3>
-
-    <form th:action="@{/product/comment}" method="post">
-
-        <input type="hidden"
-               name="productId"
-               th:value="${product.id}">
-
-        <input type="text"
-               name="name"
-               placeholder="Tên của bạn"
-               required>
-
-        <textarea name="message"
-                  placeholder="Nhập bình luận..."
-                  required></textarea>
-
-        <button type="submit">
-            Gửi
-        </button>
-
-    </form>
-
-    <hr>
-
-    <div class="comment-item"
-         th:each="c : ${comments}">
-
-        <div class="comment-header">
-
-            <b th:text="${c.name}"></b>
-
-            <span th:if="${c.admin}" class="admin-badge">
-QTV
-</span>
-
-        </div>
-
-        <p th:text="${c.message}"></p>
-
-        <!-- reply form -->
-
-        <form th:action="@{/product/comment/reply}" method="post">
-
-            <input type="hidden"
-                   name="productId"
-                   th:value="${product.id}">
-
-            <input type="hidden"
-                   name="parentId"
-                   th:value="${c.id}">
-
-            <input type="text"
-                   name="name"
-                   placeholder="Tên">
-
-            <textarea name="message"
-                      placeholder="Trả lời..."></textarea>
-
-            <button type="submit">
-                Trả lời
-            </button>
-
-        </form>
-
-
-        <!-- replies -->
-
-        <div class="reply-item"
-             th:each="rep : ${c.replies}">
-
-            <b th:text="${rep.name}"></b>
-
-            <span th:if="${rep.admin}" class="admin-badge">
-QTV
-</span>
-
-            <p th:text="${rep.message}"></p>
-
-        </div>
-
-    </div>
-
-</div>
 <!-- FOOTER -->
 
 <div th:replace="layout/footer :: footer"></div>

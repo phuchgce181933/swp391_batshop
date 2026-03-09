@@ -2,6 +2,7 @@ package com.ra.batshop.controller;
 
 
 import com.ra.batshop.model.*;
+import com.ra.batshop.model.Enum.OrderStatus;
 import com.ra.batshop.repository.CommentRepository;
 import com.ra.batshop.model.FlashSale;
 import com.ra.batshop.model.Product;
@@ -14,10 +15,12 @@ import com.ra.batshop.repository.ProductVariantRepository;
 import com.ra.batshop.repository.ReviewRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest; // ⭐ NEW
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import com.ra.batshop.repository.OrderItemRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,7 +33,7 @@ public class ProductDetailController {
     private final ProductRepository productRepository;
     private final ProductVariantRepository variantRepository;
     private final ReviewRepository reviewRepository;
-
+    private final OrderItemRepository orderItemRepository;
     private final CommentRepository commentRepository;
     // 1. Khai báo thêm FlashSaleRepository
     private final FlashSaleRepository flashSaleRepository;
@@ -40,12 +43,14 @@ public class ProductDetailController {
                                    ProductVariantRepository variantRepository,
                                    ReviewRepository reviewRepository,
                                    FlashSaleRepository flashSaleRepository,
-                                   CommentRepository commentRepository) {
+                                   CommentRepository commentRepository,
+                                   OrderItemRepository orderItemRepository) {
         this.productRepository = productRepository;
         this.variantRepository = variantRepository;
         this.reviewRepository = reviewRepository;
         this.commentRepository = commentRepository;
         this.flashSaleRepository = flashSaleRepository;
+        this.orderItemRepository = orderItemRepository;
     }
 
 
@@ -77,7 +82,7 @@ public class ProductDetailController {
         Page<Review> reviewPage =
                 reviewRepository.findByProduct_IdAndParentIsNull(
                         id,
-                        PageRequest.of(page,5)
+                        PageRequest.of(page, 5)
                 );
 
         Double avgRating =
@@ -86,7 +91,7 @@ public class ProductDetailController {
 
         model.addAttribute("product", product);
         model.addAttribute("variants", variants);
-        model.addAttribute("comments",comments);
+        model.addAttribute("comments", comments);
         model.addAttribute("reviews", reviewPage.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", reviewPage.getTotalPages());
@@ -113,30 +118,54 @@ public class ProductDetailController {
         return "user/product-detail";
     }
 
-    // =========================
-    // ADD REVIEW
-    // =========================
+    //ADD REVIEW
     @PostMapping("/review")
     public String addReview(
             @RequestParam Integer productId,
-            @RequestParam String name,
-            @RequestParam String phone,
             @RequestParam String message,
-            @RequestParam Integer rating
+            @RequestParam Integer rating,
+            HttpSession session
     ) {
+
+        User user = (User) session.getAttribute("user");
+
+        if (user == null) {
+            return "redirect:/login";
+        }
 
         Product product = productRepository
                 .findById(productId)
                 .orElseThrow();
 
+        // CHECK USER ĐÃ MUA
+        Long purchased = orderItemRepository
+                .checkUserPurchased(user.getId(), productId, OrderStatus.COMPLETED);
+
+        if (purchased == 0) {
+            return "redirect:/product/detail/" + productId + "?error=notPurchased";
+        }
+
+        // CHECK USER ĐÃ REVIEW CHƯA
+        boolean existed = reviewRepository
+                .existsByUser_IdAndProduct_Id(user.getId(), productId);
+
+        if (existed) {
+            return "redirect:/product/detail/" + productId + "?error=reviewed";
+        }
+
         Review review = new Review();
 
-        review.setName(name);
-        review.setPhone(phone);
+        review.setUser(user);
+        review.setProduct(product);
         review.setMessage(message);
         review.setRating(rating);
         review.setCreatedAt(LocalDateTime.now());
-        review.setProduct(product);
+
+        // LẤY TỪ USER
+        review.setName(user.getFullName());
+        review.setPhone(user.getPhone());
+
+        review.setVerifiedPurchase(true);
 
         reviewRepository.save(review);
 
