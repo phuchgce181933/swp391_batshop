@@ -44,5 +44,10 @@ public class Order {
     @ManyToOne
     @JoinColumn(name = "address_id")
     private Address shippingAddress;
+    @ManyToOne
+    @JoinColumn(name = "voucher_id")
+    private Voucher voucher;
+
+    private Integer discountAmount;
 }
 
