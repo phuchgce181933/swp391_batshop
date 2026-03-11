@@ -115,7 +115,7 @@ public class ProductDetailController {
             }
         }
 
-        return "user/product-detail";
+        return "user/product/product-detail";
     }
 
     //ADD REVIEW

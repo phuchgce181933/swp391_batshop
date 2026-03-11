@@ -12,6 +12,7 @@
 <div th:replace="layout/header :: header"></div>
 
 <div class="product-detail-container">
+
     <!-- IMAGE -->
     <div class="product-images">
 
@@ -110,12 +111,7 @@
 
                     <button type="button" onclick="plusQty()">+</button>
                 </div>
-                <div th:if="${param.error != null and param.error[0] == 'stock'}"
-                     style="color:red;font-weight:bold;margin-bottom:10px;">
-                    Xin lỗi, hiện tại chúng tôi chỉ còn
-                    <b th:text="${param.stock[0]}"></b>
-                    sản phẩm trong kho.
-                </div>
+
                 <button type="submit" class="btn-cart">
                     THÊM VÀO GIỎ HÀNG
                 </button>
@@ -266,29 +262,29 @@
 
     <!-- ===== PAGINATION ===== -->
 
-<!--    <div class="pagination"-->
-<!--         th:if="${totalPages > 1}">-->
+    <!--    <div class="pagination"-->
+    <!--         th:if="${totalPages > 1}">-->
 
-<!--        <a th:if="${currentPage > 0}"-->
-<!--           th:href="@{/product/detail/{id}(id=${product.id},page=${currentPage-1})}">-->
-<!--            Prev-->
-<!--        </a>-->
+    <!--        <a th:if="${currentPage > 0}"-->
+    <!--           th:href="@{/product/detail/{id}(id=${product.id},page=${currentPage-1})}">-->
+    <!--            Prev-->
+    <!--        </a>-->
 
-<!--        <span th:each="i : ${#numbers.sequence(0,totalPages-1)}">-->
+    <!--        <span th:each="i : ${#numbers.sequence(0,totalPages-1)}">-->
 
-<!--<a th:href="@{/product/detail/{id}(id=${product.id},page=${i})}"-->
-<!--   th:text="${i+1}"-->
-<!--   th:classappend="${i == currentPage} ? 'active'">-->
-<!--</a>-->
+    <!--<a th:href="@{/product/detail/{id}(id=${product.id},page=${i})}"-->
+    <!--   th:text="${i+1}"-->
+    <!--   th:classappend="${i == currentPage} ? 'active'">-->
+    <!--</a>-->
 
-<!--</span>-->
+    <!--</span>-->
 
-<!--        <a th:if="${currentPage < totalPages-1}"-->
-<!--           th:href="@{/product/detail/{id}(id=${product.id},page=${currentPage+1})}">-->
-<!--            Next-->
-<!--        </a>-->
+    <!--        <a th:if="${currentPage < totalPages-1}"-->
+    <!--           th:href="@{/product/detail/{id}(id=${product.id},page=${currentPage+1})}">-->
+    <!--            Next-->
+    <!--        </a>-->
 
-<!--    </div>-->
+    <!--    </div>-->
 
 </div>
 
@@ -316,7 +312,75 @@
         }
 
     }
+    //phước bỏ vào
+    document.addEventListener("DOMContentLoaded", function() {
+        const radios = document.querySelectorAll('.variant-radio');
+        const btnAddToCart = document.getElementById('btnAddToCart');
+        const qtyInput = document.getElementById('qty');
 
+        // Hàm cập nhật trạng thái của nút Mua Hàng
+        function updateCartState() {
+            const selectedRadio = document.querySelector('.variant-radio:checked');
+            if (selectedRadio) {
+                // Lấy số lượng tồn kho từ biến thể đang được chọn
+                const stock = parseInt(selectedRadio.getAttribute('data-stock'));
+
+                if (stock <= 0) {
+                    // Trạng thái: HẾT HÀNG
+                    btnAddToCart.disabled = true;
+                    btnAddToCart.style.backgroundColor = '#ccc';
+                    btnAddToCart.style.cursor = 'not-allowed';
+                    btnAddToCart.innerText = 'ĐÃ HẾT HÀNG';
+                    qtyInput.disabled = true;
+                } else {
+                    // Trạng thái: CÒN HÀNG
+                    btnAddToCart.disabled = false;
+                    btnAddToCart.style.backgroundColor = '#f15a22';
+                    btnAddToCart.style.cursor = 'pointer';
+                    btnAddToCart.innerText = 'THÊM VÀO GIỎ HÀNG';
+                    qtyInput.disabled = false;
+
+                    // Giới hạn max để khách không nhập quá số lượng tồn kho
+                    qtyInput.max = stock;
+                    if (parseInt(qtyInput.value) > stock) {
+                        qtyInput.value = stock; // Tự động giảm số lượng về mức tồn kho thực tế
+                    }
+                }
+            }
+        }
+
+        // Chạy ngay lúc vừa load trang để check biến thể đầu tiên
+        if(radios.length > 0) updateCartState();
+
+        // Lắng nghe sự kiện mỗi khi người dùng đổi biến thể khác (đổi Size, Màu...)
+        radios.forEach(radio => {
+            radio.addEventListener('change', updateCartState);
+        });
+    });
+
+    // Cập nhật lại 2 hàm tăng giảm số lượng an toàn hơn
+    function plusQty() {
+        let q = document.getElementById("qty");
+        if(q.disabled) return; // Nếu hết hàng thì không cho bấm
+
+        let currentVal = parseInt(q.value);
+        let maxVal = parseInt(q.max); // Lấy max từ JS đã set ở trên
+
+        if (currentVal < maxVal) {
+            q.value = currentVal + 1;
+        } else {
+            alert("Số lượng sản phẩm trong kho chỉ còn " + maxVal);
+        }
+    }
+
+    function minusQty() {
+        let q = document.getElementById("qty");
+        if(q.disabled) return;
+
+        if (parseInt(q.value) > 1) {
+            q.value = parseInt(q.value) - 1;
+        }
+    }
 </script>
 
 </body>
