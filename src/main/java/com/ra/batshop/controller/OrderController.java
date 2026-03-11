@@ -171,9 +171,8 @@ public class OrderController {
                 voucher.setTotalUsed(used + 1);
                 voucherRepository.save(voucher);
             }
-            order.setTotalPrice(BigDecimal.valueOf(total));
         }
-
+        order.setTotalPrice(BigDecimal.valueOf(total));
         if(voucher != null){
 
             UserVoucher uv = new UserVoucher();
@@ -305,6 +304,10 @@ public class OrderController {
             if (order.getStatus() != OrderStatus.CANCELLED) {
                 restoreStock(order);
             }
+        }
+        // Nếu complete thì  paid
+        if (status == OrderStatus.COMPLETED) {
+            order.setPaymentStatus("PAID");
         }
         order.setStatus(status);
         orderRepository.save(order);
