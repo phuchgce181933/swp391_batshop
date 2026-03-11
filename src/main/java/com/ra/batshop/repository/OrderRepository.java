@@ -29,4 +29,23 @@ AND (:status IS NULL OR o.status = :status)
                              String paymentStatus,
                              OrderStatus status,
                              Pageable pageable);
+
+    // Tổng doanh thu
+    @Query("""
+SELECT SUM(o.totalPrice)
+FROM Order o
+WHERE o.status <> 'CANCELLED'
+""")
+    Double getTotalRevenue();
+
+    // Revenue theo tháng
+    @Query("""
+SELECT MONTH(o.createdAt), SUM(o.totalPrice)
+FROM Order o
+WHERE o.status <> 'CANCELLED'
+GROUP BY MONTH(o.createdAt)
+ORDER BY MONTH(o.createdAt)
+""")
+    List<Object[]> getMonthlyRevenue();
+
 }
