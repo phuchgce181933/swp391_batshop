@@ -1,6 +1,7 @@
 package com.ra.batshop.controller;
 
 import com.ra.batshop.model.CartItem;
+import com.ra.batshop.model.ProductVariant;
 import com.ra.batshop.model.User;
 import com.ra.batshop.repository.CartItemRepository;
 import com.ra.batshop.repository.ProductVariantRepository;
@@ -25,21 +26,29 @@ public class CartItemController {
 
     @PostMapping("/add")
     public String addCartItem(@RequestParam("productVariantId") Integer productvariantId,
-                               HttpSession httpSession) {
+                               HttpSession httpSession,
+                              @RequestParam("quantity") Integer quantity) {
         User user = (User) httpSession.getAttribute("user");
         if (user == null) {
             return "redirect:/login";
         }
+        ProductVariant variant = productVariantRepository
+                .findById(productvariantId)
+                .orElseThrow();
+        Integer stock = variant.getStock();
+        if(quantity > stock){
+            return "redirect:/product/detail/" + variant.getProduct().getId() + "?error=stock&stock=" + stock;
+        }
         Optional<CartItem> cartItemOption = cartItemRepository.findByUserIdAndProductVariantId(user.getId(), productvariantId);
         if (cartItemOption.isPresent()) {
             CartItem cartItem = cartItemOption.get();
-            cartItem.setQuantity(cartItem.getQuantity() + 1);
+            cartItem.setQuantity(cartItem.getQuantity() + quantity);
             cartItemRepository.save(cartItem);
         } else {
             CartItem cartItem = new CartItem();
             cartItem.setUser(user);
             cartItem.setProductVariant(productVariantRepository.findById(productvariantId).get());
-            cartItem.setQuantity(1);
+            cartItem.setQuantity(quantity);
             cartItemRepository.save(cartItem);
         }
         return "redirect:/cart/list";
@@ -79,10 +88,18 @@ public class CartItemController {
     @PostMapping("/update")
     public String updateCartItem(@RequestParam("id") Integer id,
                                  @RequestParam("quantity") Integer quantity,
+                                 @RequestParam("productVariantId") Integer productvariantId,
                                  HttpSession httpSession) {
         User user = (User) httpSession.getAttribute("user");
         if (user == null) {
             return "redirect:/login";
+        }
+        ProductVariant variant = productVariantRepository
+                .findById(productvariantId)
+                .orElseThrow();
+        Integer stock = variant.getStock();
+        if(quantity > stock){
+            return "redirect:/cart/list?error=stock&stock=" + stock;
         }
         CartItem cartItem = cartItemRepository.findById(id).get();
         cartItem.setQuantity(quantity);
