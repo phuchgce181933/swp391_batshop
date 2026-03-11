@@ -93,6 +93,6 @@ public class ProductListController {
 
         model.addAttribute("racketLevels", RacketLevel.values());
 
-        return "user/product-list";
+        return "user/product/product-list";
     }
 }
