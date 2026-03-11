@@ -48,6 +48,46 @@
                     </select>
                 </div>
 
+                <!-- RACKET LEVEL -->
+                <div class="filter-group">
+                    <label>Trình độ vợt</label>
+                    <select name="level">
+                        <option value="">Tất cả</option>
+                        <option th:each="lvl : ${racketLevels}"
+                                th:value="${lvl}"
+                                th:text="${lvl}"
+                                th:selected="${lvl == selectedLevel}">
+                        </option>
+                    </select>
+                </div>
+
+                <!-- RACKET WEIGHT -->
+                <div class="filter-group">
+                    <label>Trọng lượng</label>
+                    <select name="weight">
+                        <option value="">Tất cả</option>
+                        <option value="U3" th:selected="${selectedWeight == 'U3'}">3U</option>
+                        <option value="U4" th:selected="${selectedWeight == 'U4'}">4U</option>
+                        <option value="U5" th:selected="${selectedWeight == 'U5'}">5U</option>
+                    </select>
+                </div>
+
+                <!-- RACKET STYLE -->
+                <div class="filter-group">
+                    <label>Lối chơi</label>
+                    <select name="style">
+                        <option value="">Tất cả</option>
+                        <option value="POWER" th:selected="${selectedStyle == 'POWER'}">
+                            Power (Công)
+                        </option>
+                        <option value="DEFENSE" th:selected="${selectedStyle == 'DEFENSE'}">
+                            Defense (Thủ)
+                        </option>
+                        <option value="BALANCED" th:selected="${selectedStyle == 'BALANCED'}">
+                            Balanced (Cân bằng)
+                        </option>
+                    </select>
+                </div>
                 <!-- SORT -->
                 <div class="filter-group">
                     <label>Sắp xếp</label>
@@ -103,23 +143,47 @@
         <!-- PREV -->
         <a th:if="${currentPage > 0}"
            th:with="prevPage=${currentPage - 1}"
-           th:href="@{/products(page=${prevPage},categoryId=${selectedCategory},brandId=${selectedBrand},keyword=${keyword},sort=${selectedSort})}">
+           th:href="@{/products(
+               page=${prevPage},
+               categoryId=${selectedCategory},
+               brandId=${selectedBrand},
+               keyword=${keyword},
+               sort=${selectedSort},
+               level=${selectedLevel},
+               weight=${selectedWeight},
+               style=${selectedStyle})}">
             ←
         </a>
 
         <!-- PAGE NUMBERS -->
         <span th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
-        <a th:href="@{/products(page=${i},categoryId=${selectedCategory},brandId=${selectedBrand},keyword=${keyword},sort=${selectedSort})}"
-           th:text="${i+1}"
-           th:classappend="${i == currentPage} ? ' active' : ''">
+        <a th:href="@{/products(
+           page=${i},
+           categoryId=${selectedCategory},
+           brandId=${selectedBrand},
+           keyword=${keyword},
+           sort=${selectedSort},
+           level=${selectedLevel},
+           weight=${selectedWeight},
+           style=${selectedStyle})}"
+                   th:text="${i+1}"
+                   th:classappend="${i == currentPage} ? ' active' : ''">
         </a>
     </span>
 
         <!-- NEXT -->
         <a th:if="${currentPage < totalPages - 1}"
            th:with="nextPage=${currentPage + 1}"
-           th:href="@{/products(page=${nextPage},categoryId=${selectedCategory},brandId=${selectedBrand},keyword=${keyword},sort=${selectedSort})}">
-            →
+           th:href="@{/products(
+               page=${nextPage},
+               categoryId=${selectedCategory},
+               brandId=${selectedBrand},
+               keyword=${keyword},
+               sort=${selectedSort},
+               level=${selectedLevel},
+               weight=${selectedWeight},
+               style=${selectedStyle})}">
+                        →
         </a>
     </div>
 </section>

@@ -1,5 +1,8 @@
 package com.ra.batshop.repository;
 
+import com.ra.batshop.model.Enum.RacketLevel;
+import com.ra.batshop.model.Enum.RacketStyle;
+import com.ra.batshop.model.Enum.RacketWeight;
 import com.ra.batshop.model.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.domain.Page;
@@ -80,4 +83,23 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
             @Param("maxPrice") BigDecimal maxPrice,
             Pageable pageable);
 
+    @Query("""
+            SELECT p FROM Product p
+            LEFT JOIN p.racketDetail rd
+            WHERE p.status = true
+            AND (:categoryId IS NULL OR p.category.id = :categoryId)
+            AND (:brandId IS NULL OR p.brand.id = :brandId)
+            AND (:level IS NULL OR rd.level = :level)
+            AND (:weight IS NULL OR rd.weight = :weight)
+            AND (:style IS NULL OR rd.style = :style)
+            AND (:keyword IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%')))""")
+    Page<Product> filterAllProducts(
+            @Param("categoryId") Integer categoryId,
+            @Param("brandId") Integer brandId,
+            @Param("level") RacketLevel level,
+            @Param("weight") RacketWeight weight,
+            @Param("style") RacketStyle style,
+            @Param("keyword") String keyword,
+            Pageable pageable
+    );
 }

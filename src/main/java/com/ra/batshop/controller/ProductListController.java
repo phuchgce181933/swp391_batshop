@@ -1,5 +1,8 @@
 package com.ra.batshop.controller;
 
+import com.ra.batshop.model.Enum.RacketLevel;
+import com.ra.batshop.model.Enum.RacketStyle;
+import com.ra.batshop.model.Enum.RacketWeight;
 import com.ra.batshop.model.Product;
 import com.ra.batshop.repository.BrandRepository;
 import com.ra.batshop.repository.CategoryRepository;
@@ -32,12 +35,19 @@ public class ProductListController {
 
     @GetMapping
     public String listProducts(
-            @RequestParam(value = "categoryId", required = false) Integer categoryId,
-            @RequestParam(value = "brandId", required = false) Integer brandId,
-            @RequestParam(value = "keyword", required = false) String keyword,
-            @RequestParam(value = "sort", defaultValue = "default") String sort,
-            @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "20") int size,
+
+            @RequestParam(required = false) Integer categoryId,
+            @RequestParam(required = false) Integer brandId,
+            @RequestParam(required = false) String keyword,
+
+            @RequestParam(required = false) RacketLevel level,
+            @RequestParam(required = false) RacketWeight weight,
+            @RequestParam(required = false) RacketStyle style,
+
+            @RequestParam(defaultValue = "default") String sort,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+
             Model model) {
 
         Sort sortObj;
@@ -52,28 +62,16 @@ public class ProductListController {
 
         Pageable pageable = PageRequest.of(page, size, sortObj);
 
-        Page<Product> productPage;
-
-        if (keyword != null && !keyword.isEmpty()) {
-            productPage = productRepository
-                    .findByNameContainingIgnoreCaseAndStatusTrue(keyword, pageable);
-        }
-        else if (categoryId != null && brandId != null) {
-            productPage = productRepository
-                    .findByCategory_IdAndBrand_IdAndStatusTrue(categoryId, brandId, pageable);
-        }
-        else if (categoryId != null) {
-            productPage = productRepository
-                    .findByCategory_IdAndStatusTrue(categoryId, pageable);
-        }
-        else if (brandId != null) {
-            productPage = productRepository
-                    .findByBrand_IdAndStatusTrue(brandId, pageable);
-        }
-        else {
-            productPage = productRepository
-                    .findByStatusTrue(pageable);
-        }
+        Page<Product> productPage =
+                productRepository.filterAllProducts(
+                        categoryId,
+                        brandId,
+                        level,
+                        weight,
+                        style,
+                        keyword,
+                        pageable
+                );
 
         model.addAttribute("products", productPage.getContent());
         model.addAttribute("currentPage", page);
@@ -84,8 +82,16 @@ public class ProductListController {
 
         model.addAttribute("selectedCategory", categoryId);
         model.addAttribute("selectedBrand", brandId);
-        model.addAttribute("selectedSort", sort);
+        model.addAttribute("selectedLevel", level);
+        model.addAttribute("selectedWeight", weight);
+        model.addAttribute("selectedStyle", style);
+        model.addAttribute("racketLevels", RacketLevel.values());
+        model.addAttribute("racketWeights", RacketWeight.values());
+        model.addAttribute("racketStyles", RacketStyle.values());
         model.addAttribute("keyword", keyword);
+        model.addAttribute("selectedSort", sort);
+
+        model.addAttribute("racketLevels", RacketLevel.values());
 
         return "user/product-list";
     }
