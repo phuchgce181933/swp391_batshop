@@ -4,6 +4,36 @@
 
     <h2 class="page-title">Quản lý Liên hệ Hỗ trợ</h2>
 
+    <div class="filter-container">
+        <form th:action="@{/admin/contacts}" method="get" class="filter-form">
+
+            <input type="text" name="keyword" th:value="${param.keyword}" class="filter-input" placeholder="Tìm theo tên, số ĐT, email...">
+
+            <select name="topic" class="filter-select">
+                <option value="">-- Tất cả chủ đề --</option>
+                <option value="Tư vấn chọn vợt" th:selected="${param.topic != null and param.topic[0] == 'Tư vấn chọn vợt'}">Tư vấn chọn vợt</option>
+                <option value="Hỏi đáp đơn hàng" th:selected="${param.topic != null and param.topic[0] == 'Hỏi đáp đơn hàng'}">Hỏi đáp đơn hàng</option>
+                <option value="Yêu cầu bảo hành/Đổi trả" th:selected="${param.topic != null and param.topic[0] == 'Yêu cầu bảo hành/Đổi trả'}">Yêu cầu bảo hành/Đổi trả</option>
+                <option value="Góp ý khiếu nại" th:selected="${param.topic != null and param.topic[0] == 'Góp ý khiếu nại'}">Góp ý khiếu nại</option>
+                <option value="Khác" th:selected="${param.topic != null and param.topic[0] == 'Khác'}">Khác</option>
+            </select>
+
+            <input type="date" name="date" th:value="${param.date}" class="filter-select" title="Lọc theo ngày gửi">
+
+            <select name="status" class="filter-select">
+                <option value="">-- Mọi trạng thái --</option>
+                <option th:each="s : ${T(com.ra.batshop.model.Enum.ContactStatus).values()}"
+                        th:value="${s.name()}"
+                        th:text="${s.label}"
+                        th:selected="${param.status != null and param.status[0] == s.name()}">
+                </option>
+            </select>
+
+            <button type="submit" class="btn-search"><i class="fas fa-search"></i> Lọc</button>
+            <a th:href="@{/admin/contacts}" class="btn-reset"><i class="fas fa-undo"></i> Bỏ lọc</a>
+        </form>
+    </div>
+
     <div class="modern-table-container">
         <table class="modern-table">
             <thead>
@@ -34,10 +64,14 @@
                 <td th:text="${#temporals.format(c.createdAt,'dd/MM/yyyy HH:mm')}"></td>
 
                 <td>
-    <span class="badge-status"
-          th:text="${c.status != null ? c.status.label : 'Chưa phân loại'}"
-          th:style="${c.status?.name() == 'UNREAD' ? 'background:#fef2f2; color:#ef4444;' : (c.status?.name() == 'PROCESSING' ? 'background:#fffbeb; color:#f59e0b;' : 'background:#ecfdf5; color:#10b981;')}">
-    </span>
+                    <span class="badge-status"
+                          th:text="${c.status != null ? c.status.label : 'Chưa phân loại'}"
+                          th:style="${
+                              c.status?.name() == 'UNREAD' ? 'background:#fef2f2; color:#ef4444;' :
+                              (c.status?.name() == 'PROCESSING' ? 'background:#fffbeb; color:#f59e0b;' :
+                              (c.status?.name() == 'REJECTED' ? 'background:#f1f5f9; color:#64748b;' : 'background:#ecfdf5; color:#10b981;'))
+                          }">
+                    </span>
                 </td>
 
                 <td>

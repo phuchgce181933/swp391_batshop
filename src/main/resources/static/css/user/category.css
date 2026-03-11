@@ -245,3 +245,59 @@ body {
     transform: translateY(-5px); /* Hiệu ứng nổi lên nhẹ khi hover vào card */
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
+
+/* CSS cho phần BẠN CHỌN (Selected Filters) */
+.selected-filters {
+    margin-bottom: 25px;
+    border-bottom: 1px dashed #eee;
+    padding-bottom: 20px;
+}
+
+.selected-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.selected-header h3 {
+    font-size: 16px;
+    color: #ed5527; /* Màu cam đỏ chủ đạo */
+    text-transform: uppercase;
+    margin: 0;
+}
+
+.clear-all {
+    font-size: 13px;
+    color: #555;
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.clear-all:hover {
+    color: #ed5527;
+}
+
+.selected-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.filter-tag {
+    background-color: #ed5527;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 13px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background-color 0.2s;
+}
+
+.filter-tag:hover {
+    background-color: #d6481f; /* Đậm hơn khi hover */
+}

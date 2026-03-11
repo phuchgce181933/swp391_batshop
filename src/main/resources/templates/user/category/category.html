@@ -21,6 +21,25 @@
             <input type="hidden" name="sort" id="sortInput" th:value="${currentSort}">
             <input type="hidden" name="page" id="pageInput" th:value="${currentPage != null ? currentPage : 0}">
 
+            <div class="selected-filters" th:if="${(selectedPrices != null and !selectedPrices.isEmpty()) or (selectedBrands != null and !selectedBrands.isEmpty())}">
+                <div class="selected-header">
+                    <h3>Bạn chọn</h3>
+                    <a href="javascript:void(0)" onclick="clearAllFilters()" class="clear-all">Bỏ hết ✖</a>
+                </div>
+                <div class="selected-tags">
+                    <span class="filter-tag" th:if="${selectedPrices != null and #lists.contains(selectedPrices, 'under-500')}" onclick="removeFilter('price', 'under-500')">✖ Giá dưới 500.000đ</span>
+                    <span class="filter-tag" th:if="${selectedPrices != null and #lists.contains(selectedPrices, '500-1000')}" onclick="removeFilter('price', '500-1000')">✖ 500.000đ - 1 triệu</span>
+                    <span class="filter-tag" th:if="${selectedPrices != null and #lists.contains(selectedPrices, '1000-2000')}" onclick="removeFilter('price', '1000-2000')">✖ 1 - 2 triệu</span>
+                    <span class="filter-tag" th:if="${selectedPrices != null and #lists.contains(selectedPrices, '2000-3000')}" onclick="removeFilter('price', '2000-3000')">✖ 2 - 3 triệu</span>
+                    <span class="filter-tag" th:if="${selectedPrices != null and #lists.contains(selectedPrices, 'over-3000')}" onclick="removeFilter('price', 'over-3000')">✖ Giá trên 3 triệu</span>
+
+                    <span class="filter-tag" th:each="b : ${brands}"
+                          th:if="${selectedBrands != null and #lists.contains(selectedBrands, b.id)}"
+                          th:onclick="'removeFilter(\'brand\', ' + ${b.id} + ')'">
+                        ✖ <span th:text="${b.name}"></span>
+                    </span>
+                </div>
+            </div>
             <div class="filter-group">
                 <h3>CHỌN MỨC GIÁ</h3>
                 <label>
@@ -98,7 +117,7 @@
             </div>
 
             <div th:if="${products == null or products.isEmpty()}">
-                <h4 class="product-name">Không tìm thấy sản phẩm nào.</h4>
+                <h4 class="product-name">Không tìm thấy sản phẩm nào mà bạn đang tìm kiếm.</h4>
             </div>
         </div>
 
@@ -145,6 +164,26 @@
             });
         });
     });
+    // Xóa từng bộ lọc khi click vào thẻ tag
+    function removeFilter(name, value) {
+        let checkbox = document.querySelector(`input[name="${name}"][value="${value}"]`);
+        if (checkbox) {
+            checkbox.checked = false; // Bỏ tick
+            document.getElementById('pageInput').value = 0;
+            document.getElementById('filterForm').submit(); // Submit lại form
+        }
+    }
+
+    // Xóa toàn bộ bộ lọc
+    function clearAllFilters() {
+        let categoryId = document.querySelector('input[name="id"]').value;
+        // Chuyển hướng về trang gốc (chỉ giữ lại ID danh mục nếu có, vứt hết param lọc đi)
+        if (categoryId && categoryId !== 'null' && categoryId !== '') {
+            window.location.href = '/category?id=' + categoryId;
+        } else {
+            window.location.href = '/category';
+        }
+    }
 </script>
 
 </body>

@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -40,10 +41,15 @@ public class ContactSupport {
     private LocalDateTime createdAt;
 
     @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "VARCHAR(50)") // Ép kiểu dữ liệu trong DB thành chuỗi linh hoạt
     private ContactStatus status = ContactStatus.UNREAD; // Mặc định khi khách gửi là Chưa đọc
 
     @Column(columnDefinition = "TEXT")
     private String adminNote; // Ghi chú nội bộ dành cho Admin
+
+    @OneToMany(mappedBy = "contactSupport", cascade = CascadeType.ALL)
+    @OrderBy("createdAt DESC") // Sắp xếp email mới gửi lên đầu
+    private List<ContactReply> replyHistory;
 
     @PrePersist
     protected void onCreate() {
