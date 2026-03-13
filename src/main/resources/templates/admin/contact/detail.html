@@ -9,10 +9,10 @@
     <div th:if="${param.success != null}" class="alert-success">
         <i class="fas fa-check-circle"></i> <strong>Thành công: </strong>
         <span th:text="${
-            param.success[0] == 'noteSaved' ? 'Đã lưu ghi chú nội bộ.' :
-            (param.success[0] == 'emailSent' ? 'Email phản hồi đã được gửi tới khách hàng. Tự động chuyển trạng thái sang [Đã giải quyết].' :
+            param.success[0] == 'noteSaved' ? 'Đã lưu ghi chú nội bộ. Đã đánh dấu liên hệ này là [Đang xử lí].' :
+            (param.success[0] == 'emailSent' ? 'Email phản hồi đã được gửi tới khách hàng. Đã đánh dấu liên hệ này là [Đã giải quyết].' :
             (param.success[0] == 'unread' ? 'Đã đánh dấu liên hệ này là [Chưa đọc].' :
-            'Đã từ chối và đánh dấu liên hệ này là [Từ chối/Thư rác].'))
+            'Đã đánh dấu liên hệ này là [Từ chối/Thư rác].'))
         }"></span>
     </div>
 

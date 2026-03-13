@@ -180,7 +180,7 @@ public class ContactController {
                     }
 
                     String subject = "BatShop - Phản hồi yêu cầu hỗ trợ #" + contact.getId();
-                    emailService.sendEmail("phuocnntce182513@fpt.edu.vn", subject, emailReply);
+                    emailService.sendEmail(contact.getEmail(), subject, emailReply);
 
                     // LƯU LỊCH SỬ EMAIL
                     if (contact.getReplyHistory() == null) {
