@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Đã xảy ra lỗi hệ thống - Batshop</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <style>
+        .error-page-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 50px 20px;
+            background-color: #f9f9f9;
+            min-height: 70vh;
+        }
+
+        .error-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .error-code {
+            font-size: 80px;
+            font-weight: bold;
+            color: #ed5527;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 10px rgba(237, 85, 39, 0.2);
+        }
+
+        .error-title {
+            font-size: 24px;
+            color: #333;
+            text-transform: uppercase;
+        }
+
+        /* Khung chứa chi tiết lỗi dành cho Dev */
+        .error-details-box {
+            width: 100%;
+            max-width: 900px;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            text-align: left;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .error-details-box details summary {
+            background-color: #f1f1f1;
+            padding: 15px 20px;
+            font-weight: bold;
+            color: #ed5527;
+            cursor: pointer;
+            list-style: none; /* Ẩn mũi tên mặc định trên một số trình duyệt */
+        }
+
+        .error-details-box details summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .error-details-box details summary:hover {
+            background-color: #e9e9e9;
+        }
+
+        .error-content {
+            padding: 20px;
+            font-family: Consolas, Monaco, 'Courier New', Courier, monospace;
+            font-size: 14px;
+        }
+
+        .error-info-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .error-info-table th {
+            text-align: left;
+            width: 150px;
+            padding: 8px;
+            color: #555;
+            border-bottom: 1px solid #eee;
+        }
+
+        .error-info-table td {
+            padding: 8px;
+            color: #d63031;
+            border-bottom: 1px solid #eee;
+            word-break: break-all;
+        }
+
+        .stack-trace {
+            background: #2d3436;
+            color: #00cec9;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            max-height: 400px; /* Giới hạn chiều cao, có thanh cuộn */
+            white-space: pre-wrap;
+            line-height: 1.5;
+        }
+
+        .btn-back-home {
+            background-color: #ed5527;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .btn-back-home:hover {
+            background-color: #d6481f;
+        }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{layout/header :: header}"></div>
+
+<div class="error-page-wrapper">
+    <div class="error-header">
+        <i class="fa-solid fa-bug" style="font-size: 50px; color: #ed5527; margin-bottom: 15px;"></i>
+        <div class="error-code" th:text="${status != null ? status : '500'}">500</div>
+        <h2 class="error-title" th:text="${error != null ? error : 'Lỗi Hệ Thống'}">Internal Server Error</h2>
+        <p style="color: #666; margin-top: 10px;">Hệ thống đang gặp trục trặc khi xử lý yêu cầu của bạn.</p>
+    </div>
+
+    <div class="error-details-box">
+        <details>
+            <summary><i class="fa-solid fa-code"></i> Xem chi tiết lỗi kĩ thuật (Dành cho Developer)</summary>
+            <div class="error-content">
+                <table class="error-info-table">
+                    <tr>
+                        <th>Thời gian:</th>
+                        <td th:text="${timestamp}">...</td>
+                    </tr>
+                    <tr>
+                        <th>Đường dẫn (Path):</th>
+                        <td th:text="${path}">...</td>
+                    </tr>
+                    <tr>
+                        <th>Mã lỗi (Status):</th>
+                        <td th:text="${status} + ' - ' + ${error}">...</td>
+                    </tr>
+                    <tr>
+                        <th>Tên Exception:</th>
+                        <td th:text="${exception}">...</td>
+                    </tr>
+                    <tr>
+                        <th>Lời nhắn (Message):</th>
+                        <td style="font-weight: bold; color: #e17055;" th:text="${message}">...</td>
+                    </tr>
+                </table>
+
+                <h4 style="color: #333; margin-bottom: 10px; font-family: Arial, sans-serif;">Stack Trace:</h4>
+                <div class="stack-trace" th:text="${trace}">
+                    // Dòng code lỗi sẽ hiển thị ở đây
+                </div>
+            </div>
+        </details>
+    </div>
+
+    <a href="/home" class="btn-back-home">
+        <i class="fa-solid fa-house"></i> Quay lại Trang Chủ
+    </a>
+</div>
+
+<div th:replace="~{layout/footer :: footer}"></div>
+
+</body>
+</html>
