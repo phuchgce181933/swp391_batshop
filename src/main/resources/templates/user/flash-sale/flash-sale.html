@@ -16,7 +16,8 @@
 
 <div class="flash-sale-container">
 
-    <th:block th:if="${activeFlashSale != null and !activeFlashSale.products.isEmpty()}">
+    <th:block th:if="${activeFlashSale != null}">
+
         <div class="flash-sale-banner">
             <h2>⚡ FLASH SALE ⚡</h2>
             <div class="countdown-wrapper">
@@ -31,7 +32,8 @@
         </div>
 
         <div class="flash-sale-products">
-            <div class="product-grid">
+
+            <div th:if="${!activeFlashSale.products.isEmpty()}" class="product-grid">
                 <div th:each="fsp : ${activeFlashSale.products}" class="product-card">
 
                     <div class="product-image">
@@ -55,10 +57,18 @@
                     </div>
                 </div>
             </div>
+
+            <div th:if="${activeFlashSale.products.isEmpty()}" style="text-align: center; padding: 40px; background: #f9f9f9; border-radius: 8px;">
+                <i class="fas fa-box-open fa-3x" style="color: #ccc; margin-bottom: 15px;"></i>
+                <h4 style="color: #666;">Các sản phẩm Flash Sale đang được cập nhật...</h4>
+                <p style="color: #999;">Quý khách vui lòng quay lại sau ít phút nhé!</p>
+            </div>
+
         </div>
     </th:block>
 
-    <th:block th:if="${upcomingFlashSale != null and !upcomingFlashSale.products.isEmpty()}">
+    <th:block th:if="${upcomingFlashSale != null}">
+
         <div class="flash-sale-banner" style="background: linear-gradient(90deg, #f39c12 0%, #e67e22 100%);">
             <h2>⏳ SẮP DIỄN RA ⏳</h2>
             <div class="countdown-wrapper">
@@ -73,7 +83,8 @@
         </div>
 
         <div class="flash-sale-products">
-            <div class="product-grid">
+
+            <div th:if="${!upcomingFlashSale.products.isEmpty()}" class="product-grid">
                 <div th:each="fsp : ${upcomingFlashSale.products}" class="product-card" style="border-color: #f39c12;">
 
                     <div class="product-image">
@@ -96,6 +107,13 @@
                     </div>
                 </div>
             </div>
+
+            <div th:if="${upcomingFlashSale.products.isEmpty()}" style="text-align: center; padding: 40px; background: #fdfae5; border: 1px dashed #f39c12; border-radius: 8px;">
+                <i class="fas fa-clock fa-3x" style="color: #f39c12; margin-bottom: 15px;"></i>
+                <h4 style="color: #d35400;">Danh sách sản phẩm đang được chuẩn bị...</h4>
+                <p style="color: #e67e22;">Hãy theo dõi đồng hồ đếm ngược để không bỏ lỡ nhé!</p>
+            </div>
+
         </div>
     </th:block>
 
@@ -111,7 +129,6 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            // Tìm tất cả các hộp đếm ngược (đang diễn ra HOẶC sắp diễn ra)
             const fsBoxes = document.querySelectorAll('.fs-countdown-box');
 
             fsBoxes.forEach(fsBox => {
@@ -126,7 +143,6 @@
 
                     if (distance < 0) {
                         clearInterval(timerInterval);
-                        // Khi đếm lùi về 0, trang tự động reload lại để đổi trạng thái
                         location.reload();
                         return;
                     }
@@ -136,7 +152,6 @@
                     const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                     const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-                    // Gán dữ liệu vào các thẻ thông qua Class
                     fsBox.querySelector(".fs-days").innerText = days.toString().padStart(2, '0');
                     fsBox.querySelector(".fs-hours").innerText = hours.toString().padStart(2, '0');
                     fsBox.querySelector(".fs-minutes").innerText = minutes.toString().padStart(2, '0');

@@ -23,8 +23,8 @@
 
             <div class="selected-filters" th:if="${(selectedPrices != null and !selectedPrices.isEmpty()) or (selectedBrands != null and !selectedBrands.isEmpty())}">
                 <div class="selected-header">
-                    <h3>Bạn chọn</h3>
-                    <a href="javascript:void(0)" onclick="clearAllFilters()" class="clear-all">Bỏ hết ✖</a>
+                    <h3>BẠN CHỌN:</h3>
+                    <a href="javascript:void(0)" onclick="clearAllFilters()" class="clear-all-btn" style="color: #ed5527; border: 1px solid #ed5527; padding: 4px 10px; border-radius: 4px; font-size: 12px; transition: 0.2s;">Xóa tất cả</a>
                 </div>
                 <div class="selected-tags">
                     <span class="filter-tag" th:if="${selectedPrices != null and #lists.contains(selectedPrices, 'under-500')}" onclick="removeFilter('price', 'under-500')">✖ Giá dưới 500.000đ</span>
@@ -113,11 +113,14 @@
                     <h4 class="product-name" th:text="${product.name}">Product-Name</h4>
                 </a>
 
+                <p class="product-brand" th:if="${product.brand != null}" th:text="${product.brand.name}">Brand-Name</p>
+
                 <p class="product-price" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' ₫'">123.000 ₫</p>
             </div>
 
-            <div th:if="${products == null or products.isEmpty()}">
-                <h4 class="product-name">Không tìm thấy sản phẩm nào mà bạn đang tìm kiếm.</h4>
+            <div class="no-product-message" th:if="${products == null or products.isEmpty()}">
+                <i class="fa-solid fa-box-open" style="font-size: 40px; color: #ccc; margin-bottom: 15px;"></i>
+                <h4>Không tìm thấy sản phẩm mà bạn đang tìm kiếm.</h4>
             </div>
         </div>
 
