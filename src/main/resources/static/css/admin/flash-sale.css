@@ -20,7 +20,6 @@
     margin: 0;
 }
 
-/* Card chứa nội dung (Dùng cho form add, thông tin edit, bảng dữ liệu) */
 .fs-admin-card {
     background-color: #ffffff;
     border-radius: 10px;
@@ -35,7 +34,7 @@
     font-weight: 600;
     color: #34495e;
     margin-bottom: 20px;
-    border-left: 4px solid #f15a22; /* Màu cam VNB cho đồng bộ */
+    border-left: 4px solid #f15a22;
     padding-left: 10px;
 }
 
@@ -51,7 +50,6 @@
     display: inline-block;
 }
 
-/* Làm đẹp các ô input nhập liệu */
 .fs-form-control {
     display: block;
     width: 100%;
@@ -78,7 +76,7 @@
 
 /* ================= 3. BẢNG DỮ LIỆU (List & Edit) ================= */
 .fs-table-wrapper {
-    overflow-x: auto; /* Bảng có thể cuộn ngang nếu màn hình quá nhỏ */
+    overflow-x: auto;
 }
 
 .fs-table {
@@ -107,12 +105,10 @@
     transition: background-color 0.2s;
 }
 
-/* Hiệu ứng highlight khi rê chuột vào hàng của bảng */
 .fs-table tbody tr:hover td {
     background-color: #f8f9fa;
 }
 
-/* Cột giá đặc biệt */
 .fs-price-original {
     color: #7f8c8d;
     text-decoration: line-through;
@@ -125,7 +121,6 @@
     font-size: 1.1rem;
 }
 
-/* Căn chỉnh các nút hành động trong bảng (Sửa / Xóa) ngang nhau */
 .fs-action-btns {
     display: flex;
     gap: 8px;
@@ -218,4 +213,57 @@
         align-items: flex-start;
         gap: 15px;
     }
+}
+
+/* ================= 7. CUSTOM BADGES & EMPTY STATE (CẬP NHẬT MỚI) ================= */
+.fs-badge-discount {
+    background-color: #e74c3c;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 50px;
+    font-weight: bold;
+    font-size: 0.95rem;
+    display: inline-block;
+    box-shadow: 0 2px 4px rgba(231, 76, 60, 0.2);
+}
+
+.fs-badge-count {
+    background-color: #e0f2fe;
+    color: #0369a1;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: inline-block;
+    border: 1px solid #bae6fd;
+}
+
+.fs-empty-state {
+    text-align: center;
+    padding: 40px 20px !important;
+}
+
+.fs-empty-state i {
+    color: #cbd5e1;
+    margin-bottom: 15px;
+}
+
+.fs-empty-state h5 {
+    color: #475569;
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 1.1rem;
+}
+
+.fs-empty-state p {
+    color: #94a3b8;
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+.fs-btn-disabled {
+    background-color: #e2e8f0 !important;
+    color: #94a3b8 !important;
+    cursor: not-allowed !important;
+    box-shadow: none !important;
 }

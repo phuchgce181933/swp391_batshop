@@ -18,6 +18,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDate;
 import java.util.UUID;
 
 import java.util.List;
@@ -95,18 +96,21 @@ public class ContactController {
     // ==========================================
     // KHU VỰC DÀNH CHO QUẢN TRỊ VIÊN (ADMIN)
     // ==========================================
-
-    // 1. Hiển thị danh sách liên hệ (Sử dụng chung Layout Admin)
+// 1. Hiển thị danh sách liên hệ (Kèm Tìm kiếm & Lọc)
     @GetMapping("/admin/contacts")
-    public String listContacts(Model model) {
-        // Lấy toàn bộ danh sách liên hệ từ Database
-        List<ContactSupport> contacts = contactRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
-        model.addAttribute("contacts", contacts);
+    public String listContacts(
+            @RequestParam(value = "keyword", required = false) String keyword,
+            @RequestParam(value = "topic", required = false) String topic,
+            @RequestParam(value = "status", required = false) ContactStatus status,
+            @RequestParam(value = "date", required = false) LocalDate date,
+            Model model) {
 
-        // Truyền đường dẫn file HTML mảnh ghép của list contact
+        // Lấy danh sách dựa trên bộ lọc (nếu tất cả rỗng, nó sẽ trả về toàn bộ danh sách)
+        List<ContactSupport> contacts = contactRepository.searchAndFilter(keyword, topic, status, date);
+
+        model.addAttribute("contacts", contacts);
         model.addAttribute("content", "admin/contact/list");
 
-        // Trả về layout tổng
         return "admin/layout";
     }
 
@@ -137,32 +141,70 @@ public class ContactController {
         return "admin/layout";
     }
 
-    // 4. Lưu ghi chú của Admin và Gửi Email phản hồi
-    @PostMapping("/admin/contacts/reply/{id}")
-    public String replyContact(@PathVariable Integer id,
-                               @RequestParam("adminNote") String adminNote,
-                               @RequestParam(value = "emailReply", required = false) String emailReply) {
+    @PostMapping("/admin/contacts/process/{id}")
+    public String processContact(@PathVariable Integer id,
+                                 @RequestParam(value = "adminNote", required = false) String adminNote,
+                                 @RequestParam(value = "emailReply", required = false) String emailReply,
+                                 @RequestParam("action") String action) {
         ContactSupport contact = contactRepository.findById(id).orElse(null);
         if (contact != null) {
-            // Lưu lại ghi chú nội bộ của nhân viên
-            contact.setAdminNote(adminNote);
 
-            // Nếu admin có nhập nội dung vào ô Email
-            if (emailReply != null && !emailReply.trim().isEmpty()) {
+            switch (action) {
+                case "markUnread":
+                    // Vẫn lưu ghi chú nếu Admin có gõ kèm theo
+                    if (adminNote != null && !adminNote.trim().isEmpty()) {
+                        contact.setAdminNote(adminNote);
+                    }
+                    contact.setStatus(ContactStatus.UNREAD);
+                    contactRepository.save(contact);
+                    return "redirect:/admin/contacts/detail/" + id + "?success=unread";
 
-                // GỌI HÀM GỬI EMAIL THỰC TẾ
-                String subject = "BatShop - Phản hồi yêu cầu hỗ trợ #" + contact.getId();
-                emailService.sendEmail(contact.getEmail(), subject, emailReply);
+                case "saveNote":
+                    // Bắt lỗi: Nếu bấm "Lưu ghi chú" mà bỏ trống
+                    if (adminNote == null || adminNote.trim().isEmpty()) {
+                        return "redirect:/admin/contacts/detail/" + id + "?error=emptyNote";
+                    }
+                    contact.setAdminNote(adminNote);
+                    if (contact.getStatus() == ContactStatus.UNREAD) {
+                        contact.setStatus(ContactStatus.PROCESSING);
+                    }
+                    contactRepository.save(contact);
+                    return "redirect:/admin/contacts/detail/" + id + "?success=noteSaved";
 
-                // Sau khi phản hồi email xong, tự động đánh dấu là Đã giải quyết
-                contact.setStatus(ContactStatus.RESOLVED);
-            } else {
-                // Nếu chỉ lưu ghi chú mà không gửi email, tự động chuyển thành Đang xử lý
-                contact.setStatus(ContactStatus.PROCESSING);
+                case "sendEmail":
+                    if (adminNote != null && !adminNote.trim().isEmpty()) {
+                        contact.setAdminNote(adminNote);
+                    }
+                    if (emailReply == null || emailReply.trim().isEmpty()) {
+                        return "redirect:/admin/contacts/detail/" + id + "?error=emptyEmail";
+                    }
+
+                    String subject = "BatShop - Phản hồi yêu cầu hỗ trợ #" + contact.getId();
+                    emailService.sendEmail("phuocnntce182513@fpt.edu.vn", subject, emailReply);
+
+                    // LƯU LỊCH SỬ EMAIL
+                    if (contact.getReplyHistory() == null) {
+                        contact.setReplyHistory(new java.util.ArrayList<>());
+                    }
+                    com.ra.batshop.model.ContactReply reply = new com.ra.batshop.model.ContactReply();
+                    reply.setMessage(emailReply);
+                    reply.setContactSupport(contact);
+                    contact.getReplyHistory().add(reply); // Tự động lưu vào Database nhờ CascadeType.ALL
+
+                    contact.setStatus(ContactStatus.RESOLVED);
+                    contactRepository.save(contact);
+                    return "redirect:/admin/contacts/detail/" + id + "?success=emailSent";
+
+                case "reject":
+                    // Vẫn lưu ghi chú nếu Admin có gõ lý do từ chối
+                    if (adminNote != null && !adminNote.trim().isEmpty()) {
+                        contact.setAdminNote(adminNote);
+                    }
+                    contact.setStatus(ContactStatus.REJECTED);
+                    contactRepository.save(contact);
+                    return "redirect:/admin/contacts/detail/" + id + "?success=rejected";
             }
-
-            contactRepository.save(contact);
         }
-        return "redirect:/admin/contacts/detail/" + id + "?success=true";
+        return "redirect:/admin/contacts";
     }
 }
