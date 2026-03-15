@@ -85,6 +85,12 @@ public class ProductController {
         model.addAttribute("racketLengths", RacketLength.values());
         model.addAttribute("handleLengths", RacketHandleLength.values());
         model.addAttribute("equilibriumPoints", EquilibriumPoint.values());
+        model.addAttribute("racketStyles", RacketStyle.values());
+        model.addAttribute("racketWeights", RacketWeight.values());
+        model.addAttribute("equilibriumPoints", EquilibriumPoint.values());
+        model.addAttribute("chopstickHardness", ChopstickHardness.values());
+
+        model.addAttribute("content", "admin/product/add");
         model.addAttribute("chopstickHardnesses", ChopstickHardness.values());
         return "admin/layout";
     }
@@ -101,6 +107,13 @@ public class ProductController {
             model.addAttribute("brands", brandRepository.findAll());
             model.addAttribute("sizes", sizeRepository.findAll());
             model.addAttribute("colors", colorRepository.findAll());
+            model.addAttribute("racketLevels", RacketLevel.values());
+            model.addAttribute("racketLengths", RacketLength.values());
+            model.addAttribute("handleLengths", RacketHandleLength.values());
+            model.addAttribute("racketStyles", RacketStyle.values());     // thêm
+            model.addAttribute("racketWeights", RacketWeight.values());   // thêm
+            model.addAttribute("equilibriumPoints", EquilibriumPoint.values());
+            model.addAttribute("chopstickHardness", ChopstickHardness.values());
             model.addAttribute("content", "admin/product/add");
             return "admin/layout";
         }
