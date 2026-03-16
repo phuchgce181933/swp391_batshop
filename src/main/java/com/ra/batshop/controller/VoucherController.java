@@ -93,14 +93,31 @@ public class VoucherController {
     @GetMapping
     public String listVouchers(
             @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) Boolean status,
+            @RequestParam(required = false) Integer discount,
             Model model) {
 
         List<Voucher> vouchers;
 
+        // FILTER CODE
         if (keyword != null && !keyword.isEmpty()) {
             vouchers = voucherRepository.findByCodeContainingIgnoreCase(keyword);
         } else {
             vouchers = voucherRepository.findAll();
+        }
+
+        // FILTER STATUS
+        if (status != null) {
+            vouchers = vouchers.stream()
+                    .filter(v -> v.getActive().equals(status))
+                    .toList();
+        }
+
+        // FILTER DISCOUNT
+        if (discount != null) {
+            vouchers = vouchers.stream()
+                    .filter(v -> v.getDiscountPercent() >= discount)
+                    .toList();
         }
 
         model.addAttribute("vouchers", vouchers);

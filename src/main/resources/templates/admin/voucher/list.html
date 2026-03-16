@@ -1,48 +1,3 @@
-<!--<h2>Manager Vouchers</h2>-->
-
-<!--<a th:href="@{/admin/vouchers/add}">+ Add Voucher</a>-->
-
-<!--<table>-->
-<!--    <thead>-->
-<!--    <tr>-->
-<!--        <th>ID</th>-->
-<!--        <th>Code</th>-->
-<!--        <th>Discount (%)</th>-->
-<!--        <th>Status</th>-->
-<!--        <th>Valid From</th>-->
-<!--        <th>Valid To</th>-->
-<!--        <th>Max</th>-->
-<!--        <th>Action</th>-->
-<!--    </tr>-->
-<!--    </thead>-->
-<!--    <tbody>-->
-<!--    <tr th:each="v : ${vouchers}">-->
-<!--        <td th:text="${v.id}"></td>-->
-<!--        <td th:text="${v.code}"></td>-->
-<!--        <td th:text="${v.discountPercent}"></td>-->
-
-<!--        <td th:text="${v.active ? 'Active' : 'Inactive'}"></td>-->
-
-<!--        <td th:text="${v.validFrom != null-->
-<!--            ? #temporals.format(v.validFrom,'dd/MM/yyyy') : ''}">-->
-<!--        </td>-->
-
-<!--        <td th:text="${v.validTo != null-->
-<!--            ? #temporals.format(v.validTo,'dd/MM/yyyy') : ''}">-->
-<!--        </td>-->
-
-<!--        <td th:text="${v.maxDiscountAmount}"></td>-->
-
-<!--        <td>-->
-<!--            <a th:href="@{/admin/vouchers/edit/{id}(id=${v.id})}">Edit</a> |-->
-<!--            <a th:href="@{/admin/vouchers/toggle/{id}(id=${v.id})}"-->
-<!--               th:text="${v.active ? 'Deactivate' : 'Activate'}">-->
-<!--            </a>-->
-<!--        </td>-->
-<!--    </tr>-->
-<!--    </tbody>-->
-<!--</table>-->
-
 <link rel="stylesheet" th:href="@{/css/admin/voucher.css}">
 
 <div class="voucher-container">
@@ -50,14 +5,27 @@
     <div class="voucher-header">
         <div>
             <h2>Manager Vouchers</h2>
-
+            <!-- Search voucher -->
             <form th:action="@{/admin/vouchers}" method="get" style="margin-bottom:15px;">
                 <input type="text"
                        name="keyword"
                        th:value="${keyword}"
                        placeholder=" Search voucher..."
                        class="search-input">
-
+                <!-- Status -->
+                <select name="status" class="filter-select">
+                    <option value="">All Status</option>
+                    <option value="true">Active</option>
+                    <option value="false">Inactive</option>
+                </select>
+                <!-- Discount -->
+                <select name="discount" class="filter-select">
+                    <option value="">All Discount</option>
+                    <option value="10">≥ 10%</option>
+                    <option value="30">≥ 30%</option>
+                    <option value="50">≥ 50%</option>
+                </select>
+                <!-- Button -->
                 <button type="submit">Search</button>
             </form>
         </div>
@@ -79,6 +47,9 @@
                 <th>Valid From</th>
                 <th>Valid To</th>
                 <th>Max</th>
+                <th>Min</th>
+                <th>Usage Limit</th>
+                <th>Used</th>
                 <th>Action</th>
             </tr>
             </thead>
@@ -121,6 +92,17 @@
                 <!-- MAX -->
                 <td th:text="${#numbers.formatDecimal(v.maxDiscountAmount,0,'COMMA',0,'POINT')} + ' VND'">
                 </td>
+
+                <!-- MIN  -->
+                <td th:text="${v.minOrderAmount != null? #numbers.formatDecimal(v.minOrderAmount,0,'COMMA',0,'POINT') + ' VND': '0 VND'}">
+                </td>
+
+                <!-- USAGE LIMIT -->
+                <td th:text="${v.totalUsageLimit != null ? v.totalUsageLimit : 'Unlimited'}">
+                </td>
+
+                <!-- USED -->
+                <td th:text="${v.totalUsed != null ? v.totalUsed : 0}"></td>
 
                 <!-- ACTION -->
                 <td>

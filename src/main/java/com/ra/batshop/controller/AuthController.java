@@ -5,6 +5,7 @@ import com.ra.batshop.model.User;
 import com.ra.batshop.repository.UserRepository;
 import com.ra.batshop.service.EmailService;
 import jakarta.servlet.http.HttpSession;
+import jakarta.transaction.Status;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -83,12 +84,16 @@ public class AuthController {
             return "auth/login";
         }
         session.setAttribute("user", user);
-        if (user.getRole() == Role.ADMIN) {
+        if (user.getRole() == Role.ADMIN && user.getStatus() == true) {
             return "redirect:/admin/dashboard";
-        } else {
-            return "redirect:/home";
+        } else if (user.getStatus() == false) {
+            model.addAttribute("error", "User is blocked");
+            return "auth/login";
         }
+        return "redirect:/home";
     }
+
+
 
     // =========================
     // CHANGE PASSWORD
