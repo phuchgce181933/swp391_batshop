@@ -110,8 +110,8 @@ public class ProductController {
             model.addAttribute("racketLevels", RacketLevel.values());
             model.addAttribute("racketLengths", RacketLength.values());
             model.addAttribute("handleLengths", RacketHandleLength.values());
-            model.addAttribute("racketStyles", RacketStyle.values());     // thêm
-            model.addAttribute("racketWeights", RacketWeight.values());   // thêm
+            model.addAttribute("racketStyles", RacketStyle.values());
+            model.addAttribute("racketWeights", RacketWeight.values());
             model.addAttribute("equilibriumPoints", EquilibriumPoint.values());
             model.addAttribute("chopstickHardness", ChopstickHardness.values());
             model.addAttribute("content", "admin/product/add");
@@ -144,12 +144,12 @@ public class ProductController {
 
             product.setCategory(category);
 
-            // ===== ADD IMAGE =====
+            // them anh
             ProductImage image = new ProductImage();
             image.setImage(fileName);
             product.addImage(image);
 
-            // ===== SET RELATION FOR VARIANTS =====
+            // đat variant
             if (product.getVariants() != null) {
 
                 for (ProductVariant variant : product.getVariants()) {
@@ -226,7 +226,7 @@ public class ProductController {
             // 3. KIỂM TRA XEM GIÁ CÓ BỊ THAY ĐỔI KHÔNG
             boolean isPriceChanged = existing.getPrice().compareTo(product.getPrice()) != 0;
 
-            // ===== UPDATE BASIC INFO =====
+            //  UPDATE BASIC INFO
             existing.setName(product.getName());
             existing.setDescription(product.getDescription());
             existing.setPrice(product.getPrice());
@@ -244,7 +244,7 @@ public class ProductController {
                             .orElseThrow()
             );
 
-            // ===== UPDATE IMAGE =====
+            //  UPDATE IMAGE
             if (file != null && !file.isEmpty()) {
 
                 String uploadDir = "uploads/product/";
@@ -279,7 +279,7 @@ public class ProductController {
                 existing.addImage(image);
             }
 
-            // ===== UPDATE VARIANTS =====
+            // UPDATE VARIANTS
             for (ProductVariant updated : product.getVariants()) {
 
                 ProductVariant dbVariant =
@@ -318,9 +318,7 @@ public class ProductController {
             // Lưu sản phẩm
             productRepository.save(existing);
 
-            // =========================================================
             // 4. LOGIC ĐỒNG BỘ: TỰ ĐỘNG CẬP NHẬT LẠI GIÁ FLASH SALE
-            // =========================================================
             if (isPriceChanged && existing.getFlashSales() != null) {
                 for (FlashSaleProduct fsp : existing.getFlashSales()) {
                     FlashSale fs = fsp.getFlashSale();
@@ -368,7 +366,6 @@ public class ProductController {
 
         model.addAttribute("product", product);
         model.addAttribute("variants", product.getVariants());
-
         model.addAttribute("hasSize", hasSize);
         model.addAttribute("hasColor", hasColor);
         model.addAttribute("hasRacketLevel", hasRacketLevel);
