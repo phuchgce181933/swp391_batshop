@@ -1,19 +1,21 @@
 package com.ra.batshop.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
+@Table(name = "sizes")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Size {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-    private String name;
-}
+    private Integer id; // Đổi lại thành Integer ở đây
 
+    private String name;
+
+    @Column(columnDefinition = "boolean default true")
+    private Boolean status = true;
+}

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <link rel="stylesheet" th:href="@{/css/admin/brand.css}">
+</head>
+<body>
+<h2 class="page-title">Color Form</h2>
+
+<div class="form-wrapper" style="max-width: 500px; margin: auto;">
+  <form th:action="@{/admin/colors/save}" th:object="${color}" method="post">
+    <input type="hidden" th:field="*{id}">
+
+    <div class="form-group">
+      <label>Color Name:</label>
+      <input type="text" th:field="*{name}" class="search-input" required>
+    </div>
+
+    <div class="form-group" style="margin-top: 10px;">
+      <label>Status:</label>
+      <select th:field="*{status}" class="search-input">
+        <option th:value="true">Active</option>
+        <option th:value="false">Inactive</option>
+      </select>
+    </div>
+
+    <div style="margin-top: 20px;">
+      <button type="submit" class="btn btn-primary">Save Color</button>
+      <a th:href="@{/admin/colors}" class="btn-delete">Cancel</a>
+    </div>
+  </form>
+</div>
+</body>
+</html>

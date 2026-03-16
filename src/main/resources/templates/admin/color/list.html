@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" th:href="@{/css/admin/brand.css}">
+</head>
+<body>
+<h2 class="page-title">Manage Colors</h2>
+
+<div class="page-actions right">
+    <a th:href="@{/admin/colors/add}" class="btn btn-primary">+ Add Color</a>
+</div>
+
+<div class="table-wrapper">
+    <table class="admin-table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Color Name</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="c : ${colors}">
+            <td th:text="${c.id}"></td>
+            <td th:text="${c.name}"></td>
+            <td>
+                <span th:text="${c.status ? 'Active' : 'Inactive'}"></span>
+            </td>
+            <td>
+                <a th:href="@{/admin/colors/edit/{id}(id=${c.id})}" class="btn-edit">Edit</a> |
+                <a th:href="@{/admin/colors/delete/{id}(id=${c.id})}"
+                   onclick="return confirm('Xóa màu này nhé?')" class="btn-delete">Delete</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

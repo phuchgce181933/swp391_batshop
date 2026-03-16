@@ -1,18 +1,21 @@
 package com.ra.batshop.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
+@Table(name = "colors")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Color {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Integer id; // Giữ Integer để khớp với Repository của ông
+
     private String name;
+
+    // Thêm trường này để giao diện không bị lỗi khi check status
+    private Boolean status = true;
 }
