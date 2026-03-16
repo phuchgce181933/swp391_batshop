@@ -51,6 +51,13 @@ public class Order {
     @JoinColumn(name = "address_id", nullable = true)
     private Address shippingAddress;
 
+    @ManyToOne
+    @JoinColumn(name = "voucher_id")
+    private Voucher voucher;
+
+    private Integer discountAmount;
+}
+
     // Hàm tự động gán thời gian tạo khi lưu vào DB
     @PrePersist
     protected void onCreate() {

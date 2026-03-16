@@ -39,6 +39,10 @@
         <td th:text="${item.productVariant.product.name}"></td>
         <td>
             <form th:action="@{/cart/update}" method="post">
+                <input type="hidden"
+                       name="productVariantId"
+                       th:value="${item.productVariant.id}"/>
+
                 <input type="hidden" name="id" th:value="${item.id}"/>
                 <input type="number"
                        name="quantity"
@@ -65,6 +69,12 @@
     <td  th:text="${#numbers.formatDecimal(
         totalCart, 0, 'POINT', 0, 'COMMA')} + ' đ'">
     </td>
+    <div th:if="${param.error != null and param.error[0] == 'stock'}"
+         style="color:red;font-weight:bold;margin-bottom:10px;">
+        Xin lỗi, hiện tại chúng tôi chỉ còn
+        <b th:text="${param.stock[0]}"></b>
+        sản phẩm trong kho.
+    </div>
 </div>
     <a th:href="@{/checkout/list}" class="checkout-btn">
         Thanh toán

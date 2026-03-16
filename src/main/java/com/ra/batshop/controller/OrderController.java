@@ -32,12 +32,16 @@ public class OrderController {
     private OrderItemRepository orderItemRepository;
     private final AddressRepository addressRepository;
     private final ProductVariantRepository productVariantRepository;
+    private final VoucherRepository voucherRepository;
+    private final UserVoucherRepository userVoucherRepository;
     public OrderController(OrderRepository orderRepository,
                            OrderItemRepository orderItemRepository,
                            UserAddressRepository userAddressRepository,
                            CartItemRepository cartItemRepository,
                            ProductVariantRepository productVariantRepository,
-                           AddressRepository addressRepository) {
+                           AddressRepository addressRepository,
+                           VoucherRepository voucherRepository,
+                           UserVoucherRepository userVoucherRepository) {
 
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
@@ -45,6 +49,8 @@ public class OrderController {
         this.cartItemRepository = cartItemRepository;
         this.productVariantRepository = productVariantRepository;
         this.addressRepository = addressRepository;
+        this.voucherRepository = voucherRepository;
+        this.userVoucherRepository = userVoucherRepository;
     }
 
     // LIST
@@ -131,21 +137,52 @@ public class OrderController {
 
         List<CartItem> cartItems = cartItemRepository.findByUserId(user.getId());
         if (cartItems.isEmpty()) return "redirect:/cart/list";
-
+        Voucher voucher = (Voucher) session.getAttribute("voucher");
        // UserAddress address = userAddressRepository.findById(addressId).orElseThrow();
         Address address = addressRepository.findById(Long.valueOf(addressId)).orElseThrow();
         Double total = cartItemRepository.calculateTotalByUserId(user.getId()) + 30000d;
+        Integer discount = 0;
+
 
         // TẠO ORDER
         Order order = new Order();
         order.setUser(user);
         order.setShippingAddress(address);
-        order.setTotalPrice(BigDecimal.valueOf(total));
         order.setStatus(OrderStatus.PENDING);
         order.setPaymentMethod(paymentMethod);
         order.setPaymentStatus("UNPAID");
         order.setCreatedAt(LocalDateTime.now());
+        if(voucher != null){
 
+            if(total >= voucher.getMinOrderAmount()){
+
+                discount = total.intValue() * voucher.getDiscountPercent() / 100;
+
+                if(discount > voucher.getMaxDiscountAmount()){
+                    discount = voucher.getMaxDiscountAmount();
+                }
+
+                total = total - discount;
+
+                order.setVoucher(voucher);
+                order.setDiscountAmount(discount);
+
+                Integer used = voucher.getTotalUsed() == null ? 0 : voucher.getTotalUsed();
+                voucher.setTotalUsed(used + 1);
+                voucherRepository.save(voucher);
+            }
+        }
+        order.setTotalPrice(BigDecimal.valueOf(total));
+        if(voucher != null){
+
+            UserVoucher uv = new UserVoucher();
+            uv.setUser(user);
+            uv.setVoucher(voucher);
+            uv.setUsedCount(1);
+            uv.setLastUsedAt(LocalDateTime.now());
+
+            userVoucherRepository.save(uv);
+        }
         orderRepository.save(order);
 
         for (CartItem cartItem : cartItems) {
@@ -267,6 +304,10 @@ public class OrderController {
             if (order.getStatus() != OrderStatus.CANCELLED) {
                 restoreStock(order);
             }
+        }
+        // Nếu complete thì  paid
+        if (status == OrderStatus.COMPLETED) {
+            order.setPaymentStatus("PAID");
         }
         order.setStatus(status);
         orderRepository.save(order);

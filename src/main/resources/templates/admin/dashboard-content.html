@@ -36,21 +36,32 @@
 </div>
 
 <script th:inline="javascript">
-    const months = [[${months}]];
-    const revenues = [[${revenues}]];
+    document.addEventListener("DOMContentLoaded", function () {
 
-    new Chart(document.getElementById('revenueChart'), {
-        type: 'line',
-        data: {
-            labels: months,
-            datasets: [{
-                label: 'Revenue',
-                data: revenues,
-                borderColor: '#4e73df',
-                backgroundColor: 'rgba(78,115,223,0.1)',
-                tension: 0.4,
-                fill: true
-            }]
+        const months = /*[[${months}]]*/ [];
+        const revenues = /*[[${revenues}]]*/ [];
+
+        console.log(months);
+        console.log(revenues);
+
+        const ctx = document.getElementById("revenueChart");
+
+        if (ctx && months.length > 0) {
+            new Chart(ctx, {
+                type: "line",
+                data: {
+                    labels: months,
+                    datasets: [{
+                        label: "Revenue",
+                        data: revenues,
+                        borderColor: "#4e73df",
+                        backgroundColor: "rgba(78,115,223,0.1)",
+                        tension: 0.4,
+                        fill: true
+                    }]
+                }
+            });
         }
+
     });
 </script>

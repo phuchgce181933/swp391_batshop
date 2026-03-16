@@ -20,8 +20,16 @@
             Payment Status:
             <select name="paymentStatus">
                 <option value="">All</option>
-                <option value="PAID" th:selected="${selectedPaymentStatus=='PAID'}">PAID</option>
-                <option value="UNPAID" th:selected="${selectedPaymentStatus=='UNPAID'}">UNPAID</option>
+
+                <option value="PAID"
+                        th:selected="${selectedPaymentStatus=='PAID'}">
+                    Đã thanh toán
+                </option>
+
+                <option value="UNPAID"
+                        th:selected="${selectedPaymentStatus=='UNPAID'}">
+                    Chưa thanh toán
+                </option>
             </select>
 
             Order Status:
@@ -79,7 +87,19 @@
 
                 <td th:text="${o.paymentMethod}"></td>
 
-                <td th:text="${o.paymentStatus}"></td>
+                <td>
+
+    <span th:if="${o.paymentStatus == 'PAID'}"
+          style="color:green;font-weight:600;">
+        Đã thanh toán
+    </span>
+
+                    <span th:if="${o.paymentStatus == 'UNPAID'}"
+                          style="color:red;font-weight:600;">
+        Chưa thanh toán
+    </span>
+
+                </td>
 
                 <td th:text="${#temporals.format(o.createdAt,'dd/MM/yyyy HH:mm')}"></td>
                 <td>
@@ -87,10 +107,17 @@
                 </td>
                 <td>
 
+                    <!-- CANCELLED -->
                     <div th:if="${o.status.name() == 'CANCELLED'}">
                         <span style="color:red;font-weight:600;">CANCELLED</span>
                     </div>
 
+                    <!-- COMPLETED -->
+                    <div th:if="${o.status.name() == 'COMPLETED'}">
+                        <span style="color:green;font-weight:600;">COMPLETED</span>
+                    </div>
+
+                    <!-- CHANGE STATUS -->
                     <form th:if="${o.status.name() != 'CANCELLED' && o.status.name() != 'COMPLETED'}"
                           th:action="@{/admin/orders/edit/{id}(id=${o.id})}"
                           method="post">

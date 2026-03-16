@@ -1,6 +1,5 @@
 package com.ra.batshop.model;
 
-
 import com.ra.batshop.model.Enum.*;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -28,16 +27,15 @@ public class RacketDetail {
     @Enumerated(EnumType.STRING)
     private RacketHandleLength racketHandleLength;
 
+    @Enumerated(EnumType.STRING)
+    private RacketStyle style;
 
-    private String style;
-
+    @Enumerated(EnumType.STRING)
+    private RacketWeight weight;
 
     private String technology;
 
-
     private String gamecontent;
-
-    private String weight;
 
     private String swingWeight;
 

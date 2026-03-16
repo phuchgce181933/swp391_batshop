@@ -29,5 +29,5 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
     Double getAverageRating(Integer productId);
     Page<Review> findByParentIsNull(Pageable pageable);
     Long countByProduct_Id(Integer productId);
-
+    boolean existsByUser_IdAndProduct_Id(Integer userId, Integer productId);
 }

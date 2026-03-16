@@ -111,7 +111,12 @@
 
                     <button type="button" onclick="plusQty()">+</button>
                 </div>
-
+                <div th:if="${param.error != null and param.error[0] == 'stock'}"
+                     style="color:red;font-weight:bold;margin-bottom:10px;">
+                    Xin lỗi, hiện tại chúng tôi chỉ còn
+                    <b th:text="${param.stock[0]}"></b>
+                    sản phẩm trong kho.
+                </div>
                 <button type="submit" class="btn-cart">
                     THÊM VÀO GIỎ HÀNG
                 </button>
@@ -165,7 +170,7 @@
                 ⭐ ⭐ ⭐ ⭐ ⭐
             </div>
 
-            <p th:text="${reviews.size()} + ' đánh giá và nhận xét'"></p>
+            <p th:text="${reviewCount} + ' đánh giá và nhận xét'"></p>
 
         </div>
 
@@ -184,23 +189,21 @@
 
     </div>
 
+    <div th:if="${param.error == 'notPurchased'}"
+         style="color:red;margin-bottom:10px;font-weight:bold;">
+        Bạn cần mua sản phẩm và hoàn thành đơn hàng trước khi đánh giá.
+    </div>
+
+    <div th:if="${param.error == 'reviewed'}"
+         style="color:red;margin-bottom:10px;font-weight:bold;">
+        Bạn đã đánh giá sản phẩm này rồi.
+    </div>
 
     <!-- ===== REVIEW FORM ===== -->
 
-    <form id="reviewForm"
-          th:action="@{/product/review}"
-          method="post"
-          style="display:none">
+    <form th:action="@{/product/review}" method="post">
 
-        <input type="hidden"
-               name="productId"
-               th:value="${product.id}">
-
-        <label>Tên</label>
-        <input type="text" name="name" required>
-
-        <label>Số điện thoại</label>
-        <input type="text" name="phone" required>
+        <input type="hidden" name="productId" th:value="${product.id}">
 
         <label>Đánh giá</label>
         <select name="rating">
@@ -264,118 +267,32 @@
 
     <!-- ===== PAGINATION ===== -->
 
-<!--    <div class="pagination"-->
-<!--         th:if="${totalPages > 1}">-->
+    <!--    <div class="pagination"-->
+    <!--         th:if="${totalPages > 1}">-->
 
-<!--        <a th:if="${currentPage > 0}"-->
-<!--           th:href="@{/product/detail/{id}(id=${product.id},page=${currentPage-1})}">-->
-<!--            Prev-->
-<!--        </a>-->
+    <!--        <a th:if="${currentPage > 0}"-->
+    <!--           th:href="@{/product/detail/{id}(id=${product.id},page=${currentPage-1})}">-->
+    <!--            Prev-->
+    <!--        </a>-->
 
-<!--        <span th:each="i : ${#numbers.sequence(0,totalPages-1)}">-->
+    <!--        <span th:each="i : ${#numbers.sequence(0,totalPages-1)}">-->
 
-<!--<a th:href="@{/product/detail/{id}(id=${product.id},page=${i})}"-->
-<!--   th:text="${i+1}"-->
-<!--   th:classappend="${i == currentPage} ? 'active'">-->
-<!--</a>-->
+    <!--<a th:href="@{/product/detail/{id}(id=${product.id},page=${i})}"-->
+    <!--   th:text="${i+1}"-->
+    <!--   th:classappend="${i == currentPage} ? 'active'">-->
+    <!--</a>-->
 
-<!--</span>-->
+    <!--</span>-->
 
-<!--        <a th:if="${currentPage < totalPages-1}"-->
-<!--           th:href="@{/product/detail/{id}(id=${product.id},page=${currentPage+1})}">-->
-<!--            Next-->
-<!--        </a>-->
+    <!--        <a th:if="${currentPage < totalPages-1}"-->
+    <!--           th:href="@{/product/detail/{id}(id=${product.id},page=${currentPage+1})}">-->
+    <!--            Next-->
+    <!--        </a>-->
 
-<!--    </div>-->
-
-</div>
-
-<div class="comment-section">
-
-    <h3>Bình luận</h3>
-
-    <form th:action="@{/product/comment}" method="post">
-
-        <input type="hidden"
-               name="productId"
-               th:value="${product.id}">
-
-        <input type="text"
-               name="name"
-               placeholder="Tên của bạn"
-               required>
-
-        <textarea name="message"
-                  placeholder="Nhập bình luận..."
-                  required></textarea>
-
-        <button type="submit">
-            Gửi
-        </button>
-
-    </form>
-
-    <hr>
-
-    <div class="comment-item"
-         th:each="c : ${comments}">
-
-        <div class="comment-header">
-
-            <b th:text="${c.name}"></b>
-
-            <span th:if="${c.admin}" class="admin-badge">
-QTV
-</span>
-
-        </div>
-
-        <p th:text="${c.message}"></p>
-
-        <!-- reply form -->
-
-        <form th:action="@{/product/comment/reply}" method="post">
-
-            <input type="hidden"
-                   name="productId"
-                   th:value="${product.id}">
-
-            <input type="hidden"
-                   name="parentId"
-                   th:value="${c.id}">
-
-            <input type="text"
-                   name="name"
-                   placeholder="Tên">
-
-            <textarea name="message"
-                      placeholder="Trả lời..."></textarea>
-
-            <button type="submit">
-                Trả lời
-            </button>
-
-        </form>
-
-
-        <!-- replies -->
-
-        <div class="reply-item"
-             th:each="rep : ${c.replies}">
-
-            <b th:text="${rep.name}"></b>
-
-            <span th:if="${rep.admin}" class="admin-badge">
-QTV
-</span>
-
-            <p th:text="${rep.message}"></p>
-
-        </div>
-
-    </div>
+    <!--    </div>-->
 
 </div>
+
 <!-- FOOTER -->
 
 <div th:replace="layout/footer :: footer"></div>
@@ -401,74 +318,74 @@ QTV
 
     }
     //phước bỏ vào
-    document.addEventListener("DOMContentLoaded", function() {
-        const radios = document.querySelectorAll('.variant-radio');
-        const btnAddToCart = document.getElementById('btnAddToCart');
-        const qtyInput = document.getElementById('qty');
-
-        // Hàm cập nhật trạng thái của nút Mua Hàng
-        function updateCartState() {
-            const selectedRadio = document.querySelector('.variant-radio:checked');
-            if (selectedRadio) {
-                // Lấy số lượng tồn kho từ biến thể đang được chọn
-                const stock = parseInt(selectedRadio.getAttribute('data-stock'));
-
-                if (stock <= 0) {
-                    // Trạng thái: HẾT HÀNG
-                    btnAddToCart.disabled = true;
-                    btnAddToCart.style.backgroundColor = '#ccc';
-                    btnAddToCart.style.cursor = 'not-allowed';
-                    btnAddToCart.innerText = 'ĐÃ HẾT HÀNG';
-                    qtyInput.disabled = true;
-                } else {
-                    // Trạng thái: CÒN HÀNG
-                    btnAddToCart.disabled = false;
-                    btnAddToCart.style.backgroundColor = '#f15a22';
-                    btnAddToCart.style.cursor = 'pointer';
-                    btnAddToCart.innerText = 'THÊM VÀO GIỎ HÀNG';
-                    qtyInput.disabled = false;
-
-                    // Giới hạn max để khách không nhập quá số lượng tồn kho
-                    qtyInput.max = stock;
-                    if (parseInt(qtyInput.value) > stock) {
-                        qtyInput.value = stock; // Tự động giảm số lượng về mức tồn kho thực tế
-                    }
-                }
-            }
-        }
-
-        // Chạy ngay lúc vừa load trang để check biến thể đầu tiên
-        if(radios.length > 0) updateCartState();
-
-        // Lắng nghe sự kiện mỗi khi người dùng đổi biến thể khác (đổi Size, Màu...)
-        radios.forEach(radio => {
-            radio.addEventListener('change', updateCartState);
-        });
-    });
-
-    // Cập nhật lại 2 hàm tăng giảm số lượng an toàn hơn
-    function plusQty() {
-        let q = document.getElementById("qty");
-        if(q.disabled) return; // Nếu hết hàng thì không cho bấm
-
-        let currentVal = parseInt(q.value);
-        let maxVal = parseInt(q.max); // Lấy max từ JS đã set ở trên
-
-        if (currentVal < maxVal) {
-            q.value = currentVal + 1;
-        } else {
-            alert("Số lượng sản phẩm trong kho chỉ còn " + maxVal);
-        }
-    }
-
-    function minusQty() {
-        let q = document.getElementById("qty");
-        if(q.disabled) return;
-
-        if (parseInt(q.value) > 1) {
-            q.value = parseInt(q.value) - 1;
-        }
-    }
+    // document.addEventListener("DOMContentLoaded", function() {
+    //     const radios = document.querySelectorAll('.variant-radio');
+    //     const btnAddToCart = document.getElementById('btnAddToCart');
+    //     const qtyInput = document.getElementById('qty');
+    //
+    //     // Hàm cập nhật trạng thái của nút Mua Hàng
+    //     function updateCartState() {
+    //         const selectedRadio = document.querySelector('.variant-radio:checked');
+    //         if (selectedRadio) {
+    //             // Lấy số lượng tồn kho từ biến thể đang được chọn
+    //             const stock = parseInt(selectedRadio.getAttribute('data-stock'));
+    //
+    //             if (stock <= 0) {
+    //                 // Trạng thái: HẾT HÀNG
+    //                 btnAddToCart.disabled = true;
+    //                 btnAddToCart.style.backgroundColor = '#ccc';
+    //                 btnAddToCart.style.cursor = 'not-allowed';
+    //                 btnAddToCart.innerText = 'ĐÃ HẾT HÀNG';
+    //                 qtyInput.disabled = true;
+    //             } else {
+    //                 // Trạng thái: CÒN HÀNG
+    //                 btnAddToCart.disabled = false;
+    //                 btnAddToCart.style.backgroundColor = '#f15a22';
+    //                 btnAddToCart.style.cursor = 'pointer';
+    //                 btnAddToCart.innerText = 'THÊM VÀO GIỎ HÀNG';
+    //                 qtyInput.disabled = false;
+    //
+    //                 // Giới hạn max để khách không nhập quá số lượng tồn kho
+    //                 qtyInput.max = stock;
+    //                 if (parseInt(qtyInput.value) > stock) {
+    //                     qtyInput.value = stock; // Tự động giảm số lượng về mức tồn kho thực tế
+    //                 }
+    //             }
+    //         }
+    //     }
+    //
+    //     // Chạy ngay lúc vừa load trang để check biến thể đầu tiên
+    //     if(radios.length > 0) updateCartState();
+    //
+    //     // Lắng nghe sự kiện mỗi khi người dùng đổi biến thể khác (đổi Size, Màu...)
+    //     radios.forEach(radio => {
+    //         radio.addEventListener('change', updateCartState);
+    //     });
+    // });
+    //
+    // // Cập nhật lại 2 hàm tăng giảm số lượng an toàn hơn
+    // function plusQty() {
+    //     let q = document.getElementById("qty");
+    //     if(q.disabled) return; // Nếu hết hàng thì không cho bấm
+    //
+    //     let currentVal = parseInt(q.value);
+    //     let maxVal = parseInt(q.max); // Lấy max từ JS đã set ở trên
+    //
+    //     if (currentVal < maxVal) {
+    //         q.value = currentVal + 1;
+    //     } else {
+    //         alert("Số lượng sản phẩm trong kho chỉ còn " + maxVal);
+    //     }
+    // }
+    //
+    // function minusQty() {
+    //     let q = document.getElementById("qty");
+    //     if(q.disabled) return;
+    //
+    //     if (parseInt(q.value) > 1) {
+    //         q.value = parseInt(q.value) - 1;
+    //     }
+    // }
 </script>
 
 </body>

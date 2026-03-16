@@ -18,15 +18,15 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Controller
-public class ShopController {
+public class FilterCategoryController {
 
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final BrandRepository brandRepository;
 
-    public ShopController(ProductRepository productRepository,
-                          CategoryRepository categoryRepository,
-                          BrandRepository brandRepository) {
+    public FilterCategoryController(ProductRepository productRepository,
+                                    CategoryRepository categoryRepository,
+                                    BrandRepository brandRepository) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.brandRepository = brandRepository;
@@ -58,20 +58,35 @@ public class ShopController {
 
         Pageable pageable = PageRequest.of(page, 12, sortOrder);
 
-        // 2. Xử lý Khoảng giá (Min / Max) bằng BigDecimal
-        BigDecimal minPrice = BigDecimal.ZERO;
-        BigDecimal maxPrice = new BigDecimal("999999999999");
+// 2. Xử lý Khoảng giá (Min / Max) hỗ trợ chọn nhiều checkbox cùng lúc
+        BigDecimal minPrice = new BigDecimal("999999999999"); // Khởi tạo min rất lớn
+        BigDecimal maxPrice = BigDecimal.ZERO; // Khởi tạo max rất nhỏ
 
         if (prices != null && !prices.isEmpty()) {
-            if (prices.contains("under-500")) { maxPrice = new BigDecimal("500000"); }
-            if (prices.contains("500-1000")) { minPrice = new BigDecimal("500000"); maxPrice = new BigDecimal("1000000"); }
-            if (prices.contains("1000-2000")) { minPrice = new BigDecimal("1000000"); maxPrice = new BigDecimal("2000000"); }
-            if (prices.contains("2000-3000")) { minPrice = new BigDecimal("2000000"); maxPrice = new BigDecimal("3000000"); }
-            if (prices.contains("over-3000")) { minPrice = new BigDecimal("3000000"); maxPrice = new BigDecimal("999999999999"); }
-        }
-
-        if (brandIds != null && brandIds.isEmpty()) {
-            brandIds = null;
+            if (prices.contains("under-500")) {
+                minPrice = minPrice.min(BigDecimal.ZERO);
+                maxPrice = maxPrice.max(new BigDecimal("500000"));
+            }
+            if (prices.contains("500-1000")) {
+                minPrice = minPrice.min(new BigDecimal("500000"));
+                maxPrice = maxPrice.max(new BigDecimal("1000000"));
+            }
+            if (prices.contains("1000-2000")) {
+                minPrice = minPrice.min(new BigDecimal("1000000"));
+                maxPrice = maxPrice.max(new BigDecimal("2000000"));
+            }
+            if (prices.contains("2000-3000")) {
+                minPrice = minPrice.min(new BigDecimal("2000000"));
+                maxPrice = maxPrice.max(new BigDecimal("3000000"));
+            }
+            if (prices.contains("over-3000")) {
+                minPrice = minPrice.min(new BigDecimal("3000000"));
+                maxPrice = maxPrice.max(new BigDecimal("999999999999"));
+            }
+        } else {
+            // Nếu không chọn gì thì lấy tất cả
+            minPrice = BigDecimal.ZERO;
+            maxPrice = new BigDecimal("999999999999");
         }
 
         // 3. Truy vấn DB lấy Product (XỬ LÝ LUỒNG RIÊNG CHO BEST_SELLING)

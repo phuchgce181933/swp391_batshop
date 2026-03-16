@@ -12,10 +12,9 @@
                 <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Giảm giá (%)</th>
-                    <th>Ngày Sale</th>
-                    <th>Giờ bắt đầu</th>
-                    <th>Giờ kết thúc</th>
+                    <th>Giảm giá</th>
+                    <th>Thời gian diễn ra</th>
+                    <th>Sản phẩm</th>
                     <th>Trạng thái</th>
                     <th>Hành động</th>
                 </tr>
@@ -23,11 +22,25 @@
                 <tbody>
                 <tr th:each="fs : ${flashSales}">
                     <td th:text="${fs.id}" class="fw-bold"></td>
-                    <td th:text="${fs.discountPercent} + '%'" class="text-danger fw-bold"></td>
 
-                    <td th:text="${#temporals.format(fs.startDate, 'dd/MM/yyyy')}"></td>
-                    <td th:text="${#temporals.format(fs.startDate, 'HH:mm')}"></td>
-                    <td th:text="${#temporals.format(fs.endDate, 'HH:mm')}"></td>
+                    <td class="text-center">
+                        <span class="fs-badge-discount">
+                            <i class="fas fa-bolt me-1"></i> -<span th:text="${fs.discountPercent} + '%'"></span>
+                        </span>
+                    </td>
+
+                    <td>
+                        <div class="fw-bold" style="color: #2c3e50;" th:text="${#temporals.format(fs.startDate, 'dd/MM/yyyy')}"></div>
+                        <div class="text-muted mt-1" style="font-size: 0.85rem;">
+                            <i class="far fa-clock"></i>
+                            <span th:text="${#temporals.format(fs.startDate, 'HH:mm')}"></span> -
+                            <span th:text="${#temporals.format(fs.endDate, 'HH:mm')}"></span>
+                        </div>
+                    </td>
+
+                    <td class="text-center">
+                        <span class="fs-badge-count" th:text="${fs.products != null ? fs.products.size() : 0}"></span>
+                    </td>
 
                     <td>
                         <span th:if="${fs.status == 'Đang diễn ra'}"
@@ -51,15 +64,28 @@
                             <a th:href="@{/admin/flash-sales/edit/{id}(id=${fs.id})}" class="fs-btn fs-btn-sm" style="background-color: #3498db; color: white;">
                                 <i class="fas fa-edit"></i> Quản lý
                             </a>
-                            <a th:href="@{/admin/flash-sales/delete/{id}(id=${fs.id})}" class="fs-btn fs-btn-sm" style="background-color: #e74c3c; color: white;" onclick="return confirm('Bạn có chắc chắn muốn xóa Flash Sale này không?');">
+
+                            <a th:if="${fs.status != 'Đang diễn ra'}"
+                               th:href="@{/admin/flash-sales/delete/{id}(id=${fs.id})}"
+                               class="fs-btn fs-btn-sm" style="background-color: #e74c3c; color: white;"
+                               onclick="return confirm('Bạn có chắc chắn muốn xóa Flash Sale này không?');">
                                 <i class="fas fa-trash"></i> Xóa
                             </a>
+
+                            <button th:if="${fs.status == 'Đang diễn ra'}"
+                                    class="fs-btn fs-btn-sm fs-btn-disabled" disabled
+                                    title="Không thể xóa đợt Flash Sale đang chạy">
+                                <i class="fas fa-trash"></i> Xóa
+                            </button>
                         </div>
                     </td>
                 </tr>
 
                 <tr th:if="${flashSales.isEmpty()}">
-                    <td colspan="7" class="text-center py-4 text-muted">Chưa có chương trình Flash Sale nào.</td>
+                    <td colspan="6" class="fs-empty-state">
+                        <i class="fas fa-tags fa-3x"></i>
+                        <h5>Chưa có đợt Flash Sale nào</h5>
+                    </td>
                 </tr>
                 </tbody>
             </table>

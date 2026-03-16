@@ -134,13 +134,60 @@
                                 </option>
                             </select><br>
 
+                            Handle Length:
+                            <select name="variants[0].racketDetail.racketHandleLength">
+                                <option th:each="h : ${handleLengths}"
+                                        th:value="${h}"
+                                        th:text="${h}">
+                                </option>
+                            </select><br>
+
+                            Style:
+                            <select name="variants[0].racketDetail.style">
+                                <option value="">-- Select Style --</option>
+                                <option th:each="s : ${racketStyles}"
+                                        th:value="${s}"
+                                        th:text="${s}">
+                                </option>
+                            </select>
+
                             Weight:
-                            <input type="text"
-                                   name="variants[0].racketDetail.weight"><br>
+                            <select name="variants[0].racketDetail.weight">
+                                <option value="">-- Select Weight --</option>
+                                <option th:each="w : ${racketWeights}"
+                                        th:value="${w}"
+                                        th:text="${w}">
+                                </option>
+                            </select>
 
                             Technology:
                             <input type="text"
                                    name="variants[0].racketDetail.technology"><br>
+
+                            Game Content:
+                            <input type="text"
+                                   name="variants[0].racketDetail.gamecontent"><br>
+
+                            Swing Weight:
+                            <input type="text"
+                                   name="variants[0].racketDetail.swingWeight"><br>
+
+                            Balance Point:
+                            <select name="variants[0].racketDetail.equilibriumPoint">
+                                <option th:each="e : ${equilibriumPoints}"
+                                        th:value="${e}"
+                                        th:text="${e}">
+                                </option>
+                            </select><br>
+
+                            Shaft Hardness:
+                            <select name="variants[0].racketDetail.chopstickHardness">
+                                <option th:each="c : ${chopstickHardness}"
+                                        th:value="${c}"
+                                        th:text="${c}">
+                                </option>
+                            </select><br>
+
                         </div>
 
                     </div>

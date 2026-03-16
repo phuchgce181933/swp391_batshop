@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -38,28 +39,28 @@ public class AdminController {
         long totalUsers = userRepository.count();
         long totalProducts = productRepository.count();
         long totalOrders = orderRepository.count();
-//        Double totalRevenue = orderRepository.getTotalRevenue();
+        Double totalRevenue = orderRepository.getTotalRevenue();
 
-//        if (totalRevenue == null) totalRevenue = 0.0;
+        if (totalRevenue == null) totalRevenue = 0.0;
 
         model.addAttribute("totalUsers", totalUsers);
         model.addAttribute("totalProducts", totalProducts);
         model.addAttribute("totalOrders", totalOrders);
-//        model.addAttribute("totalRevenue", totalRevenue);
+        model.addAttribute("totalRevenue", totalRevenue);
 
-        // ===== Revenue theo tháng =====
-//        List<Object[]> monthlyData = orderRepository.getMonthlyRevenue();
-//
-//        List<String> months = new ArrayList<>();
-//        List<Double> revenues = new ArrayList<>();
-//
-//        for (Object[] row : monthlyData) {
-//            months.add("Month " + row[0]);
-//            revenues.add((Double) row[1]);
-//        }
+         // ===== Revenue theo tháng =====
+        List<Object[]> monthlyData = orderRepository.getMonthlyRevenue();
 
-//        model.addAttribute("months", months);
-//        model.addAttribute("revenues", revenues);
+        List<String> months = new ArrayList<>();
+        List<Double> revenues = new ArrayList<>();
+
+        for (Object[] row : monthlyData) {
+            months.add("Month " + row[0]);
+            revenues.add(((Number) row[1]).doubleValue());
+        }
+
+        model.addAttribute("months", months);
+        model.addAttribute("revenues", revenues);
         model.addAttribute("content", "admin/dashboard-content");
         return "admin/layout";
     }
@@ -67,19 +68,29 @@ public class AdminController {
     @GetMapping("/users")
     public String listUsers(
             @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) Boolean status,
             Model model) {
 
         List<User> users;
 
-        if (keyword != null && !keyword.isEmpty()) {
-            users = userRepository
-                    .findByFullNameContainingIgnoreCaseOrEmailContainingIgnoreCase(keyword, keyword);
+        if (keyword != null && !keyword.isEmpty() && status != null) {
+
+            users = userRepository.findByFullNameContainingIgnoreCaseOrEmailContainingIgnoreCaseAndStatus(keyword, keyword, status);
+
+        } else if (keyword != null && !keyword.isEmpty()) {
+            users = userRepository.findByFullNameContainingIgnoreCaseOrEmailContainingIgnoreCase(keyword, keyword);
+
+        } else if (status != null) {
+
+            users = userRepository.findByStatus(status);
+
         } else {
             users = userRepository.findAll();
         }
 
         model.addAttribute("users", users);
         model.addAttribute("keyword", keyword);
+        model.addAttribute("status", status);
         model.addAttribute("content", "admin/user/list");
 
         return "admin/layout";

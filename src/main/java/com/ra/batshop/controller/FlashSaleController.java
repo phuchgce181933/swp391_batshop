@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -113,8 +114,14 @@ public class FlashSaleController {
     public String editForm(@PathVariable Integer id, Model model) {
         FlashSale flashSale = flashSaleRepository.findById(id).orElseThrow();
 
+        // Lấy danh sách ID của các sản phẩm ĐÃ CÓ trong đợt Flash Sale này
+        List<Integer> addedProductIds = flashSale.getProducts().stream()
+                .map(fsp -> fsp.getProduct().getId())
+                .toList();
+
         model.addAttribute("flashSale", flashSale);
         model.addAttribute("products", productRepository.findAll());
+        model.addAttribute("addedProductIds", addedProductIds); // Truyền list ID sang View
         model.addAttribute("content", "admin/flash-sale/edit");
 
         return "admin/layout";

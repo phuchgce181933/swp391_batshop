@@ -66,8 +66,14 @@
                     <form th:action="@{/admin/flash-sales/{id}/add-product(id=${flashSale.id})}" method="POST" class="d-flex gap-2 mb-4 bg-light p-3 rounded border">
                         <select name="productId" class="form-select" required>
                             <option value="">-- Chọn sản phẩm để đưa vào Flash Sale --</option>
-                            <option th:each="p : ${products}" th:value="${p.id}" th:text="${p.name} + ' (Gốc: ' + ${#numbers.formatDecimal(p.price, 0, 'COMMA', 0, 'POINT')} + ' đ)'"></option>
+
+                            <option th:each="p : ${products}"
+                                    th:value="${p.id}"
+                                    th:disabled="${#lists.contains(addedProductIds, p.id)}"
+                                    th:text="${p.name} + ' (Gốc: ' + ${#numbers.formatDecimal(p.price, 0, 'COMMA', 0, 'POINT')} + ' đ)' + (${#lists.contains(addedProductIds, p.id)} ? ' - (Đã thêm)' : '')">
+                            </option>
                         </select>
+
                         <button type="submit" class="btn btn-success text-nowrap px-4">
                             <i class="fas fa-plus me-1"></i> Thêm Sản Phẩm
                         </button>
@@ -79,7 +85,7 @@
                             <tr>
                                 <th class="text-start">Tên sản phẩm</th>
                                 <th>Giá gốc</th>
-                                <th>Giá Sale (Tự tính)</th>
+                                <th>Giá Sale</th>
                                 <th>Hành động</th>
                             </tr>
                             </thead>
