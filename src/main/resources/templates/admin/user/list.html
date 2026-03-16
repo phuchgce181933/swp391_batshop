@@ -54,12 +54,12 @@
 
 <!-- SEARCH -->
 <form th:action="@{/admin/users}" method="get" style="margin-bottom:15px;">
-    <input type="text"
-           name="keyword"
-           th:value="${keyword}"
-           placeholder="Search user..."
-           class="search-input">
-
+    <input type="text" name="keyword" th:value="${keyword}" placeholder="Search user..." class="search-input">
+    <select name="status">
+        <option value="">All Status</option>
+        <option value="true" th:selected="${status == true}">Active</option>
+        <option value="false" th:selected="${status == false}">Blocked</option>
+    </select>
     <button type="submit">Search</button>
 </form>
 

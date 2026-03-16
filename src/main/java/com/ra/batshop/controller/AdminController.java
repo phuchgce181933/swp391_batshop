@@ -68,19 +68,29 @@ public class AdminController {
     @GetMapping("/users")
     public String listUsers(
             @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) Boolean status,
             Model model) {
 
         List<User> users;
 
-        if (keyword != null && !keyword.isEmpty()) {
-            users = userRepository
-                    .findByFullNameContainingIgnoreCaseOrEmailContainingIgnoreCase(keyword, keyword);
+        if (keyword != null && !keyword.isEmpty() && status != null) {
+
+            users = userRepository.findByFullNameContainingIgnoreCaseOrEmailContainingIgnoreCaseAndStatus(keyword, keyword, status);
+
+        } else if (keyword != null && !keyword.isEmpty()) {
+            users = userRepository.findByFullNameContainingIgnoreCaseOrEmailContainingIgnoreCase(keyword, keyword);
+
+        } else if (status != null) {
+
+            users = userRepository.findByStatus(status);
+
         } else {
             users = userRepository.findAll();
         }
 
         model.addAttribute("users", users);
         model.addAttribute("keyword", keyword);
+        model.addAttribute("status", status);
         model.addAttribute("content", "admin/user/list");
 
         return "admin/layout";
