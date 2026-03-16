@@ -30,8 +30,8 @@ public class ProductController {
 
     // 1. KHAI BÁO THÊM REPOSITORY CỦA FLASH SALE
     private final FlashSaleProductRepository flashSaleProductRepository;
-
     // 2. INJECT VÀO CONSTRUCTOR
+
     public ProductController(ProductRepository productRepository,
                              CategoryRepository categoryRepository,
                              BrandRepository brandRepository,

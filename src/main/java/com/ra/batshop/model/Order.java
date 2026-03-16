@@ -2,7 +2,9 @@ package com.ra.batshop.model;
 
 import com.ra.batshop.model.Enum.OrderStatus;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
@@ -13,6 +15,8 @@ import java.util.List;
 @Table(name = "orders")
 @Getter
 @Setter
+@NoArgsConstructor // Thêm Constructor không đối số cho Hibernate
+@AllArgsConstructor // Thêm Constructor đầy đủ đối số
 public class Order {
 
     @Id
@@ -23,9 +27,7 @@ public class Order {
 
     private String paymentMethod;
     private String paymentStatus;
-    //private String transactionNo;
-    //private String vnpTxnRef;
-    //private LocalDateTime paidAt;
+
     @Enumerated(EnumType.STRING)
     @Column(length = 20)
     private OrderStatus status;
@@ -33,17 +35,22 @@ public class Order {
     private LocalDateTime createdAt;
 
     @ManyToOne
+    @JoinColumn(name = "user_id") // Nên chỉ định rõ tên cột liên kết với User
     private User user;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    // CascadeType.ALL để khi xóa Order thì tự động xóa hết OrderItem bên trong
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems;
 
-//    @ManyToOne
-//    private UserAddress shippingAddress;
-
+    /**
+     * PHẦN QUAN TRỌNG NHẤT:
+     * 1. nullable = true: Cho phép cột address_id trong DB trống (khi địa chỉ bị xóa).
+     * 2. OnDelete action: Báo cho database biết nếu Address bị xóa, hãy set address_id của Order thành NULL.
+     */
     @ManyToOne
-    @JoinColumn(name = "address_id")
+    @JoinColumn(name = "address_id", nullable = true)
     private Address shippingAddress;
+
     @ManyToOne
     @JoinColumn(name = "voucher_id")
     private Voucher voucher;
@@ -51,3 +58,9 @@ public class Order {
     private Integer discountAmount;
 }
 
+    // Hàm tự động gán thời gian tạo khi lưu vào DB
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
+}

@@ -94,6 +94,88 @@ public class AuthController {
     }
 
 
+    // QUẢN LÝ HỒ SƠ (PROFILE) - PHẦN ĐÃ SỬA THEO YÊU CẦU
+    // ========================================================
+
+    // =========================
+    // CHANGE PASSWORD
+    // =========================
+    @GetMapping("/change-password")
+    public String showChangePassword() {
+        return "profile/change-password";
+    }
+
+    @PostMapping("/change-password")
+    public String changePassword(
+            @RequestParam String oldPass,
+            @RequestParam String newPass,
+            @RequestParam String confirmPass,
+            HttpSession session,
+            Model model
+    ) {
+
+
+    // 1. Trang xem thông tin tổng quan (Thêm mới để làm trang đệm)
+    @GetMapping("/profile")
+    public String showProfileInfo(HttpSession session, Model model) {
+        User currentUser = (User) session.getAttribute("user");
+        if (currentUser == null) return "redirect:/login";
+
+        // Luôn lấy dữ liệu mới nhất từ DB
+        User dbUser = userRepository.findById(currentUser.getId()).orElse(currentUser);
+        model.addAttribute("user", dbUser);
+        return "profile/info"; // Đây là file HTML hiện thông tin và 2 nút bấm
+    }
+
+    // 2. Trang chỉnh sửa thông tin (Giữ nguyên Mapping nhưng đổi Redirect)
+    @GetMapping("/profile/edit")
+    public String editProfileForm(HttpSession session, Model model) {
+        User currentUser = (User) session.getAttribute("user");
+        if (currentUser == null) {
+            return "redirect:/login";
+        }
+        model.addAttribute("user", currentUser);
+        return "profile/edit-profile";
+    }
+
+    @PostMapping("/profile/edit")
+    public String editProfileSubmit(
+            @ModelAttribute("user") User formUser,
+            HttpSession session,
+            Model model
+    ) {
+        try {
+            User currentUser = (User) session.getAttribute("user");
+            if (currentUser == null) {
+                return "redirect:/login";
+            }
+
+            User dbUser = userRepository.findById(currentUser.getId())
+                    .orElseThrow(() -> new RuntimeException("User không tồn tại"));
+
+            if (!dbUser.getEmail().equals(formUser.getEmail())
+                    && userRepository.existsByEmail(formUser.getEmail())) {
+                model.addAttribute("error", "Email đã tồn tại");
+                model.addAttribute("user", dbUser);
+                return "profile/edit-profile";
+            }
+
+            dbUser.setEmail(formUser.getEmail());
+            dbUser.setFullName(formUser.getFullName());
+            dbUser.setPhone(formUser.getPhone());
+            dbUser.setUpdatedAt(LocalDateTime.now());
+
+            userRepository.save(dbUser);
+            session.setAttribute("user", dbUser);
+
+            // Lưu xong redirect về trang xem thông tin cho hợp lý
+            return "redirect:/profile?success=true";
+
+        } catch (Exception e) {
+            model.addAttribute("error", "Lỗi cập nhật: " + e.getMessage());
+            return "profile/edit-profile";
+        }
+    }
 
     // =========================
     // CHANGE PASSWORD
@@ -135,61 +217,7 @@ public class AuthController {
     }
 
     // =========================
-    // EDIT PROFILE
-    // =========================
-    @GetMapping("/profile/edit")
-    public String editProfileForm(HttpSession session, Model model) {
-        User currentUser = (User) session.getAttribute("user");
-        if (currentUser == null) {
-            return "redirect:/login";
-        }
-        model.addAttribute("user", currentUser);
-        return "profile/edit-profile"; // Đã sửa đường dẫn có thư mục user/
-    }
-
-    @PostMapping("/profile/edit")
-    public String editProfileSubmit(
-            @ModelAttribute("user") User formUser,
-            HttpSession session,
-            Model model
-    ) {
-        try {
-            User currentUser = (User) session.getAttribute("user");
-            if (currentUser == null) {
-                return "redirect:/login";
-            }
-
-            User dbUser = userRepository.findById(currentUser.getId())
-                    .orElseThrow(() -> new RuntimeException("User không tồn tại"));
-
-            // Check trùng email khi cập nhật
-            if (!dbUser.getEmail().equals(formUser.getEmail())
-                    && userRepository.existsByEmail(formUser.getEmail())) {
-                model.addAttribute("error", "Email đã tồn tại");
-                model.addAttribute("user", dbUser);
-                return "profile/edit-profile";
-            }
-
-            dbUser.setEmail(formUser.getEmail());
-            dbUser.setFullName(formUser.getFullName());
-            dbUser.setPhone(formUser.getPhone());
-            dbUser.setUpdatedAt(LocalDateTime.now());
-
-            userRepository.save(dbUser);
-            session.setAttribute("user", dbUser);
-
-            model.addAttribute("user", dbUser);
-            model.addAttribute("success", "Cập nhật thành công");
-            return "profile/edit-profile";
-
-        } catch (Exception e) {
-            model.addAttribute("error", "Lỗi cập nhật: " + e.getMessage());
-            return "profile/edit-profile";
-        }
-    }
-
-    // =========================
-    // FORGOT PASSWORD
+    // FORGOT PASSWORD (GIỮ NGUYÊN)
     // =========================
     @GetMapping("/forgot-password")
     public String showForgotPasswordForm() {

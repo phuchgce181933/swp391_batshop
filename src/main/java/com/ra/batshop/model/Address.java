@@ -1,17 +1,11 @@
 package com.ra.batshop.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "addresses") // Nếu vẫn đỏ, con có thể tạm thời xóa dòng này hoặc cấu hình Database như trên
+@Table(name = "addresses")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -20,18 +14,18 @@ public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String fullName;
-    private String phone;
+
+    private String receiverName;
+    private String receiverPhone;
     private String city;
     private String district;
     private String ward;
     private String detail;
-    // Thêm vào class Address.java
-    private String receiverName;
-    private String receiverPhone;
-
-    // Đừng quên tạo Getter và Setter cho 2 trường này (hoặc dùng @Data nếu có Lombok)
     private boolean isDefault;
+
+    // THÊM DÒNG NÀY ĐỂ LÀM XÓA MỀM
+    @Column(name = "is_deleted")
+    private boolean isDeleted = false;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
