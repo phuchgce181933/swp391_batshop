@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Giới Thiệu - Batshop</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f9f9f9;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Banner Giới Thiệu */
+        .about-hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://www.badmintonindia.org/img/2022/news/news-22.jpg') center/cover no-repeat;
+            color: white;
+            text-align: center;
+            padding: 80px 20px;
+            margin-bottom: 40px;
+        }
+
+        .about-hero h1 {
+            font-size: 36px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            color: #ed5527;
+        }
+
+        .about-hero p {
+            font-size: 18px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Container Chính */
+        .about-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px 60px;
+        }
+
+        /* Layout 2 cột: Story & Image */
+        .about-story {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            margin-bottom: 60px;
+            background: #fff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .story-content {
+            flex: 1;
+        }
+
+        .story-content h2 {
+            font-size: 28px;
+            color: #222;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .story-content h2::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 60px;
+            height: 3px;
+            background-color: #ed5527;
+        }
+
+        .story-content p {
+            color: #555;
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        .story-image {
+            flex: 1;
+        }
+
+        .story-image img {
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        /* Đặc điểm nổi bật (Grid 3 cột) */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            text-align: center;
+        }
+
+        .feature-box {
+            background: #fff;
+            padding: 40px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-box:hover {
+            transform: translateY(-10px);
+        }
+
+        .feature-box i {
+            font-size: 40px;
+            color: #ed5527;
+            margin-bottom: 20px;
+        }
+
+        .feature-box h3 {
+            font-size: 18px;
+            color: #222;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .feature-box p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .about-story {
+                flex-direction: column;
+            }
+            .features {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .features {
+                grid-template-columns: 1fr;
+            }
+            .about-hero h1 {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{layout/header :: header}"></div>
+
+<section class="about-hero">
+    <h1>Về Batshop</h1>
+    <p>Đồng hành cùng đam mê cầu lông của bạn với những sản phẩm chính hãng, chất lượng và dịch vụ tận tâm nhất.</p>
+</section>
+
+<div class="about-container">
+
+    <div class="about-story">
+        <div class="story-content">
+            <h2>Giới Thiệu</h2>
+            <p>Khởi nguồn từ niềm đam mê mãnh liệt với bộ môn cầu lông, <strong>Batshop</strong> được thành lập với mong muốn tạo ra một không gian mua sắm thể thao chuyên nghiệp và đáng tin cậy cho cộng đồng người chơi cầu lông tại Việt Nam.</p>
+            <p>Chúng tôi tự hào là đại lý phân phối các thương hiệu hàng đầu thế giới như Yonex, Lining, Victor và đặc biệt là các dòng áo thi đấu chuyên nghiệp từ Alien Armour.</p>
+            <p>Không chỉ đơn thuần là bán hàng, Batshop hướng tới việc trở thành người bạn đồng hành, giúp bạn lựa chọn được những "vũ khí" phù hợp nhất để tự tin tỏa sáng trên sân đấu.</p>
+        </div>
+        <div class="story-image">
+            <img src="https://tacsummercamp.com/wp-content/uploads/2018/02/Proshop.jpg" alt="Cửa hàng Batshop">
+        </div>
+    </div>
+
+    <h2 style="text-align: center; margin-bottom: 30px; color: #222; text-transform: uppercase;">Tại Sao Chọn Batshop?</h2>
+    <div class="features">
+        <div class="feature-box">
+            <i class="fa-solid fa-medal"></i>
+            <h3>100% Chính Hãng</h3>
+            <p>Cam kết cung cấp các sản phẩm vợt, giày, quần áo và phụ kiện cầu lông chính hãng, đền bù gấp 10 lần nếu phát hiện hàng giả.</p>
+        </div>
+
+        <div class="feature-box">
+            <i class="fa-solid fa-hand-holding-heart"></i>
+            <h3>Tư Vấn Tận Tâm</h3>
+            <p>Đội ngũ nhân viên am hiểu kỹ thuật, sẵn sàng hỗ trợ bạn chọn được cây vợt và mức căng cước phù hợp nhất với lối đánh.</p>
+        </div>
+
+        <div class="feature-box">
+            <i class="fa-solid fa-truck-fast"></i>
+            <h3>Giao Hàng Siêu Tốc</h3>
+            <p>Xử lý đơn hàng nhanh chóng, đóng gói cẩn thận. Giao hàng hỏa tốc trong nội thành và COD toàn quốc an toàn, tiện lợi.</p>
+        </div>
+    </div>
+
+</div>
+
+<div th:replace="~{layout/footer :: footer}"></div>
+
+</body>
+</html>

@@ -121,5 +121,8 @@ public class FilterCategoryController {
 
         return "user/category/category";
     }
-
+    @GetMapping("/about")
+    public String showAboutPage() {
+        return "about";
+    }
 }

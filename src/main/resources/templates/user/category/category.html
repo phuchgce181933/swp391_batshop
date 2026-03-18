@@ -24,7 +24,7 @@
             <div class="selected-filters" th:if="${(selectedPrices != null and !selectedPrices.isEmpty()) or (selectedBrands != null and !selectedBrands.isEmpty())}">
                 <div class="selected-header">
                     <h3>BẠN CHỌN:</h3>
-                    <a href="javascript:void(0)" onclick="clearAllFilters()" class="clear-all-btn" style="color: #ed5527; border: 1px solid #ed5527; padding: 4px 10px; border-radius: 4px; font-size: 12px; transition: 0.2s;">Xóa tất cả</a>
+                    <a href="javascript:void(0)" onclick="clearAllFilters()" class="clear-all-btn" style="color: #ed5527; border: 1px solid #ed5527; padding: 4px 10px; border-radius: 4px; font-size: 12px; transition: 0.2s;">Bỏ lọc</a>
                 </div>
                 <div class="selected-tags">
                     <span class="filter-tag" th:if="${selectedPrices != null and #lists.contains(selectedPrices, 'under-500')}" onclick="removeFilter('price', 'under-500')">✖ Giá dưới 500.000đ</span>

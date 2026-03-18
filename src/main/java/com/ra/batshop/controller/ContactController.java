@@ -153,17 +153,7 @@ public class ContactController {
         if (contact != null) {
 
             switch (action) {
-                case "markUnread":
-                    // Vẫn lưu ghi chú nếu Admin có gõ kèm theo
-                    if (adminNote != null && !adminNote.trim().isEmpty()) {
-                        contact.setAdminNote(adminNote);
-                    }
-                    contact.setStatus(ContactStatus.UNREAD);
-                    contactRepository.save(contact);
-                    return "redirect:/admin/contacts/detail/" + id + "?success=unread";
-
                 case "saveNote":
-                    // Bắt lỗi: Nếu bấm "Lưu ghi chú" mà bỏ trống
                     if (adminNote == null || adminNote.trim().isEmpty()) {
                         return "redirect:/admin/contacts/detail/" + id + "?error=emptyNote";
                     }
@@ -174,7 +164,15 @@ public class ContactController {
                     contactRepository.save(contact);
                     return "redirect:/admin/contacts/detail/" + id + "?success=noteSaved";
 
-                case "sendEmail":
+                case "reject": // NÚT BỎ QUA (Chỉ đổi trạng thái, không gửi mail)
+                    if (adminNote != null && !adminNote.trim().isEmpty()) {
+                        contact.setAdminNote(adminNote);
+                    }
+                    contact.setStatus(ContactStatus.REJECTED);
+                    contactRepository.save(contact);
+                    return "redirect:/admin/contacts/detail/" + id + "?success=rejected";
+
+                case "sendEmail": // NÚT GỬI EMAIL
                     if (adminNote != null && !adminNote.trim().isEmpty()) {
                         contact.setAdminNote(adminNote);
                     }
@@ -192,20 +190,11 @@ public class ContactController {
                     com.ra.batshop.model.ContactReply reply = new com.ra.batshop.model.ContactReply();
                     reply.setMessage(emailReply);
                     reply.setContactSupport(contact);
-                    contact.getReplyHistory().add(reply); // Tự động lưu vào Database nhờ CascadeType.ALL
+                    contact.getReplyHistory().add(reply);
 
                     contact.setStatus(ContactStatus.RESOLVED);
                     contactRepository.save(contact);
                     return "redirect:/admin/contacts/detail/" + id + "?success=emailSent";
-
-                case "reject":
-                    // Vẫn lưu ghi chú nếu Admin có gõ lý do từ chối
-                    if (adminNote != null && !adminNote.trim().isEmpty()) {
-                        contact.setAdminNote(adminNote);
-                    }
-                    contact.setStatus(ContactStatus.REJECTED);
-                    contactRepository.save(contact);
-                    return "redirect:/admin/contacts/detail/" + id + "?success=rejected";
             }
         }
         return "redirect:/admin/contacts";

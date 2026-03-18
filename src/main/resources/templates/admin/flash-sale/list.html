@@ -4,7 +4,7 @@
     <div class="container-fluid">
         <div class="fs-admin-header mt-3">
             <h2 class="fs-admin-title">Quản lý Flash Sale</h2>
-            <a th:href="@{/admin/flash-sales/add}" class="fs-btn fs-btn-primary"><i class="fas fa-plus"></i> Thêm Flash Sale Mới</a>
+            <a th:href="@{/admin/flash-sales/add}" class="fs-btn fs-btn-primary"><i class="fas fa-plus"></i>+ Thêm đợt Flash Sale mới</a>
         </div>
 
         <div class="fs-admin-card fs-table-wrapper">
@@ -84,7 +84,7 @@
                 <tr th:if="${flashSales.isEmpty()}">
                     <td colspan="6" class="fs-empty-state">
                         <i class="fas fa-tags fa-3x"></i>
-                        <h5>Chưa có đợt Flash Sale nào</h5>
+                        <h5>Chưa có đợt Flash Sale nào!</h5>
                     </td>
                 </tr>
                 </tbody>

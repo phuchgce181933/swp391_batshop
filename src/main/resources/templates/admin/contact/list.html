@@ -1,5 +1,5 @@
 <link rel="stylesheet" th:href="@{/css/admin/contact.css}">
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <div class="contact-wrapper">
 
     <h2 class="page-title">Quản lý Liên hệ Hỗ trợ</h2>
@@ -29,8 +29,8 @@
                 </option>
             </select>
 
-            <button type="submit" class="btn-search"><i class="fas fa-search"></i> Lọc</button>
-            <a th:href="@{/admin/contacts}" class="btn-reset"><i class="fas fa-undo"></i> Bỏ lọc</a>
+            <button type="submit" class="btn-search"><i class="fas fa-search"></i>Lọc</button>
+            <a th:href="@{/admin/contacts}" class="btn-reset"><i class="fas fa-xmark"></i>Bỏ lọc</a>
         </form>
     </div>
 
@@ -66,10 +66,11 @@
                 <td>
                     <span class="badge-status"
                           th:text="${c.status != null ? c.status.label : 'Chưa phân loại'}"
-                          th:style="${
-                              c.status?.name() == 'UNREAD' ? 'background:#fef2f2; color:#ef4444;' :
-                              (c.status?.name() == 'PROCESSING' ? 'background:#fffbeb; color:#f59e0b;' :
-                              (c.status?.name() == 'REJECTED' ? 'background:#f1f5f9; color:#64748b;' : 'background:#ecfdf5; color:#10b981;'))
+                          th:classappend="${
+                              c.status?.name() == 'UNREAD' ? 'badge-unread' :
+                              (c.status?.name() == 'PROCESSING' ? 'badge-processing' :
+                              (c.status?.name() == 'DECLINED' ? 'badge-declined' :
+                              (c.status?.name() == 'REJECTED' ? 'badge-rejected' : 'badge-resolved')))
                           }">
                     </span>
                 </td>

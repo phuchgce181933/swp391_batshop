@@ -3,7 +3,7 @@ package com.ra.batshop.model.Enum;
 public enum ContactStatus {
     UNREAD("Chưa đọc"),
     PROCESSING("Đang xử lý"),
-    RESOLVED("Đã giải quyết"),
+    RESOLVED("Đã phản hồi"),
     REJECTED("Đã bỏ qua/Thư rác");
 
     private final String label;
