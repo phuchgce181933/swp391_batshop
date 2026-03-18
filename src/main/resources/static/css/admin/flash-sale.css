@@ -267,3 +267,21 @@
     cursor: not-allowed !important;
     box-shadow: none !important;
 }
+/* ================= 8. SCROLLBAR TÙY CHỈNH CHO CHECKLIST ================= */
+.fs-custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.fs-custom-scrollbar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 6px;
+}
+
+.fs-custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 6px;
+}
+
+.fs-custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}

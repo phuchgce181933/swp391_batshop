@@ -15,8 +15,8 @@ import java.util.List;
 @Table(name = "orders")
 @Getter
 @Setter
-@NoArgsConstructor // Thêm Constructor không đối số cho Hibernate
-@AllArgsConstructor // Thêm Constructor đầy đủ đối số
+@NoArgsConstructor
+@AllArgsConstructor
 public class Order {
 
     @Id
@@ -35,18 +35,12 @@ public class Order {
     private LocalDateTime createdAt;
 
     @ManyToOne
-    @JoinColumn(name = "user_id") // Nên chỉ định rõ tên cột liên kết với User
+    @JoinColumn(name = "user_id")
     private User user;
 
-    // CascadeType.ALL để khi xóa Order thì tự động xóa hết OrderItem bên trong
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems;
 
-    /**
-     * PHẦN QUAN TRỌNG NHẤT:
-     * 1. nullable = true: Cho phép cột address_id trong DB trống (khi địa chỉ bị xóa).
-     * 2. OnDelete action: Báo cho database biết nếu Address bị xóa, hãy set address_id của Order thành NULL.
-     */
     @ManyToOne
     @JoinColumn(name = "address_id", nullable = true)
     private Address shippingAddress;
@@ -56,9 +50,8 @@ public class Order {
     private Voucher voucher;
 
     private Integer discountAmount;
-}
 
-    // Hàm tự động gán thời gian tạo khi lưu vào DB
+    // PHẢI NẰM TRONG NGOẶC NHỌN CỦA CLASS
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();

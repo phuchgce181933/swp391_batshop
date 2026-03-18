@@ -9,10 +9,10 @@
     <div th:if="${param.success != null}" class="alert-success">
         <i class="fas fa-check-circle"></i> <strong>Thành công: </strong>
         <span th:text="${
-            param.success[0] == 'noteSaved' ? 'Đã lưu ghi chú nội bộ. Đã đánh dấu liên hệ này là [Đang xử lí].' :
+            param.success[0] == 'noteSaved' ? 'Đã lưu ghi chú nội bộ.' :
             (param.success[0] == 'emailSent' ? 'Email phản hồi đã được gửi tới khách hàng. Đã đánh dấu liên hệ này là [Đã giải quyết].' :
             (param.success[0] == 'unread' ? 'Đã đánh dấu liên hệ này là [Chưa đọc].' :
-            'Đã đánh dấu liên hệ này là [Từ chối/Thư rác].'))
+            'Đã đánh dấu liên hệ này là [Đã bỏ qua/Thư rác].'))
         }"></span>
     </div>
 
@@ -86,11 +86,8 @@
                     <button type="submit" name="action" value="saveNote" class="btn-submit btn-secondary">
                         <i class="fas fa-save"></i> Lưu Ghi Chú
                     </button>
-                    <button type="submit" name="action" value="markUnread" class="btn-submit btn-warning">
-                        <i class="fas fa-envelope"></i> Chưa đọc
-                    </button>
-                    <button type="submit" name="action" value="reject" class="btn-submit btn-danger" onclick="return confirm('Bạn có chắc chắn muốn đánh dấu liên hệ này là thư rác?');">
-                        <i class="fas fa-ban"></i> Từ chối
+                    <button type="submit" name="action" value="reject" class="btn-submit btn-danger" onclick="return confirm('Bạn có chắc chắn muốn [Bỏ qua] liên hệ này?');">
+                        <i class="fas fa-ban"></i> Bỏ qua
                     </button>
                     <button type="submit" name="action" value="sendEmail" class="btn-submit btn-primary">
                         <i class="fas fa-paper-plane"></i> Gửi Email

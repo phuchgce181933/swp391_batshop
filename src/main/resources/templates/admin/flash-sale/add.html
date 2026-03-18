@@ -70,7 +70,7 @@
             // 1. Kiểm tra giờ bắt đầu/kết thúc
             if (startTime && endTime && startTime >= endTime) {
                 event.preventDefault();
-                showError("Giờ kết thúc phải diễn ra sau giờ bắt đầu!");
+                showError("[Giờ kết thúc] phải diễn ra sau [Giờ bắt đầu]!");
                 return;
             }
 
@@ -86,7 +86,7 @@
             // 3. Nếu chọn ngày hôm nay, không được chọn giờ bắt đầu trong quá khứ
             if (saleDate === todayStr && startTime < currentTimeStr) {
                 event.preventDefault();
-                showError("Ngày Sale là hôm nay, giờ bắt đầu không thể ở trong quá khứ!");
+                showError("Ngày diễn ra Sale đã chọn là hôm nay, [Giờ bắt đầu] không thể ở quá khứ của Giờ hiện tại!");
                 return;
             }
 

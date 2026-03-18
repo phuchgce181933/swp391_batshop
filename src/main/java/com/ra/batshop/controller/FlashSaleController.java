@@ -182,48 +182,62 @@ public class FlashSaleController {
 
         return "redirect:/admin/flash-sales/edit/" + flashSale.getId();
     }
-    // THÊM SẢN PHẨM VÀO FLASH SALE VÀ TỰ ĐỘNG TÍNH GIÁ
+
+    // THÊM NHIỀU SẢN PHẨM VÀO FLASH SALE CÙNG LÚC
     @PostMapping("/admin/flash-sales/{id}/add-product")
-    public String addProductToFlashSale(@PathVariable("id") Integer flashSaleId,
-                                        @RequestParam("productId") Integer productId,
-                                        RedirectAttributes redirectAttributes) {
+    public String addProductsToFlashSale(@PathVariable("id") Integer flashSaleId,
+                                         @RequestParam(value = "productIds", required = false) List<Integer> productIds,
+                                         RedirectAttributes redirectAttributes) {
+
+        if (productIds == null || productIds.isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Vui lòng tick chọn ít nhất một sản phẩm!");
+            return "redirect:/admin/flash-sales/edit/" + flashSaleId;
+        }
 
         FlashSale flashSale = flashSaleRepository.findById(flashSaleId).orElseThrow();
-        Product product = productRepository.findById(productId).orElseThrow();
 
-        // 1. Kiểm tra xem sản phẩm đã có trong Flash Sale NÀY chưa
-        boolean existsInCurrent = flashSale.getProducts().stream()
-                .anyMatch(fsp -> fsp.getProduct().getId().equals(productId));
+        int successCount = 0;
+        int failCount = 0;
 
-        if (existsInCurrent) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Sản phẩm này đã có trong đợt Sale hiện tại!");
-            return "redirect:/admin/flash-sales/edit/" + flashSaleId;
+        for (Integer productId : productIds) {
+            Product product = productRepository.findById(productId).orElseThrow();
+
+            // 1. Bỏ qua nếu sản phẩm ĐÃ CÓ trong Flash Sale NÀY
+            boolean existsInCurrent = flashSale.getProducts().stream()
+                    .anyMatch(fsp -> fsp.getProduct().getId().equals(productId));
+            if (existsInCurrent) continue;
+
+            // 2. LOGIC KHẮT KHE: Kiểm tra trùng thời gian với đợt sale KHÁC
+            boolean isOverlapping = flashSaleRepository.isProductInOverlappingSale(
+                    productId, flashSaleId, flashSale.getStartDate(), flashSale.getEndDate()
+            );
+
+            if (isOverlapping) {
+                failCount++;
+                continue; // Bỏ qua sản phẩm bị trùng, đi tới sản phẩm tiếp theo
+            }
+
+            // 3. Nếu an toàn, tiến hành thêm vào db
+            FlashSaleProduct fsp = new FlashSaleProduct();
+            fsp.setFlashSale(flashSale);
+            fsp.setProduct(product);
+
+            BigDecimal discount = new BigDecimal(flashSale.getDiscountPercent()).divide(new BigDecimal(100));
+            BigDecimal discountAmount = product.getPrice().multiply(discount);
+            BigDecimal salePrice = product.getPrice().subtract(discountAmount);
+
+            fsp.setSalePrice(salePrice);
+            flashSaleProductRepository.save(fsp);
+            successCount++;
         }
 
-        // 2. LOGIC KHẮT KHE: Kiểm tra xem sản phẩm có nằm trong đợt sale KHÁC bị trùng thời gian không
-        boolean isOverlapping = flashSaleRepository.isProductInOverlappingSale(
-                productId, flashSaleId, flashSale.getStartDate(), flashSale.getEndDate()
-        );
-
-        if (isOverlapping) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Thất bại: Sản phẩm này đang nằm trong một đợt Flash Sale khác có thời gian trùng lặp!");
-            return "redirect:/admin/flash-sales/edit/" + flashSaleId;
+        // Thông báo kết quả
+        if (failCount > 0) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Đã thêm " + successCount + " sản phẩm. Bỏ qua " + failCount + " sản phẩm do bị trùng thời gian với đợt Sale khác!");
+        } else {
+            redirectAttributes.addFlashAttribute("successMessage", "Đã thêm thành công " + successCount + " sản phẩm vào Flash Sale!");
         }
 
-        // 3. Nếu qua hết các bài kiểm tra, tiến hành lưu vào DB
-        FlashSaleProduct fsp = new FlashSaleProduct();
-        fsp.setFlashSale(flashSale);
-        fsp.setProduct(product);
-
-        BigDecimal discount = new BigDecimal(flashSale.getDiscountPercent()).divide(new BigDecimal(100));
-        BigDecimal discountAmount = product.getPrice().multiply(discount);
-        BigDecimal salePrice = product.getPrice().subtract(discountAmount);
-
-        fsp.setSalePrice(salePrice);
-        flashSaleProductRepository.save(fsp);
-
-        // Báo thành công
-        redirectAttributes.addFlashAttribute("successMessage", "Thêm sản phẩm vào Flash Sale thành công!");
         return "redirect:/admin/flash-sales/edit/" + flashSaleId;
     }
 

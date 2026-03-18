@@ -1,111 +1,159 @@
 <div th:fragment="content">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <link rel="stylesheet" th:href="@{/css/admin/flash-sale.css}">
 
     <div class="container-fluid">
         <div class="fs-admin-header mt-3 d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
             <h2 class="fs-admin-title m-0">Cập Nhật Flash Sale #<span th:text="${flashSale.id}"></span></h2>
             <a th:href="@{/admin/flash-sales}" class="fs-btn fs-btn-secondary text-decoration-none">
-                <i class="fas fa-arrow-left"></i>&larr; Quay lại danh sách
+                <i class="fas fa-arrow-left"></i> Quay lại
             </a>
         </div>
 
         <div class="row align-items-start">
-            <div th:if="${errorMessage}" class="alert alert-danger d-flex align-items-center" role="alert">
-                <i class="fas fa-exclamation-triangle me-2"></i>
-                <span th:text="${errorMessage}"></span>
-            </div>
-
-            <div th:if="${successMessage}" class="alert alert-success d-flex align-items-center" role="alert">
-                <i class="fas fa-check-circle me-2"></i>
-                <span th:text="${successMessage}"></span>
+            <div class="col-12">
+                <div th:if="${errorMessage}" class="alert alert-danger d-flex align-items-center mb-3" role="alert" style="border-radius: 6px;">
+                    <i class="fas fa-exclamation-triangle me-2"></i> <span th:text="${errorMessage}"></span>
+                </div>
+                <div th:if="${successMessage}" class="alert alert-success d-flex align-items-center mb-3" role="alert" style="border-radius: 6px;">
+                    <i class="fas fa-check-circle me-2"></i> <span th:text="${successMessage}"></span>
+                </div>
             </div>
 
             <div class="col-12 col-lg-4 mb-4">
-                <div class="fs-admin-card p-4 bg-white rounded shadow-sm border">
-                    <h4 class="mb-4 text-primary border-bottom pb-2">Cài đặt thông số</h4>
+                <div class="fs-admin-card p-4 h-100 border-0 shadow-sm" style="border-radius: 10px;">
+
+                    <div class="border-bottom mb-4 pb-2">
+                        <h4 class="m-0" style="color: #0d6efd; border-left: 4px solid #f15a22; padding-left: 10px; font-weight: 600; font-size: 1.2rem;">
+                            Cài đặt thông số
+                        </h4>
+                    </div>
 
                     <form id="flashSaleForm" th:action="@{/admin/flash-sales/edit}" th:object="${flashSale}" method="POST">
                         <input type="hidden" th:field="*{id}">
 
                         <div class="fs-form-group mb-3">
-                            <label class="fs-form-label fw-bold">Giảm Giá (%)</label>
-                            <input type="number" class="form-control" th:field="*{discountPercent}" min="1" max="100" required>
+                            <label class="fs-form-label fw-bold" style="font-size: 0.95rem;">Giảm Giá (%)</label>
+                            <input type="number" class="fs-form-control" th:field="*{discountPercent}" min="1" max="100" required>
                         </div>
 
                         <div class="fs-form-group mb-3">
-                            <label class="fs-form-label fw-bold">Ngày Sale</label>
-                            <input type="date" class="form-control" name="saleDate" id="saleDate" required
+                            <label class="fs-form-label fw-bold" style="font-size: 0.95rem;">Ngày Sale</label>
+                            <input type="date" class="fs-form-control" name="saleDate" id="saleDate" required
                                    th:value="${#temporals.format(flashSale.startDate, 'yyyy-MM-dd')}">
                         </div>
 
                         <div class="row">
                             <div class="col-6 fs-form-group mb-3">
-                                <label class="fs-form-label fw-bold">Giờ bắt đầu</label>
-                                <input type="time" class="form-control" name="startTime" id="startTime" required
+                                <label class="fs-form-label fw-bold" style="font-size: 0.95rem;">Giờ bắt đầu</label>
+                                <input type="time" class="fs-form-control" name="startTime" id="startTime" required
                                        th:value="${#temporals.format(flashSale.startDate, 'HH:mm')}">
                             </div>
 
                             <div class="col-6 fs-form-group mb-4">
-                                <label class="fs-form-label fw-bold">Giờ kết thúc</label>
-                                <input type="time" class="form-control" name="endTime" id="endTime" required
+                                <label class="fs-form-label fw-bold" style="font-size: 0.95rem;">Giờ kết thúc</label>
+                                <input type="time" class="fs-form-control" name="endTime" id="endTime" required
                                        th:value="${#temporals.format(flashSale.endDate, 'HH:mm')}">
                             </div>
                         </div>
 
-                        <button type="submit" class="btn btn-primary w-100 fw-bold py-2 mt-2">Cập nhật thông số</button>
+                        <div id="jsErrorMessage" class="alert alert-danger" style="display: none; padding: 10px; border-radius: 6px; font-weight: 500; margin-bottom: 15px;">
+                            <i class="fas fa-exclamation-circle"></i> <span id="jsErrorText"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 fw-bold py-2 mt-2" style="background-color: #0d6efd; border: none; border-radius: 6px;">
+                            <i class="fas fa-save me-1"></i> Cập nhật thông số
+                        </button>
                     </form>
                 </div>
             </div>
 
             <div class="col-12 col-lg-8">
-                <div class="fs-admin-card p-4 bg-white rounded shadow-sm border">
-                    <h4 class="mb-4 text-success border-bottom pb-2">Danh sách sản phẩm trong đợt Sale</h4>
+                <div class="fs-admin-card p-4 border-0 shadow-sm" style="border-radius: 10px;">
 
-                    <form th:action="@{/admin/flash-sales/{id}/add-product(id=${flashSale.id})}" method="POST" class="d-flex gap-2 mb-4 bg-light p-3 rounded border">
-                        <select name="productId" class="form-select" required>
-                            <option value="">-- Chọn sản phẩm để đưa vào Flash Sale --</option>
+                    <div class="border-bottom mb-4 pb-2">
+                        <h4 class="m-0" style="color: #198754; border-left: 4px solid #f15a22; padding-left: 10px; font-weight: 600; font-size: 1.2rem;">
+                            Sản phẩm trong đợt Sale
+                        </h4>
+                    </div>
 
-                            <option th:each="p : ${products}"
-                                    th:value="${p.id}"
-                                    th:disabled="${#lists.contains(addedProductIds, p.id)}"
-                                    th:text="${p.name} + ' (Gốc: ' + ${#numbers.formatDecimal(p.price, 0, 'COMMA', 0, 'POINT')} + ' đ)' + (${#lists.contains(addedProductIds, p.id)} ? ' - (Đã thêm)' : '')">
-                            </option>
-                        </select>
+                    <form th:action="@{/admin/flash-sales/{id}/add-product(id=${flashSale.id})}" method="POST" class="mb-4 bg-light p-3 rounded border">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="m-0" style="font-size: 1rem; font-weight: 600; color: #34495e;">
+                                <i class="fas fa-check-square text-success me-1"></i> Tick chọn sản phẩm
+                            </h5>
+                            <div class="input-group" style="width: 250px;">
+                                <span class="input-group-text bg-white"><i class="fas fa-search text-muted"></i></span>
+                                <input type="text" id="productSearch" class="form-control" placeholder="Tìm tên sản phẩm...">
+                            </div>
+                        </div>
 
-                        <button type="submit" class="btn btn-success text-nowrap px-4">
-                            <i class="fas fa-plus me-1"></i> Thêm Sản Phẩm
+                        <div class="product-checklist mb-3 bg-white fs-custom-scrollbar" style="max-height: 250px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 6px;">
+                            <div class="list-group list-group-flush" id="productListContainer">
+
+                                <label th:each="p : ${products}"
+                                       class="list-group-item d-flex justify-content-between align-items-center py-2 px-3 list-group-item-action product-item-row"
+                                       style="cursor: pointer; border-bottom: 1px solid #f0f2f5;">
+
+                                    <div class="d-flex align-items-center">
+                                        <input class="form-check-input me-3 mt-0" type="checkbox" name="productIds"
+                                               th:value="${p.id}"
+                                               th:disabled="${#lists.contains(addedProductIds, p.id)}"
+                                               th:checked="${#lists.contains(addedProductIds, p.id)}"
+                                               style="transform: scale(1.2);">
+
+                                        <span class="product-name fw-bold text-dark" style="font-size: 0.95rem;" th:text="${p.name}"></span>
+                                    </div>
+
+                                    <div class="text-end">
+                                        <span class="text-muted d-inline-block me-2" style="font-size: 0.85rem;"
+                                              th:text="'Gốc: ' + ${#numbers.formatDecimal(p.price, 0, 'COMMA', 0, 'POINT')} + ' đ'">
+                                        </span>
+
+                                        <span th:if="${#lists.contains(addedProductIds, p.id)}"
+                                              class="badge bg-secondary rounded-pill" style="font-size: 0.75rem;">Đã thêm
+                                        </span>
+                                    </div>
+                                </label>
+
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-success fw-bold px-4" style="border-radius: 6px;">
+                            <i class="fas fa-plus-circle me-1"></i> Thêm các sản phẩm đã chọn
                         </button>
                     </form>
 
-                    <div class="table-responsive">
-                        <table class="table table-hover table-bordered align-middle mb-0">
-                            <thead class="table-dark text-center">
+                    <div class="fs-table-wrapper">
+                        <table class="fs-table">
+                            <thead>
                             <tr>
-                                <th class="text-start">Tên sản phẩm</th>
+                                <th class="text-start" style="padding-left: 20px;">Tên sản phẩm</th>
                                 <th>Giá gốc</th>
-                                <th>Giá Sale</th>
+                                <th>Giá Sale (Tự tính)</th>
                                 <th>Hành động</th>
                             </tr>
                             </thead>
-                            <tbody class="text-center bg-white">
+                            <tbody>
                             <tr th:each="fsp : ${flashSale.products}">
-                                <td class="text-start fw-bold" th:text="${fsp.product.name}"></td>
-                                <td class="text-muted text-decoration-line-through" th:text="${#numbers.formatDecimal(fsp.product.price, 0, 'COMMA', 0, 'POINT')} + ' đ'"></td>
-                                <td class="text-danger fw-bold fs-5" th:text="${#numbers.formatDecimal(fsp.salePrice, 0, 'COMMA', 0, 'POINT')} + ' đ'"></td>
+                                <td class="text-start fw-bold" style="padding-left: 20px; color: #2c3e50;" th:text="${fsp.product.name}"></td>
+                                <td class="fs-price-original" th:text="${#numbers.formatDecimal(fsp.product.price, 0, 'COMMA', 0, 'POINT')} + ' đ'"></td>
+                                <td class="fs-price-sale" th:text="${#numbers.formatDecimal(fsp.salePrice, 0, 'COMMA', 0, 'POINT')} + ' đ'"></td>
                                 <td>
                                     <a th:href="@{/admin/flash-sales/{fsId}/remove-product/{fspId}(fsId=${flashSale.id}, fspId=${fsp.id})}"
-                                       class="btn btn-outline-danger btn-sm"
-                                       onclick="return confirm('Loại sản phẩm này khỏi Flash Sale?');">
+                                       class="fs-btn fs-btn-sm" style="background-color: #fff; color: #e74c3c; border: 1px solid #e74c3c;"
+                                       onclick="return confirm('Loại sản phẩm này khỏi Flash Sale?');"
+                                       onmouseover="this.style.backgroundColor='#e74c3c'; this.style.color='#fff';"
+                                       onmouseout="this.style.backgroundColor='#fff'; this.style.color='#e74c3c';">
                                         <i class="fas fa-trash me-1"></i> Xóa
                                     </a>
                                 </td>
                             </tr>
                             <tr th:if="${flashSale.products.isEmpty()}">
-                                <td colspan="4" class="text-center py-4 text-muted">
-                                    <i class="fas fa-box-open fs-4 d-block mb-2 text-black-50"></i>
-                                    <i>Chưa có sản phẩm nào được chọn.</i>
+                                <td colspan="4" class="fs-empty-state">
+                                    <i class="fas fa-box-open fa-3x"></i>
+                                    <h5>Chưa có sản phẩm</h5>
+                                    <p>Hãy tick chọn sản phẩm ở khung phía trên và ấn Thêm nhé.</p>
                                 </td>
                             </tr>
                             </tbody>
@@ -113,20 +161,52 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
+            // 1. Logic lọc tìm kiếm sản phẩm (Search JS)
+            const searchInput = document.getElementById("productSearch");
+            searchInput.addEventListener("keyup", function() {
+                const filter = this.value.toLowerCase();
+                const items = document.querySelectorAll(".product-item-row");
+
+                items.forEach(function(item) {
+                    const text = item.querySelector(".product-name").innerText.toLowerCase();
+                    if (text.indexOf(filter) > -1) {
+                        item.style.setProperty("display", "flex", "important");
+                    } else {
+                        item.style.setProperty("display", "none", "important");
+                    }
+                });
+            });
+
+            // 2. Validate form cập nhật thông số (Giống trang Add)
             const form = document.getElementById("flashSaleForm");
+            const errorDiv = document.getElementById("jsErrorMessage");
+            const errorText = document.getElementById("jsErrorText");
+
             form.addEventListener("submit", function (event) {
+                errorDiv.style.display = "none";
                 const startTime = document.getElementById("startTime").value;
                 const endTime = document.getElementById("endTime").value;
 
                 if (startTime && endTime && startTime >= endTime) {
                     event.preventDefault();
-                    alert("Lỗi: Giờ kết thúc phải diễn ra sau giờ bắt đầu!");
+                    errorText.innerText = "Giờ kết thúc phải diễn ra sau giờ bắt đầu!";
+                    errorText.style.color = "#dc3545";
+                    errorDiv.style.backgroundColor = "#f8d7da";
+                    errorDiv.style.borderColor = "#f5c6cb";
+                    errorDiv.style.color = "#721c24";
+                    errorDiv.style.display = "block";
+
+                    errorDiv.animate([
+                        { transform: 'translateX(0px)' },
+                        { transform: 'translateX(-5px)' },
+                        { transform: 'translateX(5px)' },
+                        { transform: 'translateX(0px)' }
+                    ], { duration: 300 });
                 }
             });
         });
