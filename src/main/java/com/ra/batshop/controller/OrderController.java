@@ -60,8 +60,11 @@ public class OrderController {
                        @RequestParam(defaultValue = "5") int size,
                        @RequestParam(required = false) String paymentMethod,
                        @RequestParam(required = false) String paymentStatus,
-                       @RequestParam(required = false) OrderStatus status) {
-
+                       @RequestParam(required = false) OrderStatus status,
+                       HttpSession session) {
+        if (session.getAttribute("user") == null) {
+            return "redirect:/login";
+        }
         if (paymentMethod != null && paymentMethod.trim().isEmpty()) {
             paymentMethod = null;
         }

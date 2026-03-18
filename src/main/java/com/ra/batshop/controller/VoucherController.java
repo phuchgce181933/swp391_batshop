@@ -71,6 +71,7 @@ package com.ra.batshop.controller;
 
 import com.ra.batshop.model.Voucher;
 import com.ra.batshop.repository.VoucherRepository;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -95,8 +96,10 @@ public class VoucherController {
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) Boolean status,
             @RequestParam(required = false) Integer discount,
-            Model model) {
-
+            Model model, HttpSession session) {
+        if (session.getAttribute("user") == null) {
+            return "redirect:/login";
+        }
         List<Voucher> vouchers;
 
         // FILTER CODE

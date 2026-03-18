@@ -69,8 +69,10 @@ public class AdminController {
     public String listUsers(
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) Boolean status,
-            Model model) {
-
+            Model model, HttpSession session) {
+        if (session.getAttribute("user") == null) {
+            return "redirect:/login";
+        }
         List<User> users;
 
         if (keyword != null && !keyword.isEmpty() && status != null) {

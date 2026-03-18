@@ -6,6 +6,7 @@ import com.ra.batshop.model.Product;
 import com.ra.batshop.repository.FlashSaleProductRepository;
 import com.ra.batshop.repository.FlashSaleRepository;
 import com.ra.batshop.repository.ProductRepository;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -63,7 +64,10 @@ public class FlashSaleController {
 
     // DANH SÁCH FLASH SALE
     @GetMapping("/admin/flash-sales")
-    public String list(Model model) {
+    public String list(Model model,HttpSession session) {
+        if (session.getAttribute("user") == null) {
+            return "redirect:/login";
+        }
         model.addAttribute("flashSales", flashSaleRepository.findAll(Sort.by(Sort.Direction.DESC, "startDate")));        model.addAttribute("content", "admin/flash-sale/list");
         return "admin/layout";
     }

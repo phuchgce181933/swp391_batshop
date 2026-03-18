@@ -2,6 +2,7 @@ package com.ra.batshop.controller;
 
 import com.ra.batshop.model.Size;
 import com.ra.batshop.repository.SizeRepository;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,7 +16,10 @@ public class AdminSizeController {
     private SizeRepository sizeRepository;
 
     @GetMapping
-    public String listSizes(Model model) {
+    public String listSizes(Model model, HttpSession session) {
+        if (session.getAttribute("user") == null) {
+            return "redirect:/login";
+        }
         model.addAttribute("sizes", sizeRepository.findAll());
         return "admin/size/list";
     }

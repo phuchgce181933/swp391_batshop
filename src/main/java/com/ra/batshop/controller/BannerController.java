@@ -2,6 +2,7 @@ package com.ra.batshop.controller;
 
 import com.ra.batshop.model.Banner;
 import com.ra.batshop.repository.BannerRepository;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -28,8 +29,10 @@ public class BannerController {
     @GetMapping
     public String listBanners(
             @RequestParam(required = false) String keyword,
-            Model model) {
-
+            Model model, HttpSession session) {
+        if (session.getAttribute("user") == null) {
+            return "redirect:/login";
+        }
         List<Banner> banners;
 
         if (keyword != null && !keyword.isEmpty()) {

@@ -3,6 +3,7 @@ package com.ra.batshop.controller;
 import com.ra.batshop.model.*;
 import com.ra.batshop.model.Enum.*;
 import com.ra.batshop.repository.*;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -57,7 +58,11 @@ public class ProductController {
                         @RequestParam(defaultValue = "5") int size,
                        @RequestParam(required = false) String keyword,
                        @RequestParam(required = false) Integer categoryId,
-                       @RequestParam(required = false) Long brandId) {
+                       @RequestParam(required = false) Long brandId,
+             HttpSession session) {
+        if (session.getAttribute("user") == null) {
+            return "redirect:/login";
+        }
         Page<Product> productPage = productRepository.searchProduct(
                 keyword, categoryId, brandId,
                 PageRequest.of(page, size, Sort.by("id").descending())

@@ -2,6 +2,7 @@ package com.ra.batshop.controller;
 
 import com.ra.batshop.model.Blog;
 import com.ra.batshop.repository.BlogRepository;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -27,8 +28,10 @@ public class BlogController {
     @GetMapping
     public String listBlogs(
             @RequestParam(required = false) String keyword,
-            Model model) {
-
+            Model model, HttpSession session) {
+        if (session.getAttribute("user") == null) {
+            return "redirect:/login";
+        }
         List<Blog> blogs;
 
         if (keyword != null && !keyword.isEmpty()) {

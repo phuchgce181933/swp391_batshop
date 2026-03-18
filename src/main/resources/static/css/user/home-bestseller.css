@@ -30,3 +30,22 @@
     z-index: 2;
     box-shadow: 0 2px 5px rgba(255, 71, 87, 0.4);
 }
+.product-actions .btn-cart {
+    display: inline-block;  /* không full width / full height */
+    width: 120px;            /* chiều ngang tự động */
+    max-width: 120px;       /* giới hạn chiều ngang */
+    height: auto;           /* chiều cao tự động */
+    padding: 6px 12px;      /* padding gọn */
+    font-size: 14px;
+    border-radius: 4px;
+    background-color: #ff6600;
+    color: #fff;
+    text-decoration: none;
+    text-align: center;
+    line-height: normal;     /* quan trọng: không kéo cao nút */
+}
+.product-actions {
+    text-align: center;      /* căn giữa nút */
+    margin-top: 10px;
+    width: 100%;             /* vẫn chiếm full card nhưng không ép nút */
+}

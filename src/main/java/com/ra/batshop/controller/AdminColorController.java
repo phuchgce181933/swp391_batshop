@@ -2,6 +2,7 @@ package com.ra.batshop.controller;
 
 import com.ra.batshop.model.Color;
 import com.ra.batshop.repository.ColorRepository;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model; // PHẢI dùng import này
@@ -15,7 +16,10 @@ public class AdminColorController {
     private ColorRepository colorRepository;
 
     @GetMapping
-    public String listColors(Model model) {
+    public String listColors(Model model, HttpSession session) {
+        if (session.getAttribute("user") == null) {
+            return "redirect:/login";
+        }
         model.addAttribute("colors", colorRepository.findAll());
         return "admin/color/list"; // Đường dẫn tới file HTML
     }

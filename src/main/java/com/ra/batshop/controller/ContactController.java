@@ -4,6 +4,7 @@ import com.ra.batshop.model.ContactSupport;
 import com.ra.batshop.model.Enum.ContactStatus;
 import com.ra.batshop.repository.ContactRepository;
 import com.ra.batshop.service.EmailService; // Import EmailService của bạn
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -103,8 +104,10 @@ public class ContactController {
             @RequestParam(value = "topic", required = false) String topic,
             @RequestParam(value = "status", required = false) ContactStatus status,
             @RequestParam(value = "date", required = false) LocalDate date,
-            Model model) {
-
+            Model model,HttpSession session) {
+        if (session.getAttribute("user") == null) {
+            return "redirect:/login";
+        }
         // Lấy danh sách dựa trên bộ lọc (nếu tất cả rỗng, nó sẽ trả về toàn bộ danh sách)
         List<ContactSupport> contacts = contactRepository.searchAndFilter(keyword, topic, status, date);
 

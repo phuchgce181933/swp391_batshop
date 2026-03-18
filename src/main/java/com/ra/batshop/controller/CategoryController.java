@@ -2,6 +2,7 @@ package com.ra.batshop.controller;
 
 import com.ra.batshop.model.Category;
 import com.ra.batshop.repository.CategoryRepository;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -26,8 +27,11 @@ public class CategoryController {
     @GetMapping
     public String listCategories(
             @RequestParam(required = false) String keyword,
-            Model model) {
-
+            Model model,
+            HttpSession session) {
+        if (session.getAttribute("user") == null) {
+            return "redirect:/login";
+        }
         List<Category> categories;
 
         if (keyword != null && !keyword.isEmpty()) {
