@@ -42,9 +42,9 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems;
 
-    @ManyToOne
-    @JoinColumn(name = "address_id", nullable = true)
-    private Address shippingAddress;
+//    @ManyToOne
+//    @JoinColumn(name = "address_id", nullable = true)
+//    private Address shippingAddress;
 
     @ManyToOne
     @JoinColumn(name = "voucher_id")
@@ -56,6 +56,13 @@ public class Order {
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
     }
+    // bổ sung lưu dạng text như cô kêu để tranh mất dữ liệu về address|
+    private String receiverName;
+    private String receiverPhone;
+    private String city;
+    private String district;
+    private String ward;
+    private String detail;
 }
 
 

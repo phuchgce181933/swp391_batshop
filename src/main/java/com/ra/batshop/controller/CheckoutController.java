@@ -21,19 +21,19 @@ import java.util.Optional;
 @RequestMapping("/checkout")
 public class CheckoutController {
     private CartItemRepository cartItemRepository;
-    private UserAddressRepository userAddressRepository;
+    //private UserAddressRepository userAddressRepository;
     private OrderRepository orderRepository;
     private OrderItemRepository orderItemRepository;
     private AddressRepository addressRepository;
     private VoucherRepository voucherRepository;
     public CheckoutController(CartItemRepository cartItemRepository,
-                              UserAddressRepository userAddressRepository,
+                             // UserAddressRepository userAddressRepository,
                               OrderRepository orderRepository,
                               OrderItemRepository orderItemRepository,
                               AddressRepository addressRepository,
                               VoucherRepository voucherRepository) {
         this.cartItemRepository = cartItemRepository;
-        this.userAddressRepository = userAddressRepository;
+       // this.userAddressRepository = userAddressRepository;
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
         this.addressRepository = addressRepository;

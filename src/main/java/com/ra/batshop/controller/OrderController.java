@@ -27,7 +27,7 @@ import java.util.*;
 @RequestMapping("/admin/orders")
 public class OrderController {
     private CartItemRepository cartItemRepository;
-    private UserAddressRepository userAddressRepository;
+    //private UserAddressRepository userAddressRepository;
     private final OrderRepository orderRepository;
     private OrderItemRepository orderItemRepository;
     private final AddressRepository addressRepository;
@@ -36,7 +36,7 @@ public class OrderController {
     private final UserVoucherRepository userVoucherRepository;
     public OrderController(OrderRepository orderRepository,
                            OrderItemRepository orderItemRepository,
-                           UserAddressRepository userAddressRepository,
+                           //UserAddressRepository userAddressRepository,
                            CartItemRepository cartItemRepository,
                            ProductVariantRepository productVariantRepository,
                            AddressRepository addressRepository,
@@ -45,7 +45,7 @@ public class OrderController {
 
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
-        this.userAddressRepository = userAddressRepository;
+       // this.userAddressRepository = userAddressRepository;
         this.cartItemRepository = cartItemRepository;
         this.productVariantRepository = productVariantRepository;
         this.addressRepository = addressRepository;
@@ -147,11 +147,18 @@ public class OrderController {
         // TẠO ORDER
         Order order = new Order();
         order.setUser(user);
-        order.setShippingAddress(address);
+        //order.setShippingAddress(address);
         order.setStatus(OrderStatus.PENDING);
         order.setPaymentMethod(paymentMethod);
         order.setPaymentStatus("UNPAID");
         order.setCreatedAt(LocalDateTime.now());
+        //liu địa chỉ
+        order.setReceiverName(address.getReceiverName());
+        order.setReceiverPhone(address.getReceiverPhone());
+        order.setCity(address.getCity());
+        order.setDistrict(address.getDistrict());
+        order.setWard(address.getWard());
+        order.setDetail(address.getDetail());
         if(voucher != null){
 
             if(total >= voucher.getMinOrderAmount()){

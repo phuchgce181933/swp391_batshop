@@ -66,21 +66,16 @@
 
                 <td th:text="${o.user != null ? o.user.fullName : 'Guest'}"></td>
 
+                <!-- ✅ ADDRESS -->
                 <td>
-                    <div th:if="${o.shippingAddress != null}">
-                        <strong th:text="${o.shippingAddress.fullName}"></strong><br>
-                        <span th:text="${o.shippingAddress.phone}"></span><br>
-
-                        <span th:text="${o.shippingAddress.detail}"></span><br>
-                        <span th:text="${o.shippingAddress.ward + ', '
-                        + o.shippingAddress.district + ', '
-                        + o.shippingAddress.city}">
-        </span>
+                    <div class="address-box" th:if="${o.receiverName != null}">
+                        <div class="name" th:text="${o.receiverName}"></div>
+                        <div class="phone" th:text="${o.receiverPhone}"></div>
+                        <div class="addr"
+                             th:text="${o.detail + ', ' + o.ward + ', ' + o.district + ', ' + o.city}">
+                        </div>
                     </div>
-
-                    <span th:if="${o.shippingAddress == null}">
-        No address
-    </span>
+                    <span th:if="${o.receiverName == null}">No address</span>
                 </td>
 
                 <td th:text="${#numbers.formatDecimal(o.totalPrice,0,'COMMA',0,'POINT')}"></td>
@@ -88,36 +83,35 @@
                 <td th:text="${o.paymentMethod}"></td>
 
                 <td>
-
-    <span th:if="${o.paymentStatus == 'PAID'}"
-          style="color:green;font-weight:600;">
-        Đã thanh toán
-    </span>
+        <span th:if="${o.paymentStatus == 'PAID'}"
+              style="color:green;font-weight:600;">
+            Đã thanh toán
+        </span>
 
                     <span th:if="${o.paymentStatus == 'UNPAID'}"
                           style="color:red;font-weight:600;">
-        Chưa thanh toán
-    </span>
-
+            Chưa thanh toán
+        </span>
                 </td>
 
                 <td th:text="${#temporals.format(o.createdAt,'dd/MM/yyyy HH:mm')}"></td>
+
+                <!-- VIEW -->
                 <td>
-                    <a th:href="@{/orders_item/admin/{id}(id=${o.id})}">View</a>
+                    <a th:href="@{/admin/orders/{id}(id=${o.id})}">View</a>
                 </td>
+
+                <!-- STATUS -->
                 <td>
 
-                    <!-- CANCELLED -->
                     <div th:if="${o.status.name() == 'CANCELLED'}">
                         <span style="color:red;font-weight:600;">CANCELLED</span>
                     </div>
 
-                    <!-- COMPLETED -->
                     <div th:if="${o.status.name() == 'COMPLETED'}">
                         <span style="color:green;font-weight:600;">COMPLETED</span>
                     </div>
 
-                    <!-- CHANGE STATUS -->
                     <form th:if="${o.status.name() != 'CANCELLED' && o.status.name() != 'COMPLETED'}"
                           th:action="@{/admin/orders/edit/{id}(id=${o.id})}"
                           method="post">
