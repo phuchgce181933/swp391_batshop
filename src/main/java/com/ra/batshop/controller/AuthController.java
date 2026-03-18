@@ -93,28 +93,6 @@ public class AuthController {
         return "redirect:/home";
     }
 
-
-    // QUẢN LÝ HỒ SƠ (PROFILE) - PHẦN ĐÃ SỬA THEO YÊU CẦU
-    // ========================================================
-
-    // =========================
-    // CHANGE PASSWORD
-    // =========================
-    @GetMapping("/change-password")
-    public String showChangePassword() {
-        return "profile/change-password";
-    }
-
-    @PostMapping("/change-password")
-    public String changePassword(
-            @RequestParam String oldPass,
-            @RequestParam String newPass,
-            @RequestParam String confirmPass,
-            HttpSession session,
-            Model model
-    ) {
-
-
     // 1. Trang xem thông tin tổng quan (Thêm mới để làm trang đệm)
     @GetMapping("/profile")
     public String showProfileInfo(HttpSession session, Model model) {
