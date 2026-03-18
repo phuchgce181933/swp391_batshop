@@ -1,10 +1,7 @@
 package com.ra.batshop.controller;
 
-import com.ra.batshop.model.Banner;
-import com.ra.batshop.model.FlashSale;
-import com.ra.batshop.model.ProductVariant;
+import com.ra.batshop.model.*;
 import com.ra.batshop.repository.*;
-import com.ra.batshop.model.Product;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -64,8 +61,13 @@ public class HomeController {
     @GetMapping()
     public String home(
             @RequestParam(value = "categoryId", required = false) Integer categoryId,
-            Model model) {
+            Model model, HttpSession session) {
+        User user = (User) session.getAttribute("user");
 
+        if (user != null && !user.getStatus()) {
+            session.invalidate();
+            return "redirect:/login?blocked=true";
+        }
         List<ProductVariant> variants;
 
         if (categoryId != null) {
