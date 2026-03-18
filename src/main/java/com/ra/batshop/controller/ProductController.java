@@ -17,6 +17,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Controller
 @RequestMapping("/admin/products")
@@ -27,7 +28,7 @@ public class ProductController {
     private final BrandRepository brandRepository;
     private final SizeRepository sizeRepository;
     private final ColorRepository colorRepository;
-
+    private final ProductVariantImageRepository productVariantImageRepository;
     // 1. KHAI BÁO THÊM REPOSITORY CỦA FLASH SALE
     private final FlashSaleProductRepository flashSaleProductRepository;
     // 2. INJECT VÀO CONSTRUCTOR
@@ -37,7 +38,8 @@ public class ProductController {
                              BrandRepository brandRepository,
                              SizeRepository sizeRepository,
                              ColorRepository colorRepository,
-                             FlashSaleProductRepository flashSaleProductRepository) {
+                             FlashSaleProductRepository flashSaleProductRepository,
+                             ProductVariantImageRepository productVariantImageRepository) {
 
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
@@ -45,6 +47,7 @@ public class ProductController {
         this.sizeRepository = sizeRepository;
         this.colorRepository = colorRepository;
         this.flashSaleProductRepository = flashSaleProductRepository;
+        this.productVariantImageRepository = productVariantImageRepository;
     }
 
     // LIST
@@ -84,14 +87,11 @@ public class ProductController {
         model.addAttribute("racketLevels", RacketLevel.values());
         model.addAttribute("racketLengths", RacketLength.values());
         model.addAttribute("handleLengths", RacketHandleLength.values());
-        model.addAttribute("equilibriumPoints", EquilibriumPoint.values());
         model.addAttribute("racketStyles", RacketStyle.values());
         model.addAttribute("racketWeights", RacketWeight.values());
         model.addAttribute("equilibriumPoints", EquilibriumPoint.values());
         model.addAttribute("chopstickHardness", ChopstickHardness.values());
-
         model.addAttribute("content", "admin/product/add");
-        model.addAttribute("chopstickHardnesses", ChopstickHardness.values());
         return "admin/layout";
     }
 
@@ -99,6 +99,7 @@ public class ProductController {
     @PostMapping("/add")
     public String save(@ModelAttribute Product product,
                        @RequestParam("imageFile") MultipartFile file,
+                       @RequestParam(value = "variantImages", required = false) List<MultipartFile[]> variantImages,
                        Model model) {
 
         if (file == null || file.isEmpty()) {
@@ -151,8 +152,9 @@ public class ProductController {
 
             // đat variant
             if (product.getVariants() != null) {
+                for (int i = 0; i < product.getVariants().size(); i++) {
 
-                for (ProductVariant variant : product.getVariants()) {
+                    ProductVariant variant = product.getVariants().get(i);
 
                     variant.setProduct(product);
 
@@ -161,7 +163,7 @@ public class ProductController {
                         variant.getRacketDetail().setVariant(variant);
                     }
 
-                    // set brand lại cho chắc
+                    // set brand
                     if (variant.getBrand() != null) {
                         variant.setBrand(
                                 brandRepository
@@ -185,6 +187,32 @@ public class ProductController {
                                         .orElse(null)
                         );
                     }
+
+                    // ===== UPLOAD VARIANT IMAGE =====
+                    if (variantImages != null && variantImages.size() > i) {
+                        MultipartFile[] images = variantImages.get(i);
+
+                        for (MultipartFile img : images) {
+
+                            if (!img.isEmpty()) {
+
+                                String variantFileName =
+                                        System.currentTimeMillis() + "_" + img.getOriginalFilename();
+
+                                Files.copy(
+                                        img.getInputStream(),
+                                        uploadPath.resolve(variantFileName),
+                                        StandardCopyOption.REPLACE_EXISTING
+                                );
+
+                                ProductVariantImage variantImage = new ProductVariantImage();
+                                variantImage.setImage(variantFileName);
+
+                                variant.addImage(variantImage);
+                            }
+                        }
+                    }
+
                 }
             }
 
@@ -201,7 +229,11 @@ public class ProductController {
     // EDIT FORM
     @GetMapping("/edit/{id}")
     public String editForm(@PathVariable Integer id, Model model) {
-        model.addAttribute("product", productRepository.findById(id).orElseThrow());
+
+        Product product = productRepository.findById(id).orElseThrow();
+
+        model.addAttribute("product", product);
+
         model.addAttribute("categories", categoryRepository.findAll());
         model.addAttribute("brands", brandRepository.findAll());
         model.addAttribute("sizes", sizeRepository.findAll());
@@ -209,14 +241,23 @@ public class ProductController {
         model.addAttribute("racketCategoryId", 3);
         model.addAttribute("racketLevels", RacketLevel.values());
         model.addAttribute("racketLengths", RacketLength.values());
+        model.addAttribute("handleLengths", RacketHandleLength.values());
+        model.addAttribute("racketStyles", RacketStyle.values());
+        model.addAttribute("racketWeights", RacketWeight.values());
+        model.addAttribute("equilibriumPoints", EquilibriumPoint.values());
+        model.addAttribute("chopstickHardness", ChopstickHardness.values());
+
         model.addAttribute("content", "admin/product/edit");
+
         return "admin/layout";
     }
 
     // UPDATE
     @PostMapping("/edit")
     public String update(@ModelAttribute Product product,
-                         @RequestParam("imageFile") MultipartFile file) {
+                         @RequestParam("imageFile") MultipartFile file,
+                         @RequestParam(value = "variantImages", required = false)
+                         List<MultipartFile[]> variantImages) {
 
         try {
 
@@ -279,40 +320,120 @@ public class ProductController {
                 existing.addImage(image);
             }
 
+
             // UPDATE VARIANTS
-            for (ProductVariant updated : product.getVariants()) {
+            if (product.getVariants() != null) {
 
-                ProductVariant dbVariant =
-                        existing.getVariants()
-                                .stream()
-                                .filter(v -> v.getId().equals(updated.getId()))
-                                .findFirst()
-                                .orElseThrow();
+                for (int i = 0; i < product.getVariants().size(); i++) {
 
-                dbVariant.setStock(updated.getStock());
-                dbVariant.setAdditionalPrice(updated.getAdditionalPrice());
+                    ProductVariant updated = product.getVariants().get(i);
 
-                // Nếu KHÔNG phải RACKET (id != 3) thì mới set size + color
-                if (!existing.getCategory().getId().equals(3)) {
+                    // =========================
+                    // VARIANT MỚI
+                    // =========================
+                    if (updated.getId() == null) {
 
-                    dbVariant.setSize(
-                            sizeRepository
-                                    .findById(updated.getSize().getId())
+                        updated.setProduct(existing);
+
+                        updated.setBrand(
+                                brandRepository
+                                        .findById(updated.getBrand().getId())
+                                        .orElseThrow()
+                        );
+
+                        if (updated.getSize() != null && updated.getSize().getId() != null) {
+                            updated.setSize(
+                                    sizeRepository
+                                            .findById(updated.getSize().getId())
+                                            .orElse(null)
+                            );
+                        }
+
+                        if (updated.getColor() != null && updated.getColor().getId() != null) {
+                            updated.setColor(
+                                    colorRepository
+                                            .findById(updated.getColor().getId())
+                                            .orElse(null)
+                            );
+                        }
+
+                        existing.getVariants().add(updated);
+
+                        continue;
+                    }
+
+                    // =========================
+                    // VARIANT CŨ
+                    // =========================
+                    ProductVariant dbVariant =
+                            existing.getVariants()
+                                    .stream()
+                                    .filter(v -> v.getId().equals(updated.getId()))
+                                    .findFirst()
+                                    .orElse(null);
+
+                    if (dbVariant == null) continue;
+
+                    dbVariant.setStock(updated.getStock());
+                    dbVariant.setAdditionalPrice(updated.getAdditionalPrice());
+
+                    dbVariant.setBrand(
+                            brandRepository
+                                    .findById(updated.getBrand().getId())
                                     .orElseThrow()
                     );
 
-                    dbVariant.setColor(
-                            colorRepository
-                                    .findById(updated.getColor().getId())
-                                    .orElseThrow()
-                    );
+                    if (updated.getSize() != null && updated.getSize().getId() != null) {
+                        dbVariant.setSize(
+                                sizeRepository
+                                        .findById(updated.getSize().getId())
+                                        .orElse(null)
+                        );
+                    }
+
+                    if (updated.getColor() != null && updated.getColor().getId() != null) {
+                        dbVariant.setColor(
+                                colorRepository
+                                        .findById(updated.getColor().getId())
+                                        .orElse(null)
+                        );
+                    }
+
+                    // =========================
+                    // UPLOAD VARIANT IMAGE
+                    // =========================
+                    if (variantImages != null && variantImages.size() > i) {
+
+                        MultipartFile[] images = variantImages.get(i);
+
+                        String uploadDir = "uploads/product/";
+                        Path uploadPath = Paths.get(uploadDir);
+
+                        if (!Files.exists(uploadPath)) {
+                            Files.createDirectories(uploadPath);
+                        }
+
+                        for (MultipartFile img : images) {
+
+                            if (!img.isEmpty()) {
+
+                                String variantFileName =
+                                        System.currentTimeMillis() + "_" + img.getOriginalFilename();
+
+                                Files.copy(
+                                        img.getInputStream(),
+                                        uploadPath.resolve(variantFileName),
+                                        StandardCopyOption.REPLACE_EXISTING
+                                );
+
+                                ProductVariantImage variantImage = new ProductVariantImage();
+                                variantImage.setImage(variantFileName);
+
+                                dbVariant.addImage(variantImage);
+                            }
+                        }
+                    }
                 }
-
-                dbVariant.setBrand(
-                        brandRepository
-                                .findById(updated.getBrand().getId())
-                                .orElseThrow()
-                );
             }
 
             // Lưu sản phẩm
@@ -374,5 +495,29 @@ public class ProductController {
         model.addAttribute("content", "admin/product/variant-list");
 
         return "admin/layout";
+    }
+
+    @GetMapping("/delete-variant-image/{id}")
+    public String deleteVariantImage(@PathVariable Integer id) {
+
+        ProductVariantImage image =
+                productVariantImageRepository.findById(id).orElseThrow();
+
+        Integer productId =
+                image.getVariant().getProduct().getId();
+
+        try {
+
+            Path uploadPath = Paths.get("uploads/product/");
+
+            Files.deleteIfExists(uploadPath.resolve(image.getImage()));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        productVariantImageRepository.delete(image);
+
+        return "redirect:/admin/products/edit/" + productId;
     }
 }

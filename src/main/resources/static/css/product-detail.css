@@ -30,24 +30,6 @@
     font-weight: bold;
 }
 
-.qty-box {
-    display: flex;
-    align-items: center;
-    margin: 20px 0;
-}
-
-.qty-box input {
-    width: 60px;
-    text-align: center;
-    font-size: 18px;
-}
-
-.qty-box button {
-    width: 40px;
-    height: 40px;
-    font-size: 20px;
-}
-
 .btn-group {
     display: flex;
     gap: 20px;
@@ -70,4 +52,110 @@
     border: none;
     font-size: 16px;
     font-weight: bold;
+}
+.promo-box{
+    border:1px dashed #ff6a00;
+    padding:15px;
+    margin-top:20px;
+    border-radius:10px;
+    background:#f7f7f7;
+}
+
+.promo-title{
+    display:inline-block;
+    padding:5px 12px;
+    border:1px solid #ff6a00;
+    border-radius:6px;
+    color:#ff6a00;
+    font-weight:bold;
+    margin-bottom:10px;
+    background:white;
+}
+
+.promo-list{
+    list-style:none;
+    padding-left:0;
+    margin:10px 0;
+}
+
+.promo-list li{
+    margin:6px 0;
+    font-size:14px;
+}
+
+.promo-extra{
+    margin-top:15px;
+    font-size:15px;
+}
+
+.highlight{
+    color:#ff6a00;
+    font-weight:600;
+}
+
+.green li{
+    color:#333;
+}
+.qty-box{
+    display:flex;
+    align-items:center;
+    margin:20px 0;
+}
+
+.qty-box button{
+    width:50px;
+    height:50px;
+    border:1px solid #ddd;
+    background:#fff;
+    font-size:26px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+.qty-box button:hover{
+    background:#f5f5f5;
+}
+
+.qty-box input{
+    width:80px;
+    height:50px;
+    text-align:center;
+    border:1px solid #ddd;
+    border-left:none;
+    border-right:none;
+    font-size:20px;
+    font-weight:bold;
+}
+.product-desc{
+    max-width:1100px;
+    margin:40px auto;
+    padding:25px 30px;
+    background:#fff;
+    border-radius:10px;
+    box-shadow:0 2px 10px rgba(0,0,0,0.08);
+}
+
+.product-desc h3{
+    font-size:22px;
+    margin-bottom:15px;
+    border-left:5px solid #ff6a00;
+    padding-left:10px;
+    color:#333;
+}
+
+.product-desc p{
+    font-size:16px;
+    line-height:1.7;
+    color:#444;
+    white-space:pre-line;
+}
+.review-error{
+    background:#ffe6e6;
+    border:1px solid #ff4d4f;
+    padding:12px;
+    border-radius:6px;
+    color:#b30000;
+    font-weight:500;
+    margin-bottom:15px;
 }

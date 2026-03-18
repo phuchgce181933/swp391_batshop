@@ -57,7 +57,7 @@
         <td th:text="${p.category.name}"></td>
         <td th:text="${p.brand.name}"></td>
         <td th:text="${#numbers.formatDecimal(p.price,0,'COMMA',0,'POINT')}"></td>
-        <td th:text="${p.status ? 'Active' : 'Inactive'}"></td>
+        <td th:text="${p.status == true ? 'Active' : 'Inactive'}"></td>
         <td>
             <a th:href="@{/admin/products/edit/{id}(id=${p.id})}">Edit</a>
         </td>

@@ -17,16 +17,13 @@
     <div class="product-images">
 
         <!-- MAIN IMAGE -->
-        <img class="main-img"
+        <img id="mainImage"
+             class="main-img"
              th:if="${product.images != null and !product.images.isEmpty()}"
              th:src="@{/uploads/product/{img}(img=${product.images[0].image})}">
 
-        <img class="main-img"
-             th:if="${product.images == null or product.images.isEmpty()}"
-             src="/img/no-image.png">
-
         <!-- THUMB LIST -->
-        <div class="thumb-list">
+        <div class="thumb-list" id="thumbList">
             <img th:each="img : ${product.images}"
                  th:src="@{/uploads/product/{img}(img=${img.image})}">
         </div>
@@ -70,9 +67,11 @@
                     <label>
 
                         <input type="radio"
+                               class="variant-radio"
                                name="productVariantId"
                                th:value="${v.id}"
-                               th:checked="${stat.index == 0}">
+                               th:checked="${stat.index == 0}"
+                               th:data-images="${#strings.arrayJoin(v.images.![image], ',')}">
 
                         <span>
 
@@ -100,6 +99,32 @@
 
                 </div>
                 <!-- QUANTITY -->
+                <div class="promo-box">
+
+                    <div class="promo-title">
+                        🎁 ƯU ĐÃI
+                    </div>
+
+                    <ul class="promo-list">
+                        <li>✔ Tặng 1 đôi vớ cầu lông VNB (vớ <span class="highlight">VNB dài nhiều màu</span> hoặc <span class="highlight">vớ VNB ngắn</span>)</li>
+                        <li>✔ Sản phẩm cam kết chính hãng</li>
+                        <li>✔ Thanh toán sau khi kiểm tra và nhận hàng</li>
+                        <li>✔ Bảo hành chính hãng theo nhà sản xuất</li>
+                    </ul>
+
+                    <div class="promo-extra">
+                        🎁 <b>Ưu đãi thêm khi mua sản phẩm tại <span class="highlight">VNB Premium</span></b>
+                    </div>
+
+                    <ul class="promo-list green">
+                        <li>✅ Sơn logo mặt vợt miễn phí</li>
+                        <li>✅ Bảo hành lưới đan trong 72 giờ</li>
+                        <li>✅ Thay gen vợt miễn phí trọn đời</li>
+                        <li>✅ Tích lũy điểm thành viên Premium</li>
+                        <li>✅ Voucher giảm giá cho lần mua hàng tiếp theo</li>
+                    </ul>
+
+                </div>
                 <div class="qty-box">
                     <button type="button" onclick="minusQty()">-</button>
 
@@ -149,7 +174,7 @@
     Chưa có đánh giá nào cho sản phẩm này.
 
 </div>
-<!-- ================= REVIEW SECTION ================= -->
+
 
 <div class="review-section">
 
@@ -189,8 +214,8 @@
 
     </div>
 
-    <div th:if="${param.error == 'notPurchased'}"
-         style="color:red;margin-bottom:10px;font-weight:bold;">
+    <div th:if="${param.error != null and param.error[0] == 'notPurchased'}"
+         class="review-error">
         Bạn cần mua sản phẩm và hoàn thành đơn hàng trước khi đánh giá.
     </div>
 
@@ -386,6 +411,46 @@
     //         q.value = parseInt(q.value) - 1;
     //     }
     // }
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const radios = document.querySelectorAll(".variant-radio");
+        const mainImage = document.getElementById("mainImage");
+        const thumbList = document.getElementById("thumbList");
+
+        radios.forEach(radio => {
+
+            radio.addEventListener("change", function () {
+
+                const images = this.getAttribute("data-images");
+
+                if (!images) return;
+
+                const imgArray = images.split(",");
+
+                // đổi main image
+                mainImage.src = "/uploads/product/" + imgArray[0];
+
+                // clear thumb
+                thumbList.innerHTML = "";
+
+                imgArray.forEach(img => {
+
+                    const thumb = document.createElement("img");
+                    thumb.src = "/uploads/product/" + img;
+
+                    thumb.onclick = function () {
+                        mainImage.src = this.src;
+                    };
+
+                    thumbList.appendChild(thumb);
+
+                });
+
+            });
+
+        });
+
+    });
 </script>
 
 </body>

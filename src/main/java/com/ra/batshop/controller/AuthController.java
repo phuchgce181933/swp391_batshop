@@ -5,6 +5,7 @@ import com.ra.batshop.model.User;
 import com.ra.batshop.repository.UserRepository;
 import com.ra.batshop.service.EmailService;
 import jakarta.servlet.http.HttpSession;
+import jakarta.transaction.Status;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -83,16 +84,36 @@ public class AuthController {
             return "auth/login";
         }
         session.setAttribute("user", user);
-        if (user.getRole() == Role.ADMIN) {
+        if (user.getRole() == Role.ADMIN && user.getStatus() == true) {
             return "redirect:/admin/dashboard";
-        } else {
-            return "redirect:/home";
+        } else if (user.getStatus() == false) {
+            model.addAttribute("error", "User is blocked");
+            return "auth/login";
         }
+        return "redirect:/home";
     }
 
-    // ========================================================
+
     // QUẢN LÝ HỒ SƠ (PROFILE) - PHẦN ĐÃ SỬA THEO YÊU CẦU
     // ========================================================
+
+    // =========================
+    // CHANGE PASSWORD
+    // =========================
+    @GetMapping("/change-password")
+    public String showChangePassword() {
+        return "profile/change-password";
+    }
+
+    @PostMapping("/change-password")
+    public String changePassword(
+            @RequestParam String oldPass,
+            @RequestParam String newPass,
+            @RequestParam String confirmPass,
+            HttpSession session,
+            Model model
+    ) {
+
 
     // 1. Trang xem thông tin tổng quan (Thêm mới để làm trang đệm)
     @GetMapping("/profile")
@@ -251,6 +272,7 @@ public class AuthController {
             model.addAttribute("email", email);
             return "auth/reset-password";
         }
+
         if (user.getResetCodeExpiredAt() == null ||
                 user.getResetCodeExpiredAt().isBefore(LocalDateTime.now())) {
             model.addAttribute("error", "Mã đã hết hạn, vui lòng yêu cầu lại");

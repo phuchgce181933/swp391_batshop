@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -38,5 +40,13 @@ public class ProductVariant {
 
     @OneToOne(mappedBy = "variant", cascade = CascadeType.ALL)
     private RacketDetail racketDetail;
+
+    @OneToMany(mappedBy = "variant", cascade = CascadeType.ALL)
+    private List<ProductVariantImage> images = new ArrayList<>();
+
+    public void addImage(ProductVariantImage image){
+        images.add(image);
+        image.setVariant(this);
+    }
 }
 

@@ -60,11 +60,7 @@
 <main class="main-content">
 
 
-    <section class="section-container">
-        <h2 class="section-title">Sản phẩm mới</h2>
-        <div class="product-wrapper">
-            <div th:replace="~{user/product/home-product :: home-product}"></div>        </div>
-    </section>
+
 
 
     <div th:replace="~{user/flash-sale/list :: flash-sale-list}"></div>
@@ -85,7 +81,11 @@
         <h2 class="section-title">Sản phẩm cầu lông</h2>
         <div th:replace="~{user/category/list :: category}"></div>
     </section>
-
+    <section class="section-container">
+        <h2 class="section-title">Sản phẩm mới</h2>
+        <div class="product-wrapper">
+            <div th:replace="~{user/product/home-product :: home-product}"></div>        </div>
+    </section>
 
     <section class="section-container">
         <h2 class="section-title">Tin tức mới</h2>

@@ -105,3 +105,47 @@
     margin-top: 6px;
     font-size: 16px;
 }
+.category-tabs{
+    display:flex;
+    width:100%;
+    background:#f7f7f7;
+    border-radius:8px;
+    overflow:hidden;
+    margin-bottom:25px;
+    border:1px solid #eee;
+}
+
+/* tab */
+.category-tabs a{
+    flex:1;
+    text-align:center;
+
+    padding:12px 8px;
+
+    font-size:15px;
+    font-weight:600;
+
+    text-decoration:none;
+    color:#555;
+
+    border-right:1px solid #eee;
+
+    transition:all 0.2s ease;
+}
+
+/* bỏ border cuối */
+.category-tabs a:last-child{
+    border-right:none;
+}
+
+/* hover */
+.category-tabs a:hover{
+    background:#fff;
+    color:#ff6600;
+}
+
+/* tab active */
+.category-tabs a.active{
+    background:#ff6600;
+    color:white;
+}
