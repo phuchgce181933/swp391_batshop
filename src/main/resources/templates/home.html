@@ -7,6 +7,7 @@
     <link rel="stylesheet" th:href="@{/css/user/banner.css}">
     <link rel="stylesheet" th:href="@{/css/user/home-flash-sale.css}">
     <link rel="stylesheet" th:href="@{/css/user/home-bestseller.css}">
+    <link rel="stylesheet" th:href="@{/css/user/home-blog.css}">
     <link rel="stylesheet" th:href="@{/css/user/homeproduct.css}">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -24,71 +25,41 @@
 
 <div th:replace="~{user/banner/list :: banner-list}"></div>
 
-<div class="policy-bar-container">
-    <div class="policy-bar">
-        <div class="policy-item">
-            <i class="fa-solid fa-truck-fast policy-icon"></i>
-            <div class="policy-text">
-                <strong>Vận chuyển TOÀN QUỐC</strong>
-                <span>Thanh toán khi nhận hàng</span>
-            </div>
-        </div>
-        <div class="policy-item">
-            <i class="fa-solid fa-medal policy-icon"></i>
-            <div class="policy-text">
-                <strong>Bảo đảm chất lượng</strong>
-                <span>Sản phẩm bảo đảm chất lượng</span>
-            </div>
-        </div>
-        <div class="policy-item">
-            <i class="fa-solid fa-credit-card policy-icon"></i>
-            <div class="policy-text">
-                <strong>Tiến hành THANH TOÁN</strong>
-                <span>Với nhiều PHƯƠNG THỨC</span>
-            </div>
-        </div>
-        <div class="policy-item">
-            <i class="fa-solid fa-box-open policy-icon"></i>
-            <div class="policy-text">
-                <strong>Đổi sản phẩm mới</strong>
-                <span>Nếu sản phẩm lỗi</span>
-            </div>
-        </div>
-    </div>
-</div>
-
 <main class="main-content">
 
-
-
-
+    <section class="section-container" id="new-products">
+        <a th:href="@{/category?id=&sort=newest&page=0}" class="title-link">
+            <h2 class="section-title">Sản phẩm mới</h2>
+        </a>
+        <div class="product-wrapper">
+            <div th:replace="~{user/product/home-product :: home-product}"></div>
+        </div>
+    </section>
 
     <div th:replace="~{user/flash-sale/list :: flash-sale-list}"></div>
 
-
     <section class="section-container" th:if="${not #lists.isEmpty(topSellingProducts)}">
-        <h2 class="section-title top-selling-title">
-            <i class="fa-solid fa-fire" style="color: #ff4757;"></i> SẢN PHẨM BÁN CHẠY
-        </h2>
-
+        <a th:href="@{/category?id=&sort=best_selling&page=0}" class="title-link">
+            <h2 class="section-title top-selling-title">
+                <i class="fa-solid fa-fire" style="color: #ff4757;"></i> SẢN PHẨM BÁN CHẠY
+            </h2>
+        </a>
         <div class="product-wrapper top-selling-wrapper">
             <div th:replace="~{user/productBestseller-list :: productBestseller-list}"></div>
         </div>
     </section>
 
-
     <section class="section-container">
-        <h2 class="section-title">Sản phẩm cầu lông</h2>
+        <a th:href="@{/category?id=1}" class="title-link">
+            <h2 class="section-title">Sản phẩm cầu lông</h2>
+        </a>
         <div th:replace="~{user/category/list :: category}"></div>
     </section>
-    <section class="section-container">
-        <h2 class="section-title">Sản phẩm mới</h2>
-        <div class="product-wrapper">
-            <div th:replace="~{user/product/home-product :: home-product}"></div>        </div>
-    </section>
 
     <section class="section-container">
-        <h2 class="section-title">Tin tức mới</h2>
+        <a th:href="@{/blog}" class="title-link">
+            <h2 class="section-title">Tin tức mới</h2>
+        </a>
         <div th:replace="~{user/blog/list :: blog}"></div>
     </section>
 
@@ -108,6 +79,17 @@
             }, 5000);
         }
     });
+</script>
+<script>
+    function scrollProductGrid(direction) {
+        const grid = document.getElementById('productGrid');
+        // Kích thước cuộn = Chiều rộng thẻ (230) + Gap (15)
+        const scrollAmount = 245;
+        grid.scrollBy({
+            left: direction * scrollAmount,
+            behavior: 'smooth'
+        });
+    }
 </script>
 
 </body>

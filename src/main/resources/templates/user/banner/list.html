@@ -20,23 +20,29 @@
 
             let currentIndex = 1;
             let slideInterval;
+            let isTransitioning = false; // Cờ chống spam click
             const intervalTime = 5000;
 
+            // Clone slides
             const firstClone = slides[0].cloneNode(true);
             const lastClone = slides[slides.length - 1].cloneNode(true);
-
             firstClone.id = 'first-clone';
             lastClone.id = 'last-clone';
-
             track.append(firstClone);
             track.prepend(lastClone);
 
-            const slideWidth = slides[0].clientWidth;
-            track.style.transform = `translateX(${-slideWidth * currentIndex}px)`;
+            // Hàm lấy width động để chống lỗi khi resize
+            const getSlideWidth = () => document.querySelector('.banner-slide').clientWidth;
+
+            // Set vị trí ban đầu
+            track.style.transform = `translateX(${-getSlideWidth() * currentIndex}px)`;
 
             const moveToSlide = (index) => {
+                if (isTransitioning) return; // Nếu đang trượt thì chặn click
+                isTransitioning = true;
+
                 track.style.transition = 'transform 0.5s ease-in-out';
-                track.style.transform = `translateX(${-slideWidth * index}px)`;
+                track.style.transform = `translateX(${-getSlideWidth() * index}px)`;
                 currentIndex = index;
             };
 
@@ -54,16 +60,19 @@
             prevBtn.addEventListener('click', () => { prevSlide(); resetTimer(); });
 
             track.addEventListener('transitionend', () => {
+                isTransitioning = false; // Reset cờ khi trượt xong
+
                 const allSlides = document.querySelectorAll('.banner-slide');
+
                 if (allSlides[currentIndex].id === 'first-clone') {
                     track.style.transition = 'none';
                     currentIndex = 1;
-                    track.style.transform = `translateX(${-slideWidth * currentIndex}px)`;
+                    track.style.transform = `translateX(${-getSlideWidth() * currentIndex}px)`;
                 }
                 if (allSlides[currentIndex].id === 'last-clone') {
                     track.style.transition = 'none';
                     currentIndex = slides.length;
-                    track.style.transform = `translateX(${-slideWidth * currentIndex}px)`;
+                    track.style.transform = `translateX(${-getSlideWidth() * currentIndex}px)`;
                 }
             });
 
@@ -71,12 +80,44 @@
             const resetTimer = () => { clearInterval(slideInterval); startSlide(); };
 
             window.addEventListener('resize', () => {
-                const newSlideWidth = document.querySelector('.banner-slide').clientWidth;
                 track.style.transition = 'none';
-                track.style.transform = `translateX(${-newSlideWidth * currentIndex}px)`;
+                track.style.transform = `translateX(${-getSlideWidth() * currentIndex}px)`;
             });
 
             startSlide();
         }
     </script>
+
+    <div class="policy-bar-container">
+        <div class="policy-bar">
+            <div class="policy-item">
+                <i class="fa-solid fa-truck-fast policy-icon"></i>
+                <div class="policy-text">
+                    <strong>Vận chuyển TOÀN QUỐC</strong>
+                    <span>Thanh toán khi nhận hàng</span>
+                </div>
+            </div>
+            <div class="policy-item">
+                <i class="fa-solid fa-medal policy-icon"></i>
+                <div class="policy-text">
+                    <strong>Bảo đảm chất lượng</strong>
+                    <span>Sản phẩm bảo đảm chất lượng</span>
+                </div>
+            </div>
+            <div class="policy-item">
+                <i class="fa-solid fa-credit-card policy-icon"></i>
+                <div class="policy-text">
+                    <strong>Tiến hành THANH TOÁN</strong>
+                    <span>Với nhiều PHƯƠNG THỨC</span>
+                </div>
+            </div>
+            <div class="policy-item">
+                <i class="fa-solid fa-box-open policy-icon"></i>
+                <div class="policy-text">
+                    <strong>Đổi sản phẩm mới</strong>
+                    <span>Nếu sản phẩm lỗi</span>
+                </div>
+            </div>
+        </div>
+    </div>
 </th:block>

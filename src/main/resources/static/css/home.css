@@ -135,98 +135,6 @@
     transform: skewX(20deg); /* Kéo chữ thẳng lại */
 }
 
-/* ===== BLOGS (Tin tức mới) ===== */
-.blog-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-}
-
-.blog-card {
-    background: #fff;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-    transition: transform 0.3s, box-shadow 0.3s;
-    display: flex;
-    flex-direction: column;
-    border: 1px solid #eaeaea;
-}
-
-.blog-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
-}
-
-.blog-img {
-    width: 100%;
-    height: 180px;
-    object-fit: cover;
-}
-
-.blog-content-box {
-    padding: 20px;
-    text-align: center;
-    flex-grow: 1;
-    position: relative;
-}
-
-.blog-title {
-    font-size: 16px;
-    color: #333;
-    margin-bottom: 15px;
-    line-height: 1.4;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    min-height: 44px;
-}
-
-.blog-title a:hover {
-    color: #e95211;
-}
-
-.blog-date-wrapper {
-    margin: 10px 0;
-    position: relative;
-}
-
-/* Đường kẻ ngang đi qua ngày tháng */
-.blog-date-wrapper::before {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 0;
-    right: 0;
-    border-top: 2px solid #e95211; /* Cam chuẩn VNB */
-    z-index: 1;
-}
-
-.blog-date {
-    display: inline-block;
-    background-color: #e95211;
-    color: #fff;
-    padding: 4px 15px;
-    border-radius: 20px;
-    font-size: 13px;
-    position: relative;
-    z-index: 2;
-}
-
-.blog-excerpt {
-    font-size: 14px;
-    color: #666;
-    line-height: 1.5;
-    margin-top: 15px;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
 /* ===== RESPONSIVE ===== */
 @media (max-width: 992px) {
     .category-grid, .blog-grid { grid-template-columns: repeat(2, 1fr); }
@@ -303,4 +211,17 @@
 
 .btn-detail:hover {
     background-color: #e0e0e0;
+}
+
+/* ===== TIÊU ĐỀ LÀ LINK ===== */
+.title-link {
+    text-decoration: none;
+    display: block;
+    cursor: pointer;
+}
+
+.title-link:hover .section-title {
+    color: #d34a0f; /* Tối màu cam lại khi hover */
+    transform: scale(1.02);
+    transition: all 0.3s ease;
 }

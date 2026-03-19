@@ -65,7 +65,7 @@
         </div>
 
         <div class="detail-card">
-            <h3 class="detail-card-title">Xử lý & Phản hồi</h3>
+            <h3 class="detail-card-title">Ghi chú nội bộ</h3>
 
             <div th:if="${param.error == 'emptyEmail'}" class="error-text">
                 <i class="fas fa-exclamation-triangle"></i> Vui lòng nhập nội dung email trước khi gửi!
@@ -74,21 +74,21 @@
             <form th:action="@{/admin/contacts/process/{id}(id=${contact.id})}" method="post">
 
                 <div class="mb-24">
-                    <label class="form-label">Ghi chú nội bộ</label>
                     <p class="form-desc">Chỉ Admin thấy. Ghi chú lại kết quả cuộc gọi hoặc thông tin xử lý.</p>
-                    <textarea name="adminNote" rows="4" class="custom-textarea" placeholder="Ví dụ: Đã hẹn khách hàng mang vợt qua shop..." th:text="${contact.adminNote}"></textarea>
+                    <textarea name="adminNote" rows="4" class="custom-textarea" placeholder="Ghi chú ở đây..." th:text="${contact.adminNote}"></textarea>
                 </div>
-
+                <div class="btn-group">
+                    <button type="submit" name="action" value="saveNote" class="btn-submit btn-secondary">
+                        <i class="fas fa-save"></i> Lưu Ghi Chú
+                    </button>
+                </div>
                 <div>
-                    <label class="form-label">Soạn Email trả lời khách (Tự động gửi)</label>
+                    <h3 class="detail-card-title">Soạn Email trả lời khách (Tự động gửi)</h3>
                     <p class="form-desc">Email sẽ được gửi trực tiếp đến hộp thư của khách.</p>
                     <textarea name="emailReply" rows="7" class="custom-textarea" placeholder="Chào bạn, BatShop đã nhận được yêu cầu..."></textarea>
                 </div>
 
                 <div class="btn-group">
-                    <button type="submit" name="action" value="saveNote" class="btn-submit btn-secondary">
-                        <i class="fas fa-save"></i> Lưu Ghi Chú
-                    </button>
                     <button type="submit" name="action" value="reject" class="btn-submit btn-danger" onclick="return confirm('Bạn có chắc chắn muốn [Bỏ qua] liên hệ này?');">
                         <i class="fas fa-ban"></i> Bỏ qua
                     </button>

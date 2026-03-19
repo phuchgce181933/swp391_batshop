@@ -1,100 +1,44 @@
-<link rel="stylesheet" th:href="@{/css/user/product-list.css}">
-<body>
 <div th:fragment="home-product">
 
-    <section class="section-container">
-        <!-- CATEGORY FILTER -->
-        <div class="category-tabs">
+    <div class="category-tabs">
+        <a th:href="@{/home} + '#new-products'"
+           th:classappend="${selectedCategory == null} ? 'active'">
+            Tất cả
+        </a>
+        <a th:each="c : ${categories}"
+           th:href="@{/home(categoryId=${c.id})} + '#new-products'"
+           th:text="${c.name}"
+           th:classappend="${selectedCategory == c.id} ? 'active'">
+        </a>
+    </div>
 
-            <a th:href="@{/home}"
-               th:classappend="${selectedCategory == null} ? 'active'">
-                Tất cả
-            </a>
+    <div class="product-carousel-wrapper">
+        <button class="scroll-btn prev-btn" onclick="scrollProductGrid(-1)">&#10094;</button>
 
-            <a th:each="c : ${categories}"
-               th:href="@{/home(categoryId=${c.id})}"
-               th:text="${c.name}"
-               th:classappend="${selectedCategory == c.id} ? 'active'">
-            </a>
+        <div class="product-grid" id="productGrid">
+            <div th:each="p : ${products}" class="product-card">
 
-        </div>
+                <a th:href="@{/product/detail/{id}(id=${p.id})}" class="product-image">
+                    <img th:if="${p.images != null and !p.images.isEmpty()}"
+                         th:src="@{'/uploads/product/' + ${p.images[0].image}}" alt="Product Image">
+                    <img th:if="${p.images == null or p.images.isEmpty()}"
+                         src="/img/no-image.png" alt="No Image">
+                </a>
 
-        <div class="shop-layout">
-
-            <!-- PRODUCT CONTENT -->
-            <div class="product-content">
-
-                <div class="product-grid">
-                    <div th:each="p : ${products}" class="product-card">
-
-                        <a th:href="@{/product/detail/{id}(id=${p.id})}">
-                            <img th:if="${p.images != null and !p.images.isEmpty()}"
-                                 th:src="@{/uploads/product/{img}(img=${p.images[0].image})}">
-                            <img th:if="${p.images == null or p.images.isEmpty()}"
-                                 src="/img/no-image.png">
-                        </a>
-
+                <div class="product-info">
+                    <a th:href="@{/product/detail/{id}(id=${p.id})}" class="product-title">
                         <h3 th:text="${p.name}"></h3>
-                        <p th:text="${p.brand != null ? p.brand.name : 'No brand'}"></p>
-
-                        <div class="price"
-                             th:text="${#numbers.formatDecimal(p.price,0,'COMMA',0,'POINT')} + ' ₫'">
-                        </div>
-
+                    </a>
+                    <p class="product-brand" th:text="${p.brand != null ? p.brand.name : 'No brand'}"></p>
+                    <div class="price"
+                         th:text="${#numbers.formatDecimal(p.price,0,'COMMA',0,'POINT')} + ' ₫'">
                     </div>
                 </div>
 
             </div>
-
         </div>
-        <div class="pagination" th:if="${totalPages > 1}">
 
-            <!-- PREV -->
-            <a th:if="${currentPage > 0}"
-               th:with="prevPage=${currentPage - 1}"
-               th:href="@{/products(
-               page=${prevPage},
-               categoryId=${selectedCategory},
-               brandId=${selectedBrand},
-               keyword=${keyword},
-               sort=${selectedSort},
-               level=${selectedLevel},
-               weight=${selectedWeight},
-               style=${selectedStyle})}">
-                ←
-            </a>
+        <button class="scroll-btn next-btn" onclick="scrollProductGrid(1)">&#10095;</button>
+    </div>
 
-            <!-- PAGE NUMBERS -->
-            <span th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
-        <a th:href="@{/products(
-           page=${i},
-           categoryId=${selectedCategory},
-           brandId=${selectedBrand},
-           keyword=${keyword},
-           sort=${selectedSort},
-           level=${selectedLevel},
-           weight=${selectedWeight},
-           style=${selectedStyle})}"
-           th:text="${i+1}"
-           th:classappend="${i == currentPage} ? ' active' : ''">
-        </a>
-    </span>
-
-            <!-- NEXT -->
-            <a th:if="${currentPage < totalPages - 1}"
-               th:with="nextPage=${currentPage + 1}"
-               th:href="@{/products(
-               page=${nextPage},
-               categoryId=${selectedCategory},
-               brandId=${selectedBrand},
-               keyword=${keyword},
-               sort=${selectedSort},
-               level=${selectedLevel},
-               weight=${selectedWeight},
-               style=${selectedStyle})}">
-                →
-            </a>
-        </div>
-    </section>
 </div>
-</body>

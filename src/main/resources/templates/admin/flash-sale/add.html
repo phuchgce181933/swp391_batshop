@@ -29,6 +29,7 @@
           <div class="col-md-6 fs-form-group mb-3">
             <label class="fs-form-label">Giờ bắt đầu</label>
             <input type="time" class="fs-form-control" name="startTime" id="startTime" required>
+            <small class="text-muted mt-1 d-block" style="font-size: 0.85rem;">* Giờ bắt đầu nên là giờ của tương lai</small>
           </div>
 
           <div class="col-md-6 fs-form-group mb-4">
@@ -44,7 +45,7 @@
 
         <div class="d-flex gap-2">
           <button type="submit" id="btnSubmit" class="fs-btn fs-btn-primary">
-            <i class="fas fa-save me-1"></i> Thêm đợt Flash Sale
+            <i class="fas fa-save me-1"></i>Thêm đợt Flash Sale
           </button>
           <a th:href="@{/admin/flash-sales}" class="fs-btn fs-btn-secondary">Hủy</a>
         </div>

@@ -41,7 +41,7 @@ public class ContactController {
     @GetMapping("/contact")
     public String contactPage(Model model) {
         model.addAttribute("contactSupport", new ContactSupport());
-        return "user/contact";
+        return "user/contact/contact";
     }
 
     @PostMapping("/contact")
@@ -50,7 +50,7 @@ public class ContactController {
                                 @RequestParam(value = "file", required = false) MultipartFile file,
                                 Model model) {
         if (bindingResult.hasErrors()) {
-            return "user/contact";
+            return "user/contact/contact";
         }
 
         // Mặc định gán trạng thái Chưa đọc khi khách hàng vừa gửi form
