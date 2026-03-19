@@ -211,23 +211,26 @@ body {
 .product-card {
     position: relative;
     background: #fff;
-    padding: 15px;
-    border: 1px solid #f0f0f0;
-    border-radius: 8px;
-    text-align: center;
-    transition: transform 0.2s, box-shadow 0.2s;
+    padding: 12px; /* Giảm padding cho thanh thoát giống trang chủ */
+    border-radius: 8px; /* Bo góc mềm mại */
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08); /* Đổ bóng nhẹ thay vì dùng border */
+    text-align: left; /* Đưa chữ về bên trái cho dễ đọc hơn */
+    transition: 0.3s;
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Giúp các thẻ cao bằng nhau trên cùng 1 hàng */
 }
 
 .product-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transform: translateY(-4px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.12); /* Đổ bóng rõ hơn khi hover */
 }
 
 .badge-contact {
     position: absolute;
     top: 15px;
     left: 0;
-    background-color: #ed5527; /* Đổi màu đỏ thành cam đỏ chủ đạo */
+    background-color: #ed5527;
     color: white;
     padding: 4px 12px;
     font-size: 12px;
@@ -244,36 +247,42 @@ body {
     display: block;
 }
 
+/* ===== IMAGE WRAPPER ===== */
 .product-image {
     width: 100%;
-    height: 220px;
+    aspect-ratio: 1 / 1; /* Ép khung ảnh luôn vuông */
+    height: auto;
     overflow: hidden;
-    margin-bottom: 15px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #f8f8f8;
+    margin-bottom: 10px;
+    background-color: #f5f5f5;
     border-radius: 6px;
 }
 
+/* ===== IMAGE ===== */
 .product-image img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain; /* Giữ nguyên tỉ lệ ảnh gốc, không bị cắt xén */
     transition: transform 0.3s ease;
+    display: block;
 }
 
 .product-card:hover .product-image img {
-    transform: scale(1.03); /* Zoom nhẹ 1 chút thôi */
+    transform: scale(1.03); /* Zoom nhẹ khi hover */
 }
 
+/* ===== PRODUCT INFO ===== */
 .product-name {
-    font-size: 14px;
+    font-size: 15px; /* Tăng size chữ giống trang chủ */
+    line-height: 1.4;
+    height: 42px; /* Cố định chiều cao 2 dòng */
     font-weight: normal;
     color: #333;
-    margin-bottom: 5px;
-    height: 40px;
+    margin: 0 0 6px 0;
     overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Cắt chuỗi nếu dài hơn 2 dòng */
+    -webkit-box-orient: vertical;
     transition: color 0.3s;
 }
 
@@ -283,16 +292,20 @@ body {
 
 .product-brand {
     font-size: 13px;
-    color: #777;
-    margin-bottom: 8px;
+    color: #888;
+    margin: 0 0 8px 0;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    white-space: nowrap; /* Tránh rớt dòng nếu tên brand dài */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Hiện dấu ... nếu quá dài */
 }
 
 .product-price {
-    font-size: 16px;
-    color: #ed5527; /* Đổi màu giá tiền thành cam đỏ */
+    font-size: 17px;
+    color: #ed5527;
     font-weight: bold;
+    margin-top: auto; /* Tự động đẩy giá tiền xuống sát mép dưới cùng của thẻ */
 }
 
 /* Giao diện khi không tìm thấy sản phẩm */
@@ -305,7 +318,6 @@ body {
     border: 1px dashed #ddd;
     border-radius: 8px;
 }
-
 /* =========================================
    6. PHÂN TRANG (PAGINATION)
    ========================================= */

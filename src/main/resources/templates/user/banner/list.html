@@ -10,6 +10,38 @@
         <button class="banner-btn next-btn" id="nextBtn" th:if="${banners.size() > 1}">&#10095;</button>
     </div>
 
+    <div class="policy-bar-container">
+        <div class="policy-bar">
+            <div class="policy-item">
+                <i class="fa-solid fa-truck-fast policy-icon"></i>
+                <div class="policy-text">
+                    <strong>Vận chuyển TOÀN QUỐC</strong>
+                    <span>Thanh toán khi nhận hàng</span>
+                </div>
+            </div>
+            <div class="policy-item">
+                <i class="fa-solid fa-medal policy-icon"></i>
+                <div class="policy-text">
+                    <strong>Bảo đảm chất lượng</strong>
+                    <span>Sản phẩm bảo đảm chất lượng</span>
+                </div>
+            </div>
+            <div class="policy-item">
+                <i class="fa-solid fa-credit-card policy-icon"></i>
+                <div class="policy-text">
+                    <strong>Tiến hành THANH TOÁN</strong>
+                    <span>Với nhiều PHƯƠNG THỨC</span>
+                </div>
+            </div>
+            <div class="policy-item">
+                <i class="fa-solid fa-box-open policy-icon"></i>
+                <div class="policy-text">
+                    <strong>Đổi sản phẩm mới</strong>
+                    <span>Nếu sản phẩm lỗi</span>
+                </div>
+            </div>
+        </div>
+    </div>
     <script th:inline="javascript">
         const totalBanners = /*[[${banners.size()}]]*/ 0;
         if (totalBanners > 1) {
@@ -34,7 +66,8 @@
             // Hàm lấy width động để chống lỗi khi resize
             const getSlideWidth = () => document.querySelector('.banner-slide').clientWidth;
 
-            // Set vị trí ban đầu
+            // TẮT TRANSITION ĐỂ FIX LỖI TRƯỢT NGAY LÚC LOAD TRANG
+            track.style.transition = 'none';
             track.style.transform = `translateX(${-getSlideWidth() * currentIndex}px)`;
 
             const moveToSlide = (index) => {
@@ -87,37 +120,4 @@
             startSlide();
         }
     </script>
-
-    <div class="policy-bar-container">
-        <div class="policy-bar">
-            <div class="policy-item">
-                <i class="fa-solid fa-truck-fast policy-icon"></i>
-                <div class="policy-text">
-                    <strong>Vận chuyển TOÀN QUỐC</strong>
-                    <span>Thanh toán khi nhận hàng</span>
-                </div>
-            </div>
-            <div class="policy-item">
-                <i class="fa-solid fa-medal policy-icon"></i>
-                <div class="policy-text">
-                    <strong>Bảo đảm chất lượng</strong>
-                    <span>Sản phẩm bảo đảm chất lượng</span>
-                </div>
-            </div>
-            <div class="policy-item">
-                <i class="fa-solid fa-credit-card policy-icon"></i>
-                <div class="policy-text">
-                    <strong>Tiến hành THANH TOÁN</strong>
-                    <span>Với nhiều PHƯƠNG THỨC</span>
-                </div>
-            </div>
-            <div class="policy-item">
-                <i class="fa-solid fa-box-open policy-icon"></i>
-                <div class="policy-text">
-                    <strong>Đổi sản phẩm mới</strong>
-                    <span>Nếu sản phẩm lỗi</span>
-                </div>
-            </div>
-        </div>
-    </div>
 </th:block>
