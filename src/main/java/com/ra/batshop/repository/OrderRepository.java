@@ -48,4 +48,12 @@ ORDER BY MONTH(o.createdAt)
 """)
     List<Object[]> getMonthlyRevenue();
 
+
+    @Query("""
+SELECT COUNT(o)
+FROM Order o
+WHERE o.voucher.id = :voucherId
+AND o.status = 'COMPLETED'
+""")
+    int countVoucherUsed(Integer voucherId);
 }

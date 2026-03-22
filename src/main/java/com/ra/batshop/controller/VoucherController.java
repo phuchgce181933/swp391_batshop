@@ -1,6 +1,7 @@
 package com.ra.batshop.controller;
 
 import com.ra.batshop.model.Voucher;
+import com.ra.batshop.repository.OrderRepository;
 import com.ra.batshop.repository.VoucherRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
@@ -16,9 +17,13 @@ import java.util.Optional;
 public class VoucherController {
 
     private final VoucherRepository voucherRepository;
+    private final OrderRepository orderRepository;
 
-    public VoucherController(VoucherRepository voucherRepository) {
+
+    public VoucherController(VoucherRepository voucherRepository,
+                                OrderRepository orderRepository) {
         this.voucherRepository = voucherRepository;
+        this.orderRepository = orderRepository;
     }
 
     // LIST
@@ -28,9 +33,11 @@ public class VoucherController {
             @RequestParam(required = false) Boolean status,
             @RequestParam(required = false) Integer discount,
             Model model, HttpSession session) {
+
         if (session.getAttribute("user") == null) {
             return "redirect:/login";
         }
+
         List<Voucher> vouchers;
 
         // FILTER CODE
@@ -43,7 +50,7 @@ public class VoucherController {
         // FILTER STATUS
         if (status != null) {
             vouchers = vouchers.stream()
-                    .filter(v -> v.getActive().equals(status))
+                    .filter(v -> Boolean.TRUE.equals(v.getActive()) == status)
                     .toList();
         }
 
@@ -54,8 +61,16 @@ public class VoucherController {
                     .toList();
         }
 
+        // ✅ FIX: SET totalUsed chuẩn từ DB
+        vouchers.forEach(v -> {
+            int used = orderRepository.countVoucherUsed(v.getId());
+            v.setTotalUsed(used);
+        });
+
         model.addAttribute("vouchers", vouchers);
         model.addAttribute("keyword", keyword);
+        model.addAttribute("status", status);
+        model.addAttribute("discount", discount);
         model.addAttribute("content", "admin/voucher/list");
 
         return "admin/layout";
@@ -93,8 +108,8 @@ public class VoucherController {
         }
 
         // CHECK MIN MAX MONEY
-        if (voucher.getMinOrderAmount() != null && voucher.getMinOrderAmount() < 0) {
-            model.addAttribute("error", "Min order must be >= 0");
+        if (voucher.getMaxDiscountAmount() != null && voucher.getMinOrderAmount() != null && voucher.getMaxDiscountAmount() < voucher.getMinOrderAmount()) {
+            model.addAttribute("error", "Max discount must be >= Min order amount");
             model.addAttribute("voucher", voucher);
             model.addAttribute("content", "admin/voucher/form");
             return "admin/layout";

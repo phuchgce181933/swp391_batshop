@@ -24,7 +24,9 @@ public class Voucher {
     private Integer totalUsageLimit;
     private Integer totalUsed;
     private Boolean active;
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime validFrom;
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime validTo;
 
     @OneToMany(mappedBy = "voucher")

@@ -55,6 +55,7 @@ public class AuthController {
 
         user.setPasswordHash(passwordEncoder.encode(user.getPasswordHash()));
         user.setRole(Role.USER);
+        user.setStatus(true);
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
 
