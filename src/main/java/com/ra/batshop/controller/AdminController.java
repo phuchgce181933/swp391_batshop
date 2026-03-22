@@ -110,7 +110,6 @@ public class AdminController {
     public String toggleUserStatus(@PathVariable Integer id) {
 
         User user = userRepository.findById(id).orElse(null);
-
         if (user != null) {
             user.setStatus(!user.getStatus());
             userRepository.save(user);

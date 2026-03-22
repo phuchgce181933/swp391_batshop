@@ -15,15 +15,15 @@
                 <!-- Status -->
                 <select name="status" class="filter-select">
                     <option value="">All Status</option>
-                    <option value="true">Active</option>
-                    <option value="false">Inactive</option>
+                    <option value="true" th:selected="${status == true}">Active</option>
+                    <option value="false" th:selected="${status == false}">Inactive</option>
                 </select>
                 <!-- Discount -->
                 <select name="discount" class="filter-select">
                     <option value="">All Discount</option>
-                    <option value="10">≥ 10%</option>
-                    <option value="30">≥ 30%</option>
-                    <option value="50">≥ 50%</option>
+                    <option value="10" th:selected="${discount == 10}">≥ 10%</option>
+                    <option value="30" th:selected="${discount == 30}">≥ 30%</option>
+                    <option value="50" th:selected="${discount == 50}">≥ 50%</option>
                 </select>
                 <!-- Button -->
                 <button type="submit">Search</button>
