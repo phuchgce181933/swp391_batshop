@@ -29,6 +29,52 @@
         </div>
     </div>
 
+    <div class="tables-wrapper">
+
+        <!-- Bảng 1 -->
+        <div class="table-box">
+            <h2>Product Sales By Month</h2>
+            <table>
+                <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Month</th>
+                    <th>Quantity</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="row : ${productSales}">
+                    <td th:text="${row[0]}"></td>
+                    <td th:text="'Month ' + ${row[1]}"></td>
+                    <td th:text="${row[2]}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Bảng 2 -->
+        <div class="table-box">
+            <h2>Product Sales Detail</h2>
+            <table>
+                <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Date Time</th>
+                    <th>Quantity Sold</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="row : ${productSalesByDate}">
+                    <td th:text="${row[0]}"></td>
+                    <td th:text="${#temporals.format(row[1], 'dd/MM/yyyy HH:mm')}"></td>
+                    <td th:text="${row[2]}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
     <div class="chart-container">
         <canvas id="revenueChart"></canvas>
     </div>

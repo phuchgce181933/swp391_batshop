@@ -18,4 +18,27 @@ public interface OrderItemRepository extends CrudRepository<OrderItem, Integer> 
     Long checkUserPurchased(Integer userId,
                             Integer productId,
                             OrderStatus status);
+
+    @Query("""
+    SELECT p.name, MONTH(o.createdAt), SUM(oi.quantity)
+    FROM OrderItem oi
+    JOIN oi.order o
+    JOIN oi.productVariant pv
+    JOIN pv.product p
+    WHERE o.status = com.ra.batshop.model.Enum.OrderStatus.COMPLETED
+    GROUP BY p.name, MONTH(o.createdAt)
+    ORDER BY p.name, MONTH(o.createdAt)
+""")
+    List<Object[]> getProductSalesByMonth();
+
+    @Query("""
+    SELECT p.name, o.createdAt, oi.quantity
+    FROM OrderItem oi
+    JOIN oi.order o
+    JOIN oi.productVariant pv
+    JOIN pv.product p
+    WHERE o.status = com.ra.batshop.model.Enum.OrderStatus.COMPLETED
+    ORDER BY o.createdAt DESC
+""")
+    List<Object[]> getProductSalesByDateTime();
 }
