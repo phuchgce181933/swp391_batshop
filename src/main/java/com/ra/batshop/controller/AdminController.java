@@ -1,6 +1,7 @@
 package com.ra.batshop.controller;
 
 import com.ra.batshop.model.User;
+import com.ra.batshop.repository.OrderItemRepository;
 import com.ra.batshop.repository.UserRepository;
 import com.ra.batshop.repository.ProductRepository;
 import com.ra.batshop.repository.OrderRepository;
@@ -22,13 +23,16 @@ public class AdminController {
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
     private final OrderRepository orderRepository;
+    private final OrderItemRepository orderItemRepository;
 
     public AdminController(UserRepository userRepository,
                            ProductRepository productRepository,
-                           OrderRepository orderRepository) {
+                           OrderRepository orderRepository,
+                           OrderItemRepository orderItemRepository) {
         this.userRepository = userRepository;
         this.productRepository = productRepository;
         this.orderRepository = orderRepository;
+        this.orderItemRepository = orderItemRepository;
     }
 
     @GetMapping("/dashboard")
@@ -50,6 +54,8 @@ public class AdminController {
 
          // ===== Revenue theo tháng =====
         List<Object[]> monthlyData = orderRepository.getMonthlyRevenue();
+        List<Object[]> productSales = orderItemRepository.getProductSalesByMonth();
+        List<Object[]> productSalesByDate = orderItemRepository.getProductSalesByDateTime();
 
         List<String> months = new ArrayList<>();
         List<Double> revenues = new ArrayList<>();
@@ -61,6 +67,8 @@ public class AdminController {
 
         model.addAttribute("months", months);
         model.addAttribute("revenues", revenues);
+        model.addAttribute("productSales", productSales);
+        model.addAttribute("productSalesByDate", productSalesByDate);
         model.addAttribute("content", "admin/dashboard-content");
         return "admin/layout";
     }
