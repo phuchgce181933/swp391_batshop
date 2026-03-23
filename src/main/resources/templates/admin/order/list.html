@@ -68,15 +68,22 @@
 
                 <td>
                     <div th:if="${o.shippingAddress != null}">
-                        <strong th:text="${o.shippingAddress.fullName}"></strong><br>
-                        <span th:text="${o.shippingAddress.phone}"></span><br>
+                        <strong th:text="${o.shippingAddress.receiverName}"></strong><br>
+
+                        <span th:text="${o.shippingAddress.receiverPhone}"></span><br>
 
                         <span th:text="${o.shippingAddress.detail}"></span><br>
+
                         <span th:text="${o.shippingAddress.ward + ', '
-                        + o.shippingAddress.district + ', '
-                        + o.shippingAddress.city}">
+            + o.shippingAddress.district + ', '
+            + o.shippingAddress.city}">
         </span>
                     </div>
+
+                    <span th:if="${o.shippingAddress == null}">
+        No address
+    </span>
+                </td>
 
                     <span th:if="${o.shippingAddress == null}">
         No address
@@ -191,6 +198,5 @@
     </div>
 
 </div>
-
 </body>
 </html>

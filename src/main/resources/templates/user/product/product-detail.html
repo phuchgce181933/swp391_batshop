@@ -254,7 +254,7 @@
 
         <!-- ADMIN REPLY -->
 
-        <div th:each="rep : ${r.replies}">
+        <div th:each="rep : ${r.replies != null ? r.replies : {}}">
 
             <b>Admin:</b>
 

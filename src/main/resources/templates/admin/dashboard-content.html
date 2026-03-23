@@ -1,7 +1,5 @@
-<link rel="stylesheet" th:href="@{/css/admin/dashboard.css}">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<div class="main-content">
+<link rel="stylesheet" th:href="@{/css/admin/dashboard.css}" />
+<div th:fragment="content" class="main-content">
 
     <h1>Dashboard Overview</h1>
 
@@ -23,37 +21,53 @@
 
         <div class="card revenue">
             <h3>Total Revenue</h3>
-            <p th:text="${#numbers.formatDecimal(totalRevenue,0,'COMMA',0,'POINT')} + ' VND'">
-                0
-            </p>
+            <p th:text="${#numbers.formatDecimal(totalRevenue ?: 0,0,'COMMA',0,'POINT')} + ' VND'"></p>
         </div>
+
+        <div class="card">
+            <h3>Revenue (3 days)</h3>
+            <p th:text="${#numbers.formatDecimal(revenue3Days ?: 0,0,'COMMA',0,'POINT')} + ' VND'"></p>
+        </div>
+
+        <div class="card">
+            <h3>Revenue (7 days)</h3>
+            <p th:text="${#numbers.formatDecimal(revenue7Days ?: 0,0,'COMMA',0,'POINT')} + ' VND'"></p>
+        </div>
+    </div>
+
+    <div class="chart-header">
+        <h3>Revenue Chart</h3>
+
+        <select id="filterRange" onchange="changeFilter()">
+            <option value="3">3 days</option>
+            <option value="7">7 days</option>
+            <option value="30">1 month</option>
+        </select>
     </div>
 
     <div class="chart-container">
         <canvas id="revenueChart"></canvas>
     </div>
 
-</div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<script th:inline="javascript">
-    document.addEventListener("DOMContentLoaded", function () {
+    <script th:inline="javascript">
+        let chart;
 
-        const months = /*[[${months}]]*/ [];
-        const revenues = /*[[${revenues}]]*/ [];
+        function renderChart(labels, data) {
+            const ctx = document.getElementById("revenueChart");
 
-        console.log(months);
-        console.log(revenues);
+            if (chart) {
+                chart.destroy();
+            }
 
-        const ctx = document.getElementById("revenueChart");
-
-        if (ctx && months.length > 0) {
-            new Chart(ctx, {
+            chart = new Chart(ctx, {
                 type: "line",
                 data: {
-                    labels: months,
+                    labels: labels,
                     datasets: [{
                         label: "Revenue",
-                        data: revenues,
+                        data: data,
                         borderColor: "#4e73df",
                         backgroundColor: "rgba(78,115,223,0.1)",
                         tension: 0.4,
@@ -63,5 +77,18 @@
             });
         }
 
-    });
-</script>
+        function changeFilter() {
+            const days = document.getElementById("filterRange").value;
+
+            fetch(`/admin/dashboard/chart?days=${days}`)
+                .then(res => res.json())
+                .then(data => {
+                    renderChart(data.labels, data.values);
+                });
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            changeFilter();
+        });
+    </script>
+</div>

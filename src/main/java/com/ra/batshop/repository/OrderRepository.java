@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,6 +19,8 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
 
     // Lấy đơn theo id và user (để bảo mật)
     Optional<Order> findByIdAndUser(Integer id, User user);
+
+    List<Order> findByCreatedAtAfterAndStatus(LocalDateTime date, OrderStatus status);
 
     @Query("""
 SELECT o FROM Order o
@@ -34,7 +37,7 @@ AND (:status IS NULL OR o.status = :status)
     @Query("""
 SELECT SUM(o.totalPrice)
 FROM Order o
-WHERE o.status <> 'CANCELLED'
+WHERE o.status = com.ra.batshop.model.Enum.OrderStatus.COMPLETED
 """)
     Double getTotalRevenue();
 
@@ -42,10 +45,27 @@ WHERE o.status <> 'CANCELLED'
     @Query("""
 SELECT MONTH(o.createdAt), SUM(o.totalPrice)
 FROM Order o
-WHERE o.status <> 'CANCELLED'
+WHERE o.status = 'COMPLETED'
 GROUP BY MONTH(o.createdAt)
 ORDER BY MONTH(o.createdAt)
 """)
     List<Object[]> getMonthlyRevenue();
 
+    // Revenue theo khoảng thời gian
+    @Query("""
+SELECT SUM(o.totalPrice)
+FROM Order o
+WHERE o.status = com.ra.batshop.model.Enum.OrderStatus.COMPLETED
+AND o.createdAt >= :fromDate
+""")
+    Double getRevenueFromDate(LocalDateTime fromDate);
+
+    // Revenue theo range
+    @Query("""
+SELECT SUM(o.totalPrice)
+FROM Order o
+WHERE o.status = com.ra.batshop.model.Enum.OrderStatus.COMPLETED
+AND o.createdAt BETWEEN :fromDate AND :toDate
+""")
+    Double getRevenueBetween(LocalDateTime fromDate, LocalDateTime toDate);
 }

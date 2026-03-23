@@ -9,7 +9,9 @@
 
 <body>
 
-<div class="page">
+<div th:fragment="content">
+
+    <div class="page">
 
     <h2>Quản lý Review</h2>
 
@@ -56,15 +58,16 @@
             <div class="reply-list">
 
                 <div class="admin-reply"
+                     th:if="${r.replies != null}"
                      th:each="rep : ${r.replies}">
 
                     <div class="reply-header">
 
-                        <b>Admin</b>
+                        <b th:text="${rep.name}"></b>
 
                         <span class="reply-date"
                               th:text="${#temporals.format(rep.createdAt,'dd/MM/yyyy HH:mm')}">
-                        </span>
+            </span>
 
                     </div>
 
@@ -75,9 +78,11 @@
             </div>
 
             <!-- REPLY FORM -->
-            <form class="reply-form"
-                  th:action="@{/admin/reviews/reply}"
-                  method="post">
+        <form th:if="${session.user != null and
+              (session.user.role.name() == 'ADMIN' or session.user.role.name() == 'STAFF')}"
+              class="reply-form"
+              th:action="@{/admin/reviews/reply}"
+              method="post">
 
                 <input type="hidden"
                        name="reviewId"
@@ -93,11 +98,50 @@
 
             </form>
 
+            <form th:if="${session.user != null and session.user.role.name() == 'ADMIN'}"
+                  th:action="@{/admin/reviews/delete}"
+                  method="post"
+                  style="margin-top:10px;">
+
+                <input type="hidden" name="reviewId" th:value="${r.id}"/>
+
+                <button type="submit" style="background:red;color:white;">
+                    Xóa Review
+                </button>
+            </form>
+
         </div>
+
 
     </div>
 
-</div>
+        <!-- ===== PAGINATION ===== -->
+        <div class="pagination" th:if="${totalPages > 1}">
 
+            <!-- PREV -->
+            <a th:if="${currentPage > 0}"
+               th:href="@{/admin/reviews(page=${currentPage - 1})}">
+                Prev
+            </a>
+
+            <!-- PAGE NUMBERS -->
+            <span th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+
+        <a th:href="@{/admin/reviews(page=${i})}"
+           th:text="${i + 1}"
+           th:classappend="${i == currentPage} ? 'active'">
+        </a>
+
+    </span>
+
+            <!-- NEXT -->
+            <a th:if="${currentPage < totalPages - 1}"
+               th:href="@{/admin/reviews(page=${currentPage + 1})}">
+                Next
+            </a>
+
+        </div>
+</div>
+</div>
 </body>
 </html>

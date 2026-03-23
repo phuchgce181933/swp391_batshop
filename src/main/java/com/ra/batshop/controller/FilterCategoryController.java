@@ -2,6 +2,9 @@ package com.ra.batshop.controller;
 
 import com.ra.batshop.model.Brand;
 import com.ra.batshop.model.Category;
+import com.ra.batshop.model.Enum.RacketLevel;
+import com.ra.batshop.model.Enum.RacketStyle;
+import com.ra.batshop.model.Enum.RacketWeight;
 import com.ra.batshop.model.Product;
 import com.ra.batshop.repository.BrandRepository;
 import com.ra.batshop.repository.CategoryRepository;
@@ -38,6 +41,9 @@ public class FilterCategoryController {
             @RequestParam(name = "price", required = false) List<String> prices,
             @RequestParam(name = "brand", required = false) List<Long> brandIds,
             @RequestParam(name = "sort", defaultValue = "default") String sort,
+            @RequestParam(name = "level", required = false) List<RacketLevel> levels,
+            @RequestParam(name = "weight", required = false) List<RacketWeight> weights,
+            @RequestParam(name = "style", required = false) List<RacketStyle> styles,
             @RequestParam(name = "page", defaultValue = "0") int page,
             Model model) {
 
@@ -92,12 +98,32 @@ public class FilterCategoryController {
         // 3. Truy vấn DB lấy Product (XỬ LÝ LUỒNG RIÊNG CHO BEST_SELLING)
         Page<Product> productPage;
 
-        if ("best_selling".equals(sort)) {
+        if (categoryId != null && categoryId == 3) {
+            if (levels != null && levels.isEmpty()) levels = null;
+            if (weights != null && weights.isEmpty()) weights = null;
+            if (styles != null && styles.isEmpty()) styles = null;
+            productPage = productRepository.filterRacket(
+                    categoryId,
+                    brandIds,
+                    minPrice,
+                    maxPrice,
+                    levels,
+                    weights,
+                    styles,
+                    pageable
+            );
+
+        } else if ("best_selling".equals(sort)) {
             // Nếu chọn Bán chạy nhất -> Gọi hàm chứa Query GROUP BY SUM()
-            productPage = productRepository.filterAndSortBestSellingProducts(categoryId, brandIds, minPrice, maxPrice, pageable);
+            productPage = productRepository.filterAndSortBestSellingProducts(
+                    categoryId, brandIds, minPrice, maxPrice, pageable
+            );
+
         } else {
             // Các trường hợp khác (Mặc định, Giá tăng, Giá giảm, Mới nhất) -> Gọi hàm cũ
-            productPage = productRepository.filterProducts(categoryId, brandIds, minPrice, maxPrice, pageable);
+            productPage = productRepository.filterProducts(
+                    categoryId, brandIds, minPrice, maxPrice, pageable
+            );
         }
 
         // 4. Lấy Category để làm Breadcrumb
@@ -115,7 +141,9 @@ public class FilterCategoryController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", productPage.getTotalPages());
         model.addAttribute("currentSort", sort);
-
+        model.addAttribute("selectedLevels", levels);
+        model.addAttribute("selectedWeights", weights);
+        model.addAttribute("selectedStyles", styles);
         model.addAttribute("selectedPrices", prices);
         model.addAttribute("selectedBrands", brandIds);
 

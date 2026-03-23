@@ -21,7 +21,7 @@
             <input type="hidden" name="sort" id="sortInput" th:value="${currentSort}">
             <input type="hidden" name="page" id="pageInput" th:value="${currentPage != null ? currentPage : 0}">
 
-            <div class="selected-filters" th:if="${(selectedPrices != null and !selectedPrices.isEmpty()) or (selectedBrands != null and !selectedBrands.isEmpty())}">
+            <div class="selected-filters" th:if="${(selectedPrices != null and !selectedPrices.isEmpty()) or (selectedBrands != null and !selectedBrands.isEmpty())or (selectedLevels != null and !selectedLevels.isEmpty())}">
                 <div class="selected-header">
                     <h3>BẠN CHỌN:</h3>
                     <a href="javascript:void(0)" onclick="clearAllFilters()" class="clear-all-btn" style="color: #ed5527; border: 1px solid #ed5527; padding: 4px 10px; border-radius: 4px; font-size: 12px; transition: 0.2s;">Xóa tất cả</a>
@@ -38,6 +38,22 @@
                           th:onclick="'removeFilter(\'brand\', ' + ${b.id} + ')'">
                         ✖ <span th:text="${b.name}"></span>
                     </span>
+                    <span class="filter-tag"
+                          th:each="lvl : ${selectedLevels}"
+                          th:attr="onclick=|removeFilter('level','${lvl}')|">
+                        ✖ <span th:text="${lvl}"></span>
+                    </span>
+                    <span class="filter-tag"
+                          th:each="w : ${selectedWeights}"
+                          th:attr="onclick=|removeFilter('weight','${w}')|">
+                ✖ <span th:text="${w}"></span>
+            </span>
+
+                    <span class="filter-tag"
+                          th:each="s : ${selectedStyles}"
+                          th:attr="onclick=|removeFilter('style','${s}')|">
+                ✖ <span th:text="${s}"></span>
+            </span>
                 </div>
             </div>
             <div class="filter-group">
@@ -75,6 +91,36 @@
                     <input type="checkbox" name="brand" th:value="${b.id}"
                            th:checked="${selectedBrands != null and #lists.contains(selectedBrands, b.id)}">
                     <span th:text="${b.name}">Tên thương hiệu</span>
+                </label>
+            </div>
+
+            <div class="filter-group" th:if="${category != null and category.id == 3}">
+                <h3>TRÌNH ĐỘ</h3>
+                <label th:each="lvl : ${T(com.ra.batshop.model.Enum.RacketLevel).values()}">
+                    <input type="checkbox" name="level"
+                           th:value="${lvl}"
+                           th:checked="${selectedLevels != null and #lists.contains(selectedLevels, lvl)}">
+                    <span th:text="${lvl}"></span>
+                </label>
+            </div>
+
+            <div class="filter-group" th:if="${category != null and category.id == 3}">
+                <h3>TRỌNG LƯỢNG</h3>
+                <label th:each="w : ${T(com.ra.batshop.model.Enum.RacketWeight).values()}">
+                    <input type="checkbox" name="weight"
+                           th:value="${w}"
+                           th:checked="${selectedWeights != null and #lists.contains(selectedWeights, w)}">
+                    <span th:text="${w}"></span>
+                </label>
+            </div>
+
+            <div class="filter-group" th:if="${category != null and category.id == 3}">
+                <h3>LỐI CHƠI</h3>
+                <label th:each="s : ${T(com.ra.batshop.model.Enum.RacketStyle).values()}">
+                    <input type="checkbox" name="style"
+                           th:value="${s}"
+                           th:checked="${selectedStyles != null and #lists.contains(selectedStyles, s)}">
+                    <span th:text="${s}"></span>
                 </label>
             </div>
         </form>

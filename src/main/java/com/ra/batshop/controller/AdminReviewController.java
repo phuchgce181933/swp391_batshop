@@ -1,5 +1,6 @@
 package com.ra.batshop.controller;
 
+import com.ra.batshop.model.Enum.Role;
 import com.ra.batshop.model.Review;
 import com.ra.batshop.model.User;
 import com.ra.batshop.repository.ReviewRepository;
@@ -33,7 +34,8 @@ public class AdminReviewController {
 
         User admin = (User) session.getAttribute("user");
 
-        if (admin == null) {
+        if (admin == null ||
+                (admin.getRole() != Role.ADMIN && admin.getRole() != Role.STAFF)) {
             return "redirect:/login";
         }
 
@@ -45,7 +47,7 @@ public class AdminReviewController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", reviewPage.getTotalPages());
 
-        model.addAttribute("content", "admin/review/list");
+        model.addAttribute("content", "admin/review/list.html");
 
         return "admin/layout";
     }
@@ -58,9 +60,10 @@ public class AdminReviewController {
                         @RequestParam String message,
                         HttpSession session) {
 
-        User admin = (User) session.getAttribute("user");
+        User user = (User) session.getAttribute("user");
 
-        if (admin == null) {
+        if (user == null ||
+                (user.getRole() != Role.ADMIN && user.getRole() != Role.STAFF)) {
             return "redirect:/login";
         }
 
@@ -70,7 +73,12 @@ public class AdminReviewController {
 
         Review reply = new Review();
 
-        reply.setName("ADMIN");
+        if (user.getRole() == Role.ADMIN) {
+            reply.setName("ADMIN");
+        } else {
+            reply.setName("STAFF");
+        }
+
         reply.setMessage(message);
         reply.setCreatedAt(LocalDateTime.now());
         reply.setRating(null);
@@ -81,5 +89,30 @@ public class AdminReviewController {
         reviewRepository.save(reply);
 
         return "redirect:/admin/reviews";
+    }
+
+    @PostMapping("/delete")
+    public String delete(@RequestParam Integer reviewId,
+                         HttpSession session) {
+
+        User user = (User) session.getAttribute("user");
+
+        if (!isAdmin(user)) {
+            return "redirect:/admin/reviews";
+        }
+
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new RuntimeException("Review not found"));
+
+        reviewRepository.delete(review);
+
+        return "redirect:/admin/reviews";
+    }
+    private boolean isAdmin(User user) {
+        return user != null && user.getRole() == Role.ADMIN;
+    }
+
+    private boolean isStaff(User user) {
+        return user != null && user.getRole() == Role.STAFF;
     }
 }

@@ -102,4 +102,26 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
             @Param("keyword") String keyword,
             Pageable pageable
     );
+
+    @Query("""
+SELECT p FROM Product p
+LEFT JOIN p.racketDetail r
+WHERE p.status = true
+AND (:categoryId IS NULL OR p.category.id = :categoryId)
+AND (:brandIds IS NULL OR p.brand.id IN :brandIds)
+AND p.price BETWEEN :minPrice AND :maxPrice
+AND (:levels IS NULL OR r.level IN :levels)
+AND (:weights IS NULL OR r.weight IN :weights)
+AND (:styles IS NULL OR r.style IN :styles)
+""")
+    Page<Product> filterRacket(
+            @Param("categoryId") Integer categoryId,
+            @Param("brandIds") List<Long> brandIds,
+            @Param("minPrice") BigDecimal minPrice,
+            @Param("maxPrice") BigDecimal maxPrice,
+            @Param("levels") List<RacketLevel> levels,
+            @Param("weights") List<RacketWeight> weights,
+            @Param("styles") List<RacketStyle> styles,
+            Pageable pageable
+    );
 }

@@ -1,5 +1,7 @@
 package com.ra.batshop.controller;
 
+import com.ra.batshop.model.Enum.OrderStatus;
+import com.ra.batshop.model.Order;
 import com.ra.batshop.model.User;
 import com.ra.batshop.repository.UserRepository;
 import com.ra.batshop.repository.ProductRepository;
@@ -7,13 +9,11 @@ import com.ra.batshop.repository.OrderRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Controller
 @RequestMapping("/admin")
@@ -36,34 +36,88 @@ public class AdminController {
         if (session.getAttribute("user") == null) {
             return "redirect:/login";
         }
+
         long totalUsers = userRepository.count();
         long totalProducts = productRepository.count();
         long totalOrders = orderRepository.count();
-        Double totalRevenue = orderRepository.getTotalRevenue();
 
-        if (totalRevenue == null) totalRevenue = 0.0;
+        Double totalRevenue = Optional.ofNullable(
+                orderRepository.getTotalRevenue()
+        ).orElse(0.0);
+
+        // ===== Revenue theo thời gian =====
+        LocalDateTime now = LocalDateTime.now();
+
+        Double revenue3Days = Optional.ofNullable(
+                orderRepository.getRevenueFromDate(now.minusDays(3))
+        ).orElse(0.0);
+
+        Double revenue7Days = Optional.ofNullable(
+                orderRepository.getRevenueFromDate(now.minusDays(7))
+        ).orElse(0.0);
+
+        // Mặc định load 7 ngày
+        Map<String, Double> chartData = buildChartData(7);
 
         model.addAttribute("totalUsers", totalUsers);
         model.addAttribute("totalProducts", totalProducts);
         model.addAttribute("totalOrders", totalOrders);
         model.addAttribute("totalRevenue", totalRevenue);
 
-         // ===== Revenue theo tháng =====
-        List<Object[]> monthlyData = orderRepository.getMonthlyRevenue();
+        model.addAttribute("revenue3Days", revenue3Days);
+        model.addAttribute("revenue7Days", revenue7Days);
 
-        List<String> months = new ArrayList<>();
-        List<Double> revenues = new ArrayList<>();
+        model.addAttribute("months", chartData.keySet());
+        model.addAttribute("revenues", chartData.values());
 
-        for (Object[] row : monthlyData) {
-            months.add("Month " + row[0]);
-            revenues.add(((Number) row[1]).doubleValue());
-        }
-
-        model.addAttribute("months", months);
-        model.addAttribute("revenues", revenues);
         model.addAttribute("content", "admin/dashboard-content");
+
         return "admin/layout";
     }
+
+    // ================= API FILTER CHART =================
+    @GetMapping("/dashboard/chart")
+    @ResponseBody
+    public Map<String, Object> getChart(@RequestParam int days) {
+
+        Map<String, Double> chartData = buildChartData(days);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("labels", chartData.keySet());
+        result.put("values", chartData.values());
+
+        return result;
+    }
+
+    // ================= LOGIC CHART =================
+    private Map<String, Double> buildChartData(int days) {
+
+        LocalDateTime fromDate = LocalDateTime.now().minusDays(days);
+
+        List<Order> orders = orderRepository
+                .findByCreatedAtAfterAndStatus(fromDate, OrderStatus.COMPLETED);
+
+        Map<String, Double> revenueMap = new LinkedHashMap<>();
+
+        // tạo ngày rỗng trước
+        for (int i = days - 1; i >= 0; i--) {
+            LocalDate date = LocalDate.now().minusDays(i);
+            revenueMap.put(date.toString(), 0.0);
+        }
+
+        // cộng tiền
+        for (Order o : orders) {
+            String date = o.getCreatedAt().toLocalDate().toString();
+
+            revenueMap.put(
+                    date,
+                    revenueMap.getOrDefault(date, 0.0) + o.getTotalPrice().doubleValue()
+            );
+        }
+
+        return revenueMap;
+    }
+
 
     @GetMapping("/users")
     public String listUsers(
