@@ -17,12 +17,22 @@
                 <span>0909090909 | 0909090909</span>
             </div>
 
-            <div class="search-box">
-                <input type="text" placeholder="Tìm sản phẩm...">
+            <form class="search-box"
+                  th:action="@{/products}"
+                  method="get">
+
+                <input type="text"
+                       name="keyword"
+                       placeholder="Tìm sản phẩm..."
+                       th:value="${keyword}">
+
+                <input type="hidden" name="page" value="0">
+
                 <button type="submit">
                     <i class="fa-solid fa-magnifying-glass"></i>
                 </button>
-            </div>
+
+            </form>
 
             <div class="top-icons">
                 <div class="icon-item">
