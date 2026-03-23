@@ -96,6 +96,36 @@
         </div>
 
     </div>
+    <div class="pagination">
+
+        <!-- PREVIOUS -->
+
+        <a th:if="${currentPage > 0}"
+           th:href="@{/admin/orders(
+        page=${currentPage - 1}
+   )}">
+            Previous
+        </a>
+
+        <!-- PAGE NUMBER -->
+        <span th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+        <a th:href="@{/admin/reviews(
+                page=${i}
+        )}"
+           th:text="${i + 1}"
+           th:classappend="${i == currentPage} ? 'active' : ''">
+        </a>
+    </span>
+
+        <!-- NEXT -->
+        <a th:if="${currentPage < totalPages - 1}"
+           th:href="@{/admin/reviews(
+            page=${currentPage + 1}
+       )}">
+            Next
+        </a>
+
+    </div>
 
 </div>
 
