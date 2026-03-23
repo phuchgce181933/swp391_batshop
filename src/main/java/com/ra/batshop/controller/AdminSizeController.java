@@ -21,13 +21,15 @@ public class AdminSizeController {
             return "redirect:/login";
         }
         model.addAttribute("sizes", sizeRepository.findAll());
-        return "admin/size/list";
+        model.addAttribute("content", "admin/size/list");
+        return "admin/layout";
     }
 
     @GetMapping("/add")
     public String addForm(Model model) {
         model.addAttribute("size", new Size());
-        return "admin/size/add";
+        model.addAttribute("content", "admin/size/add");
+        return "admin/layout";
     }
 
     @PostMapping("/save")
@@ -41,7 +43,8 @@ public class AdminSizeController {
     public String editForm(@PathVariable Integer id, Model model) {
         Size size = sizeRepository.findById(id).orElseThrow();
         model.addAttribute("size", size);
-        return "admin/size/add";
+        model.addAttribute("content", "admin/size/add");
+        return "admin/layout";
     }
 
     @GetMapping("/delete/{id}")

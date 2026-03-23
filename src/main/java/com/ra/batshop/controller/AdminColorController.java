@@ -21,13 +21,15 @@ public class AdminColorController {
             return "redirect:/login";
         }
         model.addAttribute("colors", colorRepository.findAll());
-        return "admin/color/list"; // Đường dẫn tới file HTML
+        model.addAttribute("content", "admin/color/list");
+        return "admin/layout"; // Đường dẫn tới file HTML
     }
 
     @GetMapping("/add")
     public String addForm(Model model) {
         model.addAttribute("color", new Color());
-        return "admin/color/add";
+        model.addAttribute("content", "admin/color/add");
+        return "admin/layout";
     }
 
     @PostMapping("/save")
@@ -46,6 +48,7 @@ public class AdminColorController {
     public String editForm(@PathVariable Integer id, Model model) {
         Color color = colorRepository.findById(id).orElse(null);
         model.addAttribute("color", color);
-        return "admin/color/add";
+        model.addAttribute("content", "admin/color/add");
+        return "admin/layout";
     }
 }
