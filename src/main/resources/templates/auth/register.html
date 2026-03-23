@@ -7,6 +7,19 @@
     <style>
         .error-message { color: #ff0000; font-size: 0.8rem; margin-bottom: 5px; font-weight: bold; }
         .input-error { border: 1px solid #ff0000 !important; }
+
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            50% { transform: translateX(8px); }
+            75% { transform: translateX(-8px); }
+            100% { transform: translateX(0); }
+        }
+        .shake-it {
+            animation: shake 0.3s ease-in-out;
+            border: 2px solid #ff4d4d !important;
+            box-shadow: 0 0 10px rgba(255, 77, 77, 0.5);
+        }
     </style>
 </head>
 
@@ -34,8 +47,16 @@
                 <input type="email" th:field="*{email}" th:classappend="${errorEmail} ? 'input-error' : ''" required>
 
                 <label>Số điện thoại</label>
+                <div id="js-phone-error" class="error-message" style="display:none;">Vui lòng chỉ nhập số!</div>
                 <div class="error-message" th:if="${errorPhone}" th:text="${errorPhone}"></div>
-                <input type="text" th:field="*{phone}" th:classappend="${errorPhone} ? 'input-error' : ''" required>
+
+                <input type="text"
+                       id="phoneInput"
+                       th:field="*{phone}"
+                       th:classappend="${errorPhone} ? 'input-error' : ''"
+                       maxlength="10"
+                       placeholder="Nhập 10 số điện thoại"
+                       required>
 
                 <label>Mật khẩu</label>
                 <input type="password" th:field="*{passwordHash}" required>
@@ -47,6 +68,28 @@
     </div>
 
 </div>
+
+<script>
+    const phoneInput = document.getElementById('phoneInput');
+    const jsError = document.getElementById('js-phone-error');
+
+    phoneInput.addEventListener('input', function() {
+        const val = this.value;
+        // Kiểm tra nếu có chứa bất kỳ ký tự nào không phải số
+        if (/[^0-9]/.test(val)) {
+            // Hiện cảnh báo và rung
+            jsError.style.display = 'block';
+            this.classList.add('shake-it');
+
+            // Xóa hiệu ứng sau khi rung xong để lần sau có thể rung tiếp
+            setTimeout(() => {
+                this.classList.remove('shake-it');
+            }, 300);
+        } else {
+            jsError.style.display = 'none';
+        }
+    });
+</script>
 
 </body>
 </html>

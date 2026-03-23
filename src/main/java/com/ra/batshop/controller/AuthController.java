@@ -5,7 +5,6 @@ import com.ra.batshop.model.User;
 import com.ra.batshop.repository.UserRepository;
 import com.ra.batshop.service.EmailService;
 import jakarta.servlet.http.HttpSession;
-import jakarta.transaction.Status;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -43,6 +42,14 @@ public class AuthController {
             @ModelAttribute("user") User user,
             Model model
     ) {
+        // --- PHẦN THÊM MỚI: KIỂM TRA ĐỊNH DẠNG SỐ ĐIỆN THOẠI ---
+        String phone = user.getPhone();
+        if (phone == null || !phone.matches("^\\d{10}$")) {
+            model.addAttribute("errorPhone", "Số điện thoại phải bao gồm đúng 10 chữ số và không chứa chữ cái");
+            return "auth/register";
+        }
+        // ---------------------------------------------------
+
         if (userRepository.existsByEmail(user.getEmail())) {
             model.addAttribute("errorEmail", "Email đã tồn tại");
             return "auth/register";
@@ -55,13 +62,13 @@ public class AuthController {
 
         user.setPasswordHash(passwordEncoder.encode(user.getPasswordHash()));
         user.setRole(Role.USER);
-        user.setStatus(true);
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
 
         userRepository.save(user);
         return "redirect:/login";
     }
+
 
     @GetMapping("/login")
     public String showLoginForm(Model model) {
@@ -85,14 +92,16 @@ public class AuthController {
             return "auth/login";
         }
         session.setAttribute("user", user);
-        if (user.getRole() == Role.ADMIN && user.getStatus() == true) {
+        if (user.getRole() == Role.ADMIN) {
             return "redirect:/admin/dashboard";
-        } else if (user.getStatus() == false) {
-            model.addAttribute("error", "User is blocked");
-            return "auth/login";
+        } else {
+            return "redirect:/home";
         }
-        return "redirect:/home";
     }
+
+    // ========================================================
+    // QUẢN LÝ HỒ SƠ (PROFILE) - PHẦN ĐÃ SỬA THEO YÊU CẦU
+    // ========================================================
 
     // 1. Trang xem thông tin tổng quan (Thêm mới để làm trang đệm)
     @GetMapping("/profile")
@@ -131,6 +140,13 @@ public class AuthController {
 
             User dbUser = userRepository.findById(currentUser.getId())
                     .orElseThrow(() -> new RuntimeException("User không tồn tại"));
+
+            // --- PHẦN KIỂM TRA SDT KHI EDIT PROFILE ---
+            if (formUser.getPhone() == null || !formUser.getPhone().matches("^\\d{10}$")) {
+                model.addAttribute("error", "Số điện thoại phải có đúng 10 chữ số");
+                model.addAttribute("user", dbUser);
+                return "profile/edit-profile";
+            }
 
             if (!dbUser.getEmail().equals(formUser.getEmail())
                     && userRepository.existsByEmail(formUser.getEmail())) {
@@ -251,7 +267,6 @@ public class AuthController {
             model.addAttribute("email", email);
             return "auth/reset-password";
         }
-
         if (user.getResetCodeExpiredAt() == null ||
                 user.getResetCodeExpiredAt().isBefore(LocalDateTime.now())) {
             model.addAttribute("error", "Mã đã hết hạn, vui lòng yêu cầu lại");
