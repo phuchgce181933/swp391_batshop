@@ -102,7 +102,7 @@ public class CheckoutController {
         model.addAttribute("discount", discount);
         model.addAttribute("defaultAddress", defaultAddress);
         model.addAttribute("addresses", addresses);
-
+        model.addAttribute("voucher", voucher);
         return "user/checkout/list";
     }
     @PostMapping("/apply-voucher")
@@ -110,29 +110,60 @@ public class CheckoutController {
                                HttpSession session,
                                RedirectAttributes ra) {
 
-        Optional<Voucher> voucherOpt = voucherRepository.findByCode(code);
+        if (code == null || code.trim().isEmpty()) {
+            ra.addFlashAttribute("error", "Vui lòng nhập mã voucher");
+            return "redirect:/checkout/list";
+        }
 
-        if(voucherOpt.isEmpty()){
+        Optional<Voucher> voucherOpt = voucherRepository.findByCode(code.trim());
+
+        if (voucherOpt.isEmpty()) {
             ra.addFlashAttribute("error","Voucher không tồn tại");
-            return "redirect:/cart/checkout";
+            return "redirect:/checkout/list";
         }
 
         Voucher voucher = voucherOpt.get();
 
-        if(!voucher.getActive()){
+        if(!Boolean.TRUE.equals(voucher.getActive())){
             ra.addFlashAttribute("error","Voucher không khả dụng");
-            return "redirect:/cart/checkout";
+            return "redirect:/checkout/list";
         }
 
-        if(voucher.getValidTo().isBefore(LocalDateTime.now())){
+        if(voucher.getValidTo() != null && voucher.getValidTo().isBefore(LocalDateTime.now())){
             ra.addFlashAttribute("error","Voucher đã hết hạn");
-            return "redirect:/cart/checkout";
+            return "redirect:/checkout/list";
+        }
+
+        // Kiểm tra giá trị đơn hàng
+        List<CartItem> cartItems = cartItemRepository.findByUserId(((User)session.getAttribute("user")).getId());
+        BigDecimal total = BigDecimal.ZERO;
+        for (CartItem item : cartItems) {
+            BigDecimal price = item.getDisplayPrice();
+            if (price == null) {
+                // fallback nếu displayPrice chưa set
+                price = item.getProductVariant().getAdditionalPrice();
+                if (price == null) price = BigDecimal.ZERO;
+                item.setDisplayPrice(price);
+            }
+            total = total.add(price.multiply(BigDecimal.valueOf(item.getQuantity())));
+        }
+
+        if (voucher.getMinOrderAmount() != null &&
+                total.compareTo(BigDecimal.valueOf(voucher.getMinOrderAmount())) < 0) {
+            ra.addFlashAttribute("error", "Đơn hàng chưa đủ giá trị tối thiểu để áp dụng voucher");
+            return "redirect:/checkout/list";
         }
 
         session.setAttribute("voucher", voucher);
-
         ra.addFlashAttribute("success","Áp dụng voucher thành công");
 
+        return "redirect:/checkout/list";
+    }
+    // xóa voucher khỏi session
+    @GetMapping("/cancel-voucher")
+    public String cancelVoucher(HttpSession session, RedirectAttributes ra) {
+        session.removeAttribute("voucher"); // Xóa voucher
+        ra.addFlashAttribute("success", "Đã hủy áp dụng voucher");
         return "redirect:/checkout/list";
     }
 }
