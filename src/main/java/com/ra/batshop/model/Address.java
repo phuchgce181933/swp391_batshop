@@ -1,8 +1,12 @@
 package com.ra.batshop.model;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.ra.batshop.model.User;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "addresses")
@@ -22,10 +26,6 @@ public class Address {
     private String ward;
     private String detail;
     private boolean isDefault;
-
-    // THÊM DÒNG NÀY ĐỂ LÀM XÓA MỀM
-    @Column(name = "is_deleted")
-    private boolean isDeleted = false;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
