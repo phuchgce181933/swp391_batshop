@@ -69,9 +69,9 @@ public class CartItemController {
 
         cartItemRepository.save(cartItem);
 
-        // ==========================================
-        // 🔥 THÊM ĐOẠN NÀY (LƯU GIÁ FLASH SALE)
-        // ==========================================
+
+       //(LƯU GIÁ FLASH SALE)
+
         Map<Integer, BigDecimal> flashSalePrices =
                 (Map<Integer, BigDecimal>) httpSession.getAttribute("flashSalePrices");
 
