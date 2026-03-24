@@ -224,7 +224,7 @@ text-decoration:none;">
                     <label>Thêm Ảnh Cho Biến Thể</label>
 
                     <input type="file"
-                           name="variantImages"
+                           th:name="'variantImages[' + ${stat.index} + ']'"
                            multiple
                            accept="image/*"
                            class="variantImageInput">

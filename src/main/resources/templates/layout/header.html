@@ -8,7 +8,7 @@
         <div class="container">
             <div class="logo">
                 <a th:href="@{/home}">
-                    <img src="/images/logo.png" alt="Logo">
+                    <img src="https://cdn.shopvnb.com/themes/images/logo.svg" alt="Logo">
                 </a>
             </div>
 
@@ -94,9 +94,24 @@
             <a th:href="@{/about}">GIỚI THIỆU</a>
             <a th:href="@{/contact}">LIÊN HỆ</a>
 
-            <a th:href="@{/logout}" class="logout-btn">
-                <i class="fa-solid fa-right-from-bracket"></i> ĐĂNG XUẤT
-            </a>
+            <!-- Nếu đã login -->
+            <div class="auth-section">
+
+                <!-- Đã login -->
+                <a th:if="${session.user != null}"
+                   th:href="@{/logout}"
+                   class="logout-btn">
+                    <i class="fa-solid fa-right-from-bracket"></i> ĐĂNG XUẤT
+                </a>
+
+                <!-- Chưa login -->
+                <a th:if="${session.user == null}"
+                   th:href="@{/login}"
+                   class="logout-btn">
+                    <i class="fa-solid fa-right-to-bracket"></i> ĐĂNG NHẬP
+                </a>
+
+            </div>
         </div>
     </nav>
 </header>

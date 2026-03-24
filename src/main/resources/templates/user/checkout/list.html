@@ -34,9 +34,10 @@
 
         <div class="item-price"
              th:text="${#numbers.formatDecimal(
-                item.quantity * item.productVariant.additionalPrice,
-                0,'POINT',0,'COMMA')} + ' đ'">
+        (item.productVariant.product.price + (item.productVariant.additionalPrice != null ? item.productVariant.additionalPrice : 0)),
+        0,'POINT',0,'COMMA')} + ' đ'">
         </div>
+        <span class="qty" th:text="'x ' + ${item.quantity}"></span>
     </div>
 
     <form th:action="@{/checkout/apply-voucher}" method="post">

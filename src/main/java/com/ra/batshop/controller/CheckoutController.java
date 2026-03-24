@@ -15,6 +15,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -22,20 +23,15 @@ import java.util.Optional;
 public class CheckoutController {
     private CartItemRepository cartItemRepository;
     //private UserAddressRepository userAddressRepository;
-    private OrderRepository orderRepository;
-    private OrderItemRepository orderItemRepository;
     private AddressRepository addressRepository;
     private VoucherRepository voucherRepository;
+    private  FlashSaleProductRepository flashSaleProductRepository;
     public CheckoutController(CartItemRepository cartItemRepository,
-                             // UserAddressRepository userAddressRepository,
-                              OrderRepository orderRepository,
-                              OrderItemRepository orderItemRepository,
                               AddressRepository addressRepository,
-                              VoucherRepository voucherRepository) {
+                              VoucherRepository voucherRepository,
+                              FlashSaleProductRepository flashSaleProductRepository) {
         this.cartItemRepository = cartItemRepository;
-       // this.userAddressRepository = userAddressRepository;
-        this.orderRepository = orderRepository;
-        this.orderItemRepository = orderItemRepository;
+        this.flashSaleProductRepository = flashSaleProductRepository;
         this.addressRepository = addressRepository;
         this.voucherRepository = voucherRepository;
     }
@@ -45,35 +41,68 @@ public class CheckoutController {
         if (user == null) {
             return "redirect:/login";
         }
-        List<CartItem> cartitem = cartItemRepository.findByUserId(user.getId());
-        Double total = cartItemRepository.calculateTotalByUserId(user.getId()) + 30000;
-        Voucher voucher = (Voucher) httpSession.getAttribute("voucher");
 
-        Integer discount = 0;
-
-        if(voucher != null){
-
-            if(total >= voucher.getMinOrderAmount()){
-
-                discount = total.intValue() * voucher.getDiscountPercent() / 100;
-
-                if(discount > voucher.getMaxDiscountAmount()){
-                    discount = voucher.getMaxDiscountAmount();
-                }
-
-                total = total - discount;
-            }
+        List<CartItem> cartItems = cartItemRepository.findByUserId(user.getId());
+        if (cartItems.isEmpty()) {
+            model.addAttribute("totalCart", 0);
+            model.addAttribute("discount", 0);
+            model.addAttribute("cartItems", cartItems);
+            model.addAttribute("defaultAddress", null);
+            model.addAttribute("addresses", List.of());
+            return "user/checkout/list";
         }
 
+
+        BigDecimal total = BigDecimal.ZERO;
+
+        // Tính tổng từng sản phẩm, nếu có Flash Sale thì lấy giá giảm
+        Map<Integer, BigDecimal> flashSalePrices =
+                (Map<Integer, BigDecimal>) httpSession.getAttribute("flashSalePrices");
+
+        for (CartItem item : cartItems) {
+
+            BigDecimal price;
+
+            //  nếu có giá flash sale đã lưu → dùng lại
+            if (flashSalePrices != null && flashSalePrices.containsKey(item.getId())) {
+                price = flashSalePrices.get(item.getId());
+            } else {
+                // fallback nếu không có (trường hợp cũ)
+                price = item.getProductVariant().getProduct().getPrice()
+                        .add(item.getProductVariant().getAdditionalPrice());
+            }
+
+            total = total.add(price.multiply(BigDecimal.valueOf(item.getQuantity())));
+        }
+
+        // Phí vận chuyển
+        total = total.add(BigDecimal.valueOf(30000));
+
+
+        // Áp dụng voucher
+        Voucher voucher = (Voucher) httpSession.getAttribute("voucher");
+        BigDecimal discount = BigDecimal.ZERO;
+        if (voucher != null && total.compareTo(BigDecimal.valueOf(voucher.getMinOrderAmount())) >= 0) {
+            discount = total.multiply(BigDecimal.valueOf(voucher.getDiscountPercent()))
+                    .divide(BigDecimal.valueOf(100));
+
+            if (discount.compareTo(BigDecimal.valueOf(voucher.getMaxDiscountAmount())) > 0) {
+                discount = BigDecimal.valueOf(voucher.getMaxDiscountAmount());
+            }
+            total = total.subtract(discount);
+        }
+
+        // Lấy địa chỉ mặc định và tất cả địa chỉ
         Address defaultAddress = addressRepository.findByUserIdAndIsDefaultTrue(user.getId())
                 .orElse(null);
-        List<Address> addresses =
-                addressRepository.findByUserId(user.getId());
-        model.addAttribute("cartItems", cartitem);
+        List<Address> addresses = addressRepository.findByUserId(user.getId());
+
+        model.addAttribute("cartItems", cartItems);
         model.addAttribute("totalCart", total);
         model.addAttribute("discount", discount);
-        model.addAttribute("defaultAddress", defaultAddress );
+        model.addAttribute("defaultAddress", defaultAddress);
         model.addAttribute("addresses", addresses);
+
         return "user/checkout/list";
     }
     @PostMapping("/apply-voucher")
