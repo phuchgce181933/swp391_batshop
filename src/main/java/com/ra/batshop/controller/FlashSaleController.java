@@ -16,9 +16,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 public class FlashSaleController {
@@ -33,6 +33,24 @@ public class FlashSaleController {
         this.flashSaleRepository = flashSaleRepository;
         this.flashSaleProductRepository = flashSaleProductRepository;
         this.productRepository = productRepository;
+    }
+
+    // =======================================================
+    // 0. API LẤY DANH SÁCH KHUNG GIỜ ĐÃ CÓ ĐỂ VÔ HIỆU HÓA BÊN GIAO DIỆN
+    // =======================================================
+    @GetMapping("/admin/flash-sales/api/booked-slots")
+    @ResponseBody
+    public List<Integer> getBookedSlots(@RequestParam("date") LocalDate date,
+                                        @RequestParam(value = "excludeId", required = false) Integer excludeId) {
+        LocalDateTime startOfDay = date.atStartOfDay();
+        LocalDateTime nextDay = date.plusDays(1).atStartOfDay();
+
+        List<FlashSale> sales = flashSaleRepository.findFlashSalesByDate(startOfDay, nextDay, excludeId);
+
+        // Trả về danh sách các "giờ bắt đầu" đã được đặt (VD: [0, 8, 14])
+        return sales.stream()
+                .map(f -> f.getStartDate().getHour())
+                .collect(Collectors.toList());
     }
 
     // =======================================================
@@ -64,11 +82,12 @@ public class FlashSaleController {
 
     // DANH SÁCH FLASH SALE
     @GetMapping("/admin/flash-sales")
-    public String list(Model model,HttpSession session) {
+    public String list(Model model, HttpSession session) {
         if (session.getAttribute("user") == null) {
             return "redirect:/login";
         }
-        model.addAttribute("flashSales", flashSaleRepository.findAll(Sort.by(Sort.Direction.DESC, "startDate")));        model.addAttribute("content", "admin/flash-sale/list");
+        model.addAttribute("flashSales", flashSaleRepository.findAll(Sort.by(Sort.Direction.DESC, "startDate")));
+        model.addAttribute("content", "admin/flash-sale/list");
         return "admin/layout";
     }
 
@@ -80,29 +99,27 @@ public class FlashSaleController {
         return "admin/layout";
     }
 
-    // LƯU FLASH SALE MỚI (Tách Ngày và Giờ)
+    // LƯU FLASH SALE MỚI (Sử dụng timeSlot)
     @PostMapping("/admin/flash-sales/add")
     public String save(@ModelAttribute FlashSale flashSale,
                        @RequestParam("saleDate") LocalDate saleDate,
-                       @RequestParam("startTime") LocalTime startTime,
-                       @RequestParam("endTime") LocalTime endTime,
+                       @RequestParam("timeSlot") Integer timeSlot,
                        RedirectAttributes redirectAttributes) {
 
-        // 1. Gộp Ngày và Giờ lại thành LocalDateTime
-        LocalDateTime start = LocalDateTime.of(saleDate, startTime);
-        LocalDateTime end = LocalDateTime.of(saleDate, endTime);
+        // 1. Tính toán Giờ bắt đầu và Giờ kết thúc từ Khung giờ (timeSlot)
+        LocalDateTime start = saleDate.atTime(timeSlot, 0);
+        // Nếu khung giờ là 22h, giờ kết thúc là 0h của ngày hôm sau
+        LocalDateTime end = (timeSlot == 22) ? saleDate.plusDays(1).atStartOfDay() : saleDate.atTime(timeSlot + 2, 0);
 
-        // 2. Validate: Giờ kết thúc phải sau Giờ bắt đầu
-        if (!start.isBefore(end)) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Lỗi: Giờ kết thúc phải sau giờ bắt đầu!");
+        // 2. Validate: Không cho tạo khung giờ trong quá khứ
+        if (start.isBefore(LocalDateTime.now())) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Lỗi: Khung giờ bắt đầu không thể nằm trong quá khứ!");
             return "redirect:/admin/flash-sales/add";
         }
 
-        // ==================================================
-        // 3. SỬA ĐOẠN NÀY: Validate chống trùng lịch Flash Sale
-        // ==================================================
+        // 3. Validate chống trùng lịch Flash Sale
         if (flashSaleRepository.isFlashSaleTimeOverlapping(start, end, null)) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Lỗi: Khoảng thời gian này đã bị trùng lịch với một đợt Flash Sale khác!");
+            redirectAttributes.addFlashAttribute("errorMessage", "Lỗi: Khung giờ này đã bị trùng lịch với một đợt Flash Sale khác!");
             return "redirect:/admin/flash-sales/add";
         }
 
@@ -131,59 +148,30 @@ public class FlashSaleController {
         return "admin/layout";
     }
 
-    // CẬP NHẬT THÔNG TIN CƠ BẢN CỦA ĐỢT SALE
+    // CẬP NHẬT THÔNG TIN CƠ BẢN CỦA ĐỢT SALE (Chỉ cập nhật thời gian)
     @PostMapping("/admin/flash-sales/edit")
     public String update(@ModelAttribute FlashSale flashSale,
                          @RequestParam("saleDate") LocalDate saleDate,
-                         @RequestParam("startTime") LocalTime startTime,
-                         @RequestParam("endTime") LocalTime endTime,
+                         @RequestParam("timeSlot") Integer timeSlot,
                          RedirectAttributes redirectAttributes) {
 
         FlashSale existing = flashSaleRepository.findById(flashSale.getId()).orElseThrow();
 
-        // 1. Gộp Ngày và Giờ
-        LocalDateTime start = LocalDateTime.of(saleDate, startTime);
-        LocalDateTime end = LocalDateTime.of(saleDate, endTime);
+        // 1. Tính toán Giờ bắt đầu và Giờ kết thúc từ Khung giờ (timeSlot)
+        LocalDateTime start = saleDate.atTime(timeSlot, 0);
+        LocalDateTime end = (timeSlot == 22) ? saleDate.plusDays(1).atStartOfDay() : saleDate.atTime(timeSlot + 2, 0);
 
-        // 2. Validate thời gian
-        if (!start.isBefore(end)) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Lỗi: Giờ kết thúc phải diễn ra sau giờ bắt đầu!");
-            return "redirect:/admin/flash-sales/edit/" + flashSale.getId();
-        }
-
-        // ==================================================
-        // 3. SỬA ĐOẠN NÀY: Validate chống trùng lịch (Bỏ qua ID của chính nó đang sửa)
-        // ==================================================
+        // 2. Validate chống trùng lịch (Bỏ qua ID của chính nó đang sửa)
         if (flashSaleRepository.isFlashSaleTimeOverlapping(start, end, flashSale.getId())) {
             redirectAttributes.addFlashAttribute("errorMessage", "Lỗi: Khoảng thời gian này đã bị trùng lịch với một đợt Flash Sale khác!");
             return "redirect:/admin/flash-sales/edit/" + flashSale.getId();
         }
 
-        // 4. Kiểm tra sự thay đổi của % giảm giá
-        boolean isDiscountChanged = !existing.getDiscountPercent().equals(flashSale.getDiscountPercent());
-
-        existing.setDiscountPercent(flashSale.getDiscountPercent());
         existing.setStartDate(start);
         existing.setEndDate(end);
         flashSaleRepository.save(existing);
 
-        // 5. Logic tính lại giá cho toàn bộ sản phẩm nếu Admin đổi % giảm
-        if (isDiscountChanged && existing.getProducts() != null) {
-            for (FlashSaleProduct fsp : existing.getProducts()) {
-                Product p = fsp.getProduct();
-
-                BigDecimal discount = new BigDecimal(existing.getDiscountPercent()).divide(new BigDecimal(100));
-                BigDecimal discountAmount = p.getPrice().multiply(discount);
-                BigDecimal newSalePrice = p.getPrice().subtract(discountAmount);
-
-                fsp.setSalePrice(newSalePrice);
-                flashSaleProductRepository.save(fsp);
-            }
-            redirectAttributes.addFlashAttribute("successMessage", "Đã cập nhật thông số và tính toán lại giá toàn bộ sản phẩm!");
-        } else {
-            redirectAttributes.addFlashAttribute("successMessage", "Cập nhật thông số thành công!");
-        }
-
+        redirectAttributes.addFlashAttribute("successMessage", "Cập nhật khung giờ thành công!");
         return "redirect:/admin/flash-sales/edit/" + flashSale.getId();
     }
 
@@ -221,16 +209,14 @@ public class FlashSaleController {
                 continue; // Bỏ qua sản phẩm bị trùng, đi tới sản phẩm tiếp theo
             }
 
-            // 3. Nếu an toàn, tiến hành thêm vào db
+            // 3. Nếu an toàn, tiến hành thêm vào db với mức giảm mặc định là 0%
             FlashSaleProduct fsp = new FlashSaleProduct();
             fsp.setFlashSale(flashSale);
             fsp.setProduct(product);
 
-            BigDecimal discount = new BigDecimal(flashSale.getDiscountPercent()).divide(new BigDecimal(100));
-            BigDecimal discountAmount = product.getPrice().multiply(discount);
-            BigDecimal salePrice = product.getPrice().subtract(discountAmount);
+            fsp.setDiscountPercent(0); // Mặc định giảm 0% khi mới thêm vào
+            fsp.setSalePrice(product.getPrice()); // Giá bán bằng giá gốc ban đầu
 
-            fsp.setSalePrice(salePrice);
             flashSaleProductRepository.save(fsp);
             successCount++;
         }
@@ -239,10 +225,34 @@ public class FlashSaleController {
         if (failCount > 0) {
             redirectAttributes.addFlashAttribute("errorMessage", "Đã thêm " + successCount + " sản phẩm. Bỏ qua " + failCount + " sản phẩm do bị trùng thời gian với đợt Sale khác!");
         } else {
-            redirectAttributes.addFlashAttribute("successMessage", "Đã thêm thành công " + successCount + " sản phẩm vào Flash Sale!");
+            redirectAttributes.addFlashAttribute("successMessage", "Đã thêm thành công " + successCount + " sản phẩm vào Flash Sale! Vui lòng cập nhật % giảm giá cho từng sản phẩm.");
         }
 
         return "redirect:/admin/flash-sales/edit/" + flashSaleId;
+    }
+
+    // CẬP NHẬT % GIẢM GIÁ CHO TỪNG SẢN PHẨM RIÊNG LẺ
+    @PostMapping("/admin/flash-sales/{fsId}/update-discount/{fspId}")
+    public String updateProductDiscount(@PathVariable Integer fsId,
+                                        @PathVariable Integer fspId,
+                                        @RequestParam("discountPercent") Integer discountPercent,
+                                        RedirectAttributes redirectAttributes) {
+
+        FlashSaleProduct fsp = flashSaleProductRepository.findById(fspId).orElseThrow();
+
+        // Cập nhật %
+        fsp.setDiscountPercent(discountPercent);
+
+        // Công thức tính giá mới: Giá Sale = Giá Gốc * (100 - % Giảm) / 100
+        BigDecimal salePrice = fsp.getProduct().getPrice()
+                .multiply(BigDecimal.valueOf(100 - discountPercent))
+                .divide(BigDecimal.valueOf(100));
+
+        fsp.setSalePrice(salePrice);
+        flashSaleProductRepository.save(fsp);
+
+        redirectAttributes.addFlashAttribute("successMessage", "Đã cập nhật mức giảm " + discountPercent + "% cho sản phẩm: " + fsp.getProduct().getName());
+        return "redirect:/admin/flash-sales/edit/" + fsId;
     }
 
     // XÓA SẢN PHẨM KHỎI FLASH SALE

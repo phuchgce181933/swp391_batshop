@@ -16,6 +16,7 @@ public class FlashSaleProduct {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    private Integer discountPercent;
     private BigDecimal salePrice;
 
     @ManyToOne

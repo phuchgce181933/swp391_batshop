@@ -12,9 +12,8 @@
                 <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Giảm giá</th>
                     <th>Thời gian diễn ra</th>
-                    <th>Sản phẩm</th>
+                    <th>Số lượng Sản phẩm</th>
                     <th>Trạng thái</th>
                     <th>Hành động</th>
                 </tr>
@@ -22,12 +21,6 @@
                 <tbody>
                 <tr th:each="fs : ${flashSales}">
                     <td th:text="${fs.id}" class="fw-bold"></td>
-
-                    <td class="text-center">
-                        <span class="fs-badge-discount">
-                            <i class="fas fa-bolt me-1"></i> -<span th:text="${fs.discountPercent} + '%'"></span>
-                        </span>
-                    </td>
 
                     <td>
                         <div class="fw-bold" style="color: #2c3e50;" th:text="${#temporals.format(fs.startDate, 'dd/MM/yyyy')}"></div>

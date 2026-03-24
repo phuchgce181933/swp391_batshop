@@ -15,35 +15,33 @@
 
       <form id="flashSaleForm" th:action="@{/admin/flash-sales/add}" th:object="${flashSale}" method="POST">
 
-        <div class="fs-form-group mb-3">
-          <label class="fs-form-label">Phần trăm giảm giá (%)</label>
-          <input type="number" class="fs-form-control" th:field="*{discountPercent}" placeholder="Ví dụ: 10, 20, 50..." required min="1" max="100">
-        </div>
-
-        <div class="fs-form-group mb-3">
-          <label class="fs-form-label">Ngày diễn ra Sale</label>
-          <input type="date" class="fs-form-control" name="saleDate" id="saleDate" required th:min="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}">
-        </div>
-
         <div class="row">
           <div class="col-md-6 fs-form-group mb-3">
-            <label class="fs-form-label">Giờ bắt đầu</label>
-            <input type="time" class="fs-form-control" name="startTime" id="startTime" required>
-            <small class="text-muted mt-1 d-block" style="font-size: 0.85rem;">* Giờ bắt đầu nên là giờ của tương lai</small>
+            <label class="fs-form-label">Ngày diễn ra Sale</label>
+            <input type="date" class="fs-form-control" name="saleDate" id="saleDate" required th:min="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}">
           </div>
 
           <div class="col-md-6 fs-form-group mb-4">
-            <label class="fs-form-label">Giờ kết thúc</label>
-            <input type="time" class="fs-form-control" name="endTime" id="endTime" required>
-            <small class="text-muted mt-1 d-block" style="font-size: 0.85rem;">* Giờ kết thúc phải sau giờ bắt đầu</small>
+            <label class="fs-form-label">Chọn Khung Giờ</label>
+            <select class="fs-form-control" name="timeSlot" id="timeSlot" required disabled>
+              <option value="" disabled selected>-- Vui lòng chọn ngày trước --</option>
+              <option value="0">00:00 - 02:00</option>
+              <option value="2">02:00 - 04:00</option>
+              <option value="4">04:00 - 06:00</option>
+              <option value="6">06:00 - 08:00</option>
+              <option value="8">08:00 - 10:00</option>
+              <option value="10">10:00 - 12:00</option>
+              <option value="12">12:00 - 14:00</option>
+              <option value="14">14:00 - 16:00</option>
+              <option value="16">16:00 - 18:00</option>
+              <option value="18">18:00 - 20:00</option>
+              <option value="20">20:00 - 22:00</option>
+              <option value="22">22:00 - 24:00</option>
+            </select>
           </div>
         </div>
 
-        <div id="jsErrorMessage" class="alert alert-danger" style="display: none; padding: 10px; border-radius: 6px; font-weight: 500; margin-bottom: 15px;">
-          <i class="fas fa-exclamation-circle"></i> <span id="jsErrorText"></span>
-        </div>
-
-        <div class="d-flex gap-2">
+        <div class="d-flex gap-2 mt-2">
           <button type="submit" id="btnSubmit" class="fs-btn fs-btn-primary">
             <i class="fas fa-save me-1"></i>Thêm đợt Flash Sale
           </button>
@@ -55,60 +53,62 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", function () {
+        const dateInput = document.getElementById("saleDate");
+        const timeSlotSelect = document.getElementById("timeSlot");
         const form = document.getElementById("flashSaleForm");
-        const errorDiv = document.getElementById("jsErrorMessage");
-        const errorText = document.getElementById("jsErrorText");
         const btnSubmit = document.getElementById("btnSubmit");
 
-        form.addEventListener("submit", function (event) {
-            // Reset thông báo lỗi
-            errorDiv.style.display = "none";
-
-            const saleDate = document.getElementById("saleDate").value;
-            const startTime = document.getElementById("startTime").value;
-            const endTime = document.getElementById("endTime").value;
-
-            // 1. Kiểm tra giờ bắt đầu/kết thúc
-            if (startTime && endTime && startTime >= endTime) {
-                event.preventDefault();
-                showError("[Giờ kết thúc] phải diễn ra sau [Giờ bắt đầu]!");
+        // Gọi API check khung giờ trống mỗi khi chọn ngày
+        dateInput.addEventListener("change", function() {
+            const dateStr = dateInput.value;
+            if(!dateStr) {
+                timeSlotSelect.disabled = true;
                 return;
             }
 
-            // 2. Lấy ngày giờ hiện tại để so sánh
-            const now = new Date();
-            const todayStr = now.toISOString().split('T')[0]; // Format: yyyy-mm-dd
+            // Gọi API
+            fetch(`/admin/flash-sales/api/booked-slots?date=${dateStr}`)
+                .then(response => response.json())
+                .then(bookedHours => {
+                    timeSlotSelect.disabled = false;
+                    timeSlotSelect.value = ""; // Reset value
 
-            // Format giờ hiện tại thành HH:mm
-            const currentHours = String(now.getHours()).padStart(2, '0');
-            const currentMinutes = String(now.getMinutes()).padStart(2, '0');
-            const currentTimeStr = `${currentHours}:${currentMinutes}`;
+                    const now = new Date();
+                    const isToday = (dateStr === now.toISOString().split('T')[0]);
+                    const currentHour = now.getHours();
 
-            // 3. Nếu chọn ngày hôm nay, không được chọn giờ bắt đầu trong quá khứ
-            if (saleDate === todayStr && startTime < currentTimeStr) {
-                event.preventDefault();
-                showError("Ngày diễn ra Sale đã chọn là hôm nay, [Giờ bắt đầu] không thể ở quá khứ của Giờ hiện tại!");
-                return;
-            }
+                    Array.from(timeSlotSelect.options).forEach(opt => {
+                        if(opt.value === "") return;
+                        const hour = parseInt(opt.value);
 
-            // Nếu qua hết các khâu validate -> Disable nút để tránh click đúp
+                        // Định dạng text giờ
+                        const hourText = `${String(hour).padStart(2, '0')}:00 - ${String(hour+2).padStart(2, '0')}:00`;
+
+                        if(bookedHours.includes(hour)) {
+                            // Khung giờ đã bị đặt
+                            opt.disabled = true;
+                            opt.text = `${hourText} (Đã có sự kiện)`;
+                        } else if (isToday && hour <= currentHour) {
+                            // Khung giờ đã trôi qua trong hôm nay
+                            opt.disabled = true;
+                            opt.text = `${hourText} (Đã qua)`;
+                        } else {
+                            // Khung giờ trống
+                            opt.disabled = false;
+                            opt.text = hourText;
+                        }
+                    });
+                })
+                .catch(err => console.error("Lỗi khi fetch khung giờ:", err));
+        });
+
+        // Effect chống click đúp
+        form.addEventListener("submit", function () {
             btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Đang lưu...';
             btnSubmit.style.opacity = '0.7';
             btnSubmit.style.cursor = 'not-allowed';
             btnSubmit.disabled = true;
         });
-
-// Hàm hiển thị lỗi mượt mà (chữ màu đỏ)
-    function showError(message) {
-        errorText.innerText = message;
-
-        // Thêm màu đỏ cho chữ
-        errorText.style.color = "#dc3545";
-        errorDiv.style.backgroundColor = "#f8d7da";
-        errorDiv.style.borderColor = "#f5c6cb";
-        errorDiv.style.color = "#721c24";
-        errorDiv.style.display = "block";
-    }
     });
   </script>
 </div>
