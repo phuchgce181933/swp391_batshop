@@ -42,10 +42,20 @@
         <input type="text" name="code">
         <button type="submit">Áp dụng</button>
     </form>
-    <p th:if="${session.voucher != null}">
-        Voucher:
-        <b th:text="${session.voucher.code}"></b>
-    </p>
+    <div th:if="${voucher != null}" class="applied-voucher mb-3 p-2 border rounded bg-light">
+        <span>Voucher: <b th:text="${voucher.code}"></b> - Giảm <b th:text="${discount}"></b> VND</span>
+        <a th:href="@{/checkout/cancel-voucher}" class="btn btn-sm btn-outline-danger ms-2">Hủy</a>
+    </div>
+    <div th:if="${error}" class="alert alert-danger">
+        <span th:text="${error}"></span>
+    </div>
+    <div th:if="${success}" class="alert alert-success">
+        <span th:text="${success}"></span>
+    </div>
+<!--    <p th:if="${session.voucher != null}">-->
+<!--        Voucher:-->
+<!--        <b th:text="${session.voucher.code}"></b>-->
+<!--    </p>-->
     <div class="total">
         <span>Tổng cộng</span>
         <strong th:text="${#numbers.formatDecimal(totalCart,0,'POINT',0,'COMMA')} + ' đ'"></strong>
@@ -58,6 +68,9 @@
         Tổng tiền:
         <span th:text="${#numbers.formatDecimal(totalCart,0,'POINT',0,'COMMA')} + ' đ'"></span>
     </p>
+    <div class="note">
+        <p>- Giá trên đã gồm phí vận chuyển 30 nghìn đồng.</p>
+    </div>
     <form th:action="@{/admin/orders/confirm}" method="post">
 
         <!--ĐỊA CHỈ -->
@@ -146,9 +159,7 @@
     </form>
 
 
-    <div class="note">
-        <p>- Giá trên đã gồm phí vận chuyển 30 nghìn đồng.</p>
-    </div>
+
 
 </div>
 
