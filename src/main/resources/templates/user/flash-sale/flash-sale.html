@@ -17,9 +17,8 @@
 <div class="flash-sale-container">
 
     <th:block th:if="${activeFlashSale != null}">
-
         <div class="flash-sale-banner">
-            <h2>⚡ FLASH SALE ⚡</h2>
+            <h2>⚡ FLASH SALE ĐANG DIỄN RA ⚡</h2>
             <div class="countdown-wrapper">
                 <p>Kết thúc trong:</p>
                 <div class="countdown-timer fs-countdown-box" th:data-endtime="${activeFlashSale.endDate}">
@@ -31,45 +30,88 @@
             </div>
         </div>
 
-        <div class="flash-sale-products">
+        <div th:if="${activeFlashSale.products.isEmpty()}" class="empty-state-box">
+            <i class="fas fa-box-open fa-3x"></i>
+            <h4>Các sản phẩm Flash Sale đang được cập nhật...</h4>
+            <p>Quý khách vui lòng quay lại sau ít phút nhé!</p>
+        </div>
 
-            <div th:if="${!activeFlashSale.products.isEmpty()}" class="product-grid">
-                <div th:each="fsp : ${activeFlashSale.products}" class="product-card">
+        <div th:if="${!activeFlashSale.products.isEmpty()}" class="fs-layout">
 
-                    <div class="product-image">
-                        <img th:if="${!fsp.product.images.isEmpty()}"
-                             th:src="@{'/uploads/product/' + ${fsp.product.images[0].image}}"
-                             alt="Product Image">
-                        <div class="discount-badge">
-                            -<span th:text="${activeFlashSale.discountPercent}"></span>%
-                        </div>
+            <aside class="fs-sidebar">
+                <div class="fs-filter-box">
+                    <h3 class="filter-title"><i class="fas fa-filter me-2"></i> Lọc sản phẩm</h3>
+
+                    <div class="filter-group">
+                        <h4 class="filter-subtitle">Mức giảm giá</h4>
+                        <label class="filter-option"><input type="checkbox" class="discount-filter" value="0-20"> Dưới 20%</label>
+                        <label class="filter-option"><input type="checkbox" class="discount-filter" value="20-50"> Từ 20% - 50%</label>
+                        <label class="filter-option"><input type="checkbox" class="discount-filter" value="51-100"> Trên 50%</label>
                     </div>
 
-                    <div class="product-info">
-                        <h3 th:text="${fsp.product.name}">Tên vợt</h3>
+                    <div class="filter-group">
+                        <h4 class="filter-subtitle">Mức giá</h4>
+                        <label class="filter-option"><input type="checkbox" class="price-filter" value="0-1000000"> Dưới 1.000.000đ</label>
+                        <label class="filter-option"><input type="checkbox" class="price-filter" value="1000000-2000000"> 1.000.000đ - 2.000.000đ</label>
+                        <label class="filter-option"><input type="checkbox" class="price-filter" value="2000000-3000000"> 2.000.000đ - 3.000.000đ</label>
+                        <label class="filter-option"><input type="checkbox" class="price-filter" value="3000000-999999999"> Trên 3.000.000đ</label>
+                    </div>
 
-                        <div class="price-section">
-                            <span class="sale-price" th:text="${#numbers.formatDecimal(fsp.salePrice, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></span>
-                            <span class="original-price" th:text="${#numbers.formatDecimal(fsp.product.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></span>
+                <div class="filter-group">
+                    <h4 class="filter-subtitle">Danh mục</h4>
+                    <th:block th:each="cat : ${categories}">
+                        <label class="filter-option">
+                            <input type="checkbox" class="category-filter" th:value="${cat.id}">
+                            <span th:text="${cat.name}"></span>
+                        </label>
+                    </th:block>
+                </div>
+                </div>
+
+            </aside>
+
+            <main class="fs-content">
+                <div class="product-grid">
+                    <div th:each="fsp : ${activeFlashSale.products}"
+                         class="product-card js-product-item"
+                         th:data-price="${fsp.salePrice}"
+                         th:data-discount="${fsp.discountPercent}"
+                         th:data-category="${fsp.product.category != null ? fsp.product.category.id : ''}">
+
+                        <div class="product-image">
+                            <img th:if="${!fsp.product.images.isEmpty()}"
+                                 th:src="@{'/uploads/product/' + ${fsp.product.images[0].image}}"
+                                 alt="Product Image">
+
+                            <div class="discount-badge" th:if="${fsp.discountPercent > 0}">
+                                -<span th:text="${fsp.discountPercent}"></span>%
+                            </div>
                         </div>
 
-                        <a th:href="@{/product/detail/{id}(id=${fsp.product.id})}" class="btn-buy-now">Mua Ngay</a>
+                        <div class="product-info">
+                            <h3 th:text="${fsp.product.name}">Tên vợt</h3>
+
+                            <div class="price-section">
+                                <span class="sale-price" th:text="${#numbers.formatDecimal(fsp.salePrice, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></span>
+                                <span class="original-price" th:if="${fsp.discountPercent > 0}" th:text="${#numbers.formatDecimal(fsp.product.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></span>
+                            </div>
+
+                            <a th:href="@{/product/detail/{id}(id=${fsp.product.id})}" class="btn-buy-now">Mua Ngay</a>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div th:if="${activeFlashSale.products.isEmpty()}" style="text-align: center; padding: 40px; background: #f9f9f9; border-radius: 8px;">
-                <i class="fas fa-box-open fa-3x" style="color: #ccc; margin-bottom: 15px;"></i>
-                <h4 style="color: #666;">Các sản phẩm Flash Sale đang được cập nhật...</h4>
-                <p style="color: #999;">Quý khách vui lòng quay lại sau ít phút nhé!</p>
-            </div>
-
+                <div id="filter-empty-state" class="empty-state-box" style="display: none; border: 1px dashed #ccc; background: transparent;">
+                    <i class="fas fa-search fa-3x"></i>
+                    <h4>Không tìm thấy sản phẩm phù hợp</h4>
+                    <p>Vui lòng thử bỏ bớt điều kiện lọc nhé!</p>
+                </div>
+            </main>
         </div>
     </th:block>
 
     <th:block th:if="${upcomingFlashSale != null}">
-
-        <div class="flash-sale-banner" style="background: linear-gradient(90deg, #f39c12 0%, #e67e22 100%);">
+        <div class="flash-sale-banner upcoming-banner">
             <h2>⏳ SẮP DIỄN RA ⏳</h2>
             <div class="countdown-wrapper">
                 <p>Bắt đầu sau:</p>
@@ -82,45 +124,88 @@
             </div>
         </div>
 
-        <div class="flash-sale-products">
+        <div th:if="${upcomingFlashSale.products.isEmpty()}" class="empty-state-box upcoming-empty">
+            <i class="fas fa-clock fa-3x"></i>
+            <h4>Danh sách sản phẩm đang được chuẩn bị...</h4>
+            <p>Hãy theo dõi đồng hồ đếm ngược để không bỏ lỡ nhé!</p>
+        </div>
 
-            <div th:if="${!upcomingFlashSale.products.isEmpty()}" class="product-grid">
-                <div th:each="fsp : ${upcomingFlashSale.products}" class="product-card" style="border-color: #f39c12;">
+        <div th:if="${!upcomingFlashSale.products.isEmpty()}" class="fs-layout">
 
-                    <div class="product-image">
-                        <img th:if="${!fsp.product.images.isEmpty()}"
-                             th:src="@{'/uploads/product/' + ${fsp.product.images[0].image}}"
-                             alt="Product Image">
-                        <div class="discount-badge" style="background: #f39c12;">
-                            Sắp giảm <span th:text="${upcomingFlashSale.discountPercent}"></span>%
-                        </div>
+            <aside class="fs-sidebar">
+                <div class="fs-filter-box" style="border-top-color: #f39c12;">
+                    <h3 class="filter-title" style="color: #d35400;"><i class="fas fa-filter me-2"></i> Lọc sản phẩm</h3>
+
+                    <div class="filter-group">
+                        <h4 class="filter-subtitle">Mức giảm giá</h4>
+                        <label class="filter-option"><input type="checkbox" class="discount-filter" value="0-20"> Dưới 20%</label>
+                        <label class="filter-option"><input type="checkbox" class="discount-filter" value="20-50"> Từ 20% - 50%</label>
+                        <label class="filter-option"><input type="checkbox" class="discount-filter" value="51-100"> Trên 50%</label>
                     </div>
 
-                    <div class="product-info">
-                        <h3 th:text="${fsp.product.name}">Tên vợt</h3>
 
-                        <div class="price-section">
-                            <span class="sale-price" style="color: #333;" th:text="${#numbers.formatDecimal(fsp.product.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></span>
+                    <div class="filter-group">
+                        <h4 class="filter-subtitle">Mức giá Sale dự kiến</h4>
+                        <label class="filter-option"><input type="checkbox" class="price-filter" value="0-1000000"> Dưới 1.000.000đ</label>
+                        <label class="filter-option"><input type="checkbox" class="price-filter" value="1000000-2000000"> 1.000.000đ - 2.000.000đ</label>
+                        <label class="filter-option"><input type="checkbox" class="price-filter" value="2000000-3000000"> 2.000.000đ - 3.000.000đ</label>
+                        <label class="filter-option"><input type="checkbox" class="price-filter" value="3000000-999999999"> Trên 3.000.000đ</label>
+                    </div>
+
+                <div class="filter-group">
+                    <h4 class="filter-subtitle">Danh mục</h4>
+                    <th:block th:each="cat : ${categories}">
+                        <label class="filter-option">
+                            <input type="checkbox" class="category-filter" th:value="${cat.id}">
+                            <span th:text="${cat.name}"></span>
+                        </label>
+                    </th:block>
+                </div>
+                </div>
+            </aside>
+
+            <main class="fs-content">
+                <div class="product-grid">
+                    <div th:each="fsp : ${upcomingFlashSale.products}"
+                         class="product-card js-product-item upcoming-card"
+                         th:data-price="${fsp.salePrice}"
+                         th:data-discount="${fsp.discountPercent}"
+                         th:data-category="${fsp.product.category != null ? fsp.product.category.id : ''}">
+
+                        <div class="product-image">
+                            <img th:if="${!fsp.product.images.isEmpty()}"
+                                 th:src="@{'/uploads/product/' + ${fsp.product.images[0].image}}"
+                                 alt="Product Image">
+
+                            <div class="discount-badge upcoming-badge" th:if="${fsp.discountPercent > 0}">
+                                Sắp giảm <span th:text="${fsp.discountPercent}"></span>%
+                            </div>
                         </div>
 
-                        <a th:href="@{/product/detail/{id}(id=${fsp.product.id})}" class="btn-buy-now" style="background: #f39c12;">Xem Trước</a>
+                        <div class="product-info">
+                            <h3 th:text="${fsp.product.name}">Tên vợt</h3>
+
+                            <div class="price-section">
+                                <span class="sale-price" style="color: #333;" th:text="${#numbers.formatDecimal(fsp.product.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></span>
+                            </div>
+
+                            <a th:href="@{/product/detail/{id}(id=${fsp.product.id})}" class="btn-buy-now upcoming-btn">Xem Trước</a>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div th:if="${upcomingFlashSale.products.isEmpty()}" style="text-align: center; padding: 40px; background: #fdfae5; border: 1px dashed #f39c12; border-radius: 8px;">
-                <i class="fas fa-clock fa-3x" style="color: #f39c12; margin-bottom: 15px;"></i>
-                <h4 style="color: #d35400;">Danh sách sản phẩm đang được chuẩn bị...</h4>
-                <p style="color: #e67e22;">Hãy theo dõi đồng hồ đếm ngược để không bỏ lỡ nhé!</p>
-            </div>
-
+                <div id="filter-empty-state" class="empty-state-box" style="display: none; border: 1px dashed #ccc; background: transparent;">
+                    <i class="fas fa-search fa-3x"></i>
+                    <h4>Không tìm thấy sản phẩm phù hợp</h4>
+                </div>
+            </main>
         </div>
     </th:block>
 
     <th:block th:if="${activeFlashSale == null and upcomingFlashSale == null}">
-        <div class="flash-sale-banner" style="background: linear-gradient(90deg, #95a5a6 0%, #7f8c8d 100%);">
+        <div class="flash-sale-banner no-sale-banner">
             <h2>⚡ FLASH SALE ⚡</h2>
-            <div style="padding: 20px; font-size: 1.2rem;">
+            <div class="no-sale-text">
                 <p>Hiện tại không có chương trình Flash Sale nào đang hoặc sắp diễn ra.</p>
                 <p>Quý khách vui lòng quay lại sau nhé!</p>
             </div>
@@ -129,8 +214,9 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            const fsBoxes = document.querySelectorAll('.fs-countdown-box');
 
+            // --- 1. XỬ LÝ ĐẾM NGƯỢC THỜI GIAN ---
+            const fsBoxes = document.querySelectorAll('.fs-countdown-box');
             fsBoxes.forEach(fsBox => {
                 const endTimeStr = fsBox.getAttribute('data-endtime');
                 if(!endTimeStr) return;
@@ -158,6 +244,70 @@
                     fsBox.querySelector(".fs-seconds").innerText = seconds.toString().padStart(2, '0');
                 }, 1000);
             });
+
+            // --- 2. XỬ LÝ BỘ LỌC (Lọc theo Giá, % Giảm & Danh mục) ---
+            const priceCheckboxes = document.querySelectorAll('.price-filter');
+            const discountCheckboxes = document.querySelectorAll('.discount-filter');
+            const categoryCheckboxes = document.querySelectorAll('.category-filter');
+            const products = document.querySelectorAll('.js-product-item');
+            const emptyState = document.getElementById('filter-empty-state');
+
+            function applyFilters() {
+                // Lấy mảng các value đang được tick
+                const checkedPrices = Array.from(priceCheckboxes).filter(cb => cb.checked).map(cb => cb.value);
+                const checkedDiscounts = Array.from(discountCheckboxes).filter(cb => cb.checked).map(cb => cb.value);
+                const checkedCategories = Array.from(categoryCheckboxes).filter(cb => cb.checked).map(cb => cb.value);
+
+                let visibleCount = 0;
+
+                products.forEach(p => {
+                    const price = parseFloat(p.getAttribute('data-price'));
+                    const discount = parseFloat(p.getAttribute('data-discount'));
+                    const categoryId = p.getAttribute('data-category');
+
+                    // Lọc Giá
+                    let matchPrice = checkedPrices.length === 0;
+                    checkedPrices.forEach(range => {
+                        const [min, max] = range.split('-');
+                        if (price >= parseFloat(min) && price <= parseFloat(max)) {
+                            matchPrice = true;
+                        }
+                    });
+
+                    // Lọc % Giảm
+                    let matchDiscount = checkedDiscounts.length === 0;
+                    checkedDiscounts.forEach(range => {
+                        const [min, max] = range.split('-');
+                        if (discount >= parseFloat(min) && discount <= parseFloat(max)) {
+                            matchDiscount = true;
+                        }
+                    });
+
+                    // Lọc Danh Mục
+                    let matchCategory = checkedCategories.length === 0 || checkedCategories.includes(categoryId);
+
+                    // Hiển thị nếu thỏa mãn toàn bộ
+                    if (matchPrice && matchDiscount && matchCategory) {
+                        p.style.display = 'flex';
+                        visibleCount++;
+                    } else {
+                        p.style.display = 'none';
+                    }
+                });
+
+                // Xử lý khối rỗng
+                if(emptyState) {
+                    if (visibleCount === 0 && products.length > 0) {
+                        emptyState.style.display = 'block';
+                    } else {
+                        emptyState.style.display = 'none';
+                    }
+                }
+            }
+
+            priceCheckboxes.forEach(cb => cb.addEventListener('change', applyFilters));
+            discountCheckboxes.forEach(cb => cb.addEventListener('change', applyFilters));
+            categoryCheckboxes.forEach(cb => cb.addEventListener('change', applyFilters));
         });
     </script>
 </div>

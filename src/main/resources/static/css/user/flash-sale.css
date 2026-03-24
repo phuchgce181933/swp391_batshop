@@ -1,3 +1,7 @@
+/* ====================================================
+   CUSTOMER FLASH SALE - STYLES
+   ==================================================== */
+
 .flash-sale-container {
     max-width: 1200px;
     margin: 0 auto;
@@ -5,6 +9,7 @@
     font-family: Arial, sans-serif;
 }
 
+/* --- BANNER --- */
 .flash-sale-banner {
     background: linear-gradient(90deg, #ff416c 0%, #ff4b2b 100%);
     color: white;
@@ -12,17 +17,35 @@
     padding: 30px 20px;
     border-radius: 10px;
     margin-bottom: 30px;
+    box-shadow: 0 5px 15px rgba(255, 75, 43, 0.3);
 }
-
 .flash-sale-banner h2 {
     margin: 0 0 15px 0;
-    font-size: 2.5rem;
+    font-size: 2.2rem;
     text-transform: uppercase;
     letter-spacing: 2px;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
 }
 
+/* Banner Sắp Diễn Ra */
+.upcoming-banner {
+    background: linear-gradient(90deg, #f39c12 0%, #e67e22 100%);
+    box-shadow: 0 5px 15px rgba(230, 126, 34, 0.3);
+}
+
+/* Banner Trống */
+.no-sale-banner {
+    background: linear-gradient(90deg, #95a5a6 0%, #7f8c8d 100%);
+    box-shadow: none;
+}
+.no-sale-text {
+    padding: 20px;
+    font-size: 1.1rem;
+}
+
+/* --- COUNTDOWN --- */
 .countdown-timer {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     font-weight: bold;
     background: rgba(0, 0, 0, 0.2);
     display: inline-block;
@@ -30,46 +53,138 @@
     border-radius: 8px;
     margin-top: 10px;
 }
-
 .countdown-timer span {
     background: white;
     color: #ff4b2b;
     padding: 5px 10px;
     border-radius: 5px;
     margin: 0 5px;
+    min-width: 45px;
+    display: inline-block;
+}
+.upcoming-banner .countdown-timer span {
+    color: #e67e22;
+}
+
+/* --- EMPTY STATE --- */
+.empty-state-box {
+    text-align: center;
+    padding: 50px 20px;
+    background: #f9f9f9;
+    border-radius: 10px;
+    margin-bottom: 30px;
+}
+.empty-state-box i { color: #ccc; margin-bottom: 15px; }
+.empty-state-box h4 { color: #555; margin-bottom: 10px; font-size: 1.2rem;}
+.empty-state-box p { color: #888; margin: 0; }
+
+.upcoming-empty {
+    background: #fdfae5;
+    border: 1px dashed #f39c12;
+}
+.upcoming-empty i { color: #f39c12; }
+.upcoming-empty h4 { color: #d35400; }
+.upcoming-empty p { color: #e67e22; }
+
+/* ====================================================
+   LAYOUT: SIDEBAR (LỌC) & CONTENT (SẢN PHẨM)
+   ==================================================== */
+.fs-layout {
+    display: flex;
+    align-items: flex-start;
+    gap: 30px;
+}
+
+/* SIDEBAR BỘ LỌC */
+.fs-sidebar {
+    flex: 0 0 260px; /* Cố định chiều rộng 260px */
+    position: sticky;
+    top: 20px; /* Dính lại khi scroll cuộn trang */
+}
+.fs-filter-box {
+    background: #fff;
+    border: 1px solid #eaeaea;
+    border-top: 4px solid #ff4b2b;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+}
+.filter-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #ff4b2b;
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 10px;
+}
+.filter-group {
+    margin-bottom: 20px;
+}
+.filter-subtitle {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 12px;
+}
+.filter-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 8px;
+    cursor: pointer;
+}
+.filter-option input[type="checkbox"] {
+    accent-color: #ff4b2b; /* Đổi màu checkbox */
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+.filter-option:hover { color: #ff4b2b; }
+
+/* MAIN CONTENT (GRID) */
+.fs-content {
+    flex: 1; /* Chiếm toàn bộ không gian còn lại */
 }
 
 .product-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
     gap: 20px;
 }
 
+/* --- PRODUCT CARD --- */
 .product-card {
     border: 1px solid #eee;
     border-radius: 8px;
     overflow: hidden;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     background: white;
+    display: flex;
+    flex-direction: column;
 }
-
 .product-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+}
+.upcoming-card {
+    border-color: #f39c12;
 }
 
 .product-image {
     position: relative;
     width: 100%;
-    height: 250px;
+    height: 230px;
+    background: #fff;
+    padding: 10px;
 }
-
 .product-image img {
     width: 100%;
     height: 100%;
     object-fit: contain;
 }
-
 .discount-badge {
     position: absolute;
     top: 10px;
@@ -78,39 +193,51 @@
     color: white;
     font-weight: bold;
     padding: 5px 10px;
-    border-radius: 5px;
+    border-radius: 50px;
+    font-size: 0.85rem;
     z-index: 2;
+    box-shadow: 0 2px 5px rgba(255, 75, 43, 0.4);
+}
+.upcoming-badge {
+    background: #f39c12;
+    box-shadow: 0 2px 5px rgba(243, 156, 18, 0.4);
 }
 
 .product-info {
     padding: 15px;
     text-align: center;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: #fafafa;
 }
-
 .product-info h3 {
-    font-size: 1.1rem;
-    margin: 0 0 10px 0;
+    font-size: 1rem;
+    line-height: 1.4;
+    margin: 0 0 12px 0;
     color: #333;
-    white-space: nowrap;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
     overflow: hidden;
-    text-overflow: ellipsis;
+    height: 40px;
 }
 
 .price-section {
     margin-bottom: 15px;
+    min-height: 45px;
 }
-
 .sale-price {
     color: #ff4b2b;
-    font-size: 1.3rem;
-    font-weight: bold;
+    font-size: 1.25rem;
+    font-weight: 700;
     display: block;
 }
-
 .original-price {
     color: #999;
     text-decoration: line-through;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
 }
 
 .btn-buy-now {
@@ -119,11 +246,71 @@
     color: white;
     text-decoration: none;
     padding: 10px;
-    border-radius: 5px;
+    border-radius: 6px;
     font-weight: bold;
-    transition: background 0.3s ease;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+}
+.btn-buy-now:hover {
+    background: #e43c5c;
+}
+.upcoming-btn {
+    background: #f39c12;
+}
+.upcoming-btn:hover {
+    background: #d68910;
 }
 
-.btn-buy-now:hover {
-    background: #ff416c;
+/* ====================================================
+   RESPONSIVE (ĐIỆN THOẠI & TABLET)
+   ==================================================== */
+@media (max-width: 992px) {
+    .fs-layout {
+        flex-direction: column;
+    }
+    .fs-sidebar {
+        width: 100%;
+        flex: none;
+        position: static;
+        margin-bottom: 20px;
+    }
+    .fs-filter-box {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        padding: 15px;
+    }
+    .filter-title {
+        width: 100%;
+        margin-bottom: 5px;
+    }
+    .filter-group {
+        flex: 1;
+        min-width: 200px;
+        margin-bottom: 0;
+    }
+}
+
+@media (max-width: 576px) {
+    .product-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    .product-image {
+        height: 160px;
+    }
+    .sale-price {
+        font-size: 1.1rem;
+    }
+    .btn-buy-now {
+        font-size: 0.85rem;
+        padding: 8px;
+    }
+    .flash-sale-banner h2 {
+        font-size: 1.6rem;
+    }
+    .countdown-timer {
+        font-size: 1rem;
+    }
 }

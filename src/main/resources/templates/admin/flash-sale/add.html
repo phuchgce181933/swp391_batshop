@@ -4,17 +4,16 @@
   <div class="container-fluid">
     <div class="fs-admin-header mt-3">
       <h2 class="fs-admin-title">Thêm đợt Flash Sale mới</h2>
-      <a th:href="@{/admin/flash-sales}" class="fs-btn fs-btn-secondary"><i class="fas fa-arrow-left"></i>&larr; Quay lại danh sách</a>
+      <a th:href="@{/admin/flash-sales}" class="fs-btn fs-btn-secondary"><i class="fas fa-arrow-left"></i> Quay lại danh sách</a>
     </div>
 
     <div class="fs-admin-card">
 
-      <div th:if="${errorMessage}" class="alert alert-danger" style="background-color: #f8d7da; color: #721c24; padding: 12px; border-radius: 6px; border: 1px solid #f5c6cb; font-weight: 500; margin-bottom: 20px;">
+      <div th:if="${errorMessage}" class="fs-alert-custom fs-alert-danger-custom">
         <i class="fas fa-exclamation-triangle"></i> <span th:text="${errorMessage}"></span>
       </div>
 
       <form id="flashSaleForm" th:action="@{/admin/flash-sales/add}" th:object="${flashSale}" method="POST">
-
         <div class="row">
           <div class="col-md-6 fs-form-group mb-3">
             <label class="fs-form-label">Ngày diễn ra Sale</label>
@@ -58,7 +57,6 @@
         const form = document.getElementById("flashSaleForm");
         const btnSubmit = document.getElementById("btnSubmit");
 
-        // Gọi API check khung giờ trống mỗi khi chọn ngày
         dateInput.addEventListener("change", function() {
             const dateStr = dateInput.value;
             if(!dateStr) {
@@ -66,12 +64,11 @@
                 return;
             }
 
-            // Gọi API
             fetch(`/admin/flash-sales/api/booked-slots?date=${dateStr}`)
                 .then(response => response.json())
                 .then(bookedHours => {
                     timeSlotSelect.disabled = false;
-                    timeSlotSelect.value = ""; // Reset value
+                    timeSlotSelect.value = "";
 
                     const now = new Date();
                     const isToday = (dateStr === now.toISOString().split('T')[0]);
@@ -80,20 +77,15 @@
                     Array.from(timeSlotSelect.options).forEach(opt => {
                         if(opt.value === "") return;
                         const hour = parseInt(opt.value);
-
-                        // Định dạng text giờ
                         const hourText = `${String(hour).padStart(2, '0')}:00 - ${String(hour+2).padStart(2, '0')}:00`;
 
                         if(bookedHours.includes(hour)) {
-                            // Khung giờ đã bị đặt
                             opt.disabled = true;
                             opt.text = `${hourText} (Đã có sự kiện)`;
-                        } else if (isToday && hour <= currentHour) {
-                            // Khung giờ đã trôi qua trong hôm nay
+} else if (isToday && (hour + 2) <= currentHour) {
                             opt.disabled = true;
                             opt.text = `${hourText} (Đã qua)`;
                         } else {
-                            // Khung giờ trống
                             opt.disabled = false;
                             opt.text = hourText;
                         }
@@ -102,7 +94,6 @@
                 .catch(err => console.error("Lỗi khi fetch khung giờ:", err));
         });
 
-        // Effect chống click đúp
         form.addEventListener("submit", function () {
             btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Đang lưu...';
             btnSubmit.style.opacity = '0.7';

@@ -3,6 +3,7 @@ package com.ra.batshop.controller;
 import com.ra.batshop.model.FlashSale;
 import com.ra.batshop.model.FlashSaleProduct;
 import com.ra.batshop.model.Product;
+import com.ra.batshop.repository.CategoryRepository;
 import com.ra.batshop.repository.FlashSaleProductRepository;
 import com.ra.batshop.repository.FlashSaleRepository;
 import com.ra.batshop.repository.ProductRepository;
@@ -26,13 +27,16 @@ public class FlashSaleController {
     private final FlashSaleRepository flashSaleRepository;
     private final FlashSaleProductRepository flashSaleProductRepository;
     private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository; // Đã thêm CategoryRepository
 
     public FlashSaleController(FlashSaleRepository flashSaleRepository,
                                FlashSaleProductRepository flashSaleProductRepository,
-                               ProductRepository productRepository) {
+                               ProductRepository productRepository,
+                               CategoryRepository categoryRepository) { // Thêm vào tham số Constructor
         this.flashSaleRepository = flashSaleRepository;
         this.flashSaleProductRepository = flashSaleProductRepository;
         this.productRepository = productRepository;
+        this.categoryRepository = categoryRepository; // Gán giá trị
     }
 
     // =======================================================
@@ -73,6 +77,11 @@ public class FlashSaleController {
             }
         }
 
+        // =================================================================
+        // THÊM: Truyền danh sách Category xuống View để làm bộ lọc Danh Mục
+        // =================================================================
+        model.addAttribute("categories", categoryRepository.findAll());
+
         return "user/flash-sale/flash-sale";
     }
 
@@ -111,9 +120,9 @@ public class FlashSaleController {
         // Nếu khung giờ là 22h, giờ kết thúc là 0h của ngày hôm sau
         LocalDateTime end = (timeSlot == 22) ? saleDate.plusDays(1).atStartOfDay() : saleDate.atTime(timeSlot + 2, 0);
 
-        // 2. Validate: Không cho tạo khung giờ trong quá khứ
-        if (start.isBefore(LocalDateTime.now())) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Lỗi: Khung giờ bắt đầu không thể nằm trong quá khứ!");
+        // 2. Validate: Chỉ báo lỗi khi KHUNG GIỜ ĐÃ KẾT THÚC hoàn toàn
+        if (!end.isAfter(LocalDateTime.now())) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Lỗi: Khung giờ đã chọn đã trôi qua hoàn toàn!");
             return "redirect:/admin/flash-sales/add";
         }
 
@@ -209,14 +218,19 @@ public class FlashSaleController {
                 continue; // Bỏ qua sản phẩm bị trùng, đi tới sản phẩm tiếp theo
             }
 
-            // 3. Nếu an toàn, tiến hành thêm vào db với mức giảm mặc định là 0%
+            // 3. Nếu an toàn, tiến hành thêm vào db với mức giảm mặc định là 1%
             FlashSaleProduct fsp = new FlashSaleProduct();
             fsp.setFlashSale(flashSale);
             fsp.setProduct(product);
 
-            fsp.setDiscountPercent(0); // Mặc định giảm 0% khi mới thêm vào
-            fsp.setSalePrice(product.getPrice()); // Giá bán bằng giá gốc ban đầu
+            fsp.setDiscountPercent(1); // Mặc định giảm 1% khi mới thêm vào
 
+            // Tự động tính luôn giá Sale cho mức 1% (Giá Gốc * 99 / 100)
+            BigDecimal salePrice = product.getPrice()
+                    .multiply(BigDecimal.valueOf(99))
+                    .divide(BigDecimal.valueOf(100));
+
+            fsp.setSalePrice(salePrice);
             flashSaleProductRepository.save(fsp);
             successCount++;
         }

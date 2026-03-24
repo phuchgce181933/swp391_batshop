@@ -23,8 +23,8 @@
                     <td th:text="${fs.id}" class="fw-bold"></td>
 
                     <td>
-                        <div class="fw-bold" style="color: #2c3e50;" th:text="${#temporals.format(fs.startDate, 'dd/MM/yyyy')}"></div>
-                        <div class="text-muted mt-1" style="font-size: 0.85rem;">
+                        <div class="fw-bold fs-product-name" th:text="${#temporals.format(fs.startDate, 'dd/MM/yyyy')}"></div>
+                        <div class="text-muted mt-1 fs-text-sm">
                             <i class="far fa-clock"></i>
                             <span th:text="${#temporals.format(fs.startDate, 'HH:mm')}"></span> -
                             <span th:text="${#temporals.format(fs.endDate, 'HH:mm')}"></span>
@@ -36,38 +36,29 @@
                     </td>
 
                     <td>
-                        <span th:if="${fs.status == 'Đang diễn ra'}"
-                              class="badge" style="background-color: #2ecc71; color: white; padding: 6px 10px; font-size: 0.85rem;">
+                        <span th:if="${fs.status == 'Đang diễn ra'}" class="badge fs-badge-status fs-badge-active">
                               <i class="fas fa-play-circle"></i> Đang diễn ra
                         </span>
-
-                        <span th:if="${fs.status == 'Sắp diễn ra'}"
-                              class="badge" style="background-color: #f39c12; color: white; padding: 6px 10px; font-size: 0.85rem;">
+                        <span th:if="${fs.status == 'Sắp diễn ra'}" class="badge fs-badge-status fs-badge-upcoming">
                               <i class="fas fa-clock"></i> Sắp diễn ra
                         </span>
-
-                        <span th:if="${fs.status == 'Đã kết thúc'}"
-                              class="badge" style="background-color: #95a5a6; color: white; padding: 6px 10px; font-size: 0.85rem;">
+                        <span th:if="${fs.status == 'Đã kết thúc'}" class="badge fs-badge-status fs-badge-ended">
                               <i class="fas fa-stop-circle"></i> Đã kết thúc
                         </span>
                     </td>
 
                     <td>
                         <div class="fs-action-btns">
-                            <a th:href="@{/admin/flash-sales/edit/{id}(id=${fs.id})}" class="fs-btn fs-btn-sm" style="background-color: #3498db; color: white;">
+                            <a th:href="@{/admin/flash-sales/edit/{id}(id=${fs.id})}" class="fs-btn fs-btn-sm fs-btn-info">
                                 <i class="fas fa-edit"></i> Quản lý
                             </a>
-
                             <a th:if="${fs.status != 'Đang diễn ra'}"
                                th:href="@{/admin/flash-sales/delete/{id}(id=${fs.id})}"
-                               class="fs-btn fs-btn-sm" style="background-color: #e74c3c; color: white;"
+                               class="fs-btn fs-btn-sm fs-btn-danger"
                                onclick="return confirm('Bạn có chắc chắn muốn xóa Flash Sale này không?');">
                                 <i class="fas fa-trash"></i> Xóa
                             </a>
-
-                            <button th:if="${fs.status == 'Đang diễn ra'}"
-                                    class="fs-btn fs-btn-sm fs-btn-disabled" disabled
-                                    title="Không thể xóa đợt Flash Sale đang chạy">
+                            <button th:if="${fs.status == 'Đang diễn ra'}" class="fs-btn fs-btn-sm fs-btn-disabled" disabled title="Không thể xóa đợt Flash Sale đang chạy">
                                 <i class="fas fa-trash"></i> Xóa
                             </button>
                         </div>
@@ -75,7 +66,7 @@
                 </tr>
 
                 <tr th:if="${flashSales.isEmpty()}">
-                    <td colspan="6" class="fs-empty-state">
+                    <td colspan="5" class="fs-empty-state">
                         <i class="fas fa-tags fa-3x"></i>
                         <h5>Chưa có đợt Flash Sale nào!</h5>
                     </td>
