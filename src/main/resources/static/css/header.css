@@ -263,3 +263,8 @@
 .logout-btn:hover {
     background-color: #d62828 !important;
 }
+.auth-section {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+}

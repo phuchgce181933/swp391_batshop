@@ -9,8 +9,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.math.BigDecimal;
 import java.nio.file.Files;
@@ -19,6 +21,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/admin/products")
@@ -55,11 +58,11 @@ public class ProductController {
     @GetMapping
     public String list(Model model,
                        @RequestParam(defaultValue = "0") int page,
-                        @RequestParam(defaultValue = "5") int size,
+                       @RequestParam(defaultValue = "5") int size,
                        @RequestParam(required = false) String keyword,
                        @RequestParam(required = false) Integer categoryId,
                        @RequestParam(required = false) Long brandId,
-             HttpSession session) {
+                       HttpSession session) {
         if (session.getAttribute("user") == null) {
             return "redirect:/login";
         }
@@ -104,7 +107,7 @@ public class ProductController {
     @PostMapping("/add")
     public String save(@ModelAttribute Product product,
                        @RequestParam("imageFile") MultipartFile file,
-                       @RequestParam(value = "variantImages", required = false) List<MultipartFile[]> variantImages,
+                       MultipartHttpServletRequest request,
                        Model model) {
 
         if (file == null || file.isEmpty()) {
@@ -113,20 +116,12 @@ public class ProductController {
             model.addAttribute("brands", brandRepository.findAll());
             model.addAttribute("sizes", sizeRepository.findAll());
             model.addAttribute("colors", colorRepository.findAll());
-            model.addAttribute("racketLevels", RacketLevel.values());
-            model.addAttribute("racketLengths", RacketLength.values());
-            model.addAttribute("handleLengths", RacketHandleLength.values());
-            model.addAttribute("racketStyles", RacketStyle.values());
-            model.addAttribute("racketWeights", RacketWeight.values());
-            model.addAttribute("equilibriumPoints", EquilibriumPoint.values());
-            model.addAttribute("chopstickHardness", ChopstickHardness.values());
             model.addAttribute("content", "admin/product/add");
             return "admin/layout";
         }
 
         try {
 
-            // ===== UPLOAD IMAGE =====
             String uploadDir = "uploads/product/";
             Path uploadPath = Paths.get(uploadDir);
 
@@ -134,6 +129,12 @@ public class ProductController {
                 Files.createDirectories(uploadPath);
             }
 
+            // ===== LẤY FILE VARIANT =====
+            Map<String, List<MultipartFile>> variantImages = request.getMultiFileMap();
+
+            System.out.println("ALL FILE KEYS: " + variantImages.keySet());
+
+            // ===== IMAGE PRODUCT =====
             String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
 
             Files.copy(file.getInputStream(),
@@ -143,59 +144,62 @@ public class ProductController {
             product.setCreatedAt(LocalDateTime.now());
             product.setStatus(true);
 
-            // ===== SET CATEGORY =====
             Category category = categoryRepository
                     .findById(product.getCategory().getId())
                     .orElseThrow();
 
             product.setCategory(category);
 
-            // them anh
             ProductImage image = new ProductImage();
             image.setImage(fileName);
             product.addImage(image);
 
-            // đat variant
+            // ===== VARIANTS =====
             if (product.getVariants() != null) {
+
                 for (int i = 0; i < product.getVariants().size(); i++) {
 
                     ProductVariant variant = product.getVariants().get(i);
-
                     variant.setProduct(product);
+                    // ===== FIX RACKET =====
+                    if (product.getCategory().getId() == 3) {
 
-                    // Nếu có racketDetail thì set quan hệ
-                    if (variant.getRacketDetail() != null) {
-                        variant.getRacketDetail().setVariant(variant);
+                        if (variant.getRacketDetail() == null) {
+                            variant.setRacketDetail(new RacketDetail());
+                        }
+
+                        variant.getRacketDetail().setVariant(variant); //  QUAN TRỌNG
                     }
-
-                    // set brand
-                    if (variant.getBrand() != null) {
+                    // ===== SET BRAND =====
+                    if (variant.getBrand() != null && variant.getBrand().getId() != null) {
                         variant.setBrand(
-                                brandRepository
-                                        .findById(variant.getBrand().getId())
-                                        .orElseThrow()
+                                brandRepository.findById(variant.getBrand().getId()).orElse(null)
                         );
                     }
 
+                    // ===== SET SIZE =====
                     if (variant.getSize() != null && variant.getSize().getId() != null) {
                         variant.setSize(
-                                sizeRepository
-                                        .findById(variant.getSize().getId())
-                                        .orElse(null)
+                                sizeRepository.findById(variant.getSize().getId()).orElse(null)
                         );
                     }
 
+                    // ===== SET COLOR =====
                     if (variant.getColor() != null && variant.getColor().getId() != null) {
                         variant.setColor(
-                                colorRepository
-                                        .findById(variant.getColor().getId())
-                                        .orElse(null)
+                                colorRepository.findById(variant.getColor().getId()).orElse(null)
                         );
                     }
 
-                    // ===== UPLOAD VARIANT IMAGE =====
-                    if (variantImages != null && variantImages.size() > i) {
-                        MultipartFile[] images = variantImages.get(i);
+                    // ===== UPLOAD VARIANT IMAGES =====
+                    String key = "variantImages[" + i + "]";
+                    List<MultipartFile> images = variantImages.get(key);
+
+                    System.out.println("Checking key: " + key);
+
+                    if (images != null && !images.isEmpty()) {
+
+                        System.out.println("Found " + images.size() + " images for variant " + i);
 
                         for (MultipartFile img : images) {
 
@@ -216,12 +220,13 @@ public class ProductController {
                                 variant.addImage(variantImage);
                             }
                         }
-                    }
 
+                    } else {
+                        System.out.println("NO IMAGE for variant " + i);
+                    }
                 }
             }
 
-            // ===== SAVE PRODUCT =====
             productRepository.save(product);
 
         } catch (Exception e) {
@@ -261,115 +266,46 @@ public class ProductController {
     @PostMapping("/edit")
     public String update(@ModelAttribute Product product,
                          @RequestParam("imageFile") MultipartFile file,
-                         @RequestParam(value = "variantImages", required = false)
-                         List<MultipartFile[]> variantImages) {
+                         MultipartHttpServletRequest request) {
 
         try {
 
             Product existing =
                     productRepository.findById(product.getId()).orElseThrow();
 
-            // 3. KIỂM TRA XEM GIÁ CÓ BỊ THAY ĐỔI KHÔNG
-            boolean isPriceChanged = existing.getPrice().compareTo(product.getPrice()) != 0;
-
-            //  UPDATE BASIC INFO
             existing.setName(product.getName());
             existing.setDescription(product.getDescription());
             existing.setPrice(product.getPrice());
             existing.setUpdatedAt(LocalDateTime.now());
             existing.setStatus(product.getStatus());
+
             existing.setCategory(
-                    categoryRepository
-                            .findById(product.getCategory().getId())
-                            .orElseThrow()
+                    categoryRepository.findById(product.getCategory().getId()).orElseThrow()
             );
 
             existing.setBrand(
-                    brandRepository
-                            .findById(product.getBrand().getId())
-                            .orElseThrow()
+                    brandRepository.findById(product.getBrand().getId()).orElseThrow()
             );
 
-            //  UPDATE IMAGE
-            if (file != null && !file.isEmpty()) {
+            String uploadDir = "uploads/product/";
+            Path uploadPath = Paths.get(uploadDir);
 
-                String uploadDir = "uploads/product/";
-                Path uploadPath = Paths.get(uploadDir);
-
-                if (!Files.exists(uploadPath)) {
-                    Files.createDirectories(uploadPath);
-                }
-
-                // XÓA FILE CŨ
-                if (!existing.getImages().isEmpty()) {
-
-                    String oldFile =
-                            existing.getImages().get(0).getImage();
-
-                    Files.deleteIfExists(uploadPath.resolve(oldFile));
-
-                    existing.getImages().clear();
-                }
-
-                String fileName =
-                        System.currentTimeMillis() + "_" +
-                                file.getOriginalFilename();
-
-                Files.copy(file.getInputStream(),
-                        uploadPath.resolve(fileName),
-                        StandardCopyOption.REPLACE_EXISTING);
-
-                ProductImage image = new ProductImage();
-                image.setImage(fileName);
-
-                existing.addImage(image);
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
             }
 
+            // ===== LẤY FILE =====
+            Map<String, List<MultipartFile>> variantImages = request.getMultiFileMap();
 
-            // UPDATE VARIANTS
+            System.out.println("KEYS: " + variantImages.keySet());
+
+            // ===== UPDATE VARIANTS =====
             if (product.getVariants() != null) {
 
                 for (int i = 0; i < product.getVariants().size(); i++) {
 
                     ProductVariant updated = product.getVariants().get(i);
 
-                    // =========================
-                    // VARIANT MỚI
-                    // =========================
-                    if (updated.getId() == null) {
-
-                        updated.setProduct(existing);
-
-                        updated.setBrand(
-                                brandRepository
-                                        .findById(updated.getBrand().getId())
-                                        .orElseThrow()
-                        );
-
-                        if (updated.getSize() != null && updated.getSize().getId() != null) {
-                            updated.setSize(
-                                    sizeRepository
-                                            .findById(updated.getSize().getId())
-                                            .orElse(null)
-                            );
-                        }
-
-                        if (updated.getColor() != null && updated.getColor().getId() != null) {
-                            updated.setColor(
-                                    colorRepository
-                                            .findById(updated.getColor().getId())
-                                            .orElse(null)
-                            );
-                        }
-
-                        existing.getVariants().add(updated);
-
-                        continue;
-                    }
-
-                    // =========================
-                    // VARIANT CŨ
-                    // =========================
                     ProductVariant dbVariant =
                             existing.getVariants()
                                     .stream()
@@ -382,58 +318,29 @@ public class ProductController {
                     dbVariant.setStock(updated.getStock());
                     dbVariant.setAdditionalPrice(updated.getAdditionalPrice());
 
-                    dbVariant.setBrand(
-                            brandRepository
-                                    .findById(updated.getBrand().getId())
-                                    .orElseThrow()
-                    );
+                    // ===== FIX IMAGE =====
+                    String key = "variantImages[" + i + "]";
+                    List<MultipartFile> images = variantImages.get(key);
 
-                    if (updated.getSize() != null && updated.getSize().getId() != null) {
-                        dbVariant.setSize(
-                                sizeRepository
-                                        .findById(updated.getSize().getId())
-                                        .orElse(null)
-                        );
-                    }
+                    System.out.println("Checking: " + key);
 
-                    if (updated.getColor() != null && updated.getColor().getId() != null) {
-                        dbVariant.setColor(
-                                colorRepository
-                                        .findById(updated.getColor().getId())
-                                        .orElse(null)
-                        );
-                    }
-
-                    // =========================
-                    // UPLOAD VARIANT IMAGE
-                    // =========================
-                    if (variantImages != null && variantImages.size() > i) {
-
-                        MultipartFile[] images = variantImages.get(i);
-
-                        String uploadDir = "uploads/product/";
-                        Path uploadPath = Paths.get(uploadDir);
-
-                        if (!Files.exists(uploadPath)) {
-                            Files.createDirectories(uploadPath);
-                        }
+                    if (images != null && !images.isEmpty()) {
 
                         for (MultipartFile img : images) {
 
                             if (!img.isEmpty()) {
 
-                                String variantFileName =
+                                String fileName =
                                         System.currentTimeMillis() + "_" + img.getOriginalFilename();
 
                                 Files.copy(
                                         img.getInputStream(),
-                                        uploadPath.resolve(variantFileName),
+                                        uploadPath.resolve(fileName),
                                         StandardCopyOption.REPLACE_EXISTING
                                 );
 
                                 ProductVariantImage variantImage = new ProductVariantImage();
-                                variantImage.setImage(variantFileName);
-
+                                variantImage.setImage(fileName);
                                 dbVariant.addImage(variantImage);
                             }
                         }
@@ -441,25 +348,7 @@ public class ProductController {
                 }
             }
 
-            // Lưu sản phẩm
             productRepository.save(existing);
-
-            // 4. LOGIC ĐỒNG BỘ: TỰ ĐỘNG CẬP NHẬT LẠI GIÁ FLASH SALE
-            if (isPriceChanged && existing.getFlashSales() != null) {
-                for (FlashSaleProduct fsp : existing.getFlashSales()) {
-                    FlashSale fs = fsp.getFlashSale();
-
-                    if (fs != null) {
-                        // Tính lại giá sale dựa trên giá gốc mới và % giảm của đợt sale đó
-                        BigDecimal discount = new BigDecimal(fs.getDiscountPercent()).divide(new BigDecimal(100));
-                        BigDecimal discountAmount = existing.getPrice().multiply(discount);
-                        BigDecimal newSalePrice = existing.getPrice().subtract(discountAmount);
-
-                        fsp.setSalePrice(newSalePrice);
-                        flashSaleProductRepository.save(fsp);
-                    }
-                }
-            }
 
         } catch (Exception e) {
             e.printStackTrace();

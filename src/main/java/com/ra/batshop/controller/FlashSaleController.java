@@ -172,12 +172,18 @@ public class FlashSaleController {
             for (FlashSaleProduct fsp : existing.getProducts()) {
                 Product p = fsp.getProduct();
 
-                BigDecimal discount = new BigDecimal(existing.getDiscountPercent()).divide(new BigDecimal(100));
-                BigDecimal discountAmount = p.getPrice().multiply(discount);
-                BigDecimal newSalePrice = p.getPrice().subtract(discountAmount);
+                BigDecimal percent = BigDecimal.valueOf(flashSale.getDiscountPercent());
 
-                fsp.setSalePrice(newSalePrice);
+                BigDecimal discount = p.getPrice()
+                        .multiply(percent)
+                        .divide(BigDecimal.valueOf(100));
+
+                BigDecimal salePrice = p.getPrice().subtract(discount);
+
+                fsp.setSalePrice(salePrice);
+
                 flashSaleProductRepository.save(fsp);
+
             }
             redirectAttributes.addFlashAttribute("successMessage", "Đã cập nhật thông số và tính toán lại giá toàn bộ sản phẩm!");
         } else {

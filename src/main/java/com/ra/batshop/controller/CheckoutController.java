@@ -14,73 +14,97 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
 @RequestMapping("/checkout")
 public class CheckoutController {
     private CartItemRepository cartItemRepository;
+    //private UserAddressRepository userAddressRepository;
     private OrderRepository orderRepository;
     private OrderItemRepository orderItemRepository;
     private AddressRepository addressRepository;
     private VoucherRepository voucherRepository;
-
+    private FlashSaleProductRepository flashSaleProductRepository;
     public CheckoutController(CartItemRepository cartItemRepository,
+                              // UserAddressRepository userAddressRepository,
                               OrderRepository orderRepository,
                               OrderItemRepository orderItemRepository,
                               AddressRepository addressRepository,
-                              VoucherRepository voucherRepository) {
+                              VoucherRepository voucherRepository,
+                              FlashSaleProductRepository flashSaleProductRepository) {
         this.cartItemRepository = cartItemRepository;
+        // this.userAddressRepository = userAddressRepository;
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
         this.addressRepository = addressRepository;
         this.voucherRepository = voucherRepository;
+        this.flashSaleProductRepository = flashSaleProductRepository;
     }
-
     @GetMapping("/list")
     public String checkout(HttpSession httpSession, Model model) {
         User user = (User) httpSession.getAttribute("user");
-        if (user == null) {
-            return "redirect:/login";
-        }
+        if (user == null) return "redirect:/login";
 
-        // Ép kiểu ID sang Long để khớp với AddressRepository (nếu Repo dùng Long)
-        // Hoặc giữ nguyên user.getId() nếu Repo đã sửa tham số thành Integer
-        Long userId = Long.valueOf(user.getId());
+        List<CartItem> cartItems = cartItemRepository.findByUserId(user.getId());
+        BigDecimal total = BigDecimal.ZERO;
+        BigDecimal shippingFee = BigDecimal.valueOf(30000);
 
-        List<CartItem> cartitem = cartItemRepository.findByUserId(user.getId());
-        Double totalResult = cartItemRepository.calculateTotalByUserId(user.getId());
-        Double total = (totalResult != null ? totalResult : 0.0) + 30000;
+        System.out.println("===== DEBUG CHECKOUT =====");
+        Map<Integer, BigDecimal> flashSalePrices = new HashMap<>();
 
-        Voucher voucher = (Voucher) httpSession.getAttribute("voucher");
-        Integer discount = 0;
+        for (CartItem item : cartItems) {
+            ProductVariant variant = item.getProductVariant();
 
-        if(voucher != null){
-            if(total >= voucher.getMinOrderAmount()){
-                discount = total.intValue() * voucher.getDiscountPercent() / 100;
-                if(discount > voucher.getMaxDiscountAmount()){
-                    discount = voucher.getMaxDiscountAmount();
-                }
-                total = total - discount;
+            Optional<FlashSaleProduct> flashSaleOpt =
+                    flashSaleProductRepository.findActiveByProductId(
+                            variant.getProduct().getId(), LocalDateTime.now()
+                    );
+
+            BigDecimal price;
+            if (flashSaleOpt.isPresent()) {
+                price = flashSaleOpt.get().getSalePrice();
+            } else {
+                price = variant.getAdditionalPrice() != null ? variant.getAdditionalPrice() : BigDecimal.ZERO;
             }
+
+            item.setDisplayPrice(price);
+
+            flashSalePrices.put(variant.getId(), price); // lưu giá theo variantId
+            total = total.add(price.multiply(BigDecimal.valueOf(item.getQuantity())));
         }
 
-        // SỬA TẠI ĐÂY: Dùng hàm tìm kiếm thông thường (XÓA CỨNG KHÔNG CẦN AndIsDeletedFalse)
-        Address defaultAddress = addressRepository.findByUserIdAndIsDefaultTrue(user.getId())
-                .orElse(null);
+        httpSession.setAttribute("flashSalePrices", flashSalePrices); // save vào session
 
-        // SỬA TẠI ĐÂY: Dùng hàm tìm kiếm thông thường
+        total = total.add(shippingFee);
+
+        // Áp dụng voucher
+        Voucher voucher = (Voucher) httpSession.getAttribute("voucher");
+        BigDecimal discount = BigDecimal.ZERO;
+        if (voucher != null && total.compareTo(BigDecimal.valueOf(voucher.getMinOrderAmount())) >= 0) {
+            discount = total.multiply(BigDecimal.valueOf(voucher.getDiscountPercent()))
+                    .divide(BigDecimal.valueOf(100));
+            if (discount.compareTo(BigDecimal.valueOf(voucher.getMaxDiscountAmount())) > 0)
+                discount = BigDecimal.valueOf(voucher.getMaxDiscountAmount());
+            total = total.subtract(discount);
+        }
+        System.out.println("TOTAL CART: " + total);
+        System.out.println("===== END DEBUG =====");
+
+        Address defaultAddress = addressRepository.findByUserIdAndIsDefaultTrue(user.getId()).orElse(null);
         List<Address> addresses = addressRepository.findByUserId(user.getId());
 
-        model.addAttribute("cartItems", cartitem);
+        model.addAttribute("cartItems", cartItems);
         model.addAttribute("totalCart", total);
         model.addAttribute("discount", discount);
         model.addAttribute("defaultAddress", defaultAddress);
         model.addAttribute("addresses", addresses);
+
         return "user/checkout/list";
     }
-
     @PostMapping("/apply-voucher")
     public String applyVoucher(@RequestParam String code,
                                HttpSession session,
@@ -90,22 +114,23 @@ public class CheckoutController {
 
         if(voucherOpt.isEmpty()){
             ra.addFlashAttribute("error","Voucher không tồn tại");
-            return "redirect:/checkout/list";
+            return "redirect:/cart/checkout";
         }
 
         Voucher voucher = voucherOpt.get();
 
         if(!voucher.getActive()){
             ra.addFlashAttribute("error","Voucher không khả dụng");
-            return "redirect:/checkout/list";
+            return "redirect:/cart/checkout";
         }
 
         if(voucher.getValidTo().isBefore(LocalDateTime.now())){
             ra.addFlashAttribute("error","Voucher đã hết hạn");
-            return "redirect:/checkout/list";
+            return "redirect:/cart/checkout";
         }
 
         session.setAttribute("voucher", voucher);
+
         ra.addFlashAttribute("success","Áp dụng voucher thành công");
 
         return "redirect:/checkout/list";

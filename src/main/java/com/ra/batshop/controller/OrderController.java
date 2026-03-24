@@ -34,6 +34,7 @@ public class OrderController {
     private final ProductVariantRepository productVariantRepository;
     private final VoucherRepository voucherRepository;
     private final UserVoucherRepository userVoucherRepository;
+    private  final  FlashSaleProductRepository flashSaleProductRepository;
     public OrderController(OrderRepository orderRepository,
                            OrderItemRepository orderItemRepository,
                            //UserAddressRepository userAddressRepository,
@@ -41,7 +42,8 @@ public class OrderController {
                            ProductVariantRepository productVariantRepository,
                            AddressRepository addressRepository,
                            VoucherRepository voucherRepository,
-                           UserVoucherRepository userVoucherRepository) {
+                           UserVoucherRepository userVoucherRepository,
+                           FlashSaleProductRepository flashSaleProductRepository) {
 
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
@@ -51,6 +53,7 @@ public class OrderController {
         this.addressRepository = addressRepository;
         this.voucherRepository = voucherRepository;
         this.userVoucherRepository = userVoucherRepository;
+        this.flashSaleProductRepository = flashSaleProductRepository;
     }
 
     // LIST
@@ -140,72 +143,119 @@ public class OrderController {
 
         List<CartItem> cartItems = cartItemRepository.findByUserId(user.getId());
         if (cartItems.isEmpty()) return "redirect:/cart/list";
+
         Voucher voucher = (Voucher) session.getAttribute("voucher");
-       // UserAddress address = userAddressRepository.findById(addressId).orElseThrow();
-        Address address = addressRepository.findById(Long.valueOf(addressId)).orElseThrow();
-        Double total = cartItemRepository.calculateTotalByUserId(user.getId()) + 30000d;
-        Integer discount = 0;
+        Address address = addressRepository.findById(addressId).orElseThrow();
 
+        // ====== LẤY FLASH SALE TỪ SESSION ======
+        Map<Integer, BigDecimal> flashSalePrices =
+                (Map<Integer, BigDecimal>) session.getAttribute("flashSalePrices");
 
-        // TẠO ORDER
+        BigDecimal total = BigDecimal.ZERO;
+        BigDecimal shippingFee = BigDecimal.valueOf(30000);
+
+        // ====== TÍNH TOTAL ======
+        for (CartItem item : cartItems) {
+            BigDecimal price;
+            Integer variantId = item.getProductVariant().getId(); // dùng variantId
+
+            if (flashSalePrices != null && flashSalePrices.containsKey(variantId)) {
+                // giá flash sale nếu có
+                price = flashSalePrices.get(variantId);
+                System.out.println("FS Price: " + price + " for variant " + variantId);
+            } else {
+                // giá variant chuẩn
+                price = item.getProductVariant().getAdditionalPrice() != null
+                        ? item.getProductVariant().getAdditionalPrice()
+                        : BigDecimal.ZERO;
+                System.out.println("Variant Price: " + price + " for variant " + variantId);
+            }
+
+            BigDecimal itemTotal = price.multiply(BigDecimal.valueOf(item.getQuantity()));
+            total = total.add(itemTotal);
+        }
+
+        // + ship
+        total = total.add(shippingFee);
+
+        // ====== ÁP DỤNG VOUCHER ======
+        BigDecimal discount = BigDecimal.ZERO;
+
+        if (voucher != null &&
+                total.compareTo(BigDecimal.valueOf(voucher.getMinOrderAmount())) >= 0) {
+
+            discount = total.multiply(BigDecimal.valueOf(voucher.getDiscountPercent()))
+                    .divide(BigDecimal.valueOf(100));
+
+            if (discount.compareTo(BigDecimal.valueOf(voucher.getMaxDiscountAmount())) > 0) {
+                discount = BigDecimal.valueOf(voucher.getMaxDiscountAmount());
+            }
+
+            total = total.subtract(discount);
+        }
+
+        // ====== TẠO ORDER ======
         Order order = new Order();
         order.setUser(user);
-        //order.setShippingAddress(address);
         order.setStatus(OrderStatus.PENDING);
         order.setPaymentMethod(paymentMethod);
         order.setPaymentStatus("UNPAID");
         order.setCreatedAt(LocalDateTime.now());
-        //liu địa chỉ
+
+        // địa chỉ
         order.setReceiverName(address.getReceiverName());
         order.setReceiverPhone(address.getReceiverPhone());
         order.setCity(address.getCity());
         order.setDistrict(address.getDistrict());
         order.setWard(address.getWard());
         order.setDetail(address.getDetail());
-        if(voucher != null){
 
-            if(total >= voucher.getMinOrderAmount()){
+        // voucher
+        if (voucher != null && discount.compareTo(BigDecimal.ZERO) > 0) {
+            order.setVoucher(voucher);
+            order.setDiscountAmount(discount.intValue());
 
-                discount = total.intValue() * voucher.getDiscountPercent() / 100;
-
-                if(discount > voucher.getMaxDiscountAmount()){
-                    discount = voucher.getMaxDiscountAmount();
-                }
-
-                total = total - discount;
-
-                order.setVoucher(voucher);
-                order.setDiscountAmount(discount);
-
-                Integer used = voucher.getTotalUsed() == null ? 0 : voucher.getTotalUsed();
-                voucher.setTotalUsed(used + 1);
-                voucherRepository.save(voucher);
-            }
-        }
-        order.setTotalPrice(BigDecimal.valueOf(total));
-        if(voucher != null){
+            Integer used = voucher.getTotalUsed() == null ? 0 : voucher.getTotalUsed();
+            voucher.setTotalUsed(used + 1);
+            voucherRepository.save(voucher);
 
             UserVoucher uv = new UserVoucher();
             uv.setUser(user);
             uv.setVoucher(voucher);
             uv.setUsedCount(1);
             uv.setLastUsedAt(LocalDateTime.now());
-
             userVoucherRepository.save(uv);
         }
+
+        // total cuối cùng
+        order.setTotalPrice(total);
+
         orderRepository.save(order);
 
+        // ====== TẠO ORDER ITEM ======
         for (CartItem cartItem : cartItems) {
             OrderItem orderItem = new OrderItem();
             orderItem.setOrder(order);
             orderItem.setProductVariant(cartItem.getProductVariant());
             orderItem.setQuantity(cartItem.getQuantity());
-            orderItem.setPrice(cartItem.getProductVariant().getAdditionalPrice());
+
+            BigDecimal price;
+            Integer variantId = cartItem.getProductVariant().getId();
+
+            if (flashSalePrices != null && flashSalePrices.containsKey(variantId)) {
+                price = flashSalePrices.get(variantId); // giá FS
+            } else {
+                price = cartItem.getProductVariant().getAdditionalPrice() != null
+                        ? cartItem.getProductVariant().getAdditionalPrice()
+                        : BigDecimal.ZERO;
+            }
+
+            orderItem.setPrice(price);
             orderItemRepository.save(orderItem);
         }
 
-        // NẾU VNPAY
-        if (paymentMethod.equals("VNPAY")) {
+        // ====== VNPAY ======
+        if ("VNPAY".equals(paymentMethod)) {
 
             String vnp_TmnCode = "OYACTOJC";
             String secretKey = "XFGP8FIP0H7436QDT2IWF8U23FWE6OM4";
@@ -227,12 +277,10 @@ public class OrderController {
             vnp_Params.put("vnp_ReturnUrl", vnp_ReturnUrl);
             vnp_Params.put("vnp_IpAddr", request.getRemoteAddr());
 
-            // Tạo thời gian
             Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
             SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
             vnp_Params.put("vnp_CreateDate", formatter.format(cld.getTime()));
 
-            // Build query giống ajaxServlet
             List<String> fieldNames = new ArrayList<>(vnp_Params.keySet());
             Collections.sort(fieldNames);
 
@@ -242,12 +290,15 @@ public class OrderController {
             for (String fieldName : fieldNames) {
                 String fieldValue = vnp_Params.get(fieldName);
                 if (fieldValue != null && fieldValue.length() > 0) {
+
                     hashData.append(fieldName).append('=')
                             .append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII));
+
                     query.append(URLEncoder.encode(fieldName, StandardCharsets.US_ASCII))
                             .append('=')
                             .append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII))
                             .append('&');
+
                     hashData.append('&');
                 }
             }
@@ -256,16 +307,20 @@ public class OrderController {
 
             String vnp_SecureHash = VnpayConfig.hmacSHA512(secretKey, hashData.toString());
             query.append("vnp_SecureHash=").append(vnp_SecureHash);
+
             redirectAttributes.addFlashAttribute("successMessage",
-                    "Đặt hàng thành công! Vui lòng chờ xác nhận.");
+                    "Đặt hàng thành công! Vui lòng thanh toán.");
+
             return "redirect:" + vnp_PayUrl + "?" + query.toString();
         }
 
-        // COD
+        // ====== COD ======
         reduceStock(order);
         cartItemRepository.deleteAll(cartItems);
+
         redirectAttributes.addFlashAttribute("successMessage",
-                "Đặt hàng thành công! Vui lòng chờ xác nhận.");
+                "Đặt hàng thành công!");
+
         return "redirect:/home";
     }
     @GetMapping("/vnpay-return")

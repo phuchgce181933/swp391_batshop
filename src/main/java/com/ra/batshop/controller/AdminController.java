@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,10 +38,15 @@ public class AdminController {
     }
 
     @GetMapping("/dashboard")
-    public String dashboard(Model model, HttpSession session) {
+    public String dashboard(
+            @RequestParam(required = false) String fromDate,
+            @RequestParam(required = false) String toDate,
+            Model model, HttpSession session) {
+
         if (session.getAttribute("user") == null) {
             return "redirect:/login";
         }
+
         long totalUsers = userRepository.count();
         long totalProducts = productRepository.count();
         long totalOrders = orderRepository.count();
@@ -52,7 +59,22 @@ public class AdminController {
         model.addAttribute("totalOrders", totalOrders);
         model.addAttribute("totalRevenue", totalRevenue);
 
-         // ===== Revenue theo tháng =====
+        Double revenueByRange = null;
+
+        if (fromDate != null && toDate != null) {
+            LocalDateTime start = LocalDate.parse(fromDate).atStartOfDay();
+            LocalDateTime end = LocalDate.parse(toDate).atTime(23, 59, 59);
+
+            if (!start.isAfter(end)) {
+                revenueByRange = orderRepository.getRevenueByDateRange(start, end);
+                if (revenueByRange == null) revenueByRange = 0.0;
+            }
+        }
+
+        model.addAttribute("revenueByRange", revenueByRange);
+        model.addAttribute("fromDate", fromDate);
+        model.addAttribute("toDate", toDate);
+
         List<Object[]> monthlyData = orderRepository.getMonthlyRevenue();
         List<Object[]> productSales = orderItemRepository.getProductSalesByMonth();
         List<Object[]> productSalesByDate = orderItemRepository.getProductSalesByDateTime();
@@ -70,6 +92,7 @@ public class AdminController {
         model.addAttribute("productSales", productSales);
         model.addAttribute("productSalesByDate", productSalesByDate);
         model.addAttribute("content", "admin/dashboard-content");
+
         return "admin/layout";
     }
 
