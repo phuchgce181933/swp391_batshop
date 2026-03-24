@@ -133,6 +133,8 @@
                                 <td class="fs-price-original" th:text="${#numbers.formatDecimal(fsp.product.price, 0, 'COMMA', 0, 'POINT')} + ' đ'"></td>
 
                                 <td>
+                                    <input type="hidden" class="fsp-id-hidden" th:value="${fsp.id}">
+
                                     <input type="number" name="discountPercent"
                                            th:form="'discount-form-' + ${fsp.id}"
                                            class="form-control form-control-sm text-center mx-auto fs-input-discount"
@@ -170,6 +172,13 @@
                             </tr>
                             </tbody>
                         </table>
+
+                        <div class="d-flex justify-content-end mt-3" th:if="${!flashSale.products.isEmpty()}">
+                            <button type="button" class="btn btn-primary fw-bold px-4 py-2 shadow-sm rounded-3" id="btnSaveAllDiscounts">
+                                <i class="fas fa-save me-1"></i> Lưu tất cả thay đổi
+                            </button>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -293,7 +302,8 @@
                             if(bookedHours.includes(hour)) {
                                 opt.disabled = true;
                                 opt.text = `${hourText} (Đã có sự kiện)`;
-} else if (isToday && (hour + 2) <= currentHour && hour !== initialSelectedHour) {                                opt.disabled = true;
+                            } else if (isToday && (hour + 2) <= currentHour && hour !== initialSelectedHour) {
+                                opt.disabled = true;
                                 opt.text = `${hourText} (Đã qua)`;
                             } else {
                                 opt.disabled = false;
@@ -463,6 +473,56 @@
                     tableFilterBrand.addEventListener("change", applyTableFilters);
                 }
             }
+
+            // ==============================================================
+            // 4. LOGIC LƯU TẤT CẢ GIẢM GIÁ CÙNG LÚC
+            // ==============================================================
+            const btnSaveAllDiscounts = document.getElementById("btnSaveAllDiscounts");
+            if (btnSaveAllDiscounts) {
+                btnSaveAllDiscounts.addEventListener("click", function() {
+                    // Tạo một form ẩn động để submit
+                    const form = document.createElement("form");
+                    form.method = "POST";
+                    form.action = `/admin/flash-sales/${flashSaleId}/update-all-discounts`; // flashSaleId đã được khai báo sẵn ở đầu script
+
+                    const rows = document.querySelectorAll('.flash-sale-product-row');
+                    let count = 0;
+
+                    rows.forEach(row => {
+                        const fspIdInput = row.querySelector('.fsp-id-hidden');
+                        const discountInput = row.querySelector('input[name="discountPercent"]');
+
+                        if (fspIdInput && discountInput) {
+                            // Tạo input mảng chứa ID
+                            const idField = document.createElement("input");
+                            idField.type = "hidden";
+                            idField.name = "fspIds";
+                            idField.value = fspIdInput.value;
+                            form.appendChild(idField);
+
+                            // Tạo input mảng chứa % Giảm
+                            const percentField = document.createElement("input");
+                            percentField.type = "hidden";
+                            percentField.name = "discountPercents";
+                            percentField.value = discountInput.value;
+                            form.appendChild(percentField);
+
+                            count++;
+                        }
+                    });
+
+                    if (count > 0) {
+                        document.body.appendChild(form);
+                        // Đổi icon nút thành trạng thái loading
+                        btnSaveAllDiscounts.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Đang lưu...';
+                        btnSaveAllDiscounts.disabled = true;
+                        form.submit();
+                    } else {
+                        alert("Không tìm thấy sản phẩm nào để cập nhật.");
+                    }
+                });
+            }
+
         });
     </script>
 </div>
