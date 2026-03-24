@@ -282,4 +282,43 @@ public class FlashSaleController {
         flashSaleRepository.deleteById(id);
         return "redirect:/admin/flash-sales";
     }
+    // =======================================================
+    // LƯU TẤT CẢ % GIẢM GIÁ CÙNG LÚC
+    // =======================================================
+    @PostMapping("/admin/flash-sales/{id}/update-all-discounts")
+    public String updateAllDiscounts(@PathVariable("id") Integer flashSaleId,
+                                     @RequestParam(value = "fspIds", required = false) List<Integer> fspIds,
+                                     @RequestParam(value = "discountPercents", required = false) List<Integer> discountPercents,
+                                     RedirectAttributes redirectAttributes) {
+
+        // Kiểm tra dữ liệu đầu vào
+        if (fspIds == null || discountPercents == null || fspIds.isEmpty() || fspIds.size() != discountPercents.size()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Lỗi: Không có dữ liệu hợp lệ để cập nhật.");
+            return "redirect:/admin/flash-sales/edit/" + flashSaleId;
+        }
+
+        // Lặp qua từng sản phẩm để cập nhật
+        int count = 0;
+        for (int i = 0; i < fspIds.size(); i++) {
+            Integer fspId = fspIds.get(i);
+            Integer discountPercent = discountPercents.get(i);
+
+            FlashSaleProduct fsp = flashSaleProductRepository.findById(fspId).orElse(null);
+            if (fsp != null) {
+                fsp.setDiscountPercent(discountPercent);
+
+                // Tính toán lại giá Flash Sale
+                BigDecimal salePrice = fsp.getProduct().getPrice()
+                        .multiply(BigDecimal.valueOf(100 - discountPercent))
+                        .divide(BigDecimal.valueOf(100));
+
+                fsp.setSalePrice(salePrice);
+                flashSaleProductRepository.save(fsp);
+                count++;
+            }
+        }
+
+        redirectAttributes.addFlashAttribute("successMessage", "Đã cập nhật thành công mức giảm giá cho " + count + " sản phẩm!");
+        return "redirect:/admin/flash-sales/edit/" + flashSaleId;
+    }
 }

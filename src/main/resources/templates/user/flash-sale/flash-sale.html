@@ -101,7 +101,7 @@
                     </div>
                 </div>
 
-                <div id="filter-empty-state" class="empty-state-box" style="display: none; border: 1px dashed #ccc; background: transparent;">
+                <div class="empty-state-box js-filter-empty-state" style="display: none; border: 1px dashed #ccc; background: transparent;">
                     <i class="fas fa-search fa-3x"></i>
                     <h4>Không tìm thấy sản phẩm phù hợp</h4>
                     <p>Vui lòng thử bỏ bớt điều kiện lọc nhé!</p>
@@ -194,9 +194,10 @@
                     </div>
                 </div>
 
-                <div id="filter-empty-state" class="empty-state-box" style="display: none; border: 1px dashed #ccc; background: transparent;">
+                <div class="empty-state-box js-filter-empty-state" style="display: none; border: 1px dashed #ccc; background: transparent;">
                     <i class="fas fa-search fa-3x"></i>
                     <h4>Không tìm thấy sản phẩm phù hợp</h4>
+                    <p>Vui lòng thử bỏ bớt điều kiện lọc nhé!</p>
                 </div>
             </main>
         </div>
@@ -250,7 +251,7 @@
             const discountCheckboxes = document.querySelectorAll('.discount-filter');
             const categoryCheckboxes = document.querySelectorAll('.category-filter');
             const products = document.querySelectorAll('.js-product-item');
-            const emptyState = document.getElementById('filter-empty-state');
+const emptyState = document.querySelector('.js-filter-empty-state');
 
             function applyFilters() {
                 // Lấy mảng các value đang được tick
