@@ -43,7 +43,12 @@
                         th:text="${b.name}">
                 </option>
             </select><br><br>
-
+            <label>Trạng Thái Sản Phẩm</label>
+            <select th:field="*{status}">
+                <option th:value="true" th:selected="${product.status} == true">Active</option>
+                <option th:value="false" th:selected="${product.status} == false">Inactive</option>
+            </select>
+            <br>
             <h3>Ảnh Sản Phẩm</h3>
 
             <div th:if="${product.images.size() > 0}">

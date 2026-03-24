@@ -14,6 +14,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -23,61 +24,62 @@ import java.util.Optional;
 public class CheckoutController {
     private CartItemRepository cartItemRepository;
     //private UserAddressRepository userAddressRepository;
+    private OrderRepository orderRepository;
+    private OrderItemRepository orderItemRepository;
     private AddressRepository addressRepository;
     private VoucherRepository voucherRepository;
-    private  FlashSaleProductRepository flashSaleProductRepository;
+    private FlashSaleProductRepository flashSaleProductRepository;
     public CheckoutController(CartItemRepository cartItemRepository,
+                              // UserAddressRepository userAddressRepository,
+                              OrderRepository orderRepository,
+                              OrderItemRepository orderItemRepository,
                               AddressRepository addressRepository,
                               VoucherRepository voucherRepository,
                               FlashSaleProductRepository flashSaleProductRepository) {
         this.cartItemRepository = cartItemRepository;
-        this.flashSaleProductRepository = flashSaleProductRepository;
+        // this.userAddressRepository = userAddressRepository;
+        this.orderRepository = orderRepository;
+        this.orderItemRepository = orderItemRepository;
         this.addressRepository = addressRepository;
         this.voucherRepository = voucherRepository;
+        this.flashSaleProductRepository = flashSaleProductRepository;
     }
     @GetMapping("/list")
     public String checkout(HttpSession httpSession, Model model) {
         User user = (User) httpSession.getAttribute("user");
-        if (user == null) {
-            return "redirect:/login";
-        }
+        if (user == null) return "redirect:/login";
 
         List<CartItem> cartItems = cartItemRepository.findByUserId(user.getId());
-        if (cartItems.isEmpty()) {
-            model.addAttribute("totalCart", 0);
-            model.addAttribute("discount", 0);
-            model.addAttribute("cartItems", cartItems);
-            model.addAttribute("defaultAddress", null);
-            model.addAttribute("addresses", List.of());
-            return "user/checkout/list";
-        }
-
-
         BigDecimal total = BigDecimal.ZERO;
+        BigDecimal shippingFee = BigDecimal.valueOf(30000);
 
-        // Tính tổng từng sản phẩm, nếu có Flash Sale thì lấy giá giảm
-        Map<Integer, BigDecimal> flashSalePrices =
-                (Map<Integer, BigDecimal>) httpSession.getAttribute("flashSalePrices");
+        System.out.println("===== DEBUG CHECKOUT =====");
+        Map<Integer, BigDecimal> flashSalePrices = new HashMap<>();
 
         for (CartItem item : cartItems) {
+            ProductVariant variant = item.getProductVariant();
+
+            Optional<FlashSaleProduct> flashSaleOpt =
+                    flashSaleProductRepository.findActiveByProductId(
+                            variant.getProduct().getId(), LocalDateTime.now()
+                    );
 
             BigDecimal price;
-
-            //  nếu có giá flash sale đã lưu → dùng lại
-            if (flashSalePrices != null && flashSalePrices.containsKey(item.getId())) {
-                price = flashSalePrices.get(item.getId());
+            if (flashSaleOpt.isPresent()) {
+                price = flashSaleOpt.get().getSalePrice();
             } else {
-                // fallback nếu không có (trường hợp cũ)
-                price = item.getProductVariant().getProduct().getPrice()
-                        .add(item.getProductVariant().getAdditionalPrice());
+                price = variant.getAdditionalPrice() != null ? variant.getAdditionalPrice() : BigDecimal.ZERO;
             }
 
+            item.setDisplayPrice(price);
+
+            flashSalePrices.put(variant.getId(), price); // lưu giá theo variantId
             total = total.add(price.multiply(BigDecimal.valueOf(item.getQuantity())));
         }
 
-        // Phí vận chuyển
-        total = total.add(BigDecimal.valueOf(30000));
+        httpSession.setAttribute("flashSalePrices", flashSalePrices); // save vào session
 
+        total = total.add(shippingFee);
 
         // Áp dụng voucher
         Voucher voucher = (Voucher) httpSession.getAttribute("voucher");
@@ -85,16 +87,14 @@ public class CheckoutController {
         if (voucher != null && total.compareTo(BigDecimal.valueOf(voucher.getMinOrderAmount())) >= 0) {
             discount = total.multiply(BigDecimal.valueOf(voucher.getDiscountPercent()))
                     .divide(BigDecimal.valueOf(100));
-
-            if (discount.compareTo(BigDecimal.valueOf(voucher.getMaxDiscountAmount())) > 0) {
+            if (discount.compareTo(BigDecimal.valueOf(voucher.getMaxDiscountAmount())) > 0)
                 discount = BigDecimal.valueOf(voucher.getMaxDiscountAmount());
-            }
             total = total.subtract(discount);
         }
+        System.out.println("TOTAL CART: " + total);
+        System.out.println("===== END DEBUG =====");
 
-        // Lấy địa chỉ mặc định và tất cả địa chỉ
-        Address defaultAddress = addressRepository.findByUserIdAndIsDefaultTrue(user.getId())
-                .orElse(null);
+        Address defaultAddress = addressRepository.findByUserIdAndIsDefaultTrue(user.getId()).orElse(null);
         List<Address> addresses = addressRepository.findByUserId(user.getId());
 
         model.addAttribute("cartItems", cartItems);

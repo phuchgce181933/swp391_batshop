@@ -341,7 +341,6 @@ public class ProductController {
 
                                 ProductVariantImage variantImage = new ProductVariantImage();
                                 variantImage.setImage(fileName);
-
                                 dbVariant.addImage(variantImage);
                             }
                         }
