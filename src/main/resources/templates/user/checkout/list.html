@@ -33,9 +33,7 @@
         </div>
 
         <div class="item-price"
-             th:text="${#numbers.formatDecimal(
-        (item.productVariant.product.price + (item.productVariant.additionalPrice != null ? item.productVariant.additionalPrice : 0)),
-        0,'POINT',0,'COMMA')} + ' đ'">
+             th:text="${#numbers.formatDecimal(item.displayPrice,0,'POINT',0,'COMMA')} + ' đ'">
         </div>
         <span class="qty" th:text="'x ' + ${item.quantity}"></span>
     </div>

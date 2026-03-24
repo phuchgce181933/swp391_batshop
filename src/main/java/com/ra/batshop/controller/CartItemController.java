@@ -123,7 +123,7 @@ public class CartItemController {
     }
     @PostMapping("/delete")
     public String delete(@RequestParam("id") Integer id,
-            HttpSession httpSession) {
+                         HttpSession httpSession) {
         User user = (User) httpSession.getAttribute("user");
         if (user == null) {
             return "redirect:/login";
