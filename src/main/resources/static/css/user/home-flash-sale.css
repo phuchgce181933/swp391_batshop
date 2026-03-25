@@ -61,3 +61,68 @@
     margin-right: 8px;
     font-weight: normal;
 }
+/* ================= KHU VỰC FLASH SALE TẠI TRANG CHỦ ================= */
+
+/* Tiêu đề màu đỏ rực rỡ */
+.flash-sale-title {
+    color: #ed1c24 !important;
+}
+.flash-sale-title::after {
+    background-color: #ed1c24 !important;
+    margin: 10px 0 0 !important; /* Căn trái gạch chân */
+}
+
+/* Khung bọc sản phẩm Sale màu đỏ nhạt */
+.flash-sale-wrapper {
+    background-color: #fff0f0;
+    border: 2px solid #ed1c24;
+    border-radius: 8px; /* Thêm bo góc cho mềm mại */
+    padding: 15px;
+}
+
+/* Huy hiệu Flash sale gắn trên ảnh */
+.fs-badge-home {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #ed1c24;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    z-index: 2;
+    box-shadow: 0 2px 5px rgba(237, 28, 36, 0.4);
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+/* Hộp đồng hồ đếm ngược */
+.fs-countdown-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: bold;
+    font-size: 1rem;
+}
+.fs-timer {
+    background: #333;
+    color: white;
+    padding: 5px 15px;
+    border-radius: 20px;
+    letter-spacing: 1px;
+}
+
+/* Giá gốc bị gạch ngang trong thẻ Flash Sale */
+.fs-original-price {
+    color: #95a5a6;
+    text-decoration: line-through;
+    font-size: 0.9rem;
+    margin-right: 8px;
+    font-weight: normal;
+}

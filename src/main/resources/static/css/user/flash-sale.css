@@ -1,73 +1,212 @@
-.flash-sale-container {
-    max-width: 1200px;
+/* ====================================================
+   USER FLASH SALE - CUSTOM STYLES
+   ==================================================== */
+.fs-page-container {
+    max-width: 1250px;
     margin: 0 auto;
     padding: 20px;
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Arial, sans-serif;
 }
 
+/* ================= BANNER ================= */
 .flash-sale-banner {
-    background: linear-gradient(90deg, #ff416c 0%, #ff4b2b 100%);
     color: white;
     text-align: center;
-    padding: 30px 20px;
-    border-radius: 10px;
+    padding: 35px 20px;
+    border-radius: 12px;
     margin-bottom: 30px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.active-banner {
+    background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+}
+
+.upcoming-banner {
+    background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+}
+
+.empty-banner {
+    background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
 }
 
 .flash-sale-banner h2 {
     margin: 0 0 15px 0;
-    font-size: 2.5rem;
+    font-size: 2.2rem;
     text-transform: uppercase;
-    letter-spacing: 2px;
+    letter-spacing: 1px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
+
+.countdown-wrapper p {
+    margin-bottom: 5px;
+    font-size: 1.1rem;
+    opacity: 0.9;
 }
 
 .countdown-timer {
     font-size: 1.5rem;
     font-weight: bold;
-    background: rgba(0, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.25);
     display: inline-block;
-    padding: 10px 20px;
+    padding: 12px 25px;
     border-radius: 8px;
-    margin-top: 10px;
+    margin-top: 5px;
+    border: 1px solid rgba(255,255,255,0.2);
 }
 
 .countdown-timer span {
     background: white;
     color: #ff4b2b;
-    padding: 5px 10px;
-    border-radius: 5px;
-    margin: 0 5px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    margin: 0 4px;
+    min-width: 45px;
+    display: inline-block;
+    text-align: center;
+    box-shadow: inset 0 -2px 0 rgba(0,0,0,0.1);
+}
+
+.upcoming-banner .countdown-timer span { color: #e67e22; }
+
+/* ================= BỐ CỤC CHÍNH (LAYOUT 2 CỘT) ================= */
+.fs-main-content {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+}
+
+/* ================= SIDEBAR BỘ LỌC ================= */
+.fs-sidebar {
+    width: 280px;
+    flex-shrink: 0;
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    border: 1px solid #eee;
+    position: sticky;
+    top: 90px; /* Cố định khi scroll */
+}
+
+.fs-filter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+}
+
+.fs-filter-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #333;
+}
+
+.fs-filter-group {
+    margin-bottom: 25px;
+}
+
+.fs-filter-title {
+    font-size: 1.05rem;
+    color: #2c3e50;
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+
+.fs-filter-title i {
+    width: 20px;
+    color: #ff4b2b;
+}
+
+.fs-filter-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.fs-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: #555;
+    transition: color 0.2s;
+}
+
+.fs-checkbox-label:hover {
+    color: #ff4b2b;
+}
+
+.fs-checkbox-label input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: #ff4b2b;
+}
+
+.fs-btn-clear-filter {
+    width: 100%;
+    padding: 10px;
+    background: #f8f9fa;
+    border: 1px dashed #dc3545;
+    color: #dc3545;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.fs-btn-clear-filter:hover {
+    background: #dc3545;
+    color: white;
+}
+
+/* ================= DANH SÁCH SẢN PHẨM ================= */
+.fs-product-container {
+    flex-grow: 1;
+    min-width: 0;
 }
 
 .product-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: 20px;
 }
 
 .product-card {
     border: 1px solid #eee;
-    border-radius: 8px;
+    border-radius: 10px;
     overflow: hidden;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
     background: white;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
 }
 
 .product-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    border-color: #ff4b2b;
 }
+
+.upcoming-grid .product-card:hover { border-color: #f39c12; }
 
 .product-image {
     position: relative;
     width: 100%;
-    height: 250px;
+    height: 240px;
+    padding: 10px;
+    background: #fdfdfd;
 }
 
 .product-image img {
     width: 100%;
     height: 100%;
     object-fit: contain;
+    mix-blend-mode: multiply;
 }
 
 .discount-badge {
@@ -77,27 +216,39 @@
     background: #ff4b2b;
     color: white;
     font-weight: bold;
-    padding: 5px 10px;
-    border-radius: 5px;
+    padding: 5px 12px;
+    border-radius: 20px;
     z-index: 2;
+    box-shadow: 0 3px 6px rgba(255, 75, 43, 0.3);
+    font-size: 0.9rem;
+}
+
+.upcoming-badge {
+    background: #f39c12;
+    box-shadow: 0 3px 6px rgba(243, 156, 18, 0.3);
 }
 
 .product-info {
     padding: 15px;
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
 }
 
 .product-info h3 {
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     margin: 0 0 10px 0;
     color: #333;
-    white-space: nowrap;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
     overflow: hidden;
-    text-overflow: ellipsis;
+    height: 42px; /* Fixed height cho 2 dòng text */
 }
 
 .price-section {
-    margin-bottom: 15px;
+    margin-bottom: 12px;
 }
 
 .sale-price {
@@ -113,17 +264,109 @@
     font-size: 0.9rem;
 }
 
+/* Thanh Tiến Độ Sale Fake */
+.fs-progress-bar {
+    background: #ffe5e5;
+    border-radius: 10px;
+    height: 18px;
+    position: relative;
+    margin-bottom: 15px;
+    overflow: hidden;
+}
+
+.fs-progress-fill {
+    background: linear-gradient(90deg, #ff416c, #ff4b2b);
+    height: 100%;
+    border-radius: 10px;
+}
+
+.fs-progress-text {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
 .btn-buy-now {
+    margin-top: auto;
     display: block;
     background: #ff4b2b;
     color: white;
     text-decoration: none;
+    text-align: center;
     padding: 10px;
-    border-radius: 5px;
+    border-radius: 6px;
     font-weight: bold;
     transition: background 0.3s ease;
 }
 
-.btn-buy-now:hover {
-    background: #ff416c;
+.btn-buy-now:hover { background: #ff416c; color: white;}
+
+.btn-upcoming { background: #f39c12; }
+.btn-upcoming:hover { background: #d35400; color: white; }
+
+/* ================= RESPONSIVE BỘ LỌC MOBILE ================= */
+.fs-mobile-filter-btn {
+    display: none;
+    width: 100%;
+    padding: 12px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #333;
+    cursor: pointer;
+    text-align: center;
+}
+
+.mobile-only {
+    display: none;
+}
+
+@media (max-width: 992px) {
+    .fs-main-content {
+        flex-direction: column;
+    }
+
+    .fs-mobile-filter-btn {
+        display: block; /* Hiện nút trên mobile */
+    }
+
+    .mobile-only {
+        display: flex;
+    }
+
+    .fs-sidebar {
+        position: fixed;
+        top: 0;
+        left: -100%; /* Ẩn ra khỏi màn hình */
+        width: 300px;
+        height: 100vh;
+        z-index: 1000;
+        border-radius: 0;
+        overflow-y: auto;
+        transition: left 0.3s ease;
+    }
+
+    .fs-sidebar.active {
+        left: 0; /* Trượt ra khi bấm nút */
+    }
+
+    #btnCloseFilter {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: #666;
+        cursor: pointer;
+    }
 }

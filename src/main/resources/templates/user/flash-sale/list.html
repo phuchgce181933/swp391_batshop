@@ -23,8 +23,9 @@
                 <div th:each="fsp : ${activeFlashSale.products}" class="product-card">
 
                     <a th:href="@{/product/detail/{id}(id=${fsp.product.id})}" class="product-image" style="position: relative; display: block;">
+
                         <div class="fs-badge-home">
-                            -<span th:text="${activeFlashSale.discountPercent}"></span>%
+                            -<span th:text="${fsp.discountPercent}"></span>%
                         </div>
 
                         <img th:if="${fsp.product.images != null and !fsp.product.images.isEmpty()}"
@@ -62,7 +63,7 @@
         </div>
     </section>
 
-    <section class="section-container" th:if="${upcomingFlashSale != null and !upcomingFlashSale.products.isEmpty()}">
+    <section class="section-container" th:if="${activeFlashSale == null and upcomingFlashSale != null and !upcomingFlashSale.products.isEmpty()}">
 
         <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
             <h2 class="section-title flash-sale-title-upcoming" style="margin-bottom: 0; color: #f39c12 !important;">
@@ -88,8 +89,9 @@
                 <div th:each="fsp : ${upcomingFlashSale.products}" class="product-card">
 
                     <a th:href="@{/product/detail/{id}(id=${fsp.product.id})}" class="product-image" style="position: relative; display: block;">
+
                         <div class="fs-badge-home" style="background: #f39c12; box-shadow: 0 2px 5px rgba(243, 156, 18, 0.4);">
-                            Sắp giảm <span th:text="${upcomingFlashSale.discountPercent}"></span>%
+                            Sắp giảm <span th:text="${fsp.discountPercent}"></span>%
                         </div>
 
                         <img th:if="${fsp.product.images != null and !fsp.product.images.isEmpty()}"
@@ -117,41 +119,38 @@
         </div>
     </section>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        // Tìm tất cả các hộp đếm ngược (đang diễn ra HOẶC sắp diễn ra)
-        const fsBoxes = document.querySelectorAll('.fs-countdown-box');
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const fsBoxes = document.querySelectorAll('.fs-countdown-box');
 
-        fsBoxes.forEach(fsBox => {
-            const endTimeStr = fsBox.getAttribute('data-endtime');
-            if(!endTimeStr) return;
+            fsBoxes.forEach(fsBox => {
+                const endTimeStr = fsBox.getAttribute('data-endtime');
+                if(!endTimeStr) return;
 
-            const countDownDate = new Date(endTimeStr).getTime();
+                const countDownDate = new Date(endTimeStr).getTime();
 
-            const timerInterval = setInterval(function() {
-                const now = new Date().getTime();
-                const distance = countDownDate - now;
+                const timerInterval = setInterval(function() {
+                    const now = new Date().getTime();
+                    const distance = countDownDate - now;
 
-                if (distance < 0) {
-                    clearInterval(timerInterval);
-                    // Khi đếm lùi về 0, trang tự động reload lại để hiển thị Sale thật/ Kết thúc Sale
-                    location.reload();
-                    return;
-                }
+                    if (distance < 0) {
+                        clearInterval(timerInterval);
+                        location.reload();
+                        return;
+                    }
 
-                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-                // Gán dữ liệu vào các thẻ thông qua Class thay vì ID
-                fsBox.querySelector(".fs-days").innerText = days.toString().padStart(2, '0');
-                fsBox.querySelector(".fs-hours").innerText = hours.toString().padStart(2, '0');
-                fsBox.querySelector(".fs-minutes").innerText = minutes.toString().padStart(2, '0');
-                fsBox.querySelector(".fs-seconds").innerText = seconds.toString().padStart(2, '0');
-            }, 1000);
+                    fsBox.querySelector(".fs-days").innerText = days.toString().padStart(2, '0');
+                    fsBox.querySelector(".fs-hours").innerText = hours.toString().padStart(2, '0');
+                    fsBox.querySelector(".fs-minutes").innerText = minutes.toString().padStart(2, '0');
+                    fsBox.querySelector(".fs-seconds").innerText = seconds.toString().padStart(2, '0');
+                }, 1000);
+            });
         });
-    });
-</script>
+    </script>
 
 </th:block>

@@ -4,7 +4,12 @@
 
     <div class="container-fluid">
         <div class="fs-admin-header mt-3 d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
-            <h2 class="fs-admin-title m-0">Cập Nhật Flash Sale #<span th:text="${flashSale.id}"></span></h2>
+            <div>
+                <h2 class="fs-admin-title m-0 d-inline-block">Cập Nhật Flash Sale #<span th:text="${flashSale.id}"></span></h2>
+                <span th:if="${flashSale.status == 'Đang diễn ra'}" class="badge bg-success ms-2 align-top fs-text-small"><i class="fas fa-play-circle"></i> Đang diễn ra</span>
+                <span th:if="${flashSale.status == 'Sắp diễn ra'}" class="badge bg-warning text-dark ms-2 align-top fs-text-small"><i class="fas fa-clock"></i> Sắp diễn ra</span>
+                <span th:if="${flashSale.status == 'Đã kết thúc'}" class="badge bg-secondary ms-2 align-top fs-text-small"><i class="fas fa-stop-circle"></i> Đã kết thúc</span>
+            </div>
             <a th:href="@{/admin/flash-sales}" class="fs-btn fs-btn-secondary text-decoration-none">
                 <i class="fas fa-arrow-left"></i>&larr; Quay lại danh sách
             </a>
@@ -12,19 +17,19 @@
 
         <div class="row align-items-start">
             <div class="col-12">
-                <div th:if="${errorMessage}" class="alert alert-danger d-flex align-items-center mb-3" role="alert" style="border-radius: 6px;">
+                <div th:if="${errorMessage}" class="alert alert-danger fs-alert d-flex align-items-center mb-3" role="alert">
                     <i class="fas fa-exclamation-triangle me-2"></i> <span th:text="${errorMessage}"></span>
                 </div>
-                <div th:if="${successMessage}" class="alert alert-success d-flex align-items-center mb-3" role="alert" style="border-radius: 6px;">
+                <div th:if="${successMessage}" class="alert alert-success fs-alert d-flex align-items-center mb-3" role="alert">
                     <i class="fas fa-check-circle me-2"></i> <span th:text="${successMessage}"></span>
                 </div>
             </div>
 
-            <div class="col-12 col-lg-4 mb-4">
-                <div class="fs-admin-card p-4 h-100 border-0 shadow-sm" style="border-radius: 10px;">
+            <div class="col-12 col-lg-3 mb-4">
+                <div class="fs-admin-card p-4 h-100 border-0 shadow-sm">
                     <div class="border-bottom mb-4 pb-2">
-                        <h4 class="m-0" style="color: #0d6efd; border-left: 4px solid #f15a22; padding-left: 10px; font-weight: 600; font-size: 1.2rem;">
-                            Cài đặt thông số
+                        <h4 class="m-0 fs-card-title-primary">
+                            Cài đặt thời gian
                         </h4>
                     </div>
 
@@ -32,93 +37,144 @@
                         <input type="hidden" th:field="*{id}">
 
                         <div class="fs-form-group mb-3">
-                            <label class="fs-form-label fw-bold" style="font-size: 0.95rem;">Giảm Giá (%)</label>
-                            <input type="number" class="fs-form-control" th:field="*{discountPercent}" min="1" max="100" required>
-                        </div>
-
-                        <div class="fs-form-group mb-3">
-                            <label class="fs-form-label fw-bold" style="font-size: 0.95rem;">Ngày Sale</label>
+                            <label class="fs-form-label">Ngày Sale</label>
                             <input type="date" class="fs-form-control" name="saleDate" id="saleDate" required
-                                   th:value="${#temporals.format(flashSale.startDate, 'yyyy-MM-dd')}">
+                                   th:value="${#temporals.format(flashSale.startDate, 'yyyy-MM-dd')}"
+                                   th:disabled="${flashSale.status == 'Đã kết thúc'}">
+                            <input th:if="${flashSale.status == 'Đã kết thúc'}" type="hidden" name="saleDate" th:value="${#temporals.format(flashSale.startDate, 'yyyy-MM-dd')}">
                         </div>
 
-                        <div class="row">
-                            <div class="col-6 fs-form-group mb-3">
-                                <label class="fs-form-label fw-bold" style="font-size: 0.95rem;">Giờ bắt đầu</label>
-                                <input type="time" class="fs-form-control" name="startTime" id="startTime" required
-                                       th:value="${#temporals.format(flashSale.startDate, 'HH:mm')}">
-                            </div>
-
-                            <div class="col-6 fs-form-group mb-4">
-                                <label class="fs-form-label fw-bold" style="font-size: 0.95rem;">Giờ kết thúc</label>
-                                <input type="time" class="fs-form-control" name="endTime" id="endTime" required
-                                       th:value="${#temporals.format(flashSale.endDate, 'HH:mm')}">
-                            </div>
+                        <div class="fs-form-group mb-4">
+                            <label class="fs-form-label">Khung giờ Sale</label>
+                            <select class="fs-form-control" name="timeSlot" id="timeSlot" required th:disabled="${flashSale.status == 'Đã kết thúc'}">
+                                <option value="">-- Chọn khung giờ --</option>
+                                <option value="00:00-02:00" th:selected="${currentTimeSlot == '00:00-02:00'}">00:00 - 02:00</option>
+                                <option value="02:00-04:00" th:selected="${currentTimeSlot == '02:00-04:00'}">02:00 - 04:00</option>
+                                <option value="04:00-06:00" th:selected="${currentTimeSlot == '04:00-06:00'}">04:00 - 06:00</option>
+                                <option value="06:00-08:00" th:selected="${currentTimeSlot == '06:00-08:00'}">06:00 - 08:00</option>
+                                <option value="08:00-10:00" th:selected="${currentTimeSlot == '08:00-10:00'}">08:00 - 10:00</option>
+                                <option value="10:00-12:00" th:selected="${currentTimeSlot == '10:00-12:00'}">10:00 - 12:00</option>
+                                <option value="12:00-14:00" th:selected="${currentTimeSlot == '12:00-14:00'}">12:00 - 14:00</option>
+                                <option value="14:00-16:00" th:selected="${currentTimeSlot == '14:00-16:00'}">14:00 - 16:00</option>
+                                <option value="16:00-18:00" th:selected="${currentTimeSlot == '16:00-18:00'}">16:00 - 18:00</option>
+                                <option value="18:00-20:00" th:selected="${currentTimeSlot == '18:00-20:00'}">18:00 - 20:00</option>
+                                <option value="20:00-22:00" th:selected="${currentTimeSlot == '20:00-22:00'}">20:00 - 22:00</option>
+                                <option value="22:00-24:00" th:selected="${currentTimeSlot == '22:00-24:00'}">22:00 - 24:00</option>
+                            </select>
+                            <input th:if="${flashSale.status == 'Đã kết thúc'}" type="hidden" name="timeSlot" th:value="${currentTimeSlot}">
                         </div>
 
-                        <div id="jsErrorMessage" class="alert alert-danger" style="display: none; padding: 10px; border-radius: 6px; font-weight: 500; margin-bottom: 15px;">
-                            <i class="fas fa-exclamation-circle"></i> <span id="jsErrorText"></span>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary w-100 fw-bold py-2 mt-2" style="background-color: #0d6efd; border: none; border-radius: 6px;">
-                            <i class="fas fa-save me-1"></i> Cập nhật thông số
+                        <button type="submit" class="btn w-100 fw-bold py-2 mt-2 fs-btn-update-time"
+                                th:disabled="${flashSale.status == 'Đã kết thúc'}">
+                            <i class="fas fa-save me-1"></i> Cập nhật thời gian
                         </button>
                     </form>
                 </div>
             </div>
 
-            <div class="col-12 col-lg-8">
-                <div class="fs-admin-card p-4 border-0 shadow-sm" style="border-radius: 10px;">
-                    <div class="border-bottom mb-4 pb-2 d-flex justify-content-between align-items-center">
-                        <h4 class="m-0" style="color: #198754; border-left: 4px solid #f15a22; padding-left: 10px; font-weight: 600; font-size: 1.2rem;">
+            <div class="col-12 col-lg-9">
+                <div class="fs-admin-card p-4 border-0 shadow-sm">
+                    <div class="border-bottom mb-3 pb-2 d-flex justify-content-between align-items-center">
+                        <h4 class="m-0 fs-card-title-success">
                             Sản phẩm trong đợt Flash Sale
                         </h4>
-                        <button type="button" class="btn btn-success fw-bold px-3 py-1" data-bs-toggle="modal" data-bs-target="#addProductModal" style="border-radius: 6px;">
+                        <button type="button" class="btn btn-success fw-bold px-3 py-1 fs-alert" data-bs-toggle="modal" data-bs-target="#addProductModal"
+                                th:disabled="${flashSale.status == 'Đã kết thúc'}"
+                                th:classappend="${flashSale.status == 'Đã kết thúc'} ? 'fs-btn-disabled' : ''">
                             <i class="fas fa-plus-circle me-1"></i>+ Thêm Sản Phẩm
                         </button>
                     </div>
 
-                    <div class="fs-table-wrapper">
-                        <table class="fs-table">
-                            <thead>
-                            <tr>
-                                <th class="text-start" style="padding-left: 20px;">Tên sản phẩm</th>
-                                <th>Giá gốc</th>
-                                <th>Giá Flash Sale</th>
-                                <th>Hành động</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr th:each="fsp : ${flashSale.products}">
-                                <td class="text-start" style="padding-left: 20px;">
-                                    <div class="fw-bold" style="color: #2c3e50; font-size: 0.95rem;" th:text="${fsp.product.name}"></div>
-                                    <div class="mt-1">
-                                        <span class="badge bg-info text-dark" style="font-size: 0.7rem;" th:text="${fsp.product.category != null ? fsp.product.category.name : 'Khác'}"></span>
-                                        <span class="badge text-white" style="background-color: #6c757d; font-size: 0.7rem;" th:text="${fsp.product.brand != null ? fsp.product.brand.name : 'Khác'}"></span>
-                                    </div>
-                                </td>
-                                <td class="fs-price-original" th:text="${#numbers.formatDecimal(fsp.product.price, 0, 'COMMA', 0, 'POINT')} + ' đ'"></td>
-                                <td class="fs-price-sale" th:text="${#numbers.formatDecimal(fsp.salePrice, 0, 'COMMA', 0, 'POINT')} + ' đ'"></td>
-                                <td>
-                                    <a th:href="@{/admin/flash-sales/{fsId}/remove-product/{fspId}(fsId=${flashSale.id}, fspId=${fsp.id})}"
-                                       class="fs-btn fs-btn-sm" style="background-color: #fff; color: #e74c3c; border: 1px solid #e74c3c;"
-                                       onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này khỏi Flash Sale?');"
-                                       onmouseover="this.style.backgroundColor='#e74c3c'; this.style.color='#fff';"
-                                       onmouseout="this.style.backgroundColor='#fff'; this.style.color='#e74c3c';">
-                                        <i class="fas fa-trash me-1"></i> Xóa
-                                    </a>
-                                </td>
-                            </tr>
-                            <tr th:if="${flashSale.products.isEmpty()}">
-                                <td colspan="4" class="fs-empty-state">
-                                    <i class="fas fa-box-open fa-3x"></i>
-                                    <h5>Chưa có sản phẩm</h5>
-                                    <p>Bấm nút "Thêm Sản Phẩm" ở góc phải để cấu hình ưu đãi.</p>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
+                    <div class="row g-2 mb-3">
+                        <div class="col-md-5">
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
+                                <input type="text" id="mainFilterName" class="form-control border-start-0 ps-0" placeholder="Tìm tên sản phẩm...">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <select id="mainFilterCategory" class="form-select text-muted">
+                                <option value="">-- Tất cả Danh mục --</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select id="mainFilterBrand" class="form-select text-muted">
+                                <option value="">-- Tất cả Hãng --</option>
+                            </select>
+                        </div>
                     </div>
+
+                    <form id="updateDiscountsForm" th:action="@{/admin/flash-sales/{id}/update-all-discounts(id=${flashSale.id})}" method="POST">
+                        <div class="fs-table-wrapper">
+                            <table class="fs-table" id="mainProductsTable">
+                                <thead>
+                                <tr>
+                                    <th class="text-start fs-table-left-align">Sản phẩm</th>
+                                    <th>Giá gốc</th>
+                                    <th class="fs-col-discount">% Giảm</th>
+                                    <th>Giá Flash Sale</th>
+                                    <th class="fs-col-action">Hành động</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="fsp : ${flashSale.products}" class="main-product-row"
+                                    th:data-category="${fsp.product.category != null ? fsp.product.category.name : 'Khác'}"
+                                    th:data-brand="${fsp.product.brand != null ? fsp.product.brand.name : 'Khác'}">
+                                    <td class="text-start fs-table-left-align">
+                                        <div class="fw-bold main-product-name fs-product-name-text" th:text="${fsp.product.name}"></div>
+                                        <div class="mt-1">
+                                            <span class="badge bg-info text-dark fs-badge-cat" th:text="${fsp.product.category != null ? fsp.product.category.name : 'Khác'}"></span>
+                                            <span class="badge fs-badge-brand" th:text="${fsp.product.brand != null ? fsp.product.brand.name : 'Khác'}"></span>
+                                        </div>
+                                    </td>
+
+                                    <td class="fs-price-original" th:text="${#numbers.formatDecimal(fsp.product.price, 0, 'COMMA', 0, 'POINT')} + ' đ'"></td>
+
+                                    <td>
+                                        <input type="hidden" name="fspIds" th:value="${fsp.id}">
+                                        <input type="number" class="form-control form-control-sm text-center mx-auto fw-bold fs-input-discount"
+                                               name="discounts" th:value="${fsp.discountPercent}" min="1" max="100"
+                                               th:disabled="${flashSale.status == 'Đã kết thúc'}">
+                                    </td>
+
+                                    <td class="fs-price-sale" th:text="${#numbers.formatDecimal(fsp.salePrice, 0, 'COMMA', 0, 'POINT')} + ' đ'"></td>
+
+                                    <td>
+                                        <div class="d-flex justify-content-center gap-1">
+                                            <button type="submit" th:formaction="@{/admin/flash-sales/{fsId}/update-discount/{fspId}(fsId=${flashSale.id}, fspId=${fsp.id})}"
+                                                    class="fs-btn fs-btn-sm fs-btn-save"
+                                                    th:disabled="${flashSale.status == 'Đã kết thúc'}" title="Lưu mức giảm này">
+                                                <i class="fas fa-save"></i> Lưu
+                                            </button>
+
+                                            <a th:href="@{/admin/flash-sales/{fsId}/remove-product/{fspId}(fsId=${flashSale.id}, fspId=${fsp.id})}"
+                                               class="fs-btn fs-btn-sm fs-btn-delete-outline"
+                                               onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này khỏi đợt Flash Sale?');"
+                                               th:classappend="${flashSale.status == 'Đã kết thúc'} ? 'disabled pe-none' : ''"
+                                               title="Xóa sản phẩm">
+                                                <i class="fas fa-trash"></i> Xóa
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr th:if="${flashSale.products.isEmpty()}">
+                                    <td colspan="5" class="fs-empty-state">
+                                        <i class="fas fa-box-open fa-3x"></i>
+                                        <h5>Chưa có sản phẩm</h5>
+                                        <p th:if="${flashSale.status != 'Đã kết thúc'}">Bấm nút "Thêm Sản Phẩm" ở góc phải để chọn sản phẩm Sale.</p>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="mt-3 text-end" th:if="${!flashSale.products.isEmpty()}">
+                            <button type="submit" class="btn btn-success fw-bold px-4 py-2 fs-btn-save-all"
+                                    th:disabled="${flashSale.status == 'Đã kết thúc'}">
+                                <i class="fas fa-check-double me-1"></i> Lưu Tất Cả Mức Giảm
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -126,9 +182,9 @@
 
     <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content" style="border-radius: 12px; border: none;">
+            <div class="modal-content fs-modal-content">
 
-                <div class="modal-header bg-light" style="border-radius: 12px 12px 0 0;">
+                <div class="modal-header bg-light fs-modal-header">
                     <h5 class="modal-title fw-bold text-success" id="addProductModalLabel">
                         <i class="fas fa-check-square me-1"></i> Thêm sản phẩm vào Flash Sale
                     </h5>
@@ -136,7 +192,6 @@
                 </div>
 
                 <div class="modal-body bg-light pt-2">
-
                     <div class="row g-2 mb-3">
                         <div class="col-md-5">
                             <div class="input-group">
@@ -157,40 +212,38 @@
                     </div>
 
                     <form th:action="@{/admin/flash-sales/{id}/add-product(id=${flashSale.id})}" method="POST" id="addProductsForm">
-                        <div class="product-checklist bg-white shadow-sm" style="border: 1px solid #dee2e6; border-radius: 6px;">
-                            <div class="list-group list-group-flush" id="productListContainer">
+                        <div class="product-checklist bg-white shadow-sm fs-checklist-box">
+                            <div class="list-group list-group-flush fs-custom-scrollbar fs-checklist-container" id="productListContainer">
 
                                 <label th:each="p : ${products}"
-                                       class="list-group-item d-flex justify-content-between align-items-center py-2 px-3 list-group-item-action product-item-row"
-                                       style="cursor: pointer; border-bottom: 1px solid #f0f2f5;"
+                                       class="list-group-item d-flex justify-content-between align-items-center py-2 px-3 list-group-item-action product-item-row fs-checklist-item"
                                        th:data-category="${p.category != null ? p.category.name : 'Khác'}"
                                        th:data-brand="${p.brand != null ? p.brand.name : 'Khác'}">
 
                                     <div class="d-flex align-items-center">
-                                        <input class="form-check-input me-3 mt-0" type="checkbox" name="productIds"
+                                        <input class="form-check-input me-3 mt-0 fs-checkbox-large" type="checkbox" name="productIds"
                                                th:value="${p.id}"
                                                th:disabled="${#lists.contains(addedProductIds, p.id)}"
-                                               th:checked="${#lists.contains(addedProductIds, p.id)}"
-                                               style="transform: scale(1.2);">
+                                               th:checked="${#lists.contains(addedProductIds, p.id)}">
 
                                         <div>
-                                            <span class="product-name fw-bold text-dark" style="font-size: 0.95rem;" th:text="${p.name}"></span>
+                                            <span class="product-name fw-bold fs-product-name-text" th:text="${p.name}"></span>
+                                            <span th:if="${#lists.contains(addedProductIds, p.id)}"
+                                                  class="badge ms-2 fs-badge-added">
+                                                  <i class="fas fa-check me-1"></i> Đã thêm
+                                            </span>
+
                                             <div class="mt-1">
-                                                <span class="badge bg-info text-dark" style="font-size: 0.7rem;" th:text="${p.category != null ? p.category.name : 'Khác'}"></span>
-                                                <span class="badge text-white" style="background-color: #6c757d; font-size: 0.7rem;" th:text="${p.brand != null ? p.brand.name : 'Khác'}"></span>
+                                                <span class="badge bg-info text-dark fs-badge-cat" th:text="${p.category != null ? p.category.name : 'Khác'}"></span>
+                                                <span class="badge fs-badge-brand" th:text="${p.brand != null ? p.brand.name : 'Khác'}"></span>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div class="text-end">
-                                        <span class="text-muted d-block fw-bold" style="font-size: 0.85rem;"
+                                        <span class="text-muted d-block fw-bold fs-text-small"
                                               th:text="${#numbers.formatDecimal(p.price, 0, 'COMMA', 0, 'POINT')} + ' đ'">
                                         </span>
-                                        <span th:if="${#lists.contains(addedProductIds, p.id)}"
-                                              class="badge rounded-pill mt-1"
-                                              style="background-color: #198754; color: #fff; font-size: 0.75rem; padding: 5px 10px; box-shadow: 0 2px 4px rgba(25, 135, 84, 0.2);">
-      <i class="fas fa-check me-1"></i> Đã thêm
-</span>
                                     </div>
                                 </label>
 
@@ -205,7 +258,7 @@
 
                 </div>
 
-                <div class="modal-footer bg-white" style="border-radius: 0 0 12px 12px;">
+                <div class="modal-footer bg-white fs-modal-footer">
                     <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Hủy</button>
                     <button type="submit" form="addProductsForm" class="btn btn-success fw-bold px-4">
                         <i class="fas fa-save me-1"></i> Thêm Sản Phẩm
@@ -217,16 +270,103 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <script>
+    <script th:inline="javascript">
         document.addEventListener("DOMContentLoaded", function () {
+            // (Phần Script hoàn toàn không có Inline CSS nào, giữ nguyên như cũ)
+            const bookedData = /*[[${bookedSlots}]]*/ [];
+            const bookedMap = {};
+            if(bookedData) {
+                bookedData.forEach(item => {
+                    let parts = item.split('|');
+                    if(!bookedMap[parts[0]]) bookedMap[parts[0]] = [];
+                    bookedMap[parts[0]].push(parts[1]);
+                });
+            }
 
-            // ==========================================
-            // 1. TỰ ĐỘNG LẤY DANH MỤC & THƯƠNG HIỆU
-            // ==========================================
+            const saleDateInput = document.getElementById('saleDate');
+            const timeSlotSelect = document.getElementById('timeSlot');
+            const currentSlotVal = timeSlotSelect ? timeSlotSelect.value : "";
+
+            function updateAvailableSlots() {
+                if(!timeSlotSelect) return;
+                const dateVal = saleDateInput.value;
+                if (!dateVal) return;
+                const today = new Date();
+                const todayStr = today.toISOString().split('T')[0];
+                const currentHourFloat = today.getHours() + (today.getMinutes() / 60);
+
+                Array.from(timeSlotSelect.options).forEach(opt => {
+                    if(opt.value === "") return;
+                    let reason = "";
+
+                    if (dateVal === todayStr) {
+                        let endH = parseInt(opt.value.split('-')[1].split(':')[0]);
+                        if (opt.value.split('-')[1] === "24:00") endH = 24;
+                        if (endH <= currentHourFloat && opt.value !== currentSlotVal) {
+                            reason = " (Đã qua)";
+                        }
+                    }
+
+                    if (bookedMap[dateVal] && bookedMap[dateVal].includes(opt.value) && opt.value !== currentSlotVal) {
+                        if (reason !== "") {
+                            reason = " (Đã qua & Đã đặt)";
+                        } else {
+                            reason = " (Đã đặt)";
+                        }
+                    }
+
+                    opt.disabled = reason !== "";
+                    opt.text = reason !== "" ? opt.value.replace('-', ' - ') + reason : opt.value.replace('-', ' - ');
+                });
+            }
+
+            if(saleDateInput) {
+                saleDateInput.addEventListener('change', updateAvailableSlots);
+                if(saleDateInput.value) updateAvailableSlots();
+            }
+
+            const mainRows = Array.from(document.querySelectorAll('.main-product-row'));
+            const mainCatSet = new Set(), mainBrandSet = new Set();
+
+            mainRows.forEach(row => {
+                if(row.getAttribute('data-category')) mainCatSet.add(row.getAttribute('data-category'));
+                if(row.getAttribute('data-brand')) mainBrandSet.add(row.getAttribute('data-brand'));
+            });
+
+            const filterMainCat = document.getElementById('mainFilterCategory');
+            const filterMainBrand = document.getElementById('mainFilterBrand');
+            if(filterMainCat && filterMainBrand) {
+                mainCatSet.forEach(cat => filterMainCat.add(new Option(cat, cat)));
+                mainBrandSet.forEach(brand => filterMainBrand.add(new Option(brand, brand)));
+            }
+
+            const filterMainName = document.getElementById("mainFilterName");
+            function filterMainTable() {
+                if(!filterMainName) return;
+                const nameVal = filterMainName.value.toLowerCase();
+                const catVal = filterMainCat.value;
+                const brandVal = filterMainBrand.value;
+
+                mainRows.forEach(row => {
+                    const name = row.querySelector(".main-product-name").innerText.toLowerCase();
+                    const cat = row.getAttribute("data-category");
+                    const brand = row.getAttribute("data-brand");
+
+                    const matchName = name.includes(nameVal);
+                    const matchCat = (catVal === "" || cat === catVal);
+                    const matchBrand = (brandVal === "" || brand === brandVal);
+
+                    row.style.display = (matchName && matchCat && matchBrand) ? "" : "none";
+                });
+            }
+
+            if(filterMainName) filterMainName.addEventListener("keyup", filterMainTable);
+            if(filterMainCat) filterMainCat.addEventListener("change", filterMainTable);
+            if(filterMainBrand) filterMainBrand.addEventListener("change", filterMainTable);
+
             const catSet = new Set();
             const brandSet = new Set();
-            const productRows = Array.from(document.querySelectorAll('.product-item-row')); // Đổi NodeList thành Array
+            const productRows = Array.from(document.querySelectorAll('.product-item-row'));
 
             productRows.forEach(row => {
                 const cat = row.getAttribute('data-category');
@@ -236,23 +376,22 @@
             });
 
             const filterCategory = document.getElementById('filterCategory');
-            catSet.forEach(cat => filterCategory.add(new Option(cat, cat)));
-
             const filterBrand = document.getElementById('filterBrand');
-            brandSet.forEach(brand => filterBrand.add(new Option(brand, brand)));
 
-            // ==========================================
-            // 2. LOGIC LỌC SẢN PHẨM & PHÂN TRANG
-            // ==========================================
+            if(filterCategory && filterBrand) {
+                catSet.forEach(cat => filterCategory.add(new Option(cat, cat)));
+                brandSet.forEach(brand => filterBrand.add(new Option(brand, brand)));
+            }
+
             const filterName = document.getElementById("filterName");
             const paginationControls = document.getElementById("paginationControls");
 
-            const ITEMS_PER_PAGE = 10; // Cài đặt số sản phẩm trên 1 trang
+            const ITEMS_PER_PAGE = 10;
             let currentPage = 1;
             let filteredRows = [];
 
-            // Hàm áp dụng bộ lọc
             function applyFiltersAndPaginate() {
+                if(!filterName) return;
                 const nameVal = filterName.value.toLowerCase();
                 const catVal = filterCategory.value;
                 const brandVal = filterBrand.value;
@@ -269,41 +408,33 @@
                     return matchName && matchCat && matchBrand;
                 });
 
-                currentPage = 1; // Lọc xong thì đưa về trang 1
+                currentPage = 1;
                 renderPage();
             }
 
-            // Hàm hiển thị sản phẩm của trang hiện tại
             function renderPage() {
-                // Ẩn tất cả đi
                 productRows.forEach(row => row.style.setProperty("display", "none", "important"));
-
-                // Lấy ra các sản phẩm thuộc trang hiện tại
                 const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
                 const endIndex = startIndex + ITEMS_PER_PAGE;
                 const rowsToShow = filteredRows.slice(startIndex, endIndex);
 
-                // Hiển thị chúng lên
                 rowsToShow.forEach(row => row.style.setProperty("display", "flex", "important"));
-
                 renderPaginationControls();
             }
 
-            // Hàm tạo nút phân trang
             function renderPaginationControls() {
+                if(!paginationControls) return;
                 paginationControls.innerHTML = '';
                 const totalPages = Math.ceil(filteredRows.length / ITEMS_PER_PAGE);
 
-                if (totalPages <= 1) return; // Nếu chỉ có 1 trang thì ẩn thanh phân trang
+                if (totalPages <= 1) return;
 
-                // Nút "Trước"
                 paginationControls.innerHTML += `
                     <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
                         <a class="page-link" href="#" data-page="${currentPage - 1}">&laquo;</a>
                     </li>
                 `;
 
-                // Các nút số
                 for (let i = 1; i <= totalPages; i++) {
                     paginationControls.innerHTML += `
                         <li class="page-item ${currentPage === i ? 'active' : ''}">
@@ -312,7 +443,6 @@
                     `;
                 }
 
-                // Nút "Sau"
                 paginationControls.innerHTML += `
                     <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
                         <a class="page-link" href="#" data-page="${currentPage + 1}">&raquo;</a>
@@ -320,48 +450,24 @@
                 `;
             }
 
-            // Bắt sự kiện click vào nút phân trang
-            paginationControls.addEventListener("click", function (e) {
-                e.preventDefault();
-                if (e.target.tagName === 'A') {
-                    const targetPage = parseInt(e.target.getAttribute("data-page"));
-                    if (!isNaN(targetPage)) {
-                        currentPage = targetPage;
-                        renderPage();
+            if(paginationControls) {
+                paginationControls.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    if (e.target.tagName === 'A') {
+                        const targetPage = parseInt(e.target.getAttribute("data-page"));
+                        if (!isNaN(targetPage)) {
+                            currentPage = targetPage;
+                            renderPage();
+                        }
                     }
-                }
-            });
+                });
+            }
 
-            // Lắng nghe sự kiện lọc
-            filterName.addEventListener("keyup", applyFiltersAndPaginate);
-            filterCategory.addEventListener("change", applyFiltersAndPaginate);
-            filterBrand.addEventListener("change", applyFiltersAndPaginate);
+            if(filterName) filterName.addEventListener("keyup", applyFiltersAndPaginate);
+            if(filterCategory) filterCategory.addEventListener("change", applyFiltersAndPaginate);
+            if(filterBrand) filterBrand.addEventListener("change", applyFiltersAndPaginate);
 
-            // Chạy lần đầu tiên khi load web
             applyFiltersAndPaginate();
-
-            // ==========================================
-            // 3. BẮT LỖI FORM CÀI ĐẶT THÔNG SỐ (GIỮ NGUYÊN)
-            // ==========================================
-            const formInfo = document.getElementById("flashSaleForm");
-            const errorDivInfo = document.getElementById("jsErrorMessage");
-            const errorTextInfo = document.getElementById("jsErrorText");
-
-            formInfo.addEventListener("submit", function (event) {
-                errorDivInfo.style.display = "none";
-                const startTime = document.getElementById("startTime").value;
-                const endTime = document.getElementById("endTime").value;
-
-                if (startTime && endTime && startTime >= endTime) {
-                    event.preventDefault();
-                    errorTextInfo.innerText = "Giờ kết thúc phải diễn ra sau giờ bắt đầu!";
-                    errorTextInfo.style.color = "#dc3545";
-                    errorDivInfo.style.backgroundColor = "#f8d7da";
-                    errorDivInfo.style.borderColor = "#f5c6cb";
-                    errorDivInfo.style.color = "#721c24";
-                    errorDivInfo.style.display = "block";
-                }
-            });
         });
     </script>
 </div>
