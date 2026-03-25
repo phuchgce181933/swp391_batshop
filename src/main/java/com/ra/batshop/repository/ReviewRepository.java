@@ -30,4 +30,11 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
     Page<Review> findByParentIsNull(Pageable pageable);
     Long countByProduct_Id(Integer productId);
     boolean existsByUser_IdAndProduct_Id(Integer userId, Integer productId);
+    @Query("""
+   SELECT COUNT(r)
+   FROM Review r
+   WHERE r.product.id = :productId
+   AND r.parent IS NULL
+""")
+    Long countRootReview(Integer productId);
 }

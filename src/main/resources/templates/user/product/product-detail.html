@@ -194,7 +194,10 @@
                 ⭐ ⭐ ⭐ ⭐ ⭐
             </div>
 
-            <p th:text="${reviewCount} + ' đánh giá và nhận xét'"></p>
+            <p>
+                <span th:text="${reviewCount != null ? reviewCount : 0}"></span>
+                đánh giá và nhận xét
+            </p>
 
         </div>
 

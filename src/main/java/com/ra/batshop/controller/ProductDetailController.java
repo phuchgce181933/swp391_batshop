@@ -85,9 +85,16 @@ public class ProductDetailController {
                         PageRequest.of(page, 5)
                 );
 
-        Double avgRating =
-                reviewRepository.getAverageRating(id);
-        Long reviewCount = reviewRepository.countByProduct_Id(id);
+        Double avgRating = reviewRepository.getAverageRating(id);
+        Long reviewCount = reviewRepository.countRootReview(id);
+
+        if (reviewCount == null) {
+            reviewCount = 0L;
+        }
+
+        if (avgRating == null) {
+            avgRating = 0.0;
+        }
 
         model.addAttribute("product", product);
         model.addAttribute("variants", variants);
@@ -96,7 +103,7 @@ public class ProductDetailController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", reviewPage.getTotalPages());
         model.addAttribute("avgRating", avgRating);
-        model.addAttribute("reviews", reviewPage.getContent());
+        model.addAttribute("reviewCount", reviewCount);
 
         // ==========================================
         // 3. KIỂM TRA LOGIC FLASH SALE TẠI ĐÂY
