@@ -38,6 +38,10 @@
     padding-left: 10px;
 }
 
+/* Các biến thể màu cho tiêu đề Card */
+.fs-card-title-primary { color: #0d6efd !important; }
+.fs-card-title-success { color: #198754 !important; }
+
 /* ================= 2. FORM STYLES (Add & Edit) ================= */
 .fs-form-group {
     margin-bottom: 1.2rem;
@@ -48,6 +52,7 @@
     color: #2c3e50;
     margin-bottom: 0.5rem;
     display: inline-block;
+    font-size: 0.95rem;
 }
 
 .fs-form-control {
@@ -72,6 +77,11 @@
     border-color: #f15a22;
     outline: 0;
     box-shadow: 0 0 5px rgba(241, 90, 34, 0.2);
+}
+
+.fs-input-discount {
+    width: 80px;
+    color: #e74c3c;
 }
 
 /* ================= 3. BẢNG DỮ LIỆU (List & Edit) ================= */
@@ -109,6 +119,16 @@
     background-color: #f8f9fa;
 }
 
+.fs-table-left-align { padding-left: 20px !important; }
+
+.fs-product-name-text {
+    color: #2c3e50;
+    font-size: 0.95rem;
+}
+
+.fs-col-discount { width: 120px; }
+.fs-col-action { width: 160px; }
+
 .fs-price-original {
     color: #7f8c8d;
     text-decoration: line-through;
@@ -127,7 +147,7 @@
     justify-content: center;
 }
 
-/* ================= 4. KHU VỰC THÊM SẢN PHẨM (Edit) ================= */
+/* ================= 4. KHU VỰC THÊM SẢN PHẨM (Modal Edit) ================= */
 .fs-select-wrapper {
     display: flex;
     gap: 10px;
@@ -170,6 +190,30 @@
     background-color: #27ae60;
 }
 
+/* Modal Custom Styles */
+.fs-modal-content {
+    border-radius: 12px;
+    border: none;
+}
+.fs-modal-header { border-radius: 12px 12px 0 0; }
+.fs-modal-footer { border-radius: 0 0 12px 12px; }
+
+.fs-checklist-box {
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+}
+.fs-checklist-container {
+    max-height: 400px;
+    overflow-y: auto;
+}
+.fs-checklist-item {
+    cursor: pointer;
+    border-bottom: 1px solid #f0f2f5;
+}
+.fs-checkbox-large {
+    transform: scale(1.2);
+}
+
 /* ================= 5. NÚT BẤM (BUTTONS) ================= */
 .fs-btn {
     display: inline-flex;
@@ -197,17 +241,58 @@
     border-radius: 4px;
 }
 
+/* Các nút riêng lẻ trong Edit & List */
+.fs-btn-update-time {
+    background-color: #0d6efd;
+    border: none;
+    border-radius: 6px;
+    color: white;
+}
+.fs-btn-manage { background-color: #3498db; color: white; }
+.fs-btn-delete-solid { background-color: #e74c3c; color: white; }
+
+.fs-btn-save {
+    background-color: #0d6efd;
+    color: white;
+    border: none;
+    min-width: 65px;
+}
+.fs-btn-delete-outline {
+    background-color: #fff;
+    color: #e74c3c;
+    border: 1px solid #e74c3c;
+    min-width: 65px;
+}
+.fs-btn-delete-outline:hover {
+    background-color: #e74c3c;
+    color: #fff;
+}
+.fs-btn-save-all {
+    border-radius: 6px;
+    box-shadow: 0 4px 6px rgba(40, 167, 69, 0.2);
+}
+
+.fs-btn-disabled {
+    background-color: #e2e8f0 !important;
+    color: #94a3b8 !important;
+    cursor: not-allowed !important;
+    box-shadow: none !important;
+}
+
+/* Trạng thái Loading của nút Submit */
+.fs-btn-loading {
+    pointer-events: none;
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
 /* ================= 6. RESPONSIVE ================= */
 @media (max-width: 768px) {
     .fs-select-wrapper {
         flex-direction: column;
         align-items: stretch;
     }
-
-    .btn-add-product {
-        width: 100%;
-    }
-
+    .btn-add-product { width: 100%; }
     .fs-admin-header {
         flex-direction: column;
         align-items: flex-start;
@@ -215,7 +300,7 @@
     }
 }
 
-/* ================= 7. CUSTOM BADGES & EMPTY STATE (CẬP NHẬT MỚI) ================= */
+/* ================= 7. CUSTOM BADGES, ALERTS & TEXT ================= */
 .fs-badge-discount {
     background-color: #e74c3c;
     color: white;
@@ -236,6 +321,52 @@
     font-size: 0.9rem;
     display: inline-block;
     border: 1px solid #bae6fd;
+}
+
+/* Status Badges */
+.fs-badge-status {
+    color: white;
+    padding: 6px 10px;
+    font-size: 0.85rem;
+}
+.fs-badge-active { background-color: #2ecc71; }
+.fs-badge-upcoming { background-color: #f39c12; }
+.fs-badge-ended { background-color: #95a5a6; }
+
+/* Product Badges */
+.fs-badge-cat { font-size: 0.7rem; }
+.fs-badge-brand {
+    background-color: #6c757d;
+    font-size: 0.7rem;
+    color: #fff;
+}
+.fs-badge-added {
+    background-color: #198754;
+    color: #fff;
+    font-size: 0.70rem;
+    padding: 4px 8px;
+    vertical-align: middle;
+}
+
+/* Typography */
+.fs-text-small { font-size: 0.85rem; }
+.fs-text-dark { color: #2c3e50; }
+
+/* Alerts */
+.fs-alert { border-radius: 6px; }
+.fs-alert-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 12px;
+    border: 1px solid #f5c6cb;
+    font-weight: 500;
+    margin-bottom: 20px;
+}
+.fs-alert-js {
+    display: none;
+    padding: 10px;
+    font-weight: 500;
+    margin-bottom: 15px;
 }
 
 .fs-empty-state {
@@ -261,27 +392,14 @@
     font-size: 0.95rem;
 }
 
-.fs-btn-disabled {
-    background-color: #e2e8f0 !important;
-    color: #94a3b8 !important;
-    cursor: not-allowed !important;
-    box-shadow: none !important;
-}
 /* ================= 8. SCROLLBAR TÙY CHỈNH CHO CHECKLIST ================= */
-.fs-custom-scrollbar::-webkit-scrollbar {
-    width: 6px;
-}
-
+.fs-custom-scrollbar::-webkit-scrollbar { width: 6px; }
 .fs-custom-scrollbar::-webkit-scrollbar-track {
     background: #f1f1f1;
     border-radius: 6px;
 }
-
 .fs-custom-scrollbar::-webkit-scrollbar-thumb {
     background: #c1c1c1;
     border-radius: 6px;
 }
-
-.fs-custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: #a8a8a8;
-}
+.fs-custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }

@@ -18,6 +18,9 @@ public class FlashSaleProduct {
 
     private BigDecimal salePrice;
 
+    @Column(name = "discount_percent")
+    private Integer discountPercent = 1;
+
     @ManyToOne
     @JoinColumn(name = "flash_sale_id")
     private FlashSale flashSale;

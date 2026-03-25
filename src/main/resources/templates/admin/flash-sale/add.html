@@ -9,38 +9,35 @@
 
     <div class="fs-admin-card">
 
-      <div th:if="${errorMessage}" class="alert alert-danger" style="background-color: #f8d7da; color: #721c24; padding: 12px; border-radius: 6px; border: 1px solid #f5c6cb; font-weight: 500; margin-bottom: 20px;">
+      <div th:if="${errorMessage}" class="alert fs-alert fs-alert-error">
         <i class="fas fa-exclamation-triangle"></i> <span th:text="${errorMessage}"></span>
       </div>
 
       <form id="flashSaleForm" th:action="@{/admin/flash-sales/add}" th:object="${flashSale}" method="POST">
 
         <div class="fs-form-group mb-3">
-          <label class="fs-form-label">Phần trăm giảm giá (%)</label>
-          <input type="number" class="fs-form-control" th:field="*{discountPercent}" placeholder="Ví dụ: 10, 20, 50..." required min="1" max="100">
-        </div>
-
-        <div class="fs-form-group mb-3">
           <label class="fs-form-label">Ngày diễn ra Sale</label>
           <input type="date" class="fs-form-control" name="saleDate" id="saleDate" required th:min="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}">
         </div>
 
-        <div class="row">
-          <div class="col-md-6 fs-form-group mb-3">
-            <label class="fs-form-label">Giờ bắt đầu</label>
-            <input type="time" class="fs-form-control" name="startTime" id="startTime" required>
-            <small class="text-muted mt-1 d-block" style="font-size: 0.85rem;">* Giờ bắt đầu nên là giờ của tương lai</small>
-          </div>
-
-          <div class="col-md-6 fs-form-group mb-4">
-            <label class="fs-form-label">Giờ kết thúc</label>
-            <input type="time" class="fs-form-control" name="endTime" id="endTime" required>
-            <small class="text-muted mt-1 d-block" style="font-size: 0.85rem;">* Giờ kết thúc phải sau giờ bắt đầu</small>
-          </div>
-        </div>
-
-        <div id="jsErrorMessage" class="alert alert-danger" style="display: none; padding: 10px; border-radius: 6px; font-weight: 500; margin-bottom: 15px;">
-          <i class="fas fa-exclamation-circle"></i> <span id="jsErrorText"></span>
+        <div class="fs-form-group mb-4">
+          <label class="fs-form-label">Khung giờ Sale</label>
+          <select class="fs-form-control" name="timeSlot" id="timeSlot" required>
+            <option value="">-- Chọn khung giờ --</option>
+            <option value="00:00-02:00">00:00 - 02:00</option>
+            <option value="02:00-04:00">02:00 - 04:00</option>
+            <option value="04:00-06:00">04:00 - 06:00</option>
+            <option value="06:00-08:00">06:00 - 08:00</option>
+            <option value="08:00-10:00">08:00 - 10:00</option>
+            <option value="10:00-12:00">10:00 - 12:00</option>
+            <option value="12:00-14:00">12:00 - 14:00</option>
+            <option value="14:00-16:00">14:00 - 16:00</option>
+            <option value="16:00-18:00">16:00 - 18:00</option>
+            <option value="18:00-20:00">18:00 - 20:00</option>
+            <option value="20:00-22:00">20:00 - 22:00</option>
+            <option value="22:00-24:00">22:00 - 24:00</option>
+          </select>
+          <small class="text-muted mt-1 d-block fs-text-small">* Các khung giờ đã qua trong ngày hoặc đã được đặt sẽ bị ẩn/vô hiệu hóa</small>
         </div>
 
         <div class="d-flex gap-2">
@@ -50,65 +47,69 @@
           <a th:href="@{/admin/flash-sales}" class="fs-btn fs-btn-secondary">Hủy</a>
         </div>
       </form>
+
+      <script th:inline="javascript">
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById("flashSaleForm");
+            const btnSubmit = document.getElementById("btnSubmit");
+
+            const bookedData = /*[[${bookedSlots}]]*/ [];
+            const bookedMap = {};
+            bookedData.forEach(item => {
+                let parts = item.split('|');
+                if(!bookedMap[parts[0]]) bookedMap[parts[0]] = [];
+                bookedMap[parts[0]].push(parts[1]);
+            });
+
+            const saleDateInput = document.getElementById('saleDate');
+            const timeSlotSelect = document.getElementById('timeSlot');
+
+            function updateAvailableSlots() {
+                const dateVal = saleDateInput.value;
+                if (!dateVal) return;
+
+                const today = new Date();
+                const todayStr = today.toISOString().split('T')[0];
+                const currentHourFloat = today.getHours() + (today.getMinutes() / 60);
+
+                Array.from(timeSlotSelect.options).forEach(opt => {
+                    if(opt.value === "") return;
+                    let reason = "";
+
+                    if (dateVal === todayStr) {
+                        let endH = parseInt(opt.value.split('-')[1].split(':')[0]);
+                        if (opt.value.split('-')[1] === "24:00") endH = 24;
+                        if (endH <= currentHourFloat) {
+                            reason = " (Đã qua)";
+                        }
+                    }
+
+                    if (bookedMap[dateVal] && bookedMap[dateVal].includes(opt.value)) {
+                        if (reason !== "") {
+                            reason = " (Đã qua & Đã đặt)";
+                        } else {
+                            reason = " (Đã đặt)";
+                        }
+                    }
+
+                    opt.disabled = reason !== "";
+                    opt.text = reason !== "" ? opt.value.replace('-', ' - ') + reason : opt.value.replace('-', ' - ');
+                });
+
+                if(timeSlotSelect.options[timeSlotSelect.selectedIndex]?.disabled) {
+                    timeSlotSelect.value = "";
+                }
+            }
+
+            saleDateInput.addEventListener('change', updateAvailableSlots);
+            if(saleDateInput.value) updateAvailableSlots();
+
+            form.addEventListener("submit", function (event) {
+                btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Đang lưu...';
+                btnSubmit.classList.add('fs-btn-loading'); // Thêm CSS Loading thay vì inline JS
+            });
+        });
+      </script>
     </div>
   </div>
-
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const form = document.getElementById("flashSaleForm");
-        const errorDiv = document.getElementById("jsErrorMessage");
-        const errorText = document.getElementById("jsErrorText");
-        const btnSubmit = document.getElementById("btnSubmit");
-
-        form.addEventListener("submit", function (event) {
-            // Reset thông báo lỗi
-            errorDiv.style.display = "none";
-
-            const saleDate = document.getElementById("saleDate").value;
-            const startTime = document.getElementById("startTime").value;
-            const endTime = document.getElementById("endTime").value;
-
-            // 1. Kiểm tra giờ bắt đầu/kết thúc
-            if (startTime && endTime && startTime >= endTime) {
-                event.preventDefault();
-                showError("[Giờ kết thúc] phải diễn ra sau [Giờ bắt đầu]!");
-                return;
-            }
-
-            // 2. Lấy ngày giờ hiện tại để so sánh
-            const now = new Date();
-            const todayStr = now.toISOString().split('T')[0]; // Format: yyyy-mm-dd
-
-            // Format giờ hiện tại thành HH:mm
-            const currentHours = String(now.getHours()).padStart(2, '0');
-            const currentMinutes = String(now.getMinutes()).padStart(2, '0');
-            const currentTimeStr = `${currentHours}:${currentMinutes}`;
-
-            // 3. Nếu chọn ngày hôm nay, không được chọn giờ bắt đầu trong quá khứ
-            if (saleDate === todayStr && startTime < currentTimeStr) {
-                event.preventDefault();
-                showError("Ngày diễn ra Sale đã chọn là hôm nay, [Giờ bắt đầu] không thể ở quá khứ của Giờ hiện tại!");
-                return;
-            }
-
-            // Nếu qua hết các khâu validate -> Disable nút để tránh click đúp
-            btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Đang lưu...';
-            btnSubmit.style.opacity = '0.7';
-            btnSubmit.style.cursor = 'not-allowed';
-            btnSubmit.disabled = true;
-        });
-
-// Hàm hiển thị lỗi mượt mà (chữ màu đỏ)
-    function showError(message) {
-        errorText.innerText = message;
-
-        // Thêm màu đỏ cho chữ
-        errorText.style.color = "#dc3545";
-        errorDiv.style.backgroundColor = "#f8d7da";
-        errorDiv.style.borderColor = "#f5c6cb";
-        errorDiv.style.color = "#721c24";
-        errorDiv.style.display = "block";
-    }
-    });
-  </script>
 </div>
