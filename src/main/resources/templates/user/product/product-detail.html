@@ -219,8 +219,8 @@
         Bạn cần mua sản phẩm và hoàn thành đơn hàng trước khi đánh giá.
     </div>
 
-    <div th:if="${param.error == 'reviewed'}"
-         style="color:red;margin-bottom:10px;font-weight:bold;">
+    <div th:if="${param.error != null and param.error[0] == 'reviewed'}"
+         class="review-error">
         Bạn đã đánh giá sản phẩm này rồi.
     </div>
 
