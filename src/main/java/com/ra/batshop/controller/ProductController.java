@@ -269,81 +269,102 @@ public class ProductController {
                          MultipartHttpServletRequest request) {
 
         try {
+            Product existing = productRepository.findById(product.getId()).orElseThrow();
 
-            Product existing =
-                    productRepository.findById(product.getId()).orElseThrow();
-
+            // Cập nhật thông tin cơ bản
             existing.setName(product.getName());
             existing.setDescription(product.getDescription());
             existing.setPrice(product.getPrice());
             existing.setUpdatedAt(LocalDateTime.now());
             existing.setStatus(product.getStatus());
-
-            existing.setCategory(
-                    categoryRepository.findById(product.getCategory().getId()).orElseThrow()
-            );
-
-            existing.setBrand(
-                    brandRepository.findById(product.getBrand().getId()).orElseThrow()
-            );
+            existing.setCategory(categoryRepository.findById(product.getCategory().getId()).orElseThrow());
+            existing.setBrand(brandRepository.findById(product.getBrand().getId()).orElseThrow());
 
             String uploadDir = "uploads/product/";
             Path uploadPath = Paths.get(uploadDir);
+            if (!Files.exists(uploadPath)) Files.createDirectories(uploadPath);
 
-            if (!Files.exists(uploadPath)) {
-                Files.createDirectories(uploadPath);
-            }
-
-            // ===== LẤY FILE =====
             Map<String, List<MultipartFile>> variantImages = request.getMultiFileMap();
 
-            System.out.println("KEYS: " + variantImages.keySet());
-
-            // ===== UPDATE VARIANTS =====
+            // Xử lý tất cả biến thể
             if (product.getVariants() != null) {
-
                 for (int i = 0; i < product.getVariants().size(); i++) {
-
                     ProductVariant updated = product.getVariants().get(i);
 
-                    ProductVariant dbVariant =
-                            existing.getVariants()
-                                    .stream()
-                                    .filter(v -> v.getId().equals(updated.getId()))
-                                    .findFirst()
-                                    .orElse(null);
+                    if (updated.getId() != null) {
+                        // Biến thể cũ → update
+                        ProductVariant dbVariant = existing.getVariants()
+                                .stream()
+                                .filter(v -> v.getId().equals(updated.getId()))
+                                .findFirst()
+                                .orElse(null);
 
-                    if (dbVariant == null) continue;
+                        if (dbVariant != null) {
+                            dbVariant.setStock(updated.getStock());
+                            dbVariant.setAdditionalPrice(updated.getAdditionalPrice());
 
-                    dbVariant.setStock(updated.getStock());
-                    dbVariant.setAdditionalPrice(updated.getAdditionalPrice());
+                            // Cập nhật brand, size, color
+                            if (updated.getBrand() != null && updated.getBrand().getId() != null) {
+                                dbVariant.setBrand(brandRepository.findById(updated.getBrand().getId()).orElse(null));
+                            }
+                            if (updated.getSize() != null && updated.getSize().getId() != null) {
+                                dbVariant.setSize(sizeRepository.findById(updated.getSize().getId()).orElse(null));
+                            }
+                            if (updated.getColor() != null && updated.getColor().getId() != null) {
+                                dbVariant.setColor(colorRepository.findById(updated.getColor().getId()).orElse(null));
+                            }
 
-                    // ===== FIX IMAGE =====
-                    String key = "variantImages[" + i + "]";
-                    List<MultipartFile> images = variantImages.get(key);
+                            // Upload ảnh
+                            String key = "variantImages[" + i + "]";
+                            List<MultipartFile> images = variantImages.get(key);
+                            if (images != null && !images.isEmpty()) {
+                                for (MultipartFile img : images) {
+                                    if (!img.isEmpty()) {
+                                        String fileName = System.currentTimeMillis() + "_" + img.getOriginalFilename();
+                                        Files.copy(img.getInputStream(), uploadPath.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
 
-                    System.out.println("Checking: " + key);
-
-                    if (images != null && !images.isEmpty()) {
-
-                        for (MultipartFile img : images) {
-
-                            if (!img.isEmpty()) {
-
-                                String fileName =
-                                        System.currentTimeMillis() + "_" + img.getOriginalFilename();
-
-                                Files.copy(
-                                        img.getInputStream(),
-                                        uploadPath.resolve(fileName),
-                                        StandardCopyOption.REPLACE_EXISTING
-                                );
-
-                                ProductVariantImage variantImage = new ProductVariantImage();
-                                variantImage.setImage(fileName);
-                                dbVariant.addImage(variantImage);
+                                        ProductVariantImage variantImage = new ProductVariantImage();
+                                        variantImage.setImage(fileName);
+                                        dbVariant.addImage(variantImage);
+                                    }
+                                }
                             }
                         }
+
+                    } else {
+                        // Biến thể mới → thêm vào
+                        updated.setProduct(existing);
+
+                        if (product.getCategory().getId() == 3) {
+                            // Nếu là racket, tạo RacketDetail
+                            if (updated.getRacketDetail() == null) updated.setRacketDetail(new RacketDetail());
+                            updated.getRacketDetail().setVariant(updated);
+                        }
+
+                        if (updated.getBrand() != null && updated.getBrand().getId() != null)
+                            updated.setBrand(brandRepository.findById(updated.getBrand().getId()).orElse(null));
+                        if (updated.getSize() != null && updated.getSize().getId() != null)
+                            updated.setSize(sizeRepository.findById(updated.getSize().getId()).orElse(null));
+                        if (updated.getColor() != null && updated.getColor().getId() != null)
+                            updated.setColor(colorRepository.findById(updated.getColor().getId()).orElse(null));
+
+                        // Upload ảnh biến thể mới
+                        String key = "variantImages[" + i + "]";
+                        List<MultipartFile> images = variantImages.get(key);
+                        if (images != null && !images.isEmpty()) {
+                            for (MultipartFile img : images) {
+                                if (!img.isEmpty()) {
+                                    String fileName = System.currentTimeMillis() + "_" + img.getOriginalFilename();
+                                    Files.copy(img.getInputStream(), uploadPath.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
+
+                                    ProductVariantImage variantImage = new ProductVariantImage();
+                                    variantImage.setImage(fileName);
+                                    updated.addImage(variantImage);
+                                }
+                            }
+                        }
+
+                        existing.addVariant(updated);
                     }
                 }
             }
