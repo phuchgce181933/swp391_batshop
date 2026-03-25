@@ -159,3 +159,299 @@
     font-weight:500;
     margin-bottom:15px;
 }
+.product-detail-container {
+    display: flex;
+    gap: 40px;
+    padding: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.product-images {
+    width: 40%;
+}
+
+.main-img {
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    object-fit: contain;
+    background: #fff;
+}
+
+.thumb-list {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    overflow-x: auto;
+}
+
+.thumb-list img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border: 2px solid transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.thumb-list img:hover {
+    border-color: #ff6a00;
+}
+
+.product-info {
+    width: 60%;
+}
+
+.product-info h1 {
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+/* ================= FLASH SALE BADGE ================= */
+.fs-badge {
+    background: linear-gradient(90deg, #ff416c 0%, #ff4b2b 100%);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1rem;
+    margin-bottom: 20px;
+    display: inline-block;
+    box-shadow: 0 4px 15px rgba(255, 75, 43, 0.3);
+    animation: fs-pulse 2s infinite;
+}
+
+@keyframes fs-pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+    100% { transform: scale(1); }
+}
+
+/* ================= CHỌN PHIÊN BẢN (VARIANTS) ================= */
+.variant-box {
+    margin-top: 20px;
+}
+
+.variant-item {
+    margin-bottom: 12px;
+}
+
+.variant-item label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.variant-radio {
+    display: none; /* Ẩn thẻ radio mặc định đi cho đẹp */
+}
+
+.variant-label-content {
+    display: block;
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #fdfdfd;
+    transition: all 0.2s ease;
+    font-size: 1rem;
+}
+
+/* Khi Radio được check -> Thay đổi Style thẻ bao bọc */
+.variant-radio:checked + .variant-label-content {
+    border-color: #ff4b2b;
+    background-color: #fff5f5;
+    box-shadow: 0 0 0 1px #ff4b2b;
+}
+
+/* Giá tiền */
+.original-price {
+    color: #95a5a6;
+    text-decoration: line-through;
+    font-size: 0.95rem;
+    margin-right: 8px;
+    font-weight: normal;
+}
+
+.sale-price {
+    color: #e74c3c;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.sale-price-normal {
+    color: #333;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+/* ================= KHUNG ƯU ĐÃI ================= */
+.promo-box {
+    border: 2px dashed #ff6a00;
+    padding: 20px;
+    margin-top: 25px;
+    border-radius: 12px;
+    background: #fffcf9;
+}
+
+.promo-title {
+    display: inline-block;
+    padding: 6px 15px;
+    border: 1px solid #ff6a00;
+    border-radius: 20px;
+    color: #ff6a00;
+    font-weight: bold;
+    margin-bottom: 15px;
+    background: white;
+}
+
+.promo-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 10px 0;
+}
+
+.promo-list li {
+    margin: 8px 0;
+    font-size: 0.95rem;
+}
+
+.promo-extra {
+    margin-top: 20px;
+    font-size: 1rem;
+}
+
+.highlight {
+    color: #ff6a00;
+    font-weight: 600;
+}
+
+.green li {
+    color: #2c3e50;
+}
+
+/* ================= SỐ LƯỢNG VÀ NÚT BẤM ================= */
+.qty-box {
+    display: flex;
+    align-items: center;
+    margin: 25px 0;
+}
+
+.qty-box button {
+    width: 45px;
+    height: 45px;
+    border: 1px solid #ddd;
+    background: #fff;
+    font-size: 22px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+    border-radius: 6px;
+}
+
+.qty-box button:hover {
+    background: #f5f5f5;
+}
+
+.qty-box input {
+    width: 70px;
+    height: 45px;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-left: none;
+    border-right: none;
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin: 0 2px;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.btn-cart {
+    background: linear-gradient(90deg, #ff6a00, #ff4b2b);
+    color: white;
+    padding: 15px 35px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    flex-grow: 1;
+    text-align: center;
+}
+
+.btn-cart:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 106, 0, 0.3);
+}
+
+.btn-wishlist {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 55px;
+    height: 55px;
+    border: 2px solid #ffe6e6;
+    border-radius: 8px;
+    background: #fff;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.btn-wishlist i {
+    color: #ff4757;
+    font-size: 1.6rem;
+    transition: 0.3s;
+}
+
+.btn-wishlist:hover {
+    background: #ffe6e6;
+    border-color: #ff4757;
+}
+
+.btn-wishlist:hover i {
+    transform: scale(1.1);
+}
+
+/* ================= MÔ TẢ ================= */
+.product-desc {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 30px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.product-desc h3 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    border-left: 5px solid #ff6a00;
+    padding-left: 15px;
+    color: #333;
+}
+
+.product-desc p {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: #555;
+    white-space: pre-line;
+}
+
+.review-error {
+    background: #ffe6e6;
+    border: 1px solid #ff4d4f;
+    padding: 12px;
+    border-radius: 6px;
+    color: #b30000;
+    font-weight: 500;
+    margin-bottom: 15px;
+}
