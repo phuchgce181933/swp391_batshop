@@ -28,6 +28,7 @@ public class CheckoutController {
     private OrderItemRepository orderItemRepository;
     private AddressRepository addressRepository;
     private VoucherRepository voucherRepository;
+    private UserVoucherRepository userVoucherRepository;
     private FlashSaleProductRepository flashSaleProductRepository;
     public CheckoutController(CartItemRepository cartItemRepository,
                               // UserAddressRepository userAddressRepository,
@@ -35,6 +36,7 @@ public class CheckoutController {
                               OrderItemRepository orderItemRepository,
                               AddressRepository addressRepository,
                               VoucherRepository voucherRepository,
+                              UserVoucherRepository userVoucherRepository,
                               FlashSaleProductRepository flashSaleProductRepository) {
         this.cartItemRepository = cartItemRepository;
         // this.userAddressRepository = userAddressRepository;
@@ -43,6 +45,7 @@ public class CheckoutController {
         this.addressRepository = addressRepository;
         this.voucherRepository = voucherRepository;
         this.flashSaleProductRepository = flashSaleProductRepository;
+        this.userVoucherRepository = userVoucherRepository;
     }
     @GetMapping("/list")
     public String checkout(HttpSession httpSession, Model model) {
@@ -110,13 +113,13 @@ public class CheckoutController {
                                HttpSession session,
                                RedirectAttributes ra) {
 
-        if (code == null || code.trim().isEmpty()) {
-            ra.addFlashAttribute("error", "Vui lòng nhập mã voucher");
-            return "redirect:/checkout/list";
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            ra.addFlashAttribute("error", "Vui lòng đăng nhập để áp dụng voucher");
+            return "redirect:/login";
         }
 
         Optional<Voucher> voucherOpt = voucherRepository.findByCode(code.trim());
-
         if (voucherOpt.isEmpty()) {
             ra.addFlashAttribute("error","Voucher không tồn tại");
             return "redirect:/checkout/list";
@@ -124,27 +127,26 @@ public class CheckoutController {
 
         Voucher voucher = voucherOpt.get();
 
-        if(!Boolean.TRUE.equals(voucher.getActive())){
+        // Kiểm tra voucher đã hết hạn / không active
+        if (!Boolean.TRUE.equals(voucher.getActive()) ||
+                (voucher.getValidTo() != null && voucher.getValidTo().isBefore(LocalDateTime.now()))) {
             ra.addFlashAttribute("error","Voucher không khả dụng");
             return "redirect:/checkout/list";
         }
 
-        if(voucher.getValidTo() != null && voucher.getValidTo().isBefore(LocalDateTime.now())){
-            ra.addFlashAttribute("error","Voucher đã hết hạn");
+        // Kiểm tra user đã dùng voucher chưa
+        Optional<UserVoucher> userVoucherOpt = userVoucherRepository.findByUserAndVoucher(user, voucher);
+        if (userVoucherOpt.isPresent() && userVoucherOpt.get().getUsedCount() != null && userVoucherOpt.get().getUsedCount() > 0) {
+            ra.addFlashAttribute("error","Voucher này đã được sử dụng rồi");
             return "redirect:/checkout/list";
         }
 
         // Kiểm tra giá trị đơn hàng
-        List<CartItem> cartItems = cartItemRepository.findByUserId(((User)session.getAttribute("user")).getId());
+        List<CartItem> cartItems = cartItemRepository.findByUserId(user.getId());
         BigDecimal total = BigDecimal.ZERO;
         for (CartItem item : cartItems) {
             BigDecimal price = item.getDisplayPrice();
-            if (price == null) {
-                // fallback nếu displayPrice chưa set
-                price = item.getProductVariant().getAdditionalPrice();
-                if (price == null) price = BigDecimal.ZERO;
-                item.setDisplayPrice(price);
-            }
+            if (price == null) price = item.getProductVariant().getAdditionalPrice();
             total = total.add(price.multiply(BigDecimal.valueOf(item.getQuantity())));
         }
 
@@ -154,6 +156,7 @@ public class CheckoutController {
             return "redirect:/checkout/list";
         }
 
+        // Áp dụng voucher
         session.setAttribute("voucher", voucher);
         ra.addFlashAttribute("success","Áp dụng voucher thành công");
 
