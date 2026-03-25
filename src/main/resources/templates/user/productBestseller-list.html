@@ -1,5 +1,5 @@
-<div th:fragment="productBestseller-list" class="product-grid">
-    <div th:each="product : ${topSellingProducts}" class="product-card">
+<div th:fragment="productBestseller-list" class="product-grid bestseller-area">
+    <div th:each="row : ${topSellingProducts}" class="product-card" th:with="product=${row[0]}, sold=${row[1]}">
 
         <a th:href="@{/product/detail/{id}(id=${product.id})}" class="product-image" style="position: relative; display: block;">
             <div class="top-selling-badge">HOT</div>
@@ -13,17 +13,23 @@
                  alt="No image available">
         </a>
 
-        <div class="product-info" style="text-align: center;">
-            <a th:href="@{/product/detail/{id}(id=${product.id})}" style="text-decoration: none;">
-                <h3 th:text="${product.name}"></h3>
+        <div class="product-info bestseller-info">
+            <a th:href="@{/product/detail/{id}(id=${product.id})}" class="bestseller-title-link">
+                <h3 class="bestseller-title" th:text="${product.name}"></h3>
             </a>
 
-            <div class="brand">
+            <div class="bestseller-brand">
                 <span th:text="${product.brand != null ? product.brand.name : 'No brand'}"></span>
             </div>
 
-            <div class="price" style="margin-bottom: 15px;">
+            <div class="bestseller-price">
                 <span th:text="${#numbers.formatDecimal(product.price, 0,'COMMA',0,'POINT')} + ' ₫'"></span>
+            </div>
+
+            <div class="bestseller-sold-wrap">
+                <div class="bestseller-sold">
+                    <i class="fa-solid fa-cart-shopping"></i> Đã bán: <span class="sold-number" th:text="${sold}">0</span>
+                </div>
             </div>
         </div>
 

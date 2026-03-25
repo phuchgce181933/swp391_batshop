@@ -1,14 +1,9 @@
-/* ================= KHU VỰC SẢN PHẨM BÁN CHẠY ================= */
+/* ================= KHU VỰC SẢN PHẨM BÁN CHẠY (KHÔNG CONFLICT) ================= */
 
-.top-selling-title {
-    color: #ff4757 !important;
-}
+/* Các CSS cũ của bạn giữ nguyên */
+.top-selling-title { color: #ff4757 !important; }
+.top-selling-title::after { background-color: #ff4757 !important; }
 
-.top-selling-title::after {
-    background-color: #ff4757 !important;
-}
-
-/* Khung bọc riêng biệt cho top-selling */
 .top-selling-wrapper {
     background-color: #fff;
     border: 2px solid #ff4757;
@@ -16,7 +11,6 @@
     box-shadow: 0 4px 15px rgba(255, 71, 87, 0.1);
 }
 
-/* Huy hiệu HOT góc trái */
 .top-selling-badge {
     position: absolute;
     top: 10px;
@@ -30,22 +24,69 @@
     z-index: 2;
     box-shadow: 0 2px 5px rgba(255, 71, 87, 0.4);
 }
-.product-actions .btn-cart {
-    display: inline-block;  /* không full width / full height */
-    width: 120px;            /* chiều ngang tự động */
-    max-width: 120px;       /* giới hạn chiều ngang */
-    height: auto;           /* chiều cao tự động */
-    padding: 6px 12px;      /* padding gọn */
-    font-size: 14px;
-    border-radius: 4px;
-    background-color: #ff6600;
-    color: #fff;
-    text-decoration: none;
-    text-align: center;
-    line-height: normal;     /* quan trọng: không kéo cao nút */
+
+/* --- TÙY CHỈNH THÔNG TIN SẢN PHẨM BÁN CHẠY --- */
+
+/* Ép canh trái nội dung chung */
+.bestseller-area .bestseller-info {
+    text-align: left;
+    padding: 10px;
 }
-.product-actions {
-    text-align: center;      /* căn giữa nút */
-    margin-top: 10px;
-    width: 100%;             /* vẫn chiếm full card nhưng không ép nút */
+
+/* Tên sản phẩm */
+.bestseller-area .bestseller-title-link {
+    text-decoration: none;
+    display: block;
+    margin-bottom: 8px; /* Tăng khoảng cách từ 4px lên 8px để cách xa tên hãng hơn 1 chút */
+}
+
+.bestseller-area .bestseller-title {
+    font-size: 1rem;
+    color: #333;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* Tên hãng: nhỏ hơn và mờ hơn */
+.bestseller-area .bestseller-brand {
+    font-size: 0.8rem;
+    color: #888;
+    margin-bottom: 6px;
+}
+
+/* Giá bán */
+.bestseller-area .bestseller-price {
+    color: #ff4757;
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-bottom: 8px; /* Cách phần đã bán phía dưới 1 chút */
+}
+
+/* Vùng bọc Đã bán: Dùng để ép phần tử con ra giữa */
+.bestseller-area .bestseller-sold-wrap {
+    text-align: center; /* Căn giữa nội dung bên trong */
+    width: 100%;
+}
+
+/* Nổi bật phần "Đã bán" - Vẫn giữ nguyên khối hiển thị */
+.bestseller-area .bestseller-sold {
+    display: inline-block;        /* Để background chỉ ôm vừa vặn chữ, không tràn full viền */
+    font-size: 0.85rem;
+    color: #d63031;
+    background-color: #ffefef;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    border: 1px solid #ffcccc;
+}
+
+.bestseller-area .bestseller-sold i {
+    color: #ff4757;
+    margin-right: 4px;
+}
+
+.bestseller-area .sold-number {
+    font-weight: bold;
+    font-size: 0.9rem;
 }

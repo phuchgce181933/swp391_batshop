@@ -94,12 +94,11 @@ public class HomeController {
         // 3. Gọi hàm kiểm tra Flash Sale
         checkAndAddFlashSale(model);
 
-        // LẤY 8 SẢN PHẨM BÁN CHẠY NHẤT THỰC TẾ
+// LẤY 8 SẢN PHẨM BÁN CHẠY NHẤT THỰC TẾ (CÓ KÈM SỐ LƯỢNG ĐÃ BÁN)
         // ==========================================
         Pageable topSellingPageable = PageRequest.of(0, 8);
-        List<Product> topSellingProducts = productRepository.findTopSellingProducts(topSellingPageable);
+        List<Object[]> topSellingProducts = productRepository.findTopSellingProducts(topSellingPageable);
         model.addAttribute("topSellingProducts", topSellingProducts);
-
         return "home";
     }
 

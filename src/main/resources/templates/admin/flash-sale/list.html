@@ -1,10 +1,13 @@
 <div th:fragment="content">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     <link rel="stylesheet" th:href="@{/css/admin/flash-sale.css}">
 
     <div class="container-fluid">
         <div class="fs-admin-header mt-3">
             <h2 class="fs-admin-title">Quản lý Flash Sale</h2>
-            <a th:href="@{/admin/flash-sales/add}" class="fs-btn fs-btn-primary"><i class="fas fa-plus"></i>+ Thêm đợt Flash Sale mới</a>
+            <a th:href="@{/admin/flash-sales/add}" class="fs-btn fs-btn-primary"><i class="fas fa-plus"></i>Thêm đợt Flash Sale mới</a>
         </div>
 
         <div class="fs-admin-card fs-table-wrapper">

@@ -36,14 +36,15 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
             String keyword,
             Pageable pageable);
 
-    // LẤY SẢN PHẨM BÁN CHẠY NHẤT DỰA TRÊN SỐ LƯỢNG (ORDER ITEM)
-    @Query("SELECT p FROM Product p " +
+    // LẤY SẢN PHẨM BÁN CHẠY NHẤT DỰA TRÊN SỐ LƯỢNG VÀ ĐƠN HÀNG THÀNH CÔNG
+    @Query("SELECT p, SUM(oi.quantity) FROM Product p " +
             "JOIN p.variants v " +
             "JOIN OrderItem oi ON oi.productVariant = v " +
-            "WHERE p.status = true " +
+            "JOIN oi.order o " +
+            "WHERE p.status = true AND o.status = com.ra.batshop.model.Enum.OrderStatus.COMPLETED " +
             "GROUP BY p " +
             "ORDER BY SUM(oi.quantity) DESC")
-    List<Product> findTopSellingProducts(Pageable pageable);
+    List<Object[]> findTopSellingProducts(Pageable pageable);
 
 
     @Query("""
