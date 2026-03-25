@@ -84,8 +84,16 @@
                        th:value="${r.id}">
 
                 <textarea name="message"
+                          class="reply-input"
                           placeholder="Trả lời review..."
                           required></textarea>
+
+                <div class="suggestions">
+                    <span onclick="setReply(this)">Cảm ơn bạn đã đánh giá sản phẩm ❤️</span>
+                    <span onclick="setReply(this)">Shop xin lỗi vì trải nghiệm chưa tốt 😢</span>
+                    <span onclick="setReply(this)">Shop sẽ cải thiện chất lượng dịch vụ 💪</span>
+                    <span onclick="setReply(this)">Nếu cần hỗ trợ thêm hãy liên hệ shop nhé 📞</span>
+                </div>
 
                 <button type="submit">
                     Trả lời
@@ -93,15 +101,13 @@
 
             </form>
 
-        </div>
-
     </div>
     <div class="pagination">
 
         <!-- PREVIOUS -->
 
         <a th:if="${currentPage > 0}"
-           th:href="@{/admin/orders(
+           th:href="@{/admin/reviews(
         page=${currentPage - 1}
    )}">
             Previous
@@ -128,6 +134,18 @@
     </div>
 
 </div>
+    <script>
+        function setReply(el) {
+            const textarea = el.closest(".reply-form").querySelector(".reply-input");
 
+            if (textarea.value.trim() !== "") {
+                textarea.value += " " + el.innerText;
+            } else {
+                textarea.value = el.innerText;
+            }
+
+            textarea.focus();
+        }
+    </script>
 </body>
 </html>
