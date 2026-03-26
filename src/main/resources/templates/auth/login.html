@@ -2,8 +2,9 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>BatShop Login</title>
+    <title>VNB Shop - Đăng nhập</title>
     <link rel="stylesheet" th:href="@{/css/login.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
 <body>
@@ -11,61 +12,68 @@
 <div class="container">
 
     <div class="left-panel">
-        <a th:href="@{/home}" class="home-btn">← Home</a>
+        <a th:href="@{/home}" class="home-btn">
+            <i class="fa-solid fa-house"></i> Trang chủ
+        </a>
 
         <div class="brand">
-            <h1>BAT<span>SHOP</span>.</h1>
+            <h1>VNB<span>SHOP</span>.</h1>
             <p>
-                Join the BatShop community.<br>
-                Exclusive deals and best products await.
+                Gia nhập cộng đồng VNB Shop.<br>
+                Nơi hội tụ những dòng vợt đẳng cấp.
             </p>
         </div>
     </div>
 
     <div class="right-panel">
-
         <div class="login-card">
-            <h2>Welcome Back</h2>
-            <p class="sub">Enter your login information</p>
+
+            <h2>Chào mừng trở lại!</h2>
+            <p class="sub">Vui lòng nhập thông tin để đăng nhập</p>
 
             <form th:action="@{/login}" method="post">
 
                 <label>Email</label>
-                <input type="text"
-                       name="email"
-                       placeholder="Email"
-                       th:value="${email}"
-                       th:classappend="${error} ? 'input-error' : ''">
+                <input type="text" name="email"
+                       placeholder="Nhập email..."
+                       th:value="${email}">
 
-                <label>Password</label>
-                <input type="password"
-                       name="password"
-                       placeholder="Password"
-                       th:classappend="${error} ? 'input-error' : ''">
+                <label>Mật khẩu</label>
+                <input type="password" name="password"
+                       placeholder="Nhập mật khẩu...">
 
+                <!-- ❌ lỗi -->
                 <div class="error-box"
                      th:if="${error}"
                      th:text="${error}">
                 </div>
 
-                <div class="success-box" th:if="${param.changed}">
+                <!-- ✅ thông báo đổi mật khẩu -->
+                <div class="success-box"
+                     th:if="${param.changed}">
                     ✅ Đổi mật khẩu thành công — vui lòng đăng nhập lại
                 </div>
 
                 <div class="forgot-container">
-                    <a th:href="@{/forgot-password}" class="forgot-link">Quên mật khẩu?</a>
+                    <a th:href="@{/forgot-password}" class="forgot-link">
+                        Quên mật khẩu?
+                    </a>
                 </div>
 
-                <button type="submit">LOG IN</button>
+                <button type="submit">ĐĂNG NHẬP NGAY</button>
+
                 <div class="register-container">
                     <p>Chưa có tài khoản?
-                        <a th:href="@{/register}" class="register-link">Đăng ký ngay</a>
+                        <a th:href="@{/register}" class="register-link">
+                            Đăng ký
+                        </a>
                     </p>
                 </div>
-            </form>
 
+            </form>
         </div>
     </div>
 </div>
+
 </body>
 </html>

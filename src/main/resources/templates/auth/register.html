@@ -2,23 +2,53 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>BatShop Register</title>
+    <title>VNB Shop - Đăng ký thành viên</title>
     <link rel="stylesheet" th:href="@{/css/register.css}">
-    <style>
-        .error-message { color: #ff0000; font-size: 0.8rem; margin-bottom: 5px; font-weight: bold; }
-        .input-error { border: 1px solid #ff0000 !important; }
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
-        @keyframes shake {
-            0% { transform: translateX(0); }
-            25% { transform: translateX(-8px); }
-            50% { transform: translateX(8px); }
-            75% { transform: translateX(-8px); }
-            100% { transform: translateX(0); }
+    <style>
+        /* Bo tròn góc ảnh và giới hạn chiều rộng input */
+        input { max-width: 100%; box-sizing: border-box; }
+
+        /* Căn giữa card đăng ký */
+        .login-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
-        .shake-it {
-            animation: shake 0.3s ease-in-out;
-            border: 2px solid #ff4d4d !important;
-            box-shadow: 0 0 10px rgba(255, 77, 77, 0.5);
+
+        /* --- LOGO VNB TEXT STYLE --- */
+        .vnb-logo-container {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .vnb-text-logo {
+            font-size: 48px;
+            font-weight: 900;
+            color: #ff0000;
+            letter-spacing: -2px;
+            display: inline-block;
+            position: relative;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.05);
+            line-height: 1;
+        }
+
+        .vnb-text-logo .logo-dot {
+            color: #ff9800;
+            font-size: 60px;
+            line-height: 0;
+        }
+
+        .vnb-text-logo::after {
+            content: '';
+            display: block;
+            width: 40px;
+            height: 4px;
+            background: #ff9800;
+            margin: 5px auto 0;
+            border-radius: 2px;
         }
     </style>
 </head>
@@ -28,65 +58,87 @@
 <div class="container">
 
     <div class="left-panel">
-        <a href="/" class="home-btn">← Home</a>
+        <a th:href="@{/home}" class="home-btn"><i class="fa-solid fa-house"></i> Trang chủ</a>
+
         <div class="brand">
-            <h1>BAT<span>SHOP</span>.</h1>
-            <p>Join the BatShop community.<br>Create your account today.</p>
+            <h1>VNB<span>SHOP</span>.</h1>
+            <p>
+                Tạo tài khoản ngay hôm nay.<br>
+                Trở thành thành viên của VNB Shop để nhận ngàn ưu đãi hấp dẫn.
+            </p>
         </div>
     </div>
 
     <div class="right-panel">
-        <div class="card">
-            <form th:action="@{/register}" th:object="${user}" method="post">
 
-                <label>Họ tên</label>
-                <input type="text" th:field="*{fullName}" required>
+        <div class="login-card">
 
-                <label>Email</label>
-                <div class="error-message" th:if="${errorEmail}" th:text="${errorEmail}"></div>
-                <input type="email" th:field="*{email}" th:classappend="${errorEmail} ? 'input-error' : ''" required>
+            <div class="vnb-logo-container">
+                <div class="vnb-text-logo">
+                    VNB<span class="logo-dot">.</span>
+                </div>
+            </div>
+
+            <h2>Đăng ký thành viên</h2>
+            <p class="sub">Vui lòng điền thông tin bên dưới</p>
+
+            <form th:action="@{/register}" th:object="${user}" method="post" id="regForm">
+
+                <label>Họ và tên</label>
+                <input type="text" th:field="*{fullName}" placeholder="Nhập họ tên của bạn..." required>
+                <div class="error-text" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></div>
+
+                <label>Địa chỉ Email</label>
+                <input type="email" th:field="*{email}" th:classappend="${errorEmail} ? 'input-error' : ''" placeholder="Email dùng để đăng nhập..." required>
+                <div class="error-text" th:if="${errorEmail}" th:text="${errorEmail}"></div>
 
                 <label>Số điện thoại</label>
-                <div id="js-phone-error" class="error-message" style="display:none;">Vui lòng chỉ nhập số!</div>
-                <div class="error-message" th:if="${errorPhone}" th:text="${errorPhone}"></div>
+                <input type="text" id="phoneInput" th:field="*{phone}" th:classappend="${errorPhone} ? 'input-error' : ''" maxlength="10" placeholder="Nhập 10 số điện thoại..." required>
 
-                <input type="text"
-                       id="phoneInput"
-                       th:field="*{phone}"
-                       th:classappend="${errorPhone} ? 'input-error' : ''"
-                       maxlength="10"
-                       placeholder="Nhập 10 số điện thoại"
-                       required>
+                <div id="js-phone-error" class="error-text" style="display:none; color: #d32f2f;">
+                    ⚠ Vui lòng chỉ nhập số!
+                </div>
+
+                <div id="th-phone-error" class="error-text" th:if="${errorPhone}" th:text="${errorPhone}"></div>
 
                 <label>Mật khẩu</label>
-                <input type="password" th:field="*{passwordHash}" required>
+                <input type="password" th:field="*{passwordHash}" placeholder="Tạo mật khẩu bảo mật..." required>
+                <div class="error-text" th:if="${#fields.hasErrors('passwordHash')}" th:errors="*{passwordHash}"></div>
 
-                <button type="submit">ĐĂNG KÝ</button>
+                <div class="error-box" th:if="${error}" th:text="${error}"></div>
 
+                <button type="submit" id="btnSubmit">ĐĂNG KÝ NGAY</button>
+
+                <div class="register-container">
+                    <p>Đã có tài khoản? <a th:href="@{/login}" class="register-link">Quay lại Đăng nhập</a></p>
+                </div>
             </form>
+
         </div>
     </div>
-
 </div>
 
 <script>
     const phoneInput = document.getElementById('phoneInput');
-    const jsError = document.getElementById('js-phone-error');
+    const jsPhoneError = document.getElementById('js-phone-error');
+    const thPhoneError = document.getElementById('th-phone-error');
+    const btnSubmit = document.getElementById('btnSubmit');
 
     phoneInput.addEventListener('input', function() {
         const val = this.value;
-        // Kiểm tra nếu có chứa bất kỳ ký tự nào không phải số
-        if (/[^0-9]/.test(val)) {
-            // Hiện cảnh báo và rung
-            jsError.style.display = 'block';
-            this.classList.add('shake-it');
 
-            // Xóa hiệu ứng sau khi rung xong để lần sau có thể rung tiếp
-            setTimeout(() => {
-                this.classList.remove('shake-it');
-            }, 300);
+        if (thPhoneError) {
+            thPhoneError.style.display = 'none';
+        }
+
+        if (/[^0-9]/.test(val)) {
+            jsPhoneError.style.display = 'block';
+            this.classList.add('shake-it');
+            btnSubmit.disabled = true;
         } else {
-            jsError.style.display = 'none';
+            jsPhoneError.style.display = 'none';
+            this.classList.remove('shake-it');
+            btnSubmit.disabled = false;
         }
     });
 </script>
