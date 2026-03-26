@@ -1,200 +1,238 @@
-/* RESET */
-* {
-    box-sizing: border-box;
-}
-
+/* ===== RESET ===== */
 body {
     margin: 0;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-    background-color: #f4f6f8;
-}
-
-/* LAYOUT */
-.admin-wrapper {
-    display: flex;
-    min-height: 100vh;
-}
-
-/* SIDEBAR */
-.admin-sidebar {
-    width: 240px;
-    background-color: #1f2937;
-    color: #fff;
-    padding: 20px 0;
-}
-
-.sidebar-title {
-    text-align: center;
-    font-size: 18px;
-    margin-bottom: 24px;
-    letter-spacing: 1px;
-}
-
-/* MENU */
-.admin-menu {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.admin-menu li {
-    margin-bottom: 4px;
-}
-
-.admin-menu a {
-    display: block;
-    padding: 12px 20px;
-    color: #d1d5db;
-    text-decoration: none;
-    transition: all 0.2s ease;
-    font-weight: 500;
-}
-
-.admin-menu a:hover {
-    background-color: #374151;
-    color: #fff;
-}
-
-.admin-menu a.active {
-    background-color: #2563eb;
-    color: #fff;
-}
-
-/* CONTENT */
-.admin-content {
-    flex: 1;
-    padding: 24px;
-}
-
-----------------------------------------------
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
     font-family: Arial, sans-serif;
     background: #f4f6f9;
 }
 
-/* layout tổng */
+/* ===== LAYOUT ===== */
 .admin-layout {
     display: flex;
     min-height: 100vh;
 }
 
-/* sidebar */
-.sidebar {
-    width: 260px;
-    background: linear-gradient(180deg, #1f2937, #111827);
-    color: #fff;
+/* ===== SIDEBAR FIXED ===== */
+.admin-sidebar {
+    width: 250px;
+    min-width: 250px;
+    max-width: 250px;
+
+    background: #1e293b;
+    color: white;
     padding: 20px;
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
 }
 
-/* content bên phải */
+/* Sidebar title */
+.sidebar-title {
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 22px;
+}
+
+/* Menu */
+.admin-menu {
+    list-style: none;
+    padding: 0;
+    flex: 1;
+}
+
+.admin-menu li {
+    margin-bottom: 8px;
+}
+
+.admin-menu a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: white;
+    text-decoration: none;
+    padding: 10px 12px;
+    border-radius: 6px;
+    transition: 0.2s;
+}
+
+.admin-menu a:hover {
+    background: #334155;
+}
+
+/* Active menu */
+.admin-menu a.active {
+    background: #2563eb;
+    font-weight: bold;
+}
+
+/* Logout */
+.logout-btn {
+    background: #ef4444;
+    padding: 10px;
+    text-align: center;
+    border-radius: 6px;
+    text-decoration: none;
+    color: white;
+}
+
+/* ===== CONTENT ===== */
 .admin-content {
     flex: 1;
     padding: 30px;
-    background: #f4f6f9;
+
+    margin-left: 250px;
+    min-height: 100vh;
 }
 
+/* Container */
+.admin-container {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+}
 
+/* ===== TABLE ===== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table th {
+    background: #f1f5f9;
+}
+
+table th,
+table td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+}
+
+/* ===== BUTTON ===== */
+.btn-add {
+    background: #22c55e;
+    color: white;
+    padding: 8px 14px;
+    border-radius: 6px;
+    text-decoration: none;
+}
+
+.btn-edit {
+    background: #3b82f6;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+}
+
+.btn-delete {
+    background: #ef4444;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+}
+
+.btn-disable {
+    background: #f59e0b;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+}
+
+.btn-enable {
+    background: #10b981;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+}
+
+/* ===== SCROLL SIDEBAR ===== */
+.admin-sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.admin-sidebar::-webkit-scrollbar-thumb {
+    background: #475569;
+    border-radius: 10px;
+}
+
+/* ===== GLOBAL ADMIN STYLE ===== */
+h1, h2 {
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.admin-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+/* Table style global */
 .admin-table {
     width: 100%;
     border-collapse: collapse;
-    background: #fff;
-}
-
-.admin-table th,
-.admin-table td {
-    padding: 12px;
-    border-bottom: 1px solid #e5e7eb;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
 }
 
 .admin-table th {
-    background: #f9fafb;
-    text-transform: uppercase;
-    font-size: 13px;
+    background: #f8fafc;
 }
 
 .admin-table tr:hover {
     background: #f1f5f9;
 }
 
-.badge {
+/* Form */
+input, select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+}
+
+/* Button global */
+button {
+    padding: 8px 14px;
+    border-radius: 6px;
+    border: none;
     background: #2563eb;
     color: white;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #1e40af;
+}
+
+/* Badge */
+.badge {
     padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 12px;
+    border-radius: 20px;
+    font-size: 13px;
 }
 
-/* RESET */
-* {
-    box-sizing: border-box;
+.badge-user {
+    background: #e0ecff;
+    color: #2563eb;
 }
 
-body {
-    margin: 0;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-    background-color: #f4f6f8;
+.badge-admin {
+    background: #fee2e2;
+    color: #dc2626;
 }
 
-/* LAYOUT */
-.admin-wrapper {
-    display: flex;
-    min-height: 100vh;
+.badge-active {
+    background: #dcfce7;
+    color: #16a34a;
 }
 
-/* SIDEBAR */
-.admin-sidebar {
-    width: 240px;
-    background-color: #1f2937;
-    color: #fff;
-    padding: 20px 0;
-}
-
-.sidebar-title {
-    text-align: center;
-    font-size: 18px;
-    margin-bottom: 24px;
-    letter-spacing: 1px;
-}
-
-/* MENU */
-.admin-menu {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.admin-menu li {
-    margin-bottom: 4px;
-}
-
-.admin-menu a {
-    display: block;
-    padding: 12px 20px;
-    color: #d1d5db;
-    text-decoration: none;
-    transition: all 0.2s ease;
-    font-weight: 500;
-}
-
-.admin-menu a:hover {
-    background-color: #374151;
-    color: #fff;
-}
-
-.admin-menu a.active {
-    background-color: #2563eb;
-    color: #fff;
-}
-
-/* CONTENT */
-.admin-content {
-    flex: 1;
-    padding: 24px;
+.badge-block {
+    background: #fee2e2;
+    color: #dc2626;
 }

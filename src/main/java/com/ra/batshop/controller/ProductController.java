@@ -27,6 +27,11 @@ import java.util.Map;
 @RequestMapping("/admin/products")
 public class ProductController {
 
+    @ModelAttribute
+    public void addActiveMenu(Model model) {
+        model.addAttribute("activeMenu", "products");
+    }
+
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final BrandRepository brandRepository;

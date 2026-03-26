@@ -12,6 +12,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/admin/colors") // Thêm chữ 's' cho chuẩn REST
 public class AdminColorController {
 
+    @ModelAttribute
+    public void addActiveMenu(Model model) {
+        model.addAttribute("activeMenu", "colors");
+    }
+
     @Autowired
     private ColorRepository colorRepository;
 

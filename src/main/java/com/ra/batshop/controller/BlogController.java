@@ -19,6 +19,11 @@ import java.util.List;
 @RequestMapping("/admin/blogs")
 public class BlogController {
 
+    @ModelAttribute
+    public void addActiveMenu(Model model) {
+        model.addAttribute("activeMenu", "blogs");
+    }
+
     private final BlogRepository blogRepository;
 
     public BlogController(BlogRepository blogRepository) {

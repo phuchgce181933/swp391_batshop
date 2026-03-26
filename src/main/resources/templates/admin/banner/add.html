@@ -2,6 +2,8 @@
 
 <h2>Add Banner</h2>
 
+<p th:if="${error}" style="color:red;" th:text="${error}"></p>
+
 <form class="admin-form" th:action="@{/admin/banners/add}" method="post" enctype="multipart/form-data">
 
     <div class="form-group">

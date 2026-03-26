@@ -3,6 +3,8 @@
 <div class="form-container">
     <h2>Add Blog</h2>
 
+    <p th:if="${error}" th:text="${error}" style="color:red;"></p>
+
     <form th:action="@{/admin/blogs/add}" method="post" enctype="multipart/form-data">
 
         <div class="form-group">
@@ -25,7 +27,7 @@
 
         <div class="form-group">
             <label>Content</label>
-            <textarea name="content" rows="8"></textarea>
+            <textarea name="content" id="editor" rows="10"></textarea>
         </div>
 
         <div class="button-group">
@@ -35,3 +37,12 @@
 
     </form>
 </div>
+
+<!-- CKEditor -->
+<script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
+
+<script>
+    CKEDITOR.replace('editor', {
+        height: 300
+    });
+</script>

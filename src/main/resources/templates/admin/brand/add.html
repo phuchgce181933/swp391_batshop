@@ -2,6 +2,7 @@
 
 <h2>Add Brand</h2>
 
+<p th:if="${error}" th:text="${error}" style="color:red"></p>
 <form class="admin-form" th:action="@{/admin/brands/add}" method="post" th:object="${brand}">
 
     <div class="form-group">

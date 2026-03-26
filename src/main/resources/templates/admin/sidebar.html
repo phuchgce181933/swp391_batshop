@@ -1,26 +1,127 @@
 <aside class="admin-sidebar" th:fragment="sidebar">
-    <h2 class="sidebar-title">BATSHOP</h2>
+
+    <h2 class="sidebar-title">
+        <i class="fa-solid fa-store"></i> BATSHOP
+    </h2>
 
     <ul class="admin-menu">
-        <li><a th:href="@{/admin/dashboard}">Dashboard</a></li>
-        <li><a th:href="@{/admin/users}">Manage Users</a></li>
-        <li><a th:href="@{/admin/products}">Manage Products</a></li>
-        <li><a th:href="@{/admin/categories}">Manage Categories</a></li>
-        <li><a th:href="@{/admin/brands}">Manage Brands</a></li>
-        <li><a th:href="@{/admin/banners}">Manage Banners</a></li>
-        <li><a th:href="@{/admin/blogs}">Manage Blogs</a></li>
-        <li><a th:href="@{/admin/orders}">Manage Orders</a></li>
-        <li><a th:href="@{/admin/vouchers}">Manage Vouchers</a></li>
-        <li><a th:href="@{/admin/contacts}">Manage Contacts</a></li>
-        <li><a th:href="@{/admin/flash-sales}">Manage FlashSales</a></li>
 
-        <li><a th:href="@{/admin/colors}">Manage Color</a></li>
-        <li><a th:href="@{/admin/sizes}">Manage Sizes</a></li>
+        <li>
+            <a th:href="@{/admin/dashboard}"
+               th:classappend="${activeMenu == 'dashboard'} ? 'active'">
+                <i class="fa-solid fa-chart-line"></i>
+                Dashboard
+            </a>
+        </li>
 
-        <li><a th:href="@{/admin/reviews}">Manage Reviews</a></li>
+        <li>
+            <a th:href="@{/admin/users}"
+               th:classappend="${activeMenu == 'users'} ? 'active'">
+                <i class="fa-solid fa-user"></i>
+                Users
+            </a>
+        </li>
 
+        <li>
+            <a th:href="@{/admin/products}"
+               th:classappend="${activeMenu == 'products'} ? 'active'">
+                <i class="fa-solid fa-box"></i>
+                Products
+            </a>
+        </li>
+
+        <li>
+            <a th:href="@{/admin/categories}"
+               th:classappend="${activeMenu == 'categories'} ? 'active'">
+                <i class="fa-solid fa-layer-group"></i>
+                Categories
+            </a>
+        </li>
+
+        <li>
+            <a th:href="@{/admin/brands}"
+               th:classappend="${activeMenu == 'brands'} ? 'active'">
+                <i class="fa-solid fa-tag"></i>
+                Brands
+            </a>
+        </li>
+
+        <li>
+            <a th:href="@{/admin/banners}"
+               th:classappend="${activeMenu == 'banners'} ? 'active'">
+                <i class="fa-solid fa-image"></i>
+                Banners
+            </a>
+        </li>
+
+        <li>
+            <a th:href="@{/admin/blogs}"
+               th:classappend="${activeMenu == 'blogs'} ? 'active'">
+                <i class="fa-solid fa-newspaper"></i>
+                Blogs
+            </a>
+        </li>
+
+        <li>
+            <a th:href="@{/admin/orders}"
+               th:classappend="${activeMenu == 'orders'} ? 'active'">
+                <i class="fa-solid fa-cart-shopping"></i>
+                Orders
+            </a>
+        </li>
+
+        <li>
+            <a th:href="@{/admin/vouchers}"
+               th:classappend="${activeMenu == 'vouchers'} ? 'active'">
+                <i class="fa-solid fa-ticket"></i>
+                Vouchers
+            </a>
+        </li>
+
+        <li>
+            <a th:href="@{/admin/reviews}"
+               th:classappend="${activeMenu == 'reviews'} ? 'active'">
+                <i class="fa-solid fa-star"></i>
+                Reviews
+            </a>
+        </li>
+
+        <li>
+            <a th:href="@{/admin/contacts}"
+               th:classappend="${activeMenu == 'contacts'} ? 'active'">
+                <i class="fa-solid fa-envelope"></i>
+                Contacts
+            </a>
+        </li>
+
+        <li>
+            <a th:href="@{/admin/flash-sales}"
+               th:classappend="${activeMenu == 'flash-sales'} ? 'active'">
+                <i class="fa-solid fa-bolt"></i>
+                Flash Sales
+            </a>
+        </li>
+
+        <li>
+            <a th:href="@{/admin/colors}"
+               th:classappend="${activeMenu == 'colors'} ? 'active'">
+                <i class="fa-solid fa-palette"></i>
+                Colors
+            </a>
+        </li>
+
+        <li>
+            <a th:href="@{/admin/sizes}"
+               th:classappend="${activeMenu == 'sizes'} ? 'active'">
+                <i class="fa-solid fa-ruler"></i>
+                Sizes
+            </a>
+        </li>
+
+        <a th:href="@{/logout}" class="logout-btn">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            Logout
+        </a>
     </ul>
-    <a th:href="@{/logout}" class="logout-btn">
-        <i class="fa-solid fa-right-from-bracket"></i> ĐĂNG XUẤT
-    </a>
+
 </aside>

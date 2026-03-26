@@ -3,6 +3,8 @@
 <div class="form-container">
   <h2>Edit Banner</h2>
 
+  <p th:if="${error}" style="color:red;" th:text="${error}"></p>
+
   <form th:action="@{/admin/banners/edit}" method="post" th:object="${banner}" enctype="multipart/form-data">
 
     <input type="hidden" th:field="*{id}"/>

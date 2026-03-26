@@ -26,6 +26,12 @@ import java.util.*;
 @Controller
 @RequestMapping("/admin/orders")
 public class OrderController {
+
+    @ModelAttribute
+    public void addActiveMenu(Model model) {
+        model.addAttribute("activeMenu", "orders");
+    }
+
     private CartItemRepository cartItemRepository;
     //private UserAddressRepository userAddressRepository;
     private final OrderRepository orderRepository;

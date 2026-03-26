@@ -87,6 +87,7 @@ public class AdminController {
             revenues.add(((Number) row[1]).doubleValue());
         }
 
+        model.addAttribute("activeMenu", "dashboard");
         model.addAttribute("months", months);
         model.addAttribute("revenues", revenues);
         model.addAttribute("productSales", productSales);
@@ -124,6 +125,7 @@ public class AdminController {
         model.addAttribute("users", users);
         model.addAttribute("keyword", keyword);
         model.addAttribute("status", status);
+        model.addAttribute("activeMenu", "users");
         model.addAttribute("content", "admin/user/list");
 
         return "admin/layout";

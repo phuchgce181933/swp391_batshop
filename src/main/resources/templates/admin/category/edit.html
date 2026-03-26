@@ -3,7 +3,12 @@
 <div class="form-container">
     <h2>Edit Category</h2>
 
-    <form th:action="@{/admin/categories/edit}" method="post" th:object="${category}" enctype="multipart/form-data">
+    <p th:if="${error}" th:text="${error}" style="color:red"></p>
+
+    <form th:action="@{/admin/categories/edit}"
+          method="post"
+          th:object="${category}"
+          enctype="multipart/form-data">
 
         <input type="hidden" th:field="*{id}" />
 
@@ -15,8 +20,9 @@
         <div class="form-group">
             <label>Current Image</label>
 
-            <div th:if="${category.image != null and !#strings.isEmpty(category.image)}" class="current-image">
-                <img th:src="@{'/uploads/category/' + ${category.image}}">
+            <div th:if="${category.image != null and !#strings.isEmpty(category.image)}"
+                 class="current-image">
+                <img th:src="@{'/uploads/category/' + ${category.image}}" width="120">
             </div>
 
             <div th:if="${category.image == null or #strings.isEmpty(category.image)}"

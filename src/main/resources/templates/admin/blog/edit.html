@@ -3,6 +3,8 @@
 <div class="form-container">
     <h2>Edit Blog</h2>
 
+    <p th:if="${error}" th:text="${error}" style="color:red;"></p>
+
     <form th:action="@{/admin/blogs/edit}" method="post" enctype="multipart/form-data" th:object="${blog}">
 
         <input type="hidden" th:field="*{id}">
@@ -15,7 +17,7 @@
         <div class="form-group" th:if="${blog.image != null}">
             <label>Current Image</label>
             <div class="current-image">
-                <img th:src="@{/uploads/product/{img}(img=${blog.image})}">
+                <img th:src="@{/uploads/blog/{img}(img=${blog.image})}" width="200">
             </div>
         </div>
 
@@ -34,7 +36,7 @@
 
         <div class="form-group">
             <label>Content</label>
-            <textarea th:field="*{content}" rows="8"></textarea>
+            <textarea th:field="*{content}" id="editor" rows="10"></textarea>
         </div>
 
         <div class="button-group">
@@ -44,3 +46,12 @@
 
     </form>
 </div>
+
+<!-- CKEditor -->
+<script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
+
+<script>
+    CKEDITOR.replace('editor', {
+        height: 300
+    });
+</script>
