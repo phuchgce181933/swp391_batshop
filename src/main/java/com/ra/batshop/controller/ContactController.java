@@ -3,9 +3,15 @@ package com.ra.batshop.controller;
 import com.ra.batshop.model.ContactSupport;
 import com.ra.batshop.model.Enum.ContactStatus;
 import com.ra.batshop.repository.ContactRepository;
-import com.ra.batshop.service.EmailService; // Import EmailService của bạn
+import com.ra.batshop.service.EmailService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
@@ -97,21 +103,37 @@ public class ContactController {
     // ==========================================
     // KHU VỰC DÀNH CHO QUẢN TRỊ VIÊN (ADMIN)
     // ==========================================
-// 1. Hiển thị danh sách liên hệ (Kèm Tìm kiếm & Lọc)
+// 1. Hiển thị danh sách liên hệ (Kèm Tìm kiếm, Lọc, Phân trang & Đếm tin chưa đọc)
     @GetMapping("/admin/contacts")
     public String listContacts(
             @RequestParam(value = "keyword", required = false) String keyword,
             @RequestParam(value = "topic", required = false) String topic,
             @RequestParam(value = "status", required = false) ContactStatus status,
             @RequestParam(value = "date", required = false) LocalDate date,
-            Model model,HttpSession session) {
+            @RequestParam(value = "page", defaultValue = "0") int page, // Trang hiện tại (mặc định 0)
+            Model model, HttpSession session) {
+
         if (session.getAttribute("user") == null) {
             return "redirect:/login";
         }
-        // Lấy danh sách dựa trên bộ lọc (nếu tất cả rỗng, nó sẽ trả về toàn bộ danh sách)
-        List<ContactSupport> contacts = contactRepository.searchAndFilter(keyword, topic, status, date);
 
-        model.addAttribute("contacts", contacts);
+        // Tạo Pageable: Mỗi trang 10 phần tử, sắp xếp theo createdAt giảm dần (Mới nhất lên đầu)
+        int pageSize = 10;
+        Pageable pageable = PageRequest.of(page, pageSize, Sort.by("createdAt").descending());
+
+        // Lấy danh sách có phân trang
+        Page<ContactSupport> contactPage = contactRepository.searchAndFilter(keyword, topic, status, date, pageable);
+
+        // Đếm số lượng thư Chưa đọc
+        long unreadCount = contactRepository.countByStatus(ContactStatus.UNREAD);
+
+        // Truyền dữ liệu sang View
+        model.addAttribute("contactPage", contactPage);
+        model.addAttribute("contacts", contactPage.getContent()); // Danh sách để lặp trong <table>
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", contactPage.getTotalPages());
+        model.addAttribute("unreadCount", unreadCount);
+
         model.addAttribute("content", "admin/contact/list");
 
         return "admin/layout";

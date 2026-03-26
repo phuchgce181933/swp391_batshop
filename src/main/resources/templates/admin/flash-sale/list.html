@@ -1,87 +1,262 @@
 <div th:fragment="content">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
     <link rel="stylesheet" th:href="@{/css/admin/flash-sale.css}">
 
     <div class="container-fluid">
-        <div class="fs-admin-header mt-3">
-            <h2 class="fs-admin-title">Quản lý Flash Sale</h2>
-            <a th:href="@{/admin/flash-sales/add}" class="fs-btn fs-btn-primary"><i class="fas fa-plus"></i>Thêm đợt Flash Sale mới</a>
+        <div class="fs-admin-header mt-3 d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div class="d-flex align-items-center gap-3" th:with="activeSales=${flashSales.?[status == 'Đang diễn ra']}">
+                <h2 class="fs-admin-title m-0">Quản lý Flash Sale</h2>
+
+                <span th:if="${!activeSales.isEmpty()}" th:with="activeSale=${activeSales[0]}"
+                      class="badge bg-success fs-text-small py-2 px-3 shadow-sm d-flex align-items-center gap-1"
+                      style="border-radius: 20px; font-size: 0.9rem;">
+                    <i class="fas fa-bolt text-warning" style="animation: pulse 1.5s infinite;"></i>
+                    Đang diễn ra:
+                    <span th:text="${activeSale.startDate.hour} + 'h - ' + (${activeSale.endDate.hour == 23 ? 24 : activeSale.endDate.hour}) + 'h ' + ${#temporals.format(activeSale.startDate, 'dd/MM/yyyy')}"></span>
+                </span>
+            </div>
+            <a th:href="@{/admin/flash-sales/add}" class="fs-btn fs-btn-primary"><i class="fas fa-plus me-1"></i>Thêm đợt Flash Sale mới</a>
         </div>
 
-        <div class="fs-admin-card fs-table-wrapper">
-            <table class="fs-table">
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Thời gian diễn ra</th>
-                    <th>Sản phẩm</th>
-                    <th>Trạng thái</th>
-                    <th>Hành động</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="fs : ${flashSales}">
-                    <td th:text="${fs.id}" class="fw-bold"></td>
+        <div class="fs-admin-card">
 
-                    <td>
-                        <div class="fw-bold fs-text-dark" th:text="${#temporals.format(fs.startDate, 'dd/MM/yyyy')}"></div>
-                        <div class="text-muted mt-1 fs-text-small">
-                            <i class="far fa-clock"></i>
-                            <span th:text="${#temporals.format(fs.startDate, 'HH:mm')}"></span> -
-                            <span th:text="${#temporals.format(fs.endDate, 'HH:mm')}"></span>
-                        </div>
-                    </td>
+            <div class="row g-3 mb-4 align-items-center">
+                <div class="col-md-4">
+                    <label class="form-label fw-bold text-muted" style="font-size: 0.85rem;"><i class="fas fa-calendar-alt me-1"></i> Lọc theo ngày diễn ra</label>
+                    <input type="date" id="filterDate" class="form-control">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-bold text-muted" style="font-size: 0.85rem;"><i class="fas fa-info-circle me-1"></i> Trạng thái</label>
+                    <select id="filterStatus" class="form-select">
+                        <option value="">-- Tất cả trạng thái --</option>
+                        <option value="Đang diễn ra">Đang diễn ra</option>
+                        <option value="Sắp diễn ra">Sắp diễn ra</option>
+                        <option value="Đã kết thúc">Đã kết thúc</option>
+                    </select>
+                </div>
+                <div class="col-md-4 text-md-end mt-auto">
+                    <button type="button" id="btnClearFilter" class="btn btn-light border fw-bold text-danger" style="display: none;">
+                        <i class="fas fa-times me-1"></i> Xóa bộ lọc
+                    </button>
+                </div>
+            </div>
 
-                    <td class="text-center">
-                        <span class="fs-badge-count" th:text="${fs.products != null ? fs.products.size() : 0}"></span>
-                    </td>
+            <div class="fs-table-wrapper">
+                <table class="fs-table" id="flashSaleTable">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Thời gian diễn ra</th>
+                        <th>Sản phẩm</th>
+                        <th>Trạng thái</th>
+                        <th>Hành động</th>
+                    </tr>
+                    </thead>
+                    <tbody id="flashSaleListContainer">
+                    <tr th:each="fs : ${flashSales}" class="flash-sale-row"
+                        th:data-date="${#temporals.format(fs.startDate, 'yyyy-MM-dd')}"
+                        th:data-status="${fs.status}">
 
-                    <td>
-                        <span th:if="${fs.status == 'Đang diễn ra'}" class="badge fs-badge-status fs-badge-active">
-                              <i class="fas fa-play-circle"></i> Đang diễn ra
-                        </span>
+                        <td th:text="${fs.id}" class="fw-bold"></td>
 
-                        <span th:if="${fs.status == 'Sắp diễn ra'}" class="badge fs-badge-status fs-badge-upcoming">
-                              <i class="fas fa-clock"></i> Sắp diễn ra
-                        </span>
+                        <td>
+                            <div class="fw-bold fs-text-dark" th:text="${#temporals.format(fs.startDate, 'dd/MM/yyyy')}"></div>
+                            <div class="text-muted mt-1 fs-text-small">
+                                <i class="far fa-clock"></i>
+                                <span th:text="${#temporals.format(fs.startDate, 'HH:mm')}"></span> -
+                                <span th:text="${#temporals.format(fs.endDate, 'HH:mm')}"></span>
+                            </div>
+                        </td>
 
-                        <span th:if="${fs.status == 'Đã kết thúc'}" class="badge fs-badge-status fs-badge-ended">
-                              <i class="fas fa-stop-circle"></i> Đã kết thúc
-                        </span>
-                    </td>
+                        <td class="text-center">
+                            <span class="fs-badge-count" th:text="${fs.products != null ? fs.products.size() : 0}"></span>
+                        </td>
 
-                    <td>
-                        <div class="fs-action-btns">
-                            <a th:href="@{/admin/flash-sales/edit/{id}(id=${fs.id})}" class="fs-btn fs-btn-sm fs-btn-manage">
-                                <i class="fas fa-edit"></i> Quản lý
-                            </a>
+                        <td>
+                            <span th:if="${fs.status == 'Đang diễn ra'}" class="badge fs-badge-status fs-badge-active">
+                                  <i class="fas fa-play-circle"></i> Đang diễn ra
+                            </span>
 
-                            <a th:if="${fs.status != 'Đang diễn ra'}"
-                               th:href="@{/admin/flash-sales/delete/{id}(id=${fs.id})}"
-                               class="fs-btn fs-btn-sm fs-btn-delete-solid"
-                               onclick="return confirm('Bạn có chắc chắn muốn xóa Flash Sale này không?');">
-                                <i class="fas fa-trash"></i> Xóa
-                            </a>
+                            <span th:if="${fs.status == 'Sắp diễn ra'}" class="badge fs-badge-status fs-badge-upcoming">
+                                  <i class="fas fa-clock"></i> Sắp diễn ra
+                            </span>
 
-                            <button th:if="${fs.status == 'Đang diễn ra'}"
-                                    class="fs-btn fs-btn-sm fs-btn-disabled" disabled
-                                    title="Không thể xóa đợt Flash Sale đang chạy">
-                                <i class="fas fa-trash"></i> Xóa
-                            </button>
-                        </div>
-                    </td>
-                </tr>
+                            <span th:if="${fs.status == 'Đã kết thúc'}" class="badge fs-badge-status fs-badge-ended">
+                                  <i class="fas fa-stop-circle"></i> Đã kết thúc
+                            </span>
+                        </td>
 
-                <tr th:if="${flashSales.isEmpty()}">
-                    <td colspan="5" class="fs-empty-state">
-                        <i class="fas fa-tags fa-3x"></i>
-                        <h5>Chưa có đợt Flash Sale nào!</h5>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+                        <td>
+                            <div class="fs-action-btns">
+                                <a th:href="@{/admin/flash-sales/edit/{id}(id=${fs.id})}" class="fs-btn fs-btn-sm fs-btn-manage">
+                                    <i class="fas fa-edit"></i> Quản lý
+                                </a>
+
+                                <a th:if="${fs.status != 'Đang diễn ra'}"
+                                   th:href="@{/admin/flash-sales/delete/{id}(id=${fs.id})}"
+                                   class="fs-btn fs-btn-sm fs-btn-delete-solid"
+                                   onclick="return confirm('Bạn có chắc chắn muốn xóa Flash Sale này không?');">
+                                    <i class="fas fa-trash"></i> Xóa
+                                </a>
+
+                                <button th:if="${fs.status == 'Đang diễn ra'}"
+                                        class="fs-btn fs-btn-sm fs-btn-disabled" disabled
+                                        title="Không thể xóa đợt Flash Sale đang chạy">
+                                    <i class="fas fa-trash"></i> Xóa
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr th:if="${flashSales.isEmpty()}" id="emptyStateRow">
+                        <td colspan="5" class="fs-empty-state">
+                            <i class="fas fa-tags fa-3x"></i>
+                            <h5>Chưa có đợt Flash Sale nào!</h5>
+                        </td>
+                    </tr>
+
+                    <tr id="noFilterResultRow" style="display: none;">
+                        <td colspan="5" class="fs-empty-state">
+                            <i class="fas fa-search-minus fa-3x"></i>
+                            <h5>Không tìm thấy kết quả phù hợp!</h5>
+                            <p>Vui lòng thử điều chỉnh lại ngày hoặc trạng thái.</p>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <nav class="mt-4" th:if="${!flashSales.isEmpty()}">
+                <ul class="pagination justify-content-center mb-0" id="listPaginationControls">
+                </ul>
+            </nav>
+
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const listRows = Array.from(document.querySelectorAll('.flash-sale-row'));
+            const filterDate = document.getElementById("filterDate");
+            const filterStatus = document.getElementById("filterStatus");
+            const btnClearFilter = document.getElementById("btnClearFilter");
+            const noFilterResultRow = document.getElementById("noFilterResultRow");
+            const paginationControls = document.getElementById("listPaginationControls");
+
+            const ITEMS_PER_PAGE = 10;
+            let currentPage = 1;
+            let filteredRows = [...listRows];
+
+            function applyFiltersAndPaginate() {
+                const dateVal = filterDate.value; // Format: yyyy-MM-dd
+                const statusVal = filterStatus.value;
+
+                // Hiển thị nút Xóa bộ lọc nếu đang có bộ lọc được chọn
+                if (dateVal !== "" || statusVal !== "") {
+                    btnClearFilter.style.display = "inline-block";
+                } else {
+                    btnClearFilter.style.display = "none";
+                }
+
+                filteredRows = listRows.filter(row => {
+                    const rowDate = row.getAttribute("data-date");
+                    const rowStatus = row.getAttribute("data-status");
+
+                    const matchDate = (dateVal === "" || rowDate === dateVal);
+                    const matchStatus = (statusVal === "" || rowStatus === statusVal);
+
+                    return matchDate && matchStatus;
+                });
+
+                currentPage = 1;
+                renderPage();
+            }
+
+            function renderPage() {
+                // Ẩn tất cả các dòng dữ liệu
+                listRows.forEach(row => row.style.display = "none");
+
+                if (filteredRows.length === 0 && listRows.length > 0) {
+                    noFilterResultRow.style.display = "table-row";
+                    if (paginationControls) paginationControls.innerHTML = '';
+                    return;
+                } else {
+                    noFilterResultRow.style.display = "none";
+                }
+
+                const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+                const endIndex = startIndex + ITEMS_PER_PAGE;
+                const rowsToShow = filteredRows.slice(startIndex, endIndex);
+
+                // Chỉ hiển thị các dòng thuộc trang hiện tại
+                rowsToShow.forEach(row => row.style.display = "table-row");
+
+                renderPaginationControls();
+            }
+
+            function renderPaginationControls() {
+                if(!paginationControls) return;
+                paginationControls.innerHTML = '';
+                const totalPages = Math.ceil(filteredRows.length / ITEMS_PER_PAGE);
+
+                if (totalPages <= 1) return; // Không cần phân trang nếu <= 1 trang
+
+                // Nút Prev
+                paginationControls.innerHTML += `
+                    <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                        <a class="page-link" href="#" data-page="${currentPage - 1}">&laquo;</a>
+                    </li>
+                `;
+
+                // Các trang số
+                for (let i = 1; i <= totalPages; i++) {
+                    paginationControls.innerHTML += `
+                        <li class="page-item ${currentPage === i ? 'active' : ''}">
+                            <a class="page-link" href="#" data-page="${i}">${i}</a>
+                        </li>
+                    `;
+                }
+
+                // Nút Next
+                paginationControls.innerHTML += `
+                    <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                        <a class="page-link" href="#" data-page="${currentPage + 1}">&raquo;</a>
+                    </li>
+                `;
+            }
+
+            // Gắn sự kiện click cho phân trang
+            if(paginationControls) {
+                paginationControls.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    if (e.target.tagName === 'A') {
+                        const targetPage = parseInt(e.target.getAttribute("data-page"));
+                        if (!isNaN(targetPage)) {
+                            currentPage = targetPage;
+                            renderPage();
+                        }
+                    }
+                });
+            }
+
+            // Gắn sự kiện lắng nghe bộ lọc thay đổi
+            filterDate.addEventListener("change", applyFiltersAndPaginate);
+            filterStatus.addEventListener("change", applyFiltersAndPaginate);
+
+            // Gắn sự kiện xóa bộ lọc
+            btnClearFilter.addEventListener("click", function() {
+                filterDate.value = "";
+                filterStatus.value = "";
+                applyFiltersAndPaginate();
+            });
+
+            // Chạy lần đầu khi khởi tạo
+            if (listRows.length > 0) {
+                applyFiltersAndPaginate();
+            }
+        });
+    </script>
 </div>

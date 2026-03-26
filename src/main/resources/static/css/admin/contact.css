@@ -303,3 +303,64 @@
 .badge-resolved { background: #ecfdf5; color: #10b981; }
 .badge-rejected { background: #f1f5f9; color: #64748b; }
 .badge-declined { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; } /* Trạng thái từ chối */
+
+/* ===== TITLE UNREAD BADGE ===== */
+.page-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 24px;
+}
+.page-header .page-title {
+    margin-bottom: 0; /* Xóa margin cũ để căn giữa với badge */
+}
+.title-badge {
+    background-color: #ef4444;
+    color: white;
+    font-size: 14px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-left: 12px;
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+}
+
+/* ===== PAGINATION ===== */
+.pagination-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 24px;
+}
+.pagination {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    gap: 6px;
+}
+.page-item .page-link {
+    padding: 8px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    color: #475569;
+    text-decoration: none;
+    transition: all 0.2s;
+    background: #fff;
+    font-size: 14px;
+    font-weight: 500;
+}
+.page-item.active .page-link {
+    background: #2563eb;
+    color: #fff;
+    border-color: #2563eb;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+}
+.page-item.disabled .page-link {
+    color: #94a3b8;
+    background: #f1f5f9;
+    border-color: #e2e8f0;
+    pointer-events: none;
+}
+.page-item .page-link:hover:not(.disabled) {
+    background: #e2e8f0;
+    color: #1e293b;
+}

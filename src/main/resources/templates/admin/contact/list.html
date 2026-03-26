@@ -1,9 +1,15 @@
 <link rel="stylesheet" th:href="@{/css/admin/contact.css}">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
 <div class="contact-wrapper">
 
-    <h2 class="page-title">Quản lý Liên hệ Hỗ trợ</h2>
+    <div class="page-header">
+        <h2 class="page-title">Quản lý Liên hệ Hỗ trợ</h2>
+        <span class="title-badge" th:if="${unreadCount != null and unreadCount > 0}">
+            <i class="fas fa-bell"></i> <span th:text="${unreadCount + ' chưa đọc'}"></span>
+        </span>
+    </div>
 
     <div class="filter-container">
         <form th:action="@{/admin/contacts}" method="get" class="filter-form">
@@ -30,8 +36,8 @@
                 </option>
             </select>
 
-            <button type="submit" class="btn-search"><i class="fas fa-search"></i>Lọc</button>
-            <a th:href="@{/admin/contacts}" class="btn-reset"><i class="fas fa-xmark"></i>Bỏ lọc</a>
+            <button type="submit" class="btn-search"><i class="fas fa-search"></i> Lọc</button>
+            <a th:href="@{/admin/contacts}" class="btn-reset"><i class="fas fa-xmark"></i> Bỏ lọc</a>
         </form>
     </div>
 
@@ -70,8 +76,7 @@
                           th:classappend="${
                               c.status?.name() == 'UNREAD' ? 'badge-unread' :
                               (c.status?.name() == 'PROCESSING' ? 'badge-processing' :
-                              (c.status?.name() == 'DECLINED' ? 'badge-declined' :
-                              (c.status?.name() == 'REJECTED' ? 'badge-rejected' : 'badge-resolved')))
+                              (c.status?.name() == 'REJECTED' ? 'badge-rejected' : 'badge-resolved'))
                           }">
                     </span>
                 </td>
@@ -83,6 +88,24 @@
             </tr>
             </tbody>
         </table>
+    </div>
+
+    <div class="pagination-container" th:if="${totalPages != null and totalPages > 0}">
+        <ul class="pagination">
+
+            <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
+                <a class="page-link" th:href="@{/admin/contacts(page=${currentPage - 1}, keyword=${param.keyword}, topic=${param.topic}, status=${param.status}, date=${param.date})}">&laquo; Trước</a>
+            </li>
+
+            <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}" th:classappend="${currentPage == i ? 'active' : ''}">
+                <a class="page-link" th:href="@{/admin/contacts(page=${i}, keyword=${param.keyword}, topic=${param.topic}, status=${param.status}, date=${param.date})}" th:text="${i + 1}"></a>
+            </li>
+
+            <li class="page-item" th:classappend="${currentPage == totalPages - 1 ? 'disabled' : ''}">
+                <a class="page-link" th:href="@{/admin/contacts(page=${currentPage + 1}, keyword=${param.keyword}, topic=${param.topic}, status=${param.status}, date=${param.date})}">Sau &raquo;</a>
+            </li>
+
+        </ul>
     </div>
 
 </div>

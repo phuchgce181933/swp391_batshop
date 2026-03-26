@@ -170,8 +170,17 @@
                             </table>
                         </div>
 
-                        <div class="mt-3 text-end" th:if="${!flashSale.products.isEmpty()}">
-                            <button type="submit" class="btn btn-success fw-bold px-4 py-2 fs-btn-save-all"
+                        <nav class="mt-3" th:if="${!flashSale.products.isEmpty()}">
+                            <ul class="pagination justify-content-center mb-0" id="mainPaginationControls">
+                            </ul>
+                        </nav>
+
+                        <div class="mt-4 d-flex justify-content-end align-items-center gap-3" th:if="${!flashSale.products.isEmpty()}">
+                            <div class="d-flex align-items-center gap-2 p-2" style="background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px;">
+                                <label for="globalDiscount" class="fw-bold mb-0 text-dark" style="font-size: 0.95rem;">Áp dụng chung:</label>
+                                <input type="number" id="globalDiscount" class="form-control form-control-sm text-center fw-bold" style="width: 80px; color: #e74c3c;" min="1" max="100" placeholder="%" th:disabled="${flashSale.status == 'Đã kết thúc'}">
+                            </div>
+                            <button type="submit" id="btnSaveAll" class="btn btn-success fw-bold px-4 py-2 fs-btn-save-all"
                                     th:disabled="${flashSale.status == 'Đã kết thúc'}">
                                 <i class="fas fa-check-double me-1"></i> Lưu Tất Cả % Giảm
                             </button>
@@ -274,7 +283,10 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script th:inline="javascript">
         document.addEventListener("DOMContentLoaded", function () {
-            // (Phần Script hoàn toàn không có Inline CSS nào, giữ nguyên như cũ)
+
+            // ==========================================
+            // 1. LOGIC XỬ LÝ KHUNG GIỜ VÀ TRÁNH TRÙNG LỊCH
+            // ==========================================
             const bookedData = /*[[${bookedSlots}]]*/ [];
             const bookedMap = {};
             if(bookedData) {
@@ -327,6 +339,9 @@
                 if(saleDateInput.value) updateAvailableSlots();
             }
 
+            // ==========================================
+            // 2. LOGIC LỌC VÀ PHÂN TRANG BẢNG CHÍNH (MAIN TABLE)
+            // ==========================================
             const mainRows = Array.from(document.querySelectorAll('.main-product-row'));
             const mainCatSet = new Set(), mainBrandSet = new Set();
 
@@ -343,13 +358,18 @@
             }
 
             const filterMainName = document.getElementById("mainFilterName");
-            function filterMainTable() {
-                if(!filterMainName) return;
-                const nameVal = filterMainName.value.toLowerCase();
-                const catVal = filterMainCat.value;
-                const brandVal = filterMainBrand.value;
+            const mainPaginationControls = document.getElementById("mainPaginationControls");
 
-                mainRows.forEach(row => {
+            const MAIN_ITEMS_PER_PAGE = 10;
+            let mainCurrentPage = 1;
+            let mainFilteredRows = [];
+
+            function filterMainTable() {
+                const nameVal = filterMainName ? filterMainName.value.toLowerCase() : "";
+                const catVal = filterMainCat ? filterMainCat.value : "";
+                const brandVal = filterMainBrand ? filterMainBrand.value : "";
+
+                mainFilteredRows = mainRows.filter(row => {
                     const name = row.querySelector(".main-product-name").innerText.toLowerCase();
                     const cat = row.getAttribute("data-category");
                     const brand = row.getAttribute("data-brand");
@@ -358,7 +378,65 @@
                     const matchCat = (catVal === "" || cat === catVal);
                     const matchBrand = (brandVal === "" || brand === brandVal);
 
-                    row.style.display = (matchName && matchCat && matchBrand) ? "" : "none";
+                    return matchName && matchCat && matchBrand;
+                });
+
+                mainCurrentPage = 1;
+                renderMainPage();
+            }
+
+            function renderMainPage() {
+                // Ẩn tất cả trước
+                mainRows.forEach(row => row.style.setProperty("display", "none", "important"));
+
+                // Cắt lấy trang hiện tại
+                const startIndex = (mainCurrentPage - 1) * MAIN_ITEMS_PER_PAGE;
+                const endIndex = startIndex + MAIN_ITEMS_PER_PAGE;
+                const rowsToShow = mainFilteredRows.slice(startIndex, endIndex);
+
+                // Hiển thị row hợp lệ
+                rowsToShow.forEach(row => row.style.setProperty("display", "table-row", "important"));
+                renderMainPaginationControls();
+            }
+
+            function renderMainPaginationControls() {
+                if(!mainPaginationControls) return;
+                mainPaginationControls.innerHTML = '';
+                const totalPages = Math.ceil(mainFilteredRows.length / MAIN_ITEMS_PER_PAGE);
+
+                if (totalPages <= 1) return;
+
+                mainPaginationControls.innerHTML += `
+                    <li class="page-item ${mainCurrentPage === 1 ? 'disabled' : ''}">
+                        <a class="page-link" href="#" data-page="${mainCurrentPage - 1}">&laquo;</a>
+                    </li>
+                `;
+
+                for (let i = 1; i <= totalPages; i++) {
+                    mainPaginationControls.innerHTML += `
+                        <li class="page-item ${mainCurrentPage === i ? 'active' : ''}">
+                            <a class="page-link" href="#" data-page="${i}">${i}</a>
+                        </li>
+                    `;
+                }
+
+                mainPaginationControls.innerHTML += `
+                    <li class="page-item ${mainCurrentPage === totalPages ? 'disabled' : ''}">
+                        <a class="page-link" href="#" data-page="${mainCurrentPage + 1}">&raquo;</a>
+                    </li>
+                `;
+            }
+
+            if(mainPaginationControls) {
+                mainPaginationControls.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    if (e.target.tagName === 'A') {
+                        const targetPage = parseInt(e.target.getAttribute("data-page"));
+                        if (!isNaN(targetPage)) {
+                            mainCurrentPage = targetPage;
+                            renderMainPage();
+                        }
+                    }
                 });
             }
 
@@ -366,6 +444,34 @@
             if(filterMainCat) filterMainCat.addEventListener("change", filterMainTable);
             if(filterMainBrand) filterMainBrand.addEventListener("change", filterMainTable);
 
+            // Chạy lần đầu khi load trang
+            filterMainTable();
+
+            // ========================================================
+            // BẮT SỰ KIỆN GÁN % CHUNG TRƯỚC KHI SUBMIT
+            // ========================================================
+            const updateDiscountsForm = document.getElementById('updateDiscountsForm');
+            const globalDiscountInput = document.getElementById('globalDiscount');
+
+            if (updateDiscountsForm) {
+                updateDiscountsForm.addEventListener('submit', function (e) {
+                    if (globalDiscountInput && globalDiscountInput.value) {
+                        const globalVal = globalDiscountInput.value;
+                        // Phải lấy tất cả input kể cả cái đang bị ẩn (display: none)
+                        const discountInputs = updateDiscountsForm.querySelectorAll('input[name="discounts"]');
+
+                        discountInputs.forEach(input => {
+                            if (!input.disabled) {
+                                input.value = globalVal;
+                            }
+                        });
+                    }
+                });
+            }
+
+            // ==========================================
+            // 3. LOGIC LỌC & PHÂN TRANG CHO MODAL "THÊM SẢN PHẨM"
+            // ==========================================
             const catSet = new Set();
             const brandSet = new Set();
             const productRows = Array.from(document.querySelectorAll('.product-item-row'));
