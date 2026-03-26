@@ -1,11 +1,13 @@
-    <!DOCTYPE html>
-    <html lang="en">
-    <link rel="stylesheet" th:href="@{/css/admin/order.css}">
-    <head>
-        <meta charset="UTF-8">
-        <title>Title</title>
-    </head>
-    <body>
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Order Items</title>
+</head>
+<body>
+<link rel="stylesheet" th:href="@{/css/admin/order.css}">
+<div th:fragment="content">
+    <a th:href="@{/admin/orders}" class="back-button">← Back to Orders</a>
     <h2>Manager Orders Item</h2>
 
     <table>
@@ -29,23 +31,20 @@
                 <img th:if="${o.productVariant.product.images != null and !o.productVariant.product.images.isEmpty()}"
                      th:src="@{/uploads/product/{img}(img=${o.productVariant.product.images[0].image})}"
                      width="80"
+                     height="80"
                      alt="product">
             </td>
 
             <td th:text="${o.productVariant.product.name}"></td>
-
             <td th:text="${o.productVariant.size?.name}"></td>
-
             <td th:text="${o.productVariant.color?.name}"></td>
-
-            <td th:text="${o.productVariant.brand?.name}"></td>
-
             <td th:text="${#numbers.formatDecimal(o.price,0,'COMMA',0,'POINT')}"></td>
-
             <td th:text="${o.quantity}"></td>
-
+            <td th:text="${o.price != null ? #numbers.formatDecimal(o.price.multiply(o.quantity), 0, 'COMMA', 0, 'POINT') : '0'}"></td>
         </tr>
         </tbody>
     </table>
-    </body>
-    </html>
+</div>
+
+</body>
+</html>

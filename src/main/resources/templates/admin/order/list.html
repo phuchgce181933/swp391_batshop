@@ -98,7 +98,7 @@
 
                 <!-- VIEW -->
                 <td>
-                    <a th:href="@{/admin/orders/{id}(id=${o.id})}">View</a>
+                    <a th:href="@{/orders_item/admin/{id}(id=${o.id})}">View</a>
                 </td>
 
                 <!-- STATUS -->
@@ -114,25 +114,21 @@
 
                     <form th:if="${o.status.name() != 'CANCELLED' && o.status.name() != 'COMPLETED'}"
                           th:action="@{/admin/orders/edit/{id}(id=${o.id})}"
-                          method="post">
-
-                        <select name="status" onchange="this.form.submit()">
-
-                            <option th:value="${o.status}"
-                                    th:text="${o.status}"
-                                    selected>
-                            </option>
+                          method="post"
+                          onsubmit="return confirmStatusChange(this)">
+                        <input type="hidden" name="page" th:value="${currentPage}">
+                        <input type="hidden" name="size" th:value="${size}">
+                        <input type="hidden" name="paymentMethod" th:value="${selectedMethod}">
+                        <input type="hidden" name="paymentStatus" th:value="${selectedPaymentStatus}">
+                        <select name="status" onchange="return confirmAndSubmit(this)">
+                            <option th:value="${o.status}" th:text="${o.status}" selected></option>
 
                             <option th:if="${o.status.name() == 'PENDING'}" value="CONFIRMED">CONFIRMED</option>
                             <option th:if="${o.status.name() == 'CONFIRMED'}" value="PACKED">PACKED</option>
                             <option th:if="${o.status.name() == 'PACKED'}" value="SHIPPING">SHIPPING</option>
                             <option th:if="${o.status.name() == 'SHIPPING'}" value="COMPLETED">COMPLETED</option>
 
-                            <option th:if="${o.status.name() == 'PENDING' || o.status.name() == 'CONFIRMED'}"
-                                    value="CANCELLED">
-                                CANCELLED
-                            </option>
-
+                            <option th:if="${o.status.name() == 'PENDING' || o.status.name() == 'CONFIRMED'}" value="CANCELLED">CANCELLED</option>
                         </select>
                     </form>
 
@@ -185,6 +181,19 @@
     </div>
 
 </div>
-
+<script>
+    function confirmAndSubmit(select) {
+        const selectedStatus = select.value;
+        if (selectedStatus === 'CANCELLED') {
+            if (!confirm('Bạn có chắc chắn muốn HỦY đơn này? Hành động này không thể hoàn tác!')) {
+                // nếu nhấn Cancel, reset lại giá trị cũ
+                select.value = select.querySelector('option[selected]').value;
+                return false;
+            }
+        }
+        // submit form
+        select.form.submit();
+    }
+</script>
 </body>
 </html>
