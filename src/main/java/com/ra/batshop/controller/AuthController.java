@@ -61,6 +61,14 @@ public class AuthController {
         User user = userRepository.findByEmail(email).orElse(null);
         if (user != null && passwordEncoder.matches(password, user.getPasswordHash())) {
             session.setAttribute("user", user);
+
+            if (user.getRole() == Role.ADMIN && user.getStatus() == true) {
+                return "redirect:/admin/dashboard";
+            } else if (user.getStatus() == false) {
+                model.addAttribute("error", "User is blocked");
+                return "auth/login";
+            }
+
             return "redirect:/home";
         }
         model.addAttribute("error", "Email hoặc mật khẩu không đúng");

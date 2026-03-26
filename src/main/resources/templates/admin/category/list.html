@@ -1,26 +1,32 @@
 <link rel="stylesheet" th:href="@{/css/admin/category.css}">
 
-<h2>Manager Categories</h2>
+<h2>Manage Categories</h2>
 
 <p th:if="${error}" th:text="${error}" style="color:red"></p>
 
 <form th:action="@{/admin/categories}" method="get" class="search-bar">
-    <input type="text" name="keyword" placeholder="Search category..."
+    <input type="text"
+           name="keyword"
+           placeholder="Search category..."
            th:value="${keyword}">
     <button type="submit">Search</button>
 </form>
 
-<a th:href="@{/admin/categories/add}">+ Add Category</a>
+<a th:href="@{/admin/categories/add}" class="btn-add">
+    + Add Category
+</a>
 
 <table class="admin-table">
     <thead>
     <tr>
         <th>ID</th>
-        <th>Image</th> <th>Name</th>
+        <th>Image</th>
+        <th>Name</th>
         <th>Total Products</th>
         <th>Action</th>
     </tr>
     </thead>
+
     <tbody>
     <tr th:each="c : ${categories}">
         <td th:text="${c.id}"></td>
@@ -28,9 +34,11 @@
         <td>
             <img th:if="${c.image != null and !#strings.isEmpty(c.image)}"
                  th:src="@{'/uploads/category/' + ${c.image}}"
-                 width="60" height="60" style="object-fit: contain; background: #f8f9fa; border-radius: 4px;">
+                 width="60" height="60"
+                 style="object-fit: contain; background:#f8f9fa; border-radius:4px;">
 
-            <span th:if="${c.image == null or #strings.isEmpty(c.image)}" style="color: #999;">
+            <span th:if="${c.image == null or #strings.isEmpty(c.image)}"
+                  style="color:#999;">
                 No image
             </span>
         </td>
@@ -42,7 +50,9 @@
         <td>
             <a th:href="@{/admin/categories/edit/{id}(id=${c.id})}">Edit</a> |
             <a th:href="@{/admin/categories/delete/{id}(id=${c.id})}"
-               onclick="return confirm('Delete this category?')">Delete</a>
+               onclick="return confirm('Delete this category?')">
+                Delete
+            </a>
         </td>
     </tr>
     </tbody>

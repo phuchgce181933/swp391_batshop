@@ -16,6 +16,11 @@ import java.util.Optional;
 @RequestMapping("/admin/vouchers")
 public class VoucherController {
 
+    @ModelAttribute
+    public void addActiveMenu(Model model) {
+        model.addAttribute("activeMenu", "vouchers");
+    }
+
     private final VoucherRepository voucherRepository;
     private final OrderRepository orderRepository;
 

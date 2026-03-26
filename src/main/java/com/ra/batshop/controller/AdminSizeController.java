@@ -12,6 +12,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/admin/sizes")
 public class AdminSizeController {
 
+    @ModelAttribute
+    public void addActiveMenu(Model model) {
+        model.addAttribute("activeMenu", "sizes");
+    }
+
     @Autowired
     private SizeRepository sizeRepository;
 

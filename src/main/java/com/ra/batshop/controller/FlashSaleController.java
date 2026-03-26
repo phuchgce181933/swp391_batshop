@@ -25,6 +25,11 @@ import java.util.stream.Collectors;
 @Controller
 public class FlashSaleController {
 
+    @ModelAttribute
+    public void addActiveMenu(Model model) {
+        model.addAttribute("activeMenu", "flash-sales");
+    }
+
     private final FlashSaleRepository flashSaleRepository;
     private final FlashSaleProductRepository flashSaleProductRepository;
     private final ProductRepository productRepository;

@@ -16,6 +16,11 @@ import java.time.LocalDateTime;
 @RequestMapping("/admin/reviews")
 public class AdminReviewController {
 
+    @ModelAttribute
+    public void addActiveMenu(Model model) {
+        model.addAttribute("activeMenu", "reviews");
+    }
+
     private final ReviewRepository reviewRepository;
 
     public AdminReviewController(ReviewRepository reviewRepository) {

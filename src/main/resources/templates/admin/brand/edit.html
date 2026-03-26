@@ -3,6 +3,7 @@
 <div class="form-container">
     <h2>Edit Brand</h2>
 
+    <p th:if="${error}" th:text="${error}" style="color:red"></p>
     <form th:action="@{/admin/brands/edit}" method="post" th:object="${brand}">
 
         <input type="hidden" th:field="*{id}">

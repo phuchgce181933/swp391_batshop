@@ -33,6 +33,11 @@ import java.util.List;
 @Controller
 public class ContactController {
 
+    @ModelAttribute
+    public void addActiveMenu(Model model) {
+        model.addAttribute("activeMenu", "contacts");
+    }
+
     @Autowired
     private ContactRepository contactRepository;
 
