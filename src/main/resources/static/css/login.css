@@ -4,7 +4,7 @@
 
 body {
     margin: 0;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .container {
@@ -15,7 +15,8 @@ body {
 /* LEFT SIDE */
 .left-panel {
     width: 50%;
-    background: linear-gradient(160deg, #5b6cff, #ff9a9e);
+    /* Đổi sang tone đỏ - cam đặc trưng của các shop cầu lông */
+    background: linear-gradient(160deg, #d32f2f, #ff9800);
     color: white;
     position: relative;
     padding: 40px;
@@ -28,36 +29,41 @@ body {
     top: 25px;
     left: 25px;
     background: white;
-    color: #333;
-    padding: 8px 14px;
+    color: #d32f2f;
+    padding: 8px 18px;
     border-radius: 20px;
     text-decoration: none;
     font-size: 14px;
+    font-weight: bold;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
 .brand h1 {
-    font-size: 48px;
-    letter-spacing: 1px;
+    font-size: 56px;
+    letter-spacing: 2px;
     margin: 0;
+    font-weight: 800;
 }
 
 .brand span {
     background: white;
-    color: #ff4b4b;
-    padding: 4px 8px;
-    border-radius: 6px;
+    color: #d32f2f;
+    padding: 4px 12px;
+    border-radius: 8px;
+    margin-left: 5px;
 }
 
 .brand p {
-    margin-top: 16px;
-    font-size: 16px;
-    opacity: 0.95;
+    margin-top: 20px;
+    font-size: 18px;
+    line-height: 1.6;
+    opacity: 0.9;
 }
 
 /* RIGHT SIDE */
 .right-panel {
     width: 50%;
-    background: #f7f7f7;
+    background: #f0f2f5;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -65,152 +71,144 @@ body {
 
 /* LOGIN CARD */
 .login-card {
-    width: 360px;
+    width: 400px;
     background: white;
-    padding: 36px;
-    border-radius: 14px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
 }
 
 .login-card h2 {
     margin: 0;
     text-align: center;
+    color: #333;
+    font-size: 28px;
 }
 
 .sub {
     text-align: center;
-    font-size: 14px;
-    color: #666;
-    margin-bottom: 22px;
+    font-size: 15px;
+    color: #777;
+    margin-bottom: 30px;
 }
 
 /* FORM */
 label {
     font-size: 14px;
-    font-weight: 600;
-    margin-top: 14px;
+    font-weight: 700;
+    margin-top: 18px;
     display: block;
+    color: #555;
 }
 
 input {
     width: 100%;
-    padding: 11px;
-    margin-top: 6px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    transition: 0.2s;
+    padding: 13px;
+    margin-top: 8px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    transition: 0.3s;
+    background: #fafafa;
 }
 
 input:focus {
     outline: none;
-    border-color: #5b6cff;
-    box-shadow: 0 0 0 3px rgba(91,108,255,0.15);
+    border-color: #d32f2f;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(211,47,47,0.1);
 }
 
-/* input lỗi */
-.input-error {
-    border-color: #ff4b4b;
-    box-shadow: 0 0 0 3px rgba(255,75,75,0.15);
-    animation: shake 0.25s linear;
-}
-
-/* ERROR BOX ĐẸP */
+/* ERROR & SUCCESS BOX */
 .error-box {
-    background: #ffe5e5;
-    color: #c40000;
-    border: 1px solid #ffb3b3;
+    background: #fff1f0;
+    color: #d32f2f;
+    border: 1px solid #ffa39e;
     padding: 12px;
     border-radius: 10px;
-    margin: 10px 0 8px 0;
+    margin-top: 15px;
     font-size: 14px;
-    font-weight: 600;
     text-align: center;
-
     animation: fadeSlideIn 0.35s ease;
 }
 
-.error-box::before {
-    content: "⚠ ";
+.success-box {
+    background: #f6ffed;
+    color: #389e0d;
+    border: 1px solid #b7eb8f;
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    text-align: center;
 }
 
 /* BUTTON */
 button {
     width: 100%;
-    margin-top: 22px;
-    padding: 13px;
+    margin-top: 25px;
+    padding: 15px;
     border: none;
-    border-radius: 10px;
-    background: #ff4b4b;
+    border-radius: 12px;
+    background: #d32f2f;
     color: white;
-    font-weight: bold;
+    font-size: 16px;
+    font-weight: 800;
     cursor: pointer;
-    transition: 0.2s;
+    transition: 0.3s;
+    box-shadow: 0 4px 12px rgba(211,47,47,0.3);
 }
 
 button:hover {
-    transform: translateY(-1px);
-    background: #e63b3b;
+    background: #b71c1c;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(211,47,47,0.4);
 }
 
-/* ANIMATION */
-@keyframes fadeSlideIn {
-    from {
-        opacity: 0;
-        transform: translateY(-8px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes shake {
-    0% { transform: translateX(0); }
-    25% { transform: translateX(-3px); }
-    50% { transform: translateX(3px); }
-    75% { transform: translateX(-3px); }
-    100% { transform: translateX(0); }
-}
-
-/* RESPONSIVE */
-@media (max-width: 900px) {
-    .left-panel {
-        display: none;
-    }
-
-    .right-panel {
-        width: 100%;
-    }
-}
-.success-box {
-    background: #e7f7ea;
-    color: #1b8a3d;
-    border: 1px solid #a6e0b5;
-    padding: 12px;
-    border-radius: 10px;
-    margin-bottom: 12px;
-    font-weight: 600;
+/* REGISTER SECTION "XỊN" */
+.register-container {
     text-align: center;
-    animation: fadeSlideIn 0.35s ease;
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
 }
-/* Container để căn chỉnh vị trí */
+
+.register-link {
+    display: inline-block;
+    margin-left: 5px;
+    color: #d32f2f;
+    text-decoration: none;
+    font-weight: 700;
+    border-bottom: 2px solid transparent;
+    transition: 0.3s;
+}
+
+.register-link:hover {
+    border-bottom: 2px solid #d32f2f;
+    letter-spacing: 0.5px;
+}
+
 .forgot-container {
     display: flex;
-    justify-content: flex-end; /* Đẩy sang bên phải */
-    margin-top: 10px;          /* Khoảng cách với ô mật khẩu */
-    margin-bottom: -10px;      /* Thu hẹp khoảng cách với nút bấm bên dưới */
+    justify-content: flex-end;
+    margin-top: 12px;
 }
 
-/* Style cho cái link nhỏ xinh */
 .forgot-link {
-    font-size: 13px;            /* Làm chữ nhỏ lại */
-    color: #888;                /* Màu xám nhẹ nhàng, không bị quá nổi */
-    text-decoration: none;      /* Bỏ gạch chân mặc định */
-    font-weight: 500;
-    transition: 0.2s;           /* Hiệu ứng mượt mà */
+    font-size: 13px;
+    color: #999;
+    text-decoration: none;
 }
 
 .forgot-link:hover {
-    color: #ff4b4b;            /* Khi rê chuột vào thì hiện màu đỏ giống nút LOG IN */
-    text-decoration: underline; /* Hiện gạch chân khi hover cho chuyên nghiệp */
+    color: #d32f2f;
+    text-decoration: underline;
+}
+
+@keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 900px) {
+    .left-panel { display: none; }
+    .right-panel { width: 100%; }
 }
