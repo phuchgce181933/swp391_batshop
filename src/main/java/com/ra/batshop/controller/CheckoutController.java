@@ -67,12 +67,20 @@ public class CheckoutController {
                             variant.getProduct().getId(), LocalDateTime.now()
                     );
 
+            BigDecimal basePrice = variant.getAdditionalPrice() != null ? variant.getAdditionalPrice() : BigDecimal.ZERO;
+
             BigDecimal price;
             if (flashSaleOpt.isPresent()) {
-                price = flashSaleOpt.get().getSalePrice();
+                // lấy % giảm
+                BigDecimal discountPercent = BigDecimal.valueOf(flashSaleOpt.get().getDiscountPercent() != null ? flashSaleOpt.get().getDiscountPercent() : 0);
+                // áp dụng giảm trên basePrice (variant)
+                price = basePrice.multiply(BigDecimal.valueOf(100).subtract(discountPercent))
+                        .divide(BigDecimal.valueOf(100));
             } else {
-                price = variant.getAdditionalPrice() != null ? variant.getAdditionalPrice() : BigDecimal.ZERO;
+                price = basePrice;
             }
+
+            item.setDisplayPrice(price);
 
             item.setDisplayPrice(price);
 

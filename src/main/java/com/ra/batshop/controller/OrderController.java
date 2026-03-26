@@ -75,7 +75,7 @@ public class OrderController {
         if (paymentStatus != null && paymentStatus.trim().isEmpty()) {
             paymentStatus = null;
         }
-        Page<Order> orderPage = orderRepository.filterOrders(paymentMethod, paymentStatus, status, PageRequest.of(page, size));
+        Page<Order> orderPage = orderRepository.filterOrders(paymentMethod, paymentStatus, status, PageRequest.of(page, size, Sort.by("createdAt").descending()));
         model.addAttribute("orders", orderPage.getContent());
         model.addAttribute("statuses", OrderStatus.values());
         model.addAttribute("selectedMethod", paymentMethod);
@@ -354,6 +354,10 @@ public class OrderController {
     @PostMapping("/edit/{id}")
     public String editOrder(@PathVariable Integer id,
                             @RequestParam OrderStatus status,
+                            @RequestParam(defaultValue = "0") int page,
+                            @RequestParam(defaultValue = "5") int size,
+                            @RequestParam(required = false) String paymentMethod,
+                            @RequestParam(required = false) String paymentStatus,
                             RedirectAttributes redirectAttributes) {
         Order order = orderRepository.findById(id).orElseThrow();
         //  éo cho sửa if can
@@ -376,7 +380,11 @@ public class OrderController {
         }
         order.setStatus(status);
         orderRepository.save(order);
-        return "redirect:/admin/orders";
+        // redirect kèm page và filter
+        return "redirect:/admin/orders?page=" + page +
+                "&size=" + size +
+                (paymentMethod != null ? "&paymentMethod=" + paymentMethod : "") +
+                (paymentStatus != null ? "&paymentStatus=" + paymentStatus : "");
     }
     private void restoreStock(Order order) {
 
