@@ -1,409 +1,286 @@
-/* ===== PAGE WRAPPER ===== */
-body {
-    background-color: #f4f6f9;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
+/* =========================
+   PAGE
+========================= */
 .blog-container {
     padding: 30px;
 }
 
-/* ===== PAGE HEADER ===== */
+/* =========================
+   HEADER
+========================= */
 .blog-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 25px;
+    margin-bottom: 20px;
 }
 
 .blog-header h2 {
     font-size: 24px;
     font-weight: 600;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
 }
 
-.blog-header p {
-    color: #6c757d;
-    font-size: 14px;
+/* =========================
+   SEARCH
+========================= */
+.search-input {
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    width: 260px;
+    outline: none;
+    transition: 0.2s;
 }
 
-/* ===== ADD BUTTON ===== */
+.search-input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+.blog-header button {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 10px;
+    background: #2563eb;
+    color: white;
+    cursor: pointer;
+    margin-left: 5px;
+}
+
+/* =========================
+   ADD BUTTON
+========================= */
 .btn-add {
+    display: inline-block;
+    margin-top: 10px;
+    margin-bottom: 18px;
     background: linear-gradient(135deg, #3b82f6, #2563eb);
     color: white;
     padding: 10px 18px;
-    border-radius: 10px;
+    border-radius: 12px;
     font-weight: 500;
     text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    transition: 0.3s;
+    transition: 0.25s;
 }
 
 .btn-add:hover {
-    opacity: 0.9;
     transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(37, 99, 235, 0.25);
 }
 
-/* ===== TABLE CARD ===== */
+/* =========================
+   TABLE CARD
+========================= */
 .blog-table-wrapper {
     background: #ffffff;
-    border-radius: 16px;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+    border-radius: 18px;
+    box-shadow: 0 10px 28px rgba(0,0,0,0.08);
     overflow: hidden;
 }
 
-/* ===== TABLE ===== */
+/* =========================
+   TABLE
+========================= */
 .blog-table {
     width: 100%;
     border-collapse: collapse;
 }
 
 .blog-table thead {
-    background-color: #f8f9fa;
+    background: #f9fafb;
 }
 
 .blog-table th {
-    text-align: left;
     padding: 16px;
+    text-align: left;
     font-size: 13px;
     font-weight: 600;
-    color: #6c757d;
+    color: #6b7280;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
 }
 
 .blog-table td {
-    padding: 16px;
+    padding: 18px 16px;
     border-top: 1px solid #f1f1f1;
-    vertical-align: middle;
     font-size: 14px;
 }
 
-/* ===== IMAGE ===== */
-.blog-image {
-    width: 60px;
-    height: 60px;
-    border-radius: 12px;
-    object-fit: cover;
-    background-color: #f1f1f1;
+.blog-table tbody tr:hover {
+    background: #f9fafb;
 }
 
-/* ===== STATUS BADGE ===== */
+/* =========================
+   IMAGE
+========================= */
+.blog-image {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+/* =========================
+   STATUS
+========================= */
 .status {
     padding: 6px 14px;
     border-radius: 999px;
     font-size: 12px;
     font-weight: 600;
-    display: inline-block;
 }
 
 .status-active {
-    background-color: #d1fae5;
+    background: #d1fae5;
     color: #059669;
 }
 
 .status-inactive {
-    background-color: #e5e7eb;
+    background: #e5e7eb;
     color: #6b7280;
 }
 
-/* ===== ACTION BUTTONS ===== */
+/* =========================
+   ACTION BUTTONS
+========================= */
 .action-buttons {
     display: flex;
-    gap: 10px;
+    gap: 8px;
 }
 
 .btn-edit,
-.btn-toggle,
+.btn-enable,
+.btn-disable,
 .btn-delete {
-    padding: 8px 14px;
+    padding: 7px 14px;
     border-radius: 10px;
     font-size: 13px;
-    font-weight: 500;
-    border: none;
-    cursor: pointer;
     text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    transition: 0.2s ease-in-out;
+    font-weight: 500;
+    transition: 0.2s;
 }
 
-/* Edit */
+/* edit */
 .btn-edit {
-    background-color: #e0e7ff;
+    background: #e0e7ff;
     color: #2563eb;
 }
 
 .btn-edit:hover {
-    background-color: #c7d2fe;
+    background: #c7d2fe;
 }
 
-/* Disable */
-.btn-disable {
-    background-color: #fff7ed;
-    color: #ea580c;
-}
-
-.btn-disable:hover {
-    background-color: #ffedd5;
-}
-
-/* Enable */
+/* enable */
 .btn-enable {
-    background-color: #dcfce7;
+    background: #dcfce7;
     color: #16a34a;
 }
 
 .btn-enable:hover {
-    background-color: #bbf7d0;
+    background: #bbf7d0;
 }
 
-/* Delete */
+/* disable */
+.btn-disable {
+    background: #fff7ed;
+    color: #ea580c;
+}
+
+.btn-disable:hover {
+    background: #ffedd5;
+}
+
+/* delete */
 .btn-delete {
-    background-color: #fee2e2;
+    background: #fee2e2;
     color: #dc2626;
 }
 
 .btn-delete:hover {
-    background-color: #fecaca;
+    background: #fecaca;
 }
 
-/* ===== ROW HOVER ===== */
-.blog-table tbody tr:hover {
-    background-color: #fafafa;
-    transition: 0.2s;
-}
-
-/*ADD BLOG*/
-/* Reset */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-/* Background */
-body {
-    font-family: Arial, sans-serif;
-    background: #f4f6f9;
-}
-
-/* Container */
+/* =========================
+   FORM (ADD + EDIT dùng chung)
+========================= */
 .form-container {
-    width: 600px;
-    margin: 60px auto;
+    width: 650px;
+    margin: 50px auto;
     background: #ffffff;
-    padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    padding: 35px;
+    border-radius: 16px;
+    box-shadow: 0 10px 28px rgba(0,0,0,0.08);
 }
 
-/* Title */
 .form-container h2 {
     text-align: center;
-    margin-bottom: 30px;
-    color: #333;
+    margin-bottom: 25px;
 }
 
-/* Form group */
+/* form group */
 .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 18px;
     display: flex;
     flex-direction: column;
 }
 
-/* Label */
 .form-group label {
-    margin-bottom: 8px;
-    font-weight: 600;
-    color: #444;
+    margin-bottom: 6px;
+    font-weight: 500;
 }
 
-/* Input, Select, Textarea */
 .form-group input,
 .form-group select,
 .form-group textarea {
     padding: 10px 12px;
     border-radius: 8px;
-    border: 1px solid #ccc;
-    font-size: 14px;
-    transition: 0.3s;
+    border: 1px solid #e5e7eb;
 }
 
-/* Focus effect */
+.form-group textarea {
+    resize: vertical;
+}
+
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
-    border-color: #4e73df;
+    border-color: #2563eb;
     outline: none;
-    box-shadow: 0 0 5px rgba(78,115,223,0.3);
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
 }
 
-/* Textarea */
-.form-group textarea {
-    resize: none;
+/* current image */
+.current-image img {
+    width: 250px;
+    border-radius: 10px;
+    margin-top: 10px;
 }
 
-/* Button group */
+/* buttons */
 .button-group {
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
 }
 
-/* Save button */
 .btn-save {
-    background: #4e73df;
+    background: #2563eb;
     color: white;
-    padding: 10px 25px;
+    padding: 10px 24px;
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    transition: 0.3s;
-    font-weight: 600;
 }
 
 .btn-save:hover {
-    background: #2e59d9;
+    background: #1d4ed8;
 }
 
-/* Back button */
 .btn-back {
-    background: #858796;
+    background: #6b7280;
     color: white;
-    padding: 10px 25px;
+    padding: 10px 24px;
     border-radius: 8px;
     text-decoration: none;
-    display: inline-block;
-    transition: 0.3s;
-    font-weight: 600;
 }
 
 .btn-back:hover {
-    background: #6c757d;
-}
-
-/*EDIT BLOG*/
-/* Reset */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-/* Background */
-body {
-    font-family: Arial, sans-serif;
-    background: #f4f6f9;
-}
-
-/* Container */
-.form-container {
-    width: 700px;
-    margin: 60px auto;
-    background: #ffffff;
-    padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-}
-
-/* Title */
-.form-container h2 {
-    text-align: center;
-    margin-bottom: 30px;
-    color: #333;
-}
-
-/* Form group */
-.form-group {
-    margin-bottom: 20px;
-    display: flex;
-    flex-direction: column;
-}
-
-/* Label */
-.form-group label {
-    margin-bottom: 8px;
-    font-weight: 600;
-    color: #444;
-}
-
-/* Input & Select & Textarea */
-.form-group input,
-.form-group select,
-.form-group textarea {
-    padding: 10px 12px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    font-size: 14px;
-    transition: 0.3s;
-}
-
-/* Focus effect */
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-    border-color: #4e73df;
-    outline: none;
-    box-shadow: 0 0 5px rgba(78,115,223,0.3);
-}
-
-/* Textarea resize */
-.form-group textarea {
-    resize: vertical;
-}
-
-/* Current image */
-.current-image {
-    margin-top: 10px;
-}
-
-.current-image img {
-    width: 250px;
-    border-radius: 10px;
-    border: 1px solid #ddd;
-    padding: 5px;
-    background: #f9f9f9;
-}
-
-/* Button group */
-.button-group {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 25px;
-}
-
-/* Update button */
-.btn-save {
-    background: #4e73df;
-    color: white;
-    padding: 10px 25px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: 0.3s;
-    font-weight: 600;
-}
-
-.btn-save:hover {
-    background: #2e59d9;
-}
-
-/* Back button */
-.btn-back {
-    background: #858796;
-    color: white;
-    padding: 10px 25px;
-    border-radius: 8px;
-    text-decoration: none;
-    display: inline-block;
-    transition: 0.3s;
-    font-weight: 600;
-}
-
-.btn-back:hover {
-    background: #6c757d;
+    background: #4b5563;
 }

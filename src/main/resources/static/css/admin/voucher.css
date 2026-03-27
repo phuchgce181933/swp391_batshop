@@ -1,67 +1,103 @@
-/* ===== PAGE BACKGROUND ===== */
-body {
-    background-color: #f4f6f9;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
+/* =========================
+   PAGE
+========================= */
 .voucher-container {
     padding: 30px;
 }
 
-/* ===== HEADER ===== */
+/* =========================
+   HEADER
+========================= */
 .voucher-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 25px;
+    margin-bottom: 20px;
 }
 
 .voucher-header h2 {
     font-size: 24px;
     font-weight: 600;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
 }
 
-.voucher-header p {
-    font-size: 14px;
-    color: #6c757d;
+/* =========================
+   SEARCH + FILTER
+========================= */
+.search-input {
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    width: 220px;
+    outline: none;
+    transition: 0.2s;
 }
 
-/* ===== ADD BUTTON ===== */
+.search-input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+.filter-select {
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    margin-left: 6px;
+    outline: none;
+}
+
+.voucher-header button {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 10px;
+    background: #2563eb;
+    color: white;
+    cursor: pointer;
+    margin-left: 5px;
+}
+
+.voucher-header button:hover {
+    background: #1d4ed8;
+}
+
+/* =========================
+   ADD BUTTON
+========================= */
 .btn-add {
+    display: inline-block;
+    margin-top: 10px;
+    margin-bottom: 18px;
     background: linear-gradient(135deg, #3b82f6, #2563eb);
     color: white;
     padding: 10px 18px;
     border-radius: 12px;
     font-weight: 500;
     text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    transition: 0.3s ease;
+    transition: 0.25s;
 }
 
 .btn-add:hover {
-    opacity: 0.9;
     transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(37, 99, 235, 0.25);
 }
 
-/* ===== TABLE CARD ===== */
+/* =========================
+   TABLE CARD
+========================= */
 .voucher-table-wrapper {
     background: #ffffff;
     border-radius: 18px;
-    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 10px 28px rgba(0,0,0,0.08);
     overflow: hidden;
 }
 
-/* ===== TABLE ===== */
+/* =========================
+   TABLE
+========================= */
 .voucher-table {
     width: 100%;
     border-collapse: collapse;
 }
 
 .voucher-table thead {
-    background-color: #f8f9fa;
+    background: #f9fafb;
 }
 
 .voucher-table th {
@@ -69,218 +105,175 @@ body {
     text-align: left;
     font-size: 13px;
     font-weight: 600;
-    color: #6c757d;
+    color: #6b7280;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
 }
 
 .voucher-table td {
     padding: 18px 16px;
     border-top: 1px solid #f1f1f1;
     font-size: 14px;
-    vertical-align: middle;
 }
 
 .voucher-table tbody tr:hover {
-    background-color: #fafafa;
-    transition: 0.2s;
+    background: #f9fafb;
 }
 
-/* ===== CODE BADGE ===== */
+/* =========================
+   CODE BADGE
+========================= */
 .voucher-code {
-    background-color: #e0edff;
+    background: #e0edff;
     color: #2563eb;
     padding: 6px 14px;
     border-radius: 999px;
     font-weight: 600;
     font-size: 13px;
-    display: inline-block;
 }
 
-/* ===== STATUS BADGE ===== */
+/* =========================
+   STATUS
+========================= */
 .status {
     padding: 6px 14px;
     border-radius: 999px;
     font-size: 12px;
     font-weight: 600;
-    display: inline-block;
 }
 
 .status-active {
-    background-color: #d1fae5;
+    background: #d1fae5;
     color: #059669;
 }
 
 .status-inactive {
-    background-color: #e5e7eb;
+    background: #e5e7eb;
     color: #6b7280;
 }
 
-/* ===== ACTION BUTTONS ===== */
+/* =========================
+   ACTION BUTTONS
+========================= */
 .action-buttons {
     display: flex;
-    gap: 10px;
+    gap: 8px;
 }
 
 .btn-edit,
-.btn-toggle,
-.btn-delete {
-    padding: 8px 14px;
-    border-radius: 12px;
+.btn-activate,
+.btn-deactivate {
+    padding: 7px 14px;
+    border-radius: 10px;
     font-size: 13px;
-    font-weight: 500;
-    border: none;
-    cursor: pointer;
     text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    transition: 0.2s ease;
+    font-weight: 500;
+    transition: 0.2s;
 }
 
-/* Edit */
+/* edit */
 .btn-edit {
-    background-color: #e0e7ff;
+    background: #e0e7ff;
     color: #2563eb;
 }
 
 .btn-edit:hover {
-    background-color: #c7d2fe;
+    background: #c7d2fe;
 }
 
-/* Activate */
+/* activate */
 .btn-activate {
-    background-color: #dcfce7;
+    background: #dcfce7;
     color: #16a34a;
 }
 
 .btn-activate:hover {
-    background-color: #bbf7d0;
+    background: #bbf7d0;
 }
 
-/* Deactivate */
+/* deactivate */
 .btn-deactivate {
-    background-color: #fff7ed;
+    background: #fff7ed;
     color: #ea580c;
 }
 
 .btn-deactivate:hover {
-    background-color: #ffedd5;
+    background: #ffedd5;
 }
 
-/* Delete */
-.btn-delete {
-    background-color: #fee2e2;
-    color: #dc2626;
-}
-
-.btn-delete:hover {
-    background-color: #fecaca;
-}
-
-/*ADD VOUCHER*/
-/* Reset */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-/* Background */
-body {
-    font-family: Arial, sans-serif;
-    background: #f4f6f9;
-}
-
-/* Container */
+/* =========================
+   FORM (ADD + EDIT)
+========================= */
 .form-container {
-    width: 600px;
-    margin: 60px auto;
+    width: 650px;
+    margin: 50px auto;
     background: #ffffff;
-    padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    padding: 35px;
+    border-radius: 16px;
+    box-shadow: 0 10px 28px rgba(0,0,0,0.08);
 }
 
-/* Title */
 .form-container h2 {
     text-align: center;
-    margin-bottom: 30px;
-    color: #333;
+    margin-bottom: 25px;
 }
 
-/* Error */
 .error-message {
-    color: red;
-    font-weight: bold;
-    margin-bottom: 15px;
+    color: #dc2626;
+    font-weight: 600;
+    margin-bottom: 10px;
 }
 
-/* Form group */
 .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 18px;
     display: flex;
     flex-direction: column;
 }
 
-/* Label */
 .form-group label {
-    margin-bottom: 8px;
-    font-weight: 600;
-    color: #444;
+    margin-bottom: 6px;
+    font-weight: 500;
 }
 
-/* Input fields */
 .form-group input {
     padding: 10px 12px;
     border-radius: 8px;
-    border: 1px solid #ccc;
-    font-size: 14px;
-    transition: 0.3s;
+    border: 1px solid #e5e7eb;
 }
 
-/* Focus effect */
 .form-group input:focus {
-    border-color: #4e73df;
+    border-color: #2563eb;
     outline: none;
-    box-shadow: 0 0 5px rgba(78,115,223,0.3);
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
 }
 
-/* Button group */
+/* buttons */
 .button-group {
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
 }
 
-/* Save button */
 .btn-save {
-    background: #4e73df;
+    background: #2563eb;
     color: white;
-    padding: 10px 25px;
+    padding: 10px 24px;
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    transition: 0.3s;
-    font-weight: 600;
 }
 
 .btn-save:hover {
-    background: #2e59d9;
+    background: #1d4ed8;
 }
 
-/* Back button */
 .btn-back {
-    background: #858796;
+    background: #6b7280;
     color: white;
-    padding: 10px 25px;
+    padding: 10px 24px;
     border-radius: 8px;
     text-decoration: none;
-    display: inline-block;
-    transition: 0.3s;
-    font-weight: 600;
 }
 
 .btn-back:hover {
-    background: #6c757d;
+    background: #4b5563;
 }
