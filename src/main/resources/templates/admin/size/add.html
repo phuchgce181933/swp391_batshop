@@ -2,19 +2,20 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <link rel="stylesheet" th:href="@{/css/admin/brand.css}">
+    <style>
+        .error-msg { background: #f8d7da; color: #721c24; padding: 10px; border-radius: 4px; margin-bottom: 15px; border: 1px solid #f5c6cb; text-align: center; }
+    </style>
 </head>
 <body>
 <h2 class="page-title">Size Form</h2>
-
 <div class="form-wrapper" style="max-width: 500px; margin: auto;">
+    <div th:if="${error}" class="error-msg" th:text="${error}"></div>
     <form th:action="@{/admin/sizes/save}" th:object="${size}" method="post">
         <input type="hidden" th:field="*{id}">
-
         <div class="form-group">
             <label>Size Name:</label>
-            <input type="text" th:field="*{name}" class="search-input" placeholder="Ví dụ: XL, 42, 43..." required>
+            <input type="text" th:field="*{name}" class="search-input" placeholder="Ex: XL, 42, 43..." required>
         </div>
-
         <div class="form-group" style="margin-top: 10px;">
             <label>Status:</label>
             <select th:field="*{status}" class="search-input">
@@ -22,10 +23,9 @@
                 <option th:value="false">Inactive</option>
             </select>
         </div>
-
         <div style="margin-top: 20px;">
             <button type="submit" class="btn btn-primary">Save Size</button>
-            <a th:href="@{/admin/sizes}" class="btn-delete">Cancel</a>
+            <a th:href="@{/admin/sizes}" class="btn-delete" style="background: #6c757d; text-decoration: none; padding: 10px 15px; border-radius: 4px;">Cancel</a>
         </div>
     </form>
 </div>

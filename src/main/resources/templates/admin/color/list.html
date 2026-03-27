@@ -2,9 +2,17 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <link rel="stylesheet" th:href="@{/css/admin/brand.css}">
+    <style>
+        .alert { padding: 12px; margin-bottom: 20px; border-radius: 4px; text-align: center; font-weight: bold; }
+        .alert-danger { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .alert-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    </style>
 </head>
 <body>
 <h2 class="page-title">Manage Colors</h2>
+
+<div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+<div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
 
 <div class="page-actions right">
     <a th:href="@{/admin/colors/add}" class="btn btn-primary">+ Add Color</a>
@@ -24,13 +32,11 @@
         <tr th:each="c : ${colors}">
             <td th:text="${c.id}"></td>
             <td th:text="${c.name}"></td>
-            <td>
-                <span th:text="${c.status ? 'Active' : 'Inactive'}"></span>
-            </td>
+            <td><span th:text="${c.status ? 'Active' : 'Inactive'}"></span></td>
             <td>
                 <a th:href="@{/admin/colors/edit/{id}(id=${c.id})}" class="btn-edit">Edit</a> |
                 <a th:href="@{/admin/colors/delete/{id}(id=${c.id})}"
-                   onclick="return confirm('Xóa màu này nhé?')" class="btn-delete">Delete</a>
+                   onclick="return confirm('Are you sure you want to delete this color?')" class="btn-delete">Delete</a>
             </td>
         </tr>
         </tbody>
