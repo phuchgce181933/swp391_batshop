@@ -31,19 +31,17 @@ AND (:status IS NULL OR o.status = :status)
                              OrderStatus status,
                              Pageable pageable);
 
-    // Tổng doanh thu
     @Query("""
 SELECT SUM(o.totalPrice)
 FROM Order o
-WHERE o.status <> 'CANCELLED'
+WHERE o.status = com.ra.batshop.model.Enum.OrderStatus.COMPLETED
 """)
     Double getTotalRevenue();
 
-    // Revenue theo tháng
     @Query("""
 SELECT MONTH(o.createdAt), SUM(o.totalPrice)
 FROM Order o
-WHERE o.status <> 'CANCELLED'
+WHERE o.status = com.ra.batshop.model.Enum.OrderStatus.COMPLETED
 GROUP BY MONTH(o.createdAt)
 ORDER BY MONTH(o.createdAt)
 """)
@@ -54,14 +52,14 @@ ORDER BY MONTH(o.createdAt)
 SELECT COUNT(o)
 FROM Order o
 WHERE o.voucher.id = :voucherId
-AND o.status = 'COMPLETED'
+AND o.status = com.ra.batshop.model.Enum.OrderStatus.COMPLETED
 """)
     int countVoucherUsed(Integer voucherId);
 
     @Query("""
 SELECT SUM(o.totalPrice)
 FROM Order o
-WHERE o.status = 'COMPLETED'
+WHERE o.status = com.ra.batshop.model.Enum.OrderStatus.COMPLETED
 AND o.createdAt BETWEEN :fromDate AND :toDate
 """)
     Double getRevenueByDateRange(LocalDateTime fromDate, LocalDateTime toDate);
