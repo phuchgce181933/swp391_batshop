@@ -63,4 +63,16 @@ WHERE o.status = com.ra.batshop.model.Enum.OrderStatus.COMPLETED
 AND o.createdAt BETWEEN :fromDate AND :toDate
 """)
     Double getRevenueByDateRange(LocalDateTime fromDate, LocalDateTime toDate);
+
+    @Query("""
+SELECT DATE(o.createdAt), SUM(o.totalPrice)
+FROM Order o
+WHERE o.status = com.ra.batshop.model.Enum.OrderStatus.COMPLETED
+AND o.createdAt BETWEEN :fromDate AND :toDate
+GROUP BY DATE(o.createdAt)
+ORDER BY DATE(o.createdAt)
+""")
+    List<Object[]> getRevenueByDateRangeGroupByDate(
+            LocalDateTime fromDate,
+            LocalDateTime toDate);
 }
