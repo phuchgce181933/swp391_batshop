@@ -1,74 +1,22 @@
-<!--<link rel="stylesheet" th:href="@{/css/admin/banner.css}">-->
-
-
-<!--<h2>Manager Banners</h2>-->
-
-<!--<a th:href="@{/admin/banners/add}">+ Add Banner</a>-->
-
-<!--<table border="1" cellpadding="10">-->
-<!--  <thead>-->
-<!--  <tr>-->
-<!--    <th>ID</th>-->
-<!--    <th>Name</th>-->
-<!--    <th>Image</th>-->
-<!--    <th>Status</th>-->
-<!--    <th>Action</th>-->
-<!--  </tr>-->
-<!--  </thead>-->
-
-<!--  <tbody>-->
-<!--  <tr th:each="b : ${banners}">-->
-<!--    <td th:text="${b.id}"></td>-->
-
-<!--    <td th:text="${b.name}"></td>-->
-
-<!--    <td>-->
-<!--      <img th:if="${b.image != null}"-->
-<!--           th:src="@{/uploads/product/{img}(img=${b.image})}"-->
-<!--           width="120">-->
-<!--    </td>-->
-
-<!--    <td th:text="${b.status ? 'ACTIVE' : 'INACTIVE'}"></td>-->
-
-<!--    <td>-->
-<!--      <a th:href="@{/admin/banners/edit/{id}(id=${b.id})}">Edit</a>-->
-<!--      |-->
-<!--      <a th:href="@{/admin/banners/toggle/{id}(id=${b.id})}">-->
-<!--        <span th:text="${b.status ? 'Disable' : 'Enable'}"></span>-->
-<!--      </a>-->
-<!--      |-->
-<!--      <a th:href="@{/admin/banners/delete/{id}(id=${b.id})}"-->
-<!--         onclick="return confirm('Delete this banner?')">-->
-<!--        Delete-->
-<!--      </a>-->
-<!--    </td>-->
-<!--  </tr>-->
-<!--  </tbody>-->
-<!--</table>-->
-
 <link rel="stylesheet" th:href="@{/css/admin/banner.css}">
 
-<div class="banner-container">
+<div class="banner-header">
+  <h2>Manager Banners</h2>
 
-  <div class="banner-header">
-    <div>
-      <h2>Manager Banners</h2>
+  <form th:action="@{/admin/banners}" method="get">
+    <input type="text"
+           name="keyword"
+           th:value="${keyword}"
+           placeholder="Search banner..."
+           class="search-input">
 
-      <form th:action="@{/admin/banners}" method="get" style="margin-bottom:15px;">
-        <input type="text"
-               name="keyword"
-               th:value="${keyword}"
-               placeholder=" Search banner..."
-               class="search-input">
+    <button type="submit">Search</button>
+  </form>
 
-        <button type="submit">Search</button>
-      </form>
-    </div>
-
-    <a th:href="@{/admin/banners/add}" class="btn-add">
-      + Add Banner
-    </a>
-  </div>
+  <a th:href="@{/admin/banners/add}" class="btn-add">
+    + Add Banner
+  </a>
+</div>
 
   <div class="banner-table-wrapper">
     <table class="banner-table">

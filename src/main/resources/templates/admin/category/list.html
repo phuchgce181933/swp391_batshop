@@ -45,7 +45,7 @@
 
         <td th:text="${c.name}"></td>
 
-        <td th:text="${c.products != null ? c.products.size() : 0}"></td>
+        <td class="product-count" th:text="${c.products != null ? c.products.size() : 0}"></td>
 
         <td>
             <a th:href="@{/admin/categories/edit/{id}(id=${c.id})}">Edit</a> |

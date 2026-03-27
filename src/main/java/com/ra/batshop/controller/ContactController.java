@@ -35,7 +35,7 @@ public class ContactController {
 
     @ModelAttribute
     public void addActiveMenu(Model model) {
-        model.addAttribute("activeMenu", "contacts");
+        model.addAttribute("activeMenu", "contactsp");
     }
 
     @Autowired

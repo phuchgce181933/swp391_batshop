@@ -1,221 +1,89 @@
-/*!* ===== PAGE ===== *!*/
-/*body {*/
-/*    background: #f8fafc;*/
-/*    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;*/
-/*}*/
-
-/*!* ===== ADD BUTTON ===== *!*/
-/*a[href*="banners/add"] {*/
-/*    display: inline-flex;*/
-/*    align-items: center;*/
-/*    gap: 8px;*/
-/*    padding: 10px 18px;*/
-/*    background: #2563eb;*/
-/*    color: #fff;*/
-/*    border-radius: 12px;*/
-/*    font-weight: 600;*/
-/*    text-decoration: none;*/
-/*    margin-bottom: 18px;*/
-/*}*/
-
-/*a[href*="banners/add"]:hover {*/
-/*    background: #1d4ed8;*/
-/*}*/
-
-/*!* ===== TABLE WRAPPER ===== *!*/
-/*table {*/
-/*    width: 100%;*/
-/*    border-collapse: separate;*/
-/*    border-spacing: 0;*/
-/*    background: #fff;*/
-/*    border-radius: 16px;*/
-/*    box-shadow: 0 10px 30px rgba(0,0,0,.06);*/
-/*    overflow: hidden;*/
-/*}*/
-
-/*!* ===== HEADER ===== *!*/
-/*thead th {*/
-/*    text-align: left;*/
-/*    padding: 16px 20px;*/
-/*    font-size: 13px;*/
-/*    font-weight: 700;*/
-/*    color: #64748b;*/
-/*    text-transform: uppercase;*/
-/*    border-bottom: 1px solid #e5e7eb;*/
-/*}*/
-
-/*!* ===== ROW ===== *!*/
-/*tbody tr {*/
-/*    transition: background .2s ease;*/
-/*}*/
-
-/*tbody tr:hover {*/
-/*    background: #f8fafc;*/
-/*}*/
-
-/*tbody td {*/
-/*    padding: 20px;*/
-/*    vertical-align: middle;*/
-/*    border-bottom: 1px solid #e5e7eb;*/
-/*    font-size: 15px;*/
-/*}*/
-
-/*!* ===== IMAGE ===== *!*/
-/*tbody td img {*/
-/*    width: 130px;*/
-/*    height: 72px;*/
-/*    object-fit: cover;*/
-/*    border-radius: 12px;*/
-/*    box-shadow: 0 4px 10px rgba(0,0,0,.15);*/
-/*}*/
-
-/*!* ===== STATUS BADGE ===== *!*/
-/*tbody td:nth-child(4) {*/
-/*    font-weight: 600;*/
-/*}*/
-
-/*tbody td:nth-child(4):contains("ACTIVE"),*/
-/*tbody td:nth-child(4):contains("Enabled") {*/
-/*    color: #15803d;*/
-/*    background: #dcfce7;*/
-/*    padding: 6px 14px;*/
-/*    border-radius: 999px;*/
-/*    display: inline-block;*/
-/*    font-size: 13px;*/
-/*}*/
-
-/*tbody td:nth-child(4):contains("INACTIVE"),*/
-/*tbody td:nth-child(4):contains("Disabled") {*/
-/*    color: #475569;*/
-/*    background: #f1f5f9;*/
-/*    padding: 6px 14px;*/
-/*    border-radius: 999px;*/
-/*    display: inline-block;*/
-/*    font-size: 13px;*/
-/*}*/
-
-/*!* ===== ACTION COLUMN ===== *!*/
-/*tbody td:last-child {*/
-/*    white-space: nowrap;*/
-/*}*/
-
-/*!* EDIT *!*/
-/*tbody td:last-child a[href*="edit"] {*/
-/*    display: inline-flex;*/
-/*    align-items: center;*/
-/*    gap: 6px;*/
-/*    padding: 8px 14px;*/
-/*    background: #eff6ff;*/
-/*    color: #2563eb;*/
-/*    border-radius: 12px;*/
-/*    font-weight: 600;*/
-/*    text-decoration: none;*/
-/*    margin-right: 8px;*/
-/*}*/
-
-/*!* ENABLE / DISABLE *!*/
-/*tbody td:last-child a[href*="toggle"] {*/
-/*    display: inline-flex;*/
-/*    align-items: center;*/
-/*    gap: 6px;*/
-/*    padding: 8px 14px;*/
-/*    border-radius: 12px;*/
-/*    font-weight: 600;*/
-/*    text-decoration: none;*/
-/*    margin-right: 8px;*/
-/*}*/
-
-/*tbody td:last-child a[href*="toggle"] span:contains("Enable") {*/
-/*    background: #ecfdf5;*/
-/*    color: #16a34a;*/
-/*    padding: 6px 12px;*/
-/*    border-radius: 999px;*/
-/*}*/
-
-/*tbody td:last-child a[href*="toggle"] span:contains("Disable") {*/
-/*    background: #fff7ed;*/
-/*    color: #ea580c;*/
-/*    padding: 6px 12px;*/
-/*    border-radius: 999px;*/
-/*}*/
-
-/*!* DELETE *!*/
-/*tbody td:last-child a[href*="delete"] {*/
-/*    display: inline-flex;*/
-/*    align-items: center;*/
-/*    gap: 6px;*/
-/*    padding: 8px 14px;*/
-/*    background: #fef2f2;*/
-/*    color: #dc2626;*/
-/*    border-radius: 12px;*/
-/*    font-weight: 600;*/
-/*    text-decoration: none;*/
-/*}*/
-
-/* ===== PAGE BACKGROUND ===== */
-body {
-    background-color: #f4f6f9;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
+/* =========================
+   PAGE
+========================= */
 .banner-container {
     padding: 30px;
 }
 
-/* ===== HEADER ===== */
+/* =========================
+   HEADER
+========================= */
 .banner-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 25px;
+    margin-bottom: 20px;
 }
 
 .banner-header h2 {
     font-size: 24px;
     font-weight: 600;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
 }
 
-.banner-header p {
-    font-size: 14px;
-    color: #6c757d;
+/* search */
+.search-input {
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    width: 260px;
+    outline: none;
+    transition: 0.2s;
 }
 
-/* ===== ADD BUTTON ===== */
+.search-input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+.banner-header button {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 10px;
+    background: #2563eb;
+    color: white;
+    cursor: pointer;
+    margin-left: 5px;
+}
+
+/* =========================
+   ADD BUTTON
+========================= */
 .btn-add {
+    display: inline-block;
+    margin-top: 10px;
+    margin-bottom: 18px;
     background: linear-gradient(135deg, #3b82f6, #2563eb);
     color: white;
     padding: 10px 18px;
     border-radius: 12px;
     font-weight: 500;
     text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    transition: 0.3s ease;
+    transition: 0.25s;
 }
 
 .btn-add:hover {
-    opacity: 0.9;
     transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(37, 99, 235, 0.25);
 }
 
-/* ===== TABLE CARD ===== */
+/* =========================
+   TABLE CARD
+========================= */
 .banner-table-wrapper {
     background: #ffffff;
-    border-radius: 20px;
-    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.06);
+    border-radius: 18px;
+    box-shadow: 0 10px 28px rgba(0,0,0,0.08);
     overflow: hidden;
 }
 
-/* ===== TABLE ===== */
+/* =========================
+   TABLE
+========================= */
 .banner-table {
     width: 100%;
     border-collapse: collapse;
 }
 
 .banner-table thead {
-    background-color: #f8f9fa;
+    background: #f9fafb;
 }
 
 .banner-table th {
@@ -223,328 +91,164 @@ body {
     text-align: left;
     font-size: 13px;
     font-weight: 600;
-    color: #6c757d;
+    color: #6b7280;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
 }
 
 .banner-table td {
-    padding: 20px 16px;
+    padding: 18px 16px;
     border-top: 1px solid #f1f1f1;
     font-size: 14px;
-    vertical-align: middle;
 }
 
 .banner-table tbody tr:hover {
-    background-color: #fafafa;
-    transition: 0.2s;
+    background: #f9fafb;
 }
 
-/* ===== BANNER IMAGE ===== */
+/* =========================
+   IMAGE
+========================= */
 .banner-image {
     width: 170px;
-    height: 85px;
+    height: 90px;
     object-fit: cover;
-    border-radius: 16px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border-radius: 14px;
 }
 
-/* ===== STATUS BADGE ===== */
+/* =========================
+   STATUS
+========================= */
 .status {
     padding: 6px 14px;
     border-radius: 999px;
     font-size: 12px;
     font-weight: 600;
-    display: inline-block;
 }
 
 .status-enabled {
-    background-color: #d1fae5;
+    background: #d1fae5;
     color: #059669;
 }
 
 .status-disabled {
-    background-color: #e5e7eb;
+    background: #e5e7eb;
     color: #6b7280;
 }
 
-/* ===== ACTION BUTTONS ===== */
+/* =========================
+   ACTION BUTTONS
+========================= */
 .action-buttons {
     display: flex;
-    gap: 10px;
+    gap: 8px;
 }
 
 .btn-edit,
-.btn-toggle,
+.btn-enable,
+.btn-disable,
 .btn-delete {
-    padding: 8px 14px;
-    border-radius: 12px;
+    padding: 7px 14px;
+    border-radius: 10px;
     font-size: 13px;
-    font-weight: 500;
-    border: none;
-    cursor: pointer;
     text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    transition: 0.2s ease;
+    font-weight: 500;
+    transition: 0.2s;
 }
 
-/* Edit */
+/* edit */
 .btn-edit {
-    background-color: #e0e7ff;
+    background: #e0e7ff;
     color: #2563eb;
 }
 
 .btn-edit:hover {
-    background-color: #c7d2fe;
+    background: #c7d2fe;
 }
 
-/* Enable */
+/* enable */
 .btn-enable {
-    background-color: #dcfce7;
+    background: #dcfce7;
     color: #16a34a;
 }
 
 .btn-enable:hover {
-    background-color: #bbf7d0;
+    background: #bbf7d0;
 }
 
-/* Disable */
+/* disable */
 .btn-disable {
-    background-color: #fff7ed;
+    background: #fff7ed;
     color: #ea580c;
 }
 
 .btn-disable:hover {
-    background-color: #ffedd5;
+    background: #ffedd5;
 }
 
-/* Delete */
+/* delete */
 .btn-delete {
-    background-color: #fee2e2;
+    background: #fee2e2;
     color: #dc2626;
 }
 
 .btn-delete:hover {
-    background-color: #fecaca;
+    background: #fecaca;
 }
 
-/*ADD BANNER*/
-/* ===== TITLE ===== */
-h2 {
-    font-size: 22px;
-    font-weight: 600;
-    margin-bottom: 20px;
-}
-
-/* ===== FORM CARD ===== */
+/* =========================
+   FORM (ADD + EDIT dùng chung)
+========================= */
 .admin-form {
     background: #ffffff;
     padding: 28px;
     border-radius: 14px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.06);
     max-width: 520px;
 }
 
-/* ===== FORM GROUP ===== */
 .form-group {
     margin-bottom: 18px;
     display: flex;
     flex-direction: column;
 }
 
-/* ===== LABEL ===== */
 .form-group label {
     font-size: 14px;
-    font-weight: 500;
     margin-bottom: 6px;
-    color: #374151;
 }
 
-/* ===== INPUT & SELECT ===== */
 .form-group input,
 .form-group select {
     padding: 10px 12px;
-    border: 1px solid #e5e7eb;
     border-radius: 8px;
-    font-size: 14px;
-    outline: none;
-    transition: 0.2s;
-    background: #fff;
+    border: 1px solid #e5e7eb;
 }
 
-.form-group input:focus,
-.form-group select:focus {
-    border-color: #4e73df;
-    box-shadow: 0 0 0 2px rgba(78, 115, 223, 0.15);
-}
-
-/* ===== FILE INPUT STYLE FIX ===== */
-.form-group input[type="file"] {
-    padding: 8px;
-}
-
-/* ===== BUTTON GROUP ===== */
 .form-actions {
     display: flex;
-    gap: 12px;
+    gap: 10px;
     margin-top: 10px;
 }
 
-/* ===== SAVE BUTTON ===== */
+/* save */
 .btn-primary {
-    padding: 10px 18px;
-    background: #4e73df;
+    background: #2563eb;
     color: white;
-    border: none;
+    padding: 10px 18px;
     border-radius: 8px;
-    font-size: 14px;
-    font-weight: 500;
+    border: none;
     cursor: pointer;
-    transition: 0.2s;
 }
 
 .btn-primary:hover {
-    background: #2e59d9;
+    background: #1d4ed8;
 }
 
-/* ===== BACK BUTTON ===== */
+/* back */
 .btn-secondary {
-    padding: 10px 18px;
     background: #e5e7eb;
     color: #374151;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 500;
-    text-decoration: none;
-    transition: 0.2s;
-    display: inline-flex;
-    align-items: center;
-}
-
-.btn-secondary:hover {
-    background: #d1d5db;
-}
-
-/* ===== RESPONSIVE ===== */
-@media (max-width: 768px) {
-    .admin-form {
-        width: 100%;
-    }
-}
-
-/*EDIT BANNER*/
-/* Reset */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-/* Background */
-body {
-    font-family: Arial, sans-serif;
-    background: #f4f6f9;
-}
-
-/* Container */
-.form-container {
-    width: 650px;
-    margin: 60px auto;
-    background: #ffffff;
-    padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-}
-
-/* Title */
-.form-container h2 {
-    text-align: center;
-    margin-bottom: 30px;
-    color: #333;
-}
-
-/* Form group */
-.form-group {
-    margin-bottom: 20px;
-    display: flex;
-    flex-direction: column;
-}
-
-/* Label */
-.form-group label {
-    margin-bottom: 8px;
-    font-weight: 600;
-    color: #444;
-}
-
-/* Input & Select */
-.form-group input,
-.form-group select {
-    padding: 10px 12px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    font-size: 14px;
-    transition: 0.3s;
-}
-
-/* Focus effect */
-.form-group input:focus,
-.form-group select:focus {
-    border-color: #4e73df;
-    outline: none;
-    box-shadow: 0 0 5px rgba(78,115,223,0.3);
-}
-
-/* Current image */
-.current-image {
-    margin-top: 10px;
-}
-
-.current-image img {
-    width: 250px;
-    border-radius: 10px;
-    border: 1px solid #ddd;
-    padding: 5px;
-    background: #f9f9f9;
-}
-
-/* Button group */
-.button-group {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 25px;
-}
-
-/* Update button */
-.btn-save {
-    background: #4e73df;
-    color: white;
-    padding: 10px 25px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: 0.3s;
-    font-weight: 600;
-}
-
-.btn-save:hover {
-    background: #2e59d9;
-}
-
-/* Back button */
-.btn-back {
-    background: #858796;
-    color: white;
-    padding: 10px 25px;
+    padding: 10px 18px;
     border-radius: 8px;
     text-decoration: none;
-    display: inline-block;
-    transition: 0.3s;
-    font-weight: 600;
-}
-
-.btn-back:hover {
-    background: #6c757d;
 }

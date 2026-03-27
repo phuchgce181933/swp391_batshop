@@ -1,26 +1,22 @@
 <link rel="stylesheet" th:href="@{/css/admin/blog.css}">
 
-<div class="blog-container">
+<div class="blog-header">
+    <h2>Manager Blogs</h2>
 
-    <div class="blog-header">
-        <div>
-            <h2>Manager Blogs</h2>
+    <form th:action="@{/admin/blogs}" method="get">
+        <input type="text"
+               name="keyword"
+               th:value="${keyword}"
+               placeholder="Search blog..."
+               class="search-input">
 
-            <form th:action="@{/admin/blogs}" method="get" style="margin-bottom:15px;">
-                <input type="text"
-                       name="keyword"
-                       th:value="${keyword}"
-                       placeholder=" Search blog..."
-                       class="search-input">
+        <button type="submit">Search</button>
+    </form>
 
-                <button type="submit">Search</button>
-            </form>
-        </div>
-
-        <a th:href="@{/admin/blogs/add}" class="btn-add">
-            + Add Blog
-        </a>
-    </div>
+    <a th:href="@{/admin/blogs/add}" class="btn-add">
+        + Add Blog
+    </a>
+</div>
 
     <div class="blog-table-wrapper">
         <table class="blog-table">
