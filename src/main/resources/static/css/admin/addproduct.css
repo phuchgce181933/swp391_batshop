@@ -108,3 +108,25 @@ button:hover {
         grid-column: span 1;
     }
 }
+.alert {
+    padding: 12px 16px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.alert-danger {
+    background-color: #ffe5e5;
+    color: #d93025;
+    border: 1px solid #f5c2c2;
+}
+
+/* Icon trước thông báo */
+.alert-danger::before {
+    content: "⚠️";
+    font-size: 16px;
+}

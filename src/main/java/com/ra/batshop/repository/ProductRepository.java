@@ -30,7 +30,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
             Integer categoryId,
             Integer brandId,
             Pageable pageable);
-
+    boolean existsByNameIgnoreCase(String name);
     // SEARCH
     Page<Product> findByNameContainingIgnoreCaseAndStatusTrue(
             String keyword,

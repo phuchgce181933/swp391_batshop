@@ -90,6 +90,7 @@ public class ProductController {
     // ADD FORM
     @GetMapping("/add")
     public String addForm(Model model) {
+
         model.addAttribute("racketDetail", new RacketDetail());
         model.addAttribute("product", new Product());
         model.addAttribute("categories", categoryRepository.findAll());
@@ -116,6 +117,7 @@ public class ProductController {
                        Model model) {
 
         if (file == null || file.isEmpty()) {
+
             model.addAttribute("errorMessage", "Product must have at least 1 image!");
             model.addAttribute("categories", categoryRepository.findAll());
             model.addAttribute("brands", brandRepository.findAll());
@@ -124,7 +126,19 @@ public class ProductController {
             model.addAttribute("content", "admin/product/add");
             return "admin/layout";
         }
+        // CHECK TRÙNG TÊN
+        if (productRepository.existsByNameIgnoreCase(product.getName().trim())) {
 
+            model.addAttribute("errorMessage", "Product name already exists!");
+
+            model.addAttribute("categories", categoryRepository.findAll());
+            model.addAttribute("brands", brandRepository.findAll());
+            model.addAttribute("sizes", sizeRepository.findAll());
+            model.addAttribute("colors", colorRepository.findAll());
+            model.addAttribute("content", "admin/product/add");
+
+            return "admin/layout";
+        }
         try {
 
             String uploadDir = "uploads/product/";
