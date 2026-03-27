@@ -1,17 +1,27 @@
-/* ===== CONTENT WRAPPER ===== */
-.admin-content {
-    padding: 30px;
-    background: #f5f6f8;
-    min-height: 100vh;
+/* ===== CONTAINER CHÍNH CỦA MAIN ===== */
+.admin-container {
+    max-width: 1200px;
+    margin: 0 auto;        /* container nằm giữa trang */
+    padding: 20px 20px;
+    background: none;
+
+    display: flex;
+    justify-content: center; /* căn giữa admin-content */
 }
 
-/* ===== CARD ===== */
+/* ===== CONTENT ===== */
+.admin-content {
+    width: 1000px;
+    max-width: 900px;   /* chiều rộng nội dung */
+}
+
+/* ===== FORM CARD ===== */
 .form-card {
-    background: #ffffff;
+    width: 100%;
+    background: #fff;
     padding: 30px;
-    border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-    max-width: 900px;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
 }
 
 /* ===== TITLE ===== */
