@@ -75,17 +75,34 @@ public class AdminController {
         model.addAttribute("fromDate", fromDate);
         model.addAttribute("toDate", toDate);
 
-        List<Object[]> monthlyData = orderRepository.getMonthlyRevenue();
-        List<Object[]> productSales = orderItemRepository.getProductSalesByMonth();
-        List<Object[]> productSalesByDate = orderItemRepository.getProductSalesByDateTime();
-
         List<String> months = new ArrayList<>();
         List<Double> revenues = new ArrayList<>();
 
-        for (Object[] row : monthlyData) {
-            months.add("Month " + row[0]);
-            revenues.add(((Number) row[1]).doubleValue());
+        if (fromDate != null && toDate != null) {
+
+            LocalDateTime start = LocalDate.parse(fromDate).atStartOfDay();
+            LocalDateTime end = LocalDate.parse(toDate).atTime(23, 59, 59);
+
+            List<Object[]> data =
+                    orderRepository.getRevenueByDateRangeGroupByDate(start, end);
+
+            for (Object[] row : data) {
+                months.add(row[0].toString()); // yyyy-MM-dd
+                revenues.add(((Number) row[1]).doubleValue());
+            }
+
+        } else {
+
+            List<Object[]> monthlyData = orderRepository.getMonthlyRevenue();
+
+            for (Object[] row : monthlyData) {
+                months.add("Month " + row[0]);
+                revenues.add(((Number) row[1]).doubleValue());
+            }
         }
+
+        List<Object[]> productSales = orderItemRepository.getProductSalesByMonth();
+        List<Object[]> productSalesByDate = orderItemRepository.getProductSalesByDateTime();
 
         model.addAttribute("activeMenu", "dashboard");
         model.addAttribute("months", months);

@@ -27,9 +27,6 @@ public class AdminReviewController {
         this.reviewRepository = reviewRepository;
     }
 
-    // =========================
-    // LIST REVIEW + PAGINATION
-    // =========================
     @GetMapping
     public String list(
             @RequestParam(defaultValue = "0") int page,
@@ -55,9 +52,6 @@ public class AdminReviewController {
         return "admin/layout";
     }
 
-    // =========================
-    // REPLY REVIEW
-    // =========================
     @PostMapping("/reply")
     public String reply(@RequestParam Integer reviewId,
                         @RequestParam String message,

@@ -35,10 +35,8 @@ public class ProductDetailController {
     private final ReviewRepository reviewRepository;
     private final OrderItemRepository orderItemRepository;
     private final CommentRepository commentRepository;
-    // 1. Khai báo thêm FlashSaleRepository
     private final FlashSaleRepository flashSaleRepository;
 
-    // 2. Inject vào Constructor
     public ProductDetailController(ProductRepository productRepository,
                                    ProductVariantRepository variantRepository,
                                    ReviewRepository reviewRepository,
@@ -61,10 +59,6 @@ public class ProductDetailController {
     }
 
 
-    // =========================
-    // PRODUCT DETAIL
-    // =========================
-    // VIEW PRODUCT DETAIL
 
     @GetMapping("/detail/{id}")
     public String productDetail(@PathVariable Integer id,
@@ -105,19 +99,14 @@ public class ProductDetailController {
         model.addAttribute("avgRating", avgRating);
         model.addAttribute("reviewCount", reviewCount);
 
-        // ==========================================
-        // 3. KIỂM TRA LOGIC FLASH SALE TẠI ĐÂY
-        // ==========================================
         Optional<FlashSale> activeSale = flashSaleRepository.findActiveFlashSales(LocalDateTime.now()).stream().findFirst();
 
         if (activeSale.isPresent()) {
             FlashSale sale = activeSale.get();
-            // Kiểm tra xem sản phẩm này có nằm trong danh sách Flash Sale không
             boolean isInSale = sale.getProducts().stream()
                     .anyMatch(fsp -> fsp.getProduct().getId().equals(product.getId()));
 
             if (isInSale) {
-                // Nếu có, đẩy object flash sale sang View để Thymeleaf tự động tính giá giảm
                 model.addAttribute("activeFlashSale", sale);
             }
         }
@@ -125,7 +114,6 @@ public class ProductDetailController {
         return "user/product/product-detail";
     }
 
-    //ADD REVIEW
     @PostMapping("/review")
     public String addReview(
             @RequestParam Integer productId,
@@ -144,7 +132,6 @@ public class ProductDetailController {
                 .findById(productId)
                 .orElseThrow();
 
-        // CHECK USER ĐÃ MUA
         Long purchased = orderItemRepository
                 .checkUserPurchased(user.getId(), productId, OrderStatus.COMPLETED);
 
@@ -152,7 +139,6 @@ public class ProductDetailController {
             return "redirect:/product/detail/" + productId + "?error=notPurchased";
         }
 
-        // CHECK USER ĐÃ REVIEW CHƯA
         boolean existed = reviewRepository
                 .existsByUser_IdAndProduct_Id(user.getId(), productId);
 
@@ -168,7 +154,6 @@ public class ProductDetailController {
         review.setRating(rating);
         review.setCreatedAt(LocalDateTime.now());
 
-        // LẤY TỪ USER
         review.setName(user.getFullName());
         review.setPhone(user.getPhone());
 
