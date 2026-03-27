@@ -4,7 +4,7 @@ public enum ContactStatus {
     UNREAD("Chưa đọc"),
     PROCESSING("Đang xử lý"),
     RESOLVED("Đã phản hồi"),
-    REJECTED("Đã bỏ qua/Thư rác");
+    REJECTED("Bỏ qua/Thư rác");
 
     private final String label;
 

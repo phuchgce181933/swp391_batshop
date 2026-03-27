@@ -93,16 +93,16 @@
                                     <i class="fas fa-edit"></i> Quản lý
                                 </a>
 
-                                <a th:if="${fs.status != 'Đang diễn ra'}"
+                                <a th:if="${fs.status == 'Sắp diễn ra'}"
                                    th:href="@{/admin/flash-sales/delete/{id}(id=${fs.id})}"
                                    class="fs-btn fs-btn-sm fs-btn-delete-solid"
                                    onclick="return confirm('Bạn có chắc chắn muốn xóa Flash Sale này không?');">
                                     <i class="fas fa-trash"></i> Xóa
                                 </a>
 
-                                <button th:if="${fs.status == 'Đang diễn ra'}"
+                                <button th:if="${fs.status == 'Đang diễn ra' or fs.status == 'Đã kết thúc'}"
                                         class="fs-btn fs-btn-sm fs-btn-disabled" disabled
-                                        title="Không thể xóa đợt Flash Sale đang chạy">
+                                        title="Chỉ có thể xóa đợt Sale sắp diễn ra">
                                     <i class="fas fa-trash"></i> Xóa
                                 </button>
                             </div>

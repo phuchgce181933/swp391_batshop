@@ -273,8 +273,16 @@ public class FlashSaleController {
     }
 
     @GetMapping("/admin/flash-sales/delete/{id}")
-    public String delete(@PathVariable Integer id) {
-        flashSaleRepository.deleteById(id);
+    public String delete(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
+        FlashSale flashSale = flashSaleRepository.findById(id).orElse(null);
+        if (flashSale != null) {
+            if (flashSale.getStatus().equals("Sắp diễn ra")) {
+                flashSaleRepository.deleteById(id);
+                redirectAttributes.addFlashAttribute("successMessage", "Xóa Flash Sale thành công!");
+            } else {
+                redirectAttributes.addFlashAttribute("errorMessage", "Không thể xóa Flash Sale Đang diễn ra hoặc Đã kết thúc!");
+            }
+        }
         return "redirect:/admin/flash-sales";
     }
 }

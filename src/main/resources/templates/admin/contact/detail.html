@@ -15,7 +15,7 @@
         <span th:text="${
             param.success[0] == 'noteSaved' ? 'Đã lưu ghi chú nội bộ.' :
             (param.success[0] == 'emailSent' ? 'Email phản hồi đã được gửi tới khách hàng. Đã chuyển trạng thái sang [Đã phản hồi].' :
-            'Đã đánh dấu liên hệ này là [Đã bỏ qua/Thư rác].')
+            'Đã đánh dấu liên hệ này là [Bỏ qua/Thư rác].')
         }"></span>
     </div>
 
@@ -75,30 +75,51 @@
                 <i class="fas fa-exclamation-triangle"></i> Vui lòng nhập nội dung email trước khi gửi!
             </div>
 
-            <form th:action="@{/admin/contacts/process/{id}(id=${contact.id})}" method="post">
+            <form th:action="@{/admin/contacts/process/{id}(id=${contact.id})}" method="post" id="processForm">
 
-                <div class="mb-24">
+                <div>
                     <p class="form-desc">Chỉ Admin thấy. Ghi chú lại kết quả cuộc gọi hoặc thông tin xử lý.</p>
                     <textarea name="adminNote" rows="4" class="custom-textarea" placeholder="Ghi chú ở đây..." th:text="${contact.adminNote}"></textarea>
                 </div>
-                <div class="btn-group">
+
+                <div class="btn-group" style="margin-bottom: 40px;">
                     <button type="submit" name="action" value="saveNote" class="btn-submit btn-secondary">
                         <i class="fas fa-save"></i> Lưu Ghi Chú
                     </button>
                 </div>
-                <div>
-                    <h3 class="detail-card-title">Soạn Email trả lời khách (Tự động gửi)</h3>
+
+                <div style="border-top: 2px solid #f1f5f9; padding-top: 30px;">
+                    <h3 class="detail-card-title" style="margin-bottom: 10px;">Soạn Email trả lời khách (Tự động gửi)</h3>
                     <p class="form-desc">Email sẽ được gửi trực tiếp đến hộp thư của khách.</p>
                     <textarea name="emailReply" rows="7" class="custom-textarea" placeholder="Chào bạn, BatShop đã nhận được yêu cầu..."></textarea>
                 </div>
 
                 <div class="btn-group">
-                    <button type="submit" name="action" value="reject" class="btn-submit btn-danger" onclick="return confirm('Bạn có chắc chắn muốn [Bỏ qua] liên hệ này?');">
-                        <i class="fas fa-ban"></i> Bỏ qua
+
+                    <button th:if="${contact.status?.name() == 'REJECTED'}"
+                            type="submit" name="action" value="undoReject"
+                            class="btn-submit btn-warning"
+                            onclick="return confirm('Bạn có muốn xóa trạng thái [Bỏ qua/Thư rác] và chuyển liên hệ này về [Chưa đọc]?');">
+                        <i class="fas fa-undo"></i> Xóa Bỏ Qua/Thư rác
                     </button>
-                    <button type="submit" name="action" value="sendEmail" class="btn-submit btn-primary">
+
+                    <button th:unless="${contact.status?.name() == 'REJECTED'}"
+                            type="submit" name="action" value="reject"
+                            class="btn-submit btn-danger"
+                            th:disabled="${contact.replyHistory != null and !contact.replyHistory.isEmpty()}"
+                            th:style="${contact.replyHistory != null and !contact.replyHistory.isEmpty() ? 'opacity: 0.5; cursor: not-allowed;' : ''}"
+                            th:attr="onclick=${contact.replyHistory != null and !contact.replyHistory.isEmpty() ? 'return false;' : 'return confirm(''Bạn có chắc chắn muốn đánh dấu [Bỏ qua/Thư rác] liên hệ này?'');'}">
+                        <i class="fas fa-ban"></i> Bỏ qua/Thư rác
+                    </button>
+
+                    <button type="submit" name="action" value="sendEmail"
+                            class="btn-submit btn-primary"
+                            th:disabled="${contact.status?.name() == 'REJECTED'}"
+                            th:style="${contact.status?.name() == 'REJECTED' ? 'opacity: 0.5; cursor: not-allowed;' : ''}"
+                            onclick="if(this.disabled) return false; setTimeout(() => { this.innerHTML='<i class=\'fas fa-spinner fa-spin\'></i> Đang gửi...'; this.style.pointerEvents='none'; }, 10); return true;">
                         <i class="fas fa-paper-plane"></i> Gửi Email
                     </button>
+
                 </div>
             </form>
 

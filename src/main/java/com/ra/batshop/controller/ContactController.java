@@ -222,6 +222,15 @@ public class ContactController {
                     contact.setStatus(ContactStatus.RESOLVED);
                     contactRepository.save(contact);
                     return "redirect:/admin/contacts/detail/" + id + "?success=emailSent";
+                case "undoReject":
+                    // Vẫn lưu ghi chú nếu Admin có gõ kèm theo
+                    if (adminNote != null && !adminNote.trim().isEmpty()) {
+                        contact.setAdminNote(adminNote);
+                    }
+                    // Chuyển trạng thái lại thành Chưa đọc
+                    contact.setStatus(ContactStatus.UNREAD);
+                    contactRepository.save(contact);
+                    return "redirect:/admin/contacts/detail/" + id + "?success=unread";
             }
         }
         return "redirect:/admin/contacts";
