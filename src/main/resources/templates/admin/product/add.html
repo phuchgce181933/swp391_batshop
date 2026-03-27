@@ -10,7 +10,11 @@
 <div class="admin-content">
     <div class="form-card">
         <h2>Add Product</h2>
-
+        <th:block th:if="${errorMessage}">
+            <div class="alert alert-danger">
+                <span th:text="${errorMessage}"></span>
+            </div>
+        </th:block>
         <form th:action="@{/admin/products/add}"
               method="post"
               th:object="${product}"
