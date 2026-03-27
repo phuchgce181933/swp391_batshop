@@ -47,6 +47,7 @@ public class AuthController {
         user.setPasswordHash(passwordEncoder.encode(user.getPasswordHash()));
         user.setRole(Role.USER);
         user.setCreatedAt(LocalDateTime.now());
+        user.setStatus(true);
         userRepository.save(user);
         return "redirect:/login";
     }
