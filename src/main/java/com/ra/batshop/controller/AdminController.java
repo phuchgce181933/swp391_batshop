@@ -1,5 +1,6 @@
 package com.ra.batshop.controller;
 
+import com.ra.batshop.model.Enum.Role;
 import com.ra.batshop.model.User;
 import com.ra.batshop.repository.OrderItemRepository;
 import com.ra.batshop.repository.UserRepository;
@@ -42,8 +43,9 @@ public class AdminController {
             @RequestParam(required = false) String fromDate,
             @RequestParam(required = false) String toDate,
             Model model, HttpSession session) {
+        User user = (User) session.getAttribute("user");
 
-        if (session.getAttribute("user") == null) {
+        if (user == null || user.getRole() != Role.ADMIN) {
             return "redirect:/login";
         }
 
