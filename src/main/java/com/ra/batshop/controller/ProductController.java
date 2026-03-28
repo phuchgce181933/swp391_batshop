@@ -187,7 +187,7 @@ public class ProductController {
                             variant.setRacketDetail(new RacketDetail());
                         }
 
-                        variant.getRacketDetail().setVariant(variant); //  QUAN TRỌNG
+                        variant.getRacketDetail().setVariant(variant);
                     }
                     // ===== SET BRAND =====
                     if (variant.getBrand() != null && variant.getBrand().getId() != null) {
@@ -260,7 +260,15 @@ public class ProductController {
     public String editForm(@PathVariable Integer id, Model model) {
 
         Product product = productRepository.findById(id).orElseThrow();
-
+        for (ProductVariant variant : product.getVariants()) {
+            if (product.getCategory().getId() == 3) {
+                if (variant.getRacketDetail() == null) {
+                    RacketDetail detail = new RacketDetail();
+                    detail.setVariant(variant);
+                    variant.setRacketDetail(detail);
+                }
+            }
+        }
         model.addAttribute("product", product);
 
         model.addAttribute("categories", categoryRepository.findAll());
@@ -321,7 +329,31 @@ public class ProductController {
                         if (dbVariant != null) {
                             dbVariant.setStock(updated.getStock());
                             dbVariant.setAdditionalPrice(updated.getAdditionalPrice());
+                            // ===== UPDATE RACKET DETAIL =====
+                            if (product.getCategory().getId() == 3) {
 
+                                if (dbVariant.getRacketDetail() == null) {
+                                    RacketDetail detail = new RacketDetail();
+                                    detail.setProduct(product);
+                                    detail.setVariant(dbVariant);
+                                    dbVariant.setRacketDetail(detail);
+                                }
+
+                                RacketDetail updatedDetail = updated.getRacketDetail();
+
+                                if (updatedDetail != null) {
+                                    dbVariant.getRacketDetail().setLevel(updatedDetail.getLevel());
+                                    dbVariant.getRacketDetail().setLength(updatedDetail.getLength());
+                                    dbVariant.getRacketDetail().setRacketHandleLength(updatedDetail.getRacketHandleLength());
+                                    dbVariant.getRacketDetail().setStyle(updatedDetail.getStyle());
+                                    dbVariant.getRacketDetail().setWeight(updatedDetail.getWeight());
+                                    dbVariant.getRacketDetail().setTechnology(updatedDetail.getTechnology());
+                                    dbVariant.getRacketDetail().setGamecontent(updatedDetail.getGamecontent());
+                                    dbVariant.getRacketDetail().setSwingWeight(updatedDetail.getSwingWeight());
+                                    dbVariant.getRacketDetail().setEquilibriumPoint(updatedDetail.getEquilibriumPoint());
+                                    dbVariant.getRacketDetail().setChopstickHardness(updatedDetail.getChopstickHardness());
+                                }
+                            }
                             // Cập nhật brand, size, color
                             if (updated.getBrand() != null && updated.getBrand().getId() != null) {
                                 dbVariant.setBrand(brandRepository.findById(updated.getBrand().getId()).orElse(null));
