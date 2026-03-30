@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>VNB Shop - Xác thực OTP</title>
+  <link rel="stylesheet" th:href="@{/css/register.css}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    /* Style cho các ô nhập OTP */
+    .otp-inputs { display: flex; gap: 10px; justify-content: center; margin: 25px 0; }
+    .otp-field {
+        width: 45px; height: 50px; text-align: center; font-size: 24px;
+        font-weight: bold; border: 2px solid #ddd; border-radius: 10px;
+        transition: 0.3s;
+    }
+    .otp-field:focus { border-color: #d32f2f; outline: none; box-shadow: 0 0 5px rgba(211,47,47,0.3); }
+
+    .otp-error-container {
+        height: 25px;
+        text-align: center;
+        margin-bottom: 15px;
+    }
+
+    /* Group nút bấm để nằm ngang */
+    .btn-group-vnb {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .btn-back {
+        background-color: #6c757d; /* Màu xám cho nút trở lại */
+        flex: 1;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        border-radius: 5px;
+        font-weight: bold;
+        font-size: 14px;
+        transition: 0.3s;
+    }
+
+    .btn-back:hover {
+        background-color: #5a6268;
+    }
+
+    .btn-submit-vnb {
+        flex: 2; /* Nút xác nhận to hơn nút trở lại */
+        margin: 0 !important; /* Ghi đè margin mặc định nếu có */
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="left-panel">
+    <a th:href="@{/home}" class="home-btn"><i class="fa-solid fa-house"></i> Trang chủ</a>
+    <div class="brand">
+      <h1>VNB<span>SHOP</span>.</h1>
+      <p>Hệ thống shop cầu lông số 1 Việt Nam.</p>
+    </div>
+  </div>
+  <div class="right-panel">
+    <div class="login-card">
+      <h2>Xác thực tài khoản</h2>
+      <p class="sub">Nhập mã 6 số đã được gửi vào Gmail của bạn</p>
+
+      <form th:action="@{/verify-registration}" method="post" id="otpForm">
+        <div class="otp-inputs">
+          <input type="text" class="otp-field" maxlength="1" required>
+          <input type="text" class="otp-field" maxlength="1" required>
+          <input type="text" class="otp-field" maxlength="1" required>
+          <input type="text" class="otp-field" maxlength="1" required>
+          <input type="text" class="otp-field" maxlength="1" required>
+          <input type="text" class="otp-field" maxlength="1" required>
+        </div>
+
+        <input type="hidden" name="otpInput" id="otpFull">
+
+        <div class="otp-error-container">
+          <span class="error-message" style="position: static;" th:if="${error}" th:text="${error}"></span>
+        </div>
+
+        <div class="btn-group-vnb">
+          <a th:href="@{/register}" class="btn-back">TRỞ LẠI</a>
+          <button type="submit" class="btn-submit-vnb">XÁC NHẬN MÃ</button>
+        </div>
+
+        <div class="register-container">
+          <p>Không nhận được mã? <a th:href="@{/register}" class="register-link">Gửi lại mã</a></p>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  const inputs = document.querySelectorAll('.otp-field');
+  const fullInput = document.getElementById('otpFull');
+
+  inputs.forEach((input, index) => {
+      input.addEventListener('input', (e) => {
+          if (e.target.value.length > 1) e.target.value = e.target.value.slice(0, 1);
+          if (e.target.value && index < inputs.length - 1) {
+              inputs[index + 1].focus();
+          }
+          let otp = "";
+          inputs.forEach(i => otp += i.value);
+          fullInput.value = otp;
+      });
+
+      input.addEventListener('keydown', (e) => {
+          if (e.key === 'Backspace' && !e.target.value && index > 0) {
+              inputs[index - 1].focus();
+          }
+      });
+  });
+</script>
+</body>
+</html>
