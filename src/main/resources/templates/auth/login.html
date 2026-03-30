@@ -5,75 +5,131 @@
     <title>VNB Shop - Đăng nhập</title>
     <link rel="stylesheet" th:href="@{/css/login.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .msg-error {
+            color: #d32f2f;
+            font-size: 13px;
+            margin-top: 5px;
+            display: block;
+            font-weight: 500;
+        }
+        /* Class này dùng để đổi màu viền khi có lỗi */
+        .input-error-active {
+            border: 1px solid #d32f2f !important;
+            background-color: #fff1f0 !important;
+        }
+    </style>
 </head>
-
 <body>
 
 <div class="container">
-
     <div class="left-panel">
         <a th:href="@{/home}" class="home-btn">
             <i class="fa-solid fa-house"></i> Trang chủ
         </a>
-
         <div class="brand">
             <h1>VNB<span>SHOP</span>.</h1>
-            <p>
-                Gia nhập cộng đồng VNB Shop.<br>
-                Nơi hội tụ những dòng vợt đẳng cấp.
-            </p>
+            <p>Gia nhập cộng đồng VNB Shop.<br>Nơi hội tụ những dòng vợt đẳng cấp.</p>
         </div>
     </div>
 
     <div class="right-panel">
         <div class="login-card">
-
             <h2>Chào mừng trở lại!</h2>
             <p class="sub">Vui lòng nhập thông tin để đăng nhập</p>
 
-            <form th:action="@{/login}" method="post">
+            <form th:action="@{/login}" method="post" id="loginForm" novalidate>
 
                 <label>Email</label>
-                <input type="text" name="email"
+                <input type="text" name="email" id="emailLogin"
                        placeholder="Nhập email..."
-                       th:value="${email}">
+                       th:value="${email}"
+                       th:classappend="${emailError != null} ? 'input-error-active' : ''">
 
-                <label>Mật khẩu</label>
-                <input type="password" name="password"
-                       placeholder="Nhập mật khẩu...">
+                <span id="js-email-err" class="msg-error" style="display:none;"></span>
+                <span class="msg-error" th:if="${emailError != null}" th:text="${emailError}"></span>
 
-                <!-- ❌ lỗi -->
-                <div class="error-box"
-                     th:if="${error}"
-                     th:text="${error}">
-                </div>
+                <label style="margin-top: 15px;">Mật khẩu</label>
+                <input type="password" name="password" id="passLogin"
+                       placeholder="Nhập mật khẩu..."
+                       th:classappend="${passError != null} ? 'input-error-active' : ''">
 
-                <!-- ✅ thông báo đổi mật khẩu -->
-                <div class="success-box"
-                     th:if="${param.changed}">
+                <span id="js-pass-err" class="msg-error" style="display:none;"></span>
+                <span class="msg-error" th:if="${passError != null}" th:text="${passError}"></span>
+
+                <div class="success-box" th:if="${param.changed}">
                     ✅ Đổi mật khẩu thành công — vui lòng đăng nhập lại
                 </div>
 
                 <div class="forgot-container">
-                    <a th:href="@{/forgot-password}" class="forgot-link">
-                        Quên mật khẩu?
-                    </a>
+                    <a th:href="@{/forgot-password}" class="forgot-link">Quên mật khẩu?</a>
                 </div>
 
                 <button type="submit">ĐĂNG NHẬP NGAY</button>
 
                 <div class="register-container">
-                    <p>Chưa có tài khoản?
-                        <a th:href="@{/register}" class="register-link">
-                            Đăng ký
-                        </a>
-                    </p>
+                    <p>Chưa có tài khoản? <a th:href="@{/register}" class="register-link">Đăng ký</a></p>
                 </div>
-
             </form>
         </div>
     </div>
 </div>
 
+<script>
+    const form = document.getElementById('loginForm');
+    const emailInp = document.getElementById('emailLogin');
+    const passInp = document.getElementById('passLogin');
+
+    form.addEventListener('submit', function(e) {
+        let hasErr = false;
+        const emailVal = emailInp.value.trim();
+        const passVal = passInp.value.trim();
+
+        // Ẩn tất cả lỗi cũ (cả lỗi server và JS)
+        document.querySelectorAll('.msg-error').forEach(el => {
+            el.style.display = 'none';
+        });
+        emailInp.classList.remove('input-error-active');
+        passInp.classList.remove('input-error-active');
+
+        // Bắt lỗi Email bằng JS
+        if (emailVal === "") {
+            showError('js-email-err', emailInp, "⚠ Email không được để trống!");
+            hasErr = true;
+        } else if (!emailVal.toLowerCase().endsWith("@gmail.com")) {
+            showError('js-email-err', emailInp, "⚠ Email phải có đuôi @gmail.com!");
+            hasErr = true;
+        }
+
+        // Bắt lỗi Mật khẩu bằng JS
+        if (passVal === "") {
+            showError('js-pass-err', passInp, "⚠ Mật khẩu không được để trống!");
+            hasErr = true;
+        }
+
+        if (hasErr) {
+            e.preventDefault(); // Chặn form không gửi lên server nếu có lỗi JS
+        }
+    });
+
+    function showError(id, input, msg) {
+        const err = document.getElementById(id);
+        err.innerText = msg;
+        err.style.display = 'block';
+        input.classList.add('input-error-active');
+    }
+
+    // Khi gõ lại thì ẩn lỗi ngay lập tức
+    [emailInp, passInp].forEach(input => {
+        input.addEventListener('input', function() {
+            this.classList.remove('input-error-active');
+            let sibling = this.nextElementSibling;
+            while (sibling && sibling.classList.contains('msg-error')) {
+                sibling.style.display = 'none';
+                sibling = sibling.nextElementSibling;
+            }
+        });
+    });
+</script>
 </body>
 </html>

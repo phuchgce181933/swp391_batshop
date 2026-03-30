@@ -31,7 +31,10 @@ public class AuthController {
         this.emailService = emailService;
     }
 
-    // --- GIỮ NGUYÊN CODE CŨ CỦA ÔNG ---
+    // ============================================================
+    // 1. PHẦN ĐĂNG KÝ & GỬI EMAIL
+    // ============================================================
+
     @GetMapping("/register")
     public String showRegister(Model model) {
         model.addAttribute("user", new User());
@@ -39,18 +42,74 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String register(@ModelAttribute("user") User user, Model model) {
-        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-            model.addAttribute("error", "Email đã tồn tại");
+    public String register(@ModelAttribute("user") User user, HttpSession session, Model model) {
+        boolean hasError = false;
+
+        // Check định dạng @gmail.com
+        if (user.getEmail() == null || !user.getEmail().toLowerCase().endsWith("@gmail.com")) {
+            model.addAttribute("errorEmail", "Email phải có định dạng @gmail.com!");
+            hasError = true;
+        }
+
+        // Check trùng dữ liệu
+        if (userRepository.existsByEmail(user.getEmail())) {
+            model.addAttribute("errorEmail", "Email này đã được sử dụng!");
+            hasError = true;
+        }
+
+        if (userRepository.existsByPhone(user.getPhone())) {
+            model.addAttribute("errorPhone", "Số điện thoại đã tồn tại!");
+            hasError = true;
+        }
+
+        if (hasError) {
             return "auth/register";
         }
-        user.setPasswordHash(passwordEncoder.encode(user.getPasswordHash()));
-        user.setRole(Role.USER);
-        user.setCreatedAt(LocalDateTime.now());
-        user.setStatus(true);
-        userRepository.save(user);
-        return "redirect:/login";
+
+        // Tạo OTP và gửi mail
+        String otp = String.format("%06d", new Random().nextInt(999999));
+        session.setAttribute("otp", otp);
+        session.setAttribute("tempUser", user);
+
+        try {
+            emailService.sendEmail(user.getEmail(), "Xác thực đăng ký VNB Shop", "Mã OTP của bạn là: " + otp);
+            return "auth/verify-registration";
+        } catch (Exception e) {
+            model.addAttribute("error", "Lỗi gửi mail: " + e.getMessage());
+            return "auth/register";
+        }
     }
+
+    @GetMapping("/verify-registration")
+    public String showVerifyRegistration() {
+        return "auth/verify-registration";
+    }
+
+    @PostMapping("/verify-registration")
+    public String verifyRegistration(@RequestParam String otpInput, HttpSession session, Model model) {
+        String sessionOtp = (String) session.getAttribute("otp");
+        User tempUser = (User) session.getAttribute("tempUser");
+
+        if (sessionOtp != null && sessionOtp.equals(otpInput)) {
+            tempUser.setPasswordHash(passwordEncoder.encode(tempUser.getPasswordHash()));
+            tempUser.setRole(Role.USER);
+            tempUser.setCreatedAt(LocalDateTime.now());
+            tempUser.setStatus(true);
+
+            userRepository.save(tempUser);
+
+            session.removeAttribute("otp");
+            session.removeAttribute("tempUser");
+            return "redirect:/login?success";
+        } else {
+            model.addAttribute("error", "Mã OTP không chính xác!");
+            return "auth/verify-registration";
+        }
+    }
+
+    // ============================================================
+    // 2. ĐĂNG NHẬP / ĐĂNG XUẤT (ĐÃ CẬP NHẬT TÁCH LỖI RIÊNG)
+    // ============================================================
 
     @GetMapping("/login")
     public String showLogin() {
@@ -58,22 +117,42 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestParam String email, @RequestParam String password, HttpSession session, Model model) {
+    public String login(@RequestParam String email,
+                        @RequestParam String password,
+                        HttpSession session,
+                        Model model) {
+
+        // Tìm user theo email
         User user = userRepository.findByEmail(email).orElse(null);
-        if (user != null && passwordEncoder.matches(password, user.getPasswordHash())) {
-            session.setAttribute("user", user);
 
-            if (user.getRole() == Role.ADMIN && user.getStatus() == true) {
-                return "redirect:/admin/dashboard";
-            } else if (user.getStatus() == false) {
-                model.addAttribute("error", "User is blocked");
-                return "auth/login";
-            }
-
-            return "redirect:/home";
+        // Kiểm tra Email tồn tại
+        if (user == null) {
+            model.addAttribute("emailError", "⚠ Email này không tồn tại trên hệ thống!");
+            model.addAttribute("email", email);
+            return "auth/login";
         }
-        model.addAttribute("error", "Email hoặc mật khẩu không đúng");
-        return "auth/login";
+
+        // Kiểm tra Mật khẩu
+        if (!passwordEncoder.matches(password, user.getPasswordHash())) {
+            model.addAttribute("passError", "⚠ Mật khẩu không chính xác!");
+            model.addAttribute("email", email);
+            return "auth/login";
+        }
+
+        // Kiểm tra trạng thái tài khoản
+        if (!user.getStatus()) {
+            model.addAttribute("emailError", "⚠ Tài khoản của bạn đã bị khóa!");
+            return "auth/login";
+        }
+
+        // Đăng nhập thành công
+        session.setAttribute("user", user);
+
+        if (user.getRole() == Role.ADMIN) {
+            return "redirect:/admin/dashboard";
+        }
+
+        return "redirect:/home";
     }
 
     @GetMapping("/logout")
@@ -81,6 +160,10 @@ public class AuthController {
         session.invalidate();
         return "redirect:/login";
     }
+
+    // ============================================================
+    // 3. QUÊN MẬT KHẨU
+    // ============================================================
 
     @GetMapping("/forgot-password")
     public String showForgotPassword() {
@@ -130,7 +213,7 @@ public class AuthController {
     }
 
     // ============================================================
-    // PROFILE
+    // 4. PROFILE & ĐỔI MẬT KHẨU
     // ============================================================
 
     @GetMapping("/profile")
@@ -173,7 +256,6 @@ public class AuthController {
         return "redirect:/profile/edit?success";
     }
 
-    // ✅ THÊM CÁI NÀY ĐỂ FIX 405
     @GetMapping("/change-password")
     public String showChangePassword(HttpSession session) {
         if (session.getAttribute("user") == null) return "redirect:/login";
@@ -206,10 +288,7 @@ public class AuthController {
         userInDb.setUpdatedAt(LocalDateTime.now());
         userRepository.save(userInDb);
 
-        // 🔥 logout
         session.invalidate();
-
-        // 🔥 về login + thông báo
         return "redirect:/login?changed";
     }
 }
