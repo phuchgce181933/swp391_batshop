@@ -38,10 +38,21 @@
         <span class="qty" th:text="'x ' + ${item.quantity}"></span>
     </div>
 
-    <form th:action="@{/checkout/apply-voucher}" method="post">
-        <input type="text" name="code">
-        <button type="submit">Áp dụng</button>
-    </form>
+    <div class="voucher-box" style="margin:15px 0;">
+
+        <h4 style="margin-bottom:8px;">Mã giảm giá</h4>
+
+        <form th:action="@{/checkout/apply-voucher}" method="post">
+            <input type="text" name="code" placeholder="Nhập mã voucher..."
+                   style="padding:8px;width:200px;border:1px solid #ccc;border-radius:4px;">
+
+            <button type="submit"
+                    style="padding:8px 12px;background:#ff4b2b;color:white;border:none;border-radius:4px;">
+                Áp dụng
+            </button>
+        </form>
+
+    </div>
     <div th:if="${voucher != null}" class="applied-voucher mb-3 p-2 border rounded bg-light">
         <span>Voucher: <b th:text="${voucher.code}"></b> - Giảm <b th:text="${discount}"></b> VND</span>
         <a th:href="@{/checkout/cancel-voucher}" class="btn btn-sm btn-outline-danger ms-2">Hủy</a>
@@ -76,7 +87,16 @@
         <!--ĐỊA CHỈ -->
         <div class="address-box">
             <h3>Địa chỉ giao hàng</h3>
+            <div th:if="${addressError}" style="color:red;font-weight:bold;">
+                <span th:text="${addressError}"></span>
+                <br>
 
+                <a th:href="@{/address/list}"
+                   style="display:inline-block;margin-top:10px;padding:8px 12px;
+              background:#ff4b2b;color:white;border-radius:5px;text-decoration:none;">
+                    ➕ Thêm địa chỉ ngay
+                </a>
+            </div>
             <!-- Địa chỉ đang chọn -->
             <div class="selected-address" onclick="toggleAddressList()">
 

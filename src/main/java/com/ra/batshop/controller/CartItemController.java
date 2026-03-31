@@ -48,12 +48,19 @@ public class CartItemController {
                 .orElseThrow();
 
         Integer stock = variant.getStock();
+
         if(quantity > stock){
             return "redirect:/product/detail/" + variant.getProduct().getId() + "?error=stock&stock=" + stock;
         }
 
         Optional<CartItem> cartItemOption =
                 cartItemRepository.findByUserIdAndProductVariantId(user.getId(), productvariantId);
+        int currentQuantity = cartItemOption.map(CartItem::getQuantity).orElse(0);
+        if (currentQuantity + quantity > stock) {
+            return "redirect:/product/detail/" + variant.getProduct().getId()
+                    + "?error=stock&stock=" + stock
+                    + "&current=" + currentQuantity;
+        }
 
         CartItem cartItem;
 

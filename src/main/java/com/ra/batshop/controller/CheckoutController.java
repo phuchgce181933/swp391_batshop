@@ -107,7 +107,12 @@ public class CheckoutController {
 
         Address defaultAddress = addressRepository.findByUserIdAndIsDefaultTrue(user.getId()).orElse(null);
         List<Address> addresses = addressRepository.findByUserId(user.getId());
-
+        if (addresses == null || addresses.isEmpty()) {
+            model.addAttribute("addressError", "Bạn chưa có địa chỉ. Vui lòng thêm địa chỉ trước khi thanh toán.");
+        }else if (defaultAddress == null) {
+            model.addAttribute("addressError",
+                    "Bạn chưa chọn địa chỉ mặc định. Vui lòng chọn một địa chỉ.");
+        }
         model.addAttribute("cartItems", cartItems);
         model.addAttribute("totalCart", total);
         model.addAttribute("discount", discount);
