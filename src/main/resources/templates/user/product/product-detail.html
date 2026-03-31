@@ -106,7 +106,9 @@
                         </div>
 
                         <ul class="promo-list">
-                            <li>✔ Tặng 1 đôi vớ cầu lông VNB (vớ <span class="highlight">VNB dài nhiều màu</span> hoặc <span class="highlight">vớ VNB ngắn</span>)</li>
+                            <li>✔ Tặng 1 đôi vớ cầu lông VNB (vớ <span class="highlight">VNB dài nhiều màu</span> hoặc
+                                <span class="highlight">vớ VNB ngắn</span>)
+                            </li>
                             <li>✔ Sản phẩm cam kết chính hãng</li>
                             <li>✔ Thanh toán sau khi kiểm tra và nhận hàng</li>
                             <li>✔ Bảo hành chính hãng theo nhà sản xuất</li>
@@ -141,13 +143,19 @@
                         Xin lỗi, hiện tại chúng tôi chỉ còn
                         <b th:text="${param.stock[0]}"></b>
                         sản phẩm trong kho.
+                        <br>
+                        <span th:if="${param.current != null}">
+                        Giỏ hàng của bạn đã có
+                        <b th:text="${param.current[0]}"></b>
+                        sản phẩm.
+                         </span>
                     </div>
-
                     <div class="action-buttons">
                         <button type="submit" class="btn-cart">
                             THÊM VÀO GIỎ HÀNG
                         </button>
-                        <a th:href="@{'/wishlist/add/' + ${product.id}}" class="btn-wishlist" title="Thêm vào yêu thích">
+                        <a th:href="@{'/wishlist/add/' + ${product.id}}" class="btn-wishlist"
+                           title="Thêm vào yêu thích">
                             <i class="fa-solid fa-heart"></i>
                         </a>
                     </div>
@@ -224,12 +232,14 @@
         Bạn đã đánh giá sản phẩm này rồi.
     </div>
 
-    <form id="reviewForm" th:action="@{/product/review}" method="post" style="display: none; margin-top: 20px; padding: 20px; background: #f9f9f9; border-radius: 8px;">
+    <form id="reviewForm" th:action="@{/product/review}" method="post"
+          style="display: none; margin-top: 20px; padding: 20px; background: #f9f9f9; border-radius: 8px;">
 
         <input type="hidden" name="productId" th:value="${product.id}">
 
         <label style="display: block; font-weight: bold; margin-bottom: 5px;">Đánh giá</label>
-        <select name="rating" style="padding: 8px; margin-bottom: 15px; width: 100%; max-width: 200px; border-radius: 4px; border: 1px solid #ddd;">
+        <select name="rating"
+                style="padding: 8px; margin-bottom: 15px; width: 100%; max-width: 200px; border-radius: 4px; border: 1px solid #ddd;">
             <option value="5">5 ⭐ Tuyệt vời</option>
             <option value="4">4 ⭐ Hài lòng</option>
             <option value="3">3 ⭐ Bình thường</option>
@@ -238,9 +248,12 @@
         </select>
 
         <label style="display: block; font-weight: bold; margin-bottom: 5px;">Nhận xét</label>
-        <textarea name="message" rows="4" style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ddd; margin-bottom: 15px;" placeholder="Mời bạn chia sẻ thêm cảm nhận về sản phẩm..."></textarea>
+        <textarea name="message" rows="4"
+                  style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ddd; margin-bottom: 15px;"
+                  placeholder="Mời bạn chia sẻ thêm cảm nhận về sản phẩm..."></textarea>
 
-        <button type="submit" style="background: #ff4b2b; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
+        <button type="submit"
+                style="background: #ff4b2b; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
             Gửi đánh giá
         </button>
 
@@ -265,7 +278,8 @@
         <p class="review-date"
            th:text="${#temporals.format(r.createdAt,'dd/MM/yyyy')}"></p>
 
-        <div th:each="rep : ${r.replies}" style="background: #eef2f5; padding: 10px; border-radius: 6px; margin-top: 10px; border-left: 4px solid #3498db;">
+        <div th:each="rep : ${r.replies}"
+             style="background: #eef2f5; padding: 10px; border-radius: 6px; margin-top: 10px; border-left: 4px solid #3498db;">
             <b style="color: #2c3e50;"><i class="fas fa-headset"></i> Quản trị viên:</b>
             <p style="margin: 5px 0 0 0; color: #555;" th:text="${rep.message}"></p>
         </div>
