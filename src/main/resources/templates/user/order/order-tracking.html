@@ -32,7 +32,7 @@
     <!-- Nút hủy đơn hàng -->
     <div th:if="${order.status != null and (order.status.name() == 'PENDING' or order.status.name() == 'PROCESSING')}"
          class="cancel-order">
-        <form th:action="@{'/user/orders/cancel/' + ${order.id}}" method="post">
+        <form id="cancelForm" th:action="@{'/user/orders/cancel/' + ${order.id}}" method="post">
             <label for="reason">Lý do hủy đơn:</label>
             <select id="reason" name="reason" required>
                 <option value="">-- Chọn lý do --</option>
@@ -42,7 +42,7 @@
                 <option value="Khác">Khác (vui lòng nhập)</option>
             </select>
 
-            <input type="text" id="otherReason" name="otherReason" placeholder="Nhập lý do khác"
+            <input type="text" id="otherReason" placeholder="Nhập lý do khác"
                    style="display:none; margin-top:5px;">
 
             <button type="submit">Hủy đơn</button>
@@ -130,6 +130,7 @@
 <script>
     const select = document.getElementById('reason');
     const otherInput = document.getElementById('otherReason');
+    const form = document.getElementById('cancelForm');
 
     select.addEventListener('change', function() {
         if (this.value === 'Khác') {
@@ -138,6 +139,20 @@
         } else {
             otherInput.style.display = 'none';
             otherInput.required = false;
+        }
+    });
+
+    form.addEventListener('submit', function() {
+        if (select.value === 'Khác') {
+            // Thay giá trị select = input khác
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'reason';
+            hiddenInput.value = otherInput.value;
+            form.appendChild(hiddenInput);
+
+            // Xoá select để tránh gửi khác lun dào đê bê
+            select.disabled = true;
         }
     });
 </script>

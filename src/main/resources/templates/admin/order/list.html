@@ -113,7 +113,6 @@
                     <div th:if="${o.status.name() == 'COMPLETED'}">
                         <span style="color:green;font-weight:600;">COMPLETED</span>
                     </div>
-
                     <form th:if="${o.status.name() != 'CANCELLED' && o.status.name() != 'COMPLETED'}"
                           th:action="@{/admin/orders/edit/{id}(id=${o.id})}"
                           method="post">
@@ -129,12 +128,18 @@
                             <option th:if="${o.status.name() == 'CONFIRMED'}" value="PACKED">PACKED</option>
                             <option th:if="${o.status.name() == 'PACKED'}" value="SHIPPING">SHIPPING</option>
                             <option th:if="${o.status.name() == 'SHIPPING'}" value="COMPLETED">COMPLETED</option>
+                            <option th:if="${o.status.name() == 'PROCESSING'}" value="CANCELLED">
+                                CANCELLED
+                            </option>
                         </select>
                     </form>
                     <!-- FORM HỦY -->
-                    <form th:if="${o.status.name() != 'CANCELLED' && o.status.name() != 'COMPLETED'}"
+                    <form th:if="${o.status.name() != 'CANCELLED'
+                          && o.status.name() != 'COMPLETED'
+                            && o.status.name() != 'PROCESSING'}"
                           th:action="@{/admin/orders/edit/{id}(id=${o.id})}"
                           method="post">
+
                         <input type="hidden" name="status" value="CANCELLED">
                         <input type="hidden" name="page" th:value="${currentPage}">
                         <input type="hidden" name="size" th:value="${size}">

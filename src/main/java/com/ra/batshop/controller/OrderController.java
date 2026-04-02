@@ -375,16 +375,13 @@ public class OrderController {
         }
         // if chuyển sang can hoàn stock
         if (status == OrderStatus.CANCELLED) {
-            if (cancelReason == null || cancelReason.trim().isEmpty()) {
-                redirectAttributes.addFlashAttribute("errorMessage",
-                        "Bạn phải nhập lý do hủy đơn hàng!");
-                return "redirect:/admin/orders?page=" + page +
-                        "&size=" + size +
-                        (paymentMethod != null ? "&paymentMethod=" + paymentMethod : "") +
-                        (paymentStatus != null ? "&paymentStatus=" + paymentStatus : "");
-            }
             restoreStock(order);
-            order.setCancelReason(cancelReason);
+
+            if (cancelReason != null && !cancelReason.trim().isEmpty()) {
+                order.setCancelReason(cancelReason);
+            } else if (order.getCancelReason() == null) {
+                order.setCancelReason("Admin hủy đơn");
+            }
         }
         // Nếu complete thì  paid
         if (status == OrderStatus.COMPLETED) {
