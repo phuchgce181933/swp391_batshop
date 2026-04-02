@@ -55,8 +55,10 @@
                 <th>Payment Method</th>
                 <th>Payment Status</th>
                 <th>Created At</th>
-                <th>Status</th>
                 <th>Order Item</th>
+                <th>Status</th>
+                <th>Cancel Reason</th>
+
             </tr>
             </thead>
 
@@ -66,7 +68,7 @@
 
                 <td th:text="${o.user != null ? o.user.fullName : 'Guest'}"></td>
 
-                <!-- ✅ ADDRESS -->
+                <!--  ADDRESS -->
                 <td>
                     <div class="address-box" th:if="${o.receiverName != null}">
                         <div class="name" th:text="${o.receiverName}"></div>
@@ -114,33 +116,37 @@
 
                     <form th:if="${o.status.name() != 'CANCELLED' && o.status.name() != 'COMPLETED'}"
                           th:action="@{/admin/orders/edit/{id}(id=${o.id})}"
-                          method="post"
-                          onsubmit="return confirmStatusChange(this)">
+                          method="post">
+
                         <input type="hidden" name="page" th:value="${currentPage}">
                         <input type="hidden" name="size" th:value="${size}">
                         <input type="hidden" name="paymentMethod" th:value="${selectedMethod}">
                         <input type="hidden" name="paymentStatus" th:value="${selectedPaymentStatus}">
-                        <select name="status" onchange="return confirmAndSubmit(this)">
+
+                        <select name="status" onchange="this.form.submit()">
                             <option th:value="${o.status}" th:text="${o.status}" selected></option>
-
-                            <!-- PENDING -->
                             <option th:if="${o.status.name() == 'PENDING'}" value="CONFIRMED">CONFIRMED</option>
-                            <option th:if="${o.status.name() == 'PENDING'}" value="CANCELLED">CANCELLED</option>
-
-                            <!-- PROCESSING -->
-                            <option th:if="${o.status.name() == 'PROCESSING'}" value="CANCELLED">CANCELLED</option>
-
-                            <!-- CONFIRMED → PACKED → SHIPPING → COMPLETED -->
                             <option th:if="${o.status.name() == 'CONFIRMED'}" value="PACKED">PACKED</option>
-                            <option th:if="${o.status.name() == 'CONFIRMED'}" value="CANCELLED">CANCELLED</option> <!-- admin có thể hủy nếu cần -->
                             <option th:if="${o.status.name() == 'PACKED'}" value="SHIPPING">SHIPPING</option>
                             <option th:if="${o.status.name() == 'SHIPPING'}" value="COMPLETED">COMPLETED</option>
-
-                            <!-- SHIPPED → CANCELLED (trường hợp bơm hàng) -->
-                            <option th:if="${o.status.name() == 'SHIPPING'}" value="CANCELLED">CANCELLED</option>
                         </select>
                     </form>
+                    <!-- FORM HỦY -->
+                    <form th:if="${o.status.name() != 'CANCELLED' && o.status.name() != 'COMPLETED'}"
+                          th:action="@{/admin/orders/edit/{id}(id=${o.id})}"
+                          method="post">
+                        <input type="hidden" name="status" value="CANCELLED">
+                        <input type="hidden" name="page" th:value="${currentPage}">
+                        <input type="hidden" name="size" th:value="${size}">
+                        <input type="hidden" name="paymentMethod" th:value="${selectedMethod}">
+                        <input type="hidden" name="paymentStatus" th:value="${selectedPaymentStatus}">
 
+                        <label>Lý do hủy:</label>
+                        <input type="text" name="cancelReason" placeholder="Nhập lý do hủy" required>
+
+                        <button type="submit" style="color:red;">HỦY ĐƠN</button>
+                    </form>
+                <td th:text="${o.cancelReason != null ? o.cancelReason : '-'}"></td>
                 </td>
             </tr>
             </tbody>

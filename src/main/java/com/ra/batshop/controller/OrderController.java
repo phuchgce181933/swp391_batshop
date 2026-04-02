@@ -360,6 +360,7 @@ public class OrderController {
     @PostMapping("/edit/{id}")
     public String editOrder(@PathVariable Integer id,
                             @RequestParam OrderStatus status,
+                            @RequestParam(required = false) String cancelReason,
                             @RequestParam(defaultValue = "0") int page,
                             @RequestParam(defaultValue = "5") int size,
                             @RequestParam(required = false) String paymentMethod,
@@ -374,11 +375,16 @@ public class OrderController {
         }
         // if chuyển sang can hoàn stock
         if (status == OrderStatus.CANCELLED) {
-
-            // chỉ cho nếu chưa can
-            if (order.getStatus() != OrderStatus.CANCELLED) {
-                restoreStock(order);
+            if (cancelReason == null || cancelReason.trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("errorMessage",
+                        "Bạn phải nhập lý do hủy đơn hàng!");
+                return "redirect:/admin/orders?page=" + page +
+                        "&size=" + size +
+                        (paymentMethod != null ? "&paymentMethod=" + paymentMethod : "") +
+                        (paymentStatus != null ? "&paymentStatus=" + paymentStatus : "");
             }
+            restoreStock(order);
+            order.setCancelReason(cancelReason);
         }
         // Nếu complete thì  paid
         if (status == OrderStatus.COMPLETED) {
