@@ -25,6 +25,10 @@
     <p><strong>Status:</strong>
         <span th:text="${order.status}"></span>
     </p>
+    <p th:if="${order.status.name() == 'CANCELLED'}">
+        <strong>Lý do hủy:</strong>
+        <span th:text="${order.cancelReason != null ? order.cancelReason : 'Không có'}"></span>
+    </p>
     <!-- Nút hủy đơn hàng -->
     <div th:if="${order.status != null and (order.status.name() == 'PENDING' or order.status.name() == 'PROCESSING')}"
          class="cancel-order">
