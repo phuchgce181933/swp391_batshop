@@ -51,34 +51,46 @@
 
     <div class="timeline">
 
-        <div class="step"
-             th:classappend="${order.status.ordinal() >= 0} ? 'active'">
+        <!-- PENDING -->
+        <div class="step" th:classappend="${order.status.name() == 'PENDING'} ? 'active'">
             <div class="circle">1</div>
             <p>PENDING</p>
         </div>
 
-        <div class="step"
-             th:classappend="${order.status.ordinal() >= 1} ? 'active'">
+        <!-- CONFIRMED -->
+        <div class="step" th:classappend="${order.status.name() == 'CONFIRMED'} ? 'active'">
             <div class="circle">2</div>
             <p>CONFIRMED</p>
         </div>
 
-        <div class="step"
-             th:classappend="${order.status.ordinal() >= 2} ? 'active'">
+        <!-- PACKED -->
+        <div class="step" th:classappend="${order.status.name() == 'PACKED'} ? 'active'">
             <div class="circle">3</div>
             <p>PACKED</p>
         </div>
 
-        <div class="step"
-             th:classappend="${order.status.ordinal() >= 3} ? 'active'">
+        <!-- SHIPPING -->
+        <div class="step" th:classappend="${order.status.name() == 'SHIPPING'} ? 'active'">
             <div class="circle">4</div>
             <p>SHIPPING</p>
         </div>
 
-        <div class="step"
-             th:classappend="${order.status.ordinal() >= 4} ? 'active'">
+        <!-- COMPLETED -->
+        <div class="step" th:classappend="${order.status.name() == 'COMPLETED'} ? 'active'">
             <div class="circle">5</div>
             <p>COMPLETED</p>
+        </div>
+
+        <!-- PROCESSING (riêng) -->
+        <div class="step" th:if="${order.status.name() == 'PROCESSING'}" th:classappend="'active processing'">
+            <div class="circle">P</div>
+            <p>PROCESSING</p>
+        </div>
+
+        <!-- CANCELLED -->
+        <div class="step" th:if="${order.status.name() == 'CANCELLED'}" th:classappend="'active cancelled'">
+            <div class="circle">X</div>
+            <p>CANCELLED</p>
         </div>
 
     </div>

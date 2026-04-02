@@ -93,3 +93,28 @@ th {
 .cancel-order button:hover {
     background-color: #c0392b;
 }
+.timeline .step {
+    display: inline-block;
+    text-align: center;
+    width: 100px;
+    position: relative;
+}
+
+.timeline .step .circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #ccc;
+    line-height: 30px;
+    margin: 0 auto 5px;
+}
+
+.timeline .step.active .circle {
+    background-color: green;
+    color: white;
+}
+
+.timeline .step.cancelled .circle {
+    background-color: red;
+    color: white;
+}
