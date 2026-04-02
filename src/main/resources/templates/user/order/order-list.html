@@ -13,18 +13,24 @@
 <table border="1">
     <tr>
         <th>ID</th>
-        <th>Total</th>
-        <th>Status</th>
-        <th>Action</th>
+        <th>Tên Sản Phầm</th>
+        <th>Tổng Giá Trị</th>
+        <th>Trạng Thái</th>
+        <th>Hành Động</th>
     </tr>
 
     <tr th:each="order : ${orders}">
         <td th:text="${order.id}"></td>
-        <td th:text="${order.totalPrice}"></td>
+        <td>
+            <div th:each="item : ${order.orderItems}">
+                <span th:text="${item.productVariant.product.name} + ' x' + ${item.quantity}"></span>
+            </div>
+        </td>
+        <td th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')} + '₫'"></td>
         <td th:text="${order.status}"></td>
         <td>
             <a th:href="@{/user/orders/{id}(id=${order.id})}">
-                Track
+                Xem
             </a>
         </td>
     </tr>
