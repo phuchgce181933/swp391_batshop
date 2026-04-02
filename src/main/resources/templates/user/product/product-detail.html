@@ -69,16 +69,22 @@
                                    name="productVariantId"
                                    th:value="${v.id}"
                                    th:checked="${stat.index == 0}"
-                                   th:data-images="${#strings.arrayJoin(v.images.![image], ',')}">
+                                   th:data-images="${#strings.arrayJoin(v.images.![image], ',')}"
+                                   th:data-category-id="${product.category != null ? product.category.id : 0}"
 
+                            />
                             <span class="variant-label-content">
 
                                 <span th:text="${v.brand != null ? v.brand.name : ''}"></span>
 
-                                <span th:if="${v.size != null}" th:text="' - Size: ' + ${v.size.name}"></span>
+                                <span th:text="${product.category != null and product.category.id == 3
+                                    ? ' - Size: ' + (v.racketDetail != null and v.racketDetail.weight != null ? v.racketDetail.weight.name() : '-')
+                                    : (v.size != null ? ' - Size: ' + v.size.name : '')}">
+                                </span>
 
-                                <span th:if="${v.color != null}" th:text="' - ' + ${v.color.name}"></span>
-
+                                <span th:if="${(product.category == null or product.category.id != 3) and v.color != null}"
+                                      th:text="' - ' + ${v.color.name}">
+                                </span>
                                 -
 
                                 <del th:if="${fsp != null}" class="original-price"
@@ -92,45 +98,13 @@
                                 <b th:if="${fsp == null}" class="sale-price-normal"
                                    th:text="${#numbers.formatDecimal((v.additionalPrice != null ? v.additionalPrice : product.price), 0, 'COMMA', 0, 'POINT')} + ' ₫'">
                                 </b>
-                                <!-- Thông số vợt -->
-                            <div th:if="${racketDetails[v.id] != null}" class="racket-info" style="margin-top:5px;">
-                                <p>Level: <span th:text="${racketDetails[v.id].level}"></span></p>
-                                <p>Weight: <span th:text="${racketDetails[v.id].weight}"></span></p>
-                                <p>Style: <span th:text="${racketDetails[v.id].style}"></span></p>
-                            </div>
+
                             </span>
+
                         </label>
 
                     </div>
 
-                    <div class="promo-box">
-
-                        <div class="promo-title">
-                            🎁 ƯU ĐÃI
-                        </div>
-
-                        <ul class="promo-list">
-                            <li>✔ Tặng 1 đôi vớ cầu lông VNB (vớ <span class="highlight">VNB dài nhiều màu</span> hoặc
-                                <span class="highlight">vớ VNB ngắn</span>)
-                            </li>
-                            <li>✔ Sản phẩm cam kết chính hãng</li>
-                            <li>✔ Thanh toán sau khi kiểm tra và nhận hàng</li>
-                            <li>✔ Bảo hành chính hãng theo nhà sản xuất</li>
-                        </ul>
-
-                        <div class="promo-extra">
-                            🎁 <b>Ưu đãi thêm khi mua sản phẩm tại <span class="highlight">VNB Premium</span></b>
-                        </div>
-
-                        <ul class="promo-list green">
-                            <li>✅ Sơn logo mặt vợt miễn phí</li>
-                            <li>✅ Bảo hành lưới đan trong 72 giờ</li>
-                            <li>✅ Thay gen vợt miễn phí trọn đời</li>
-                            <li>✅ Tích lũy điểm thành viên Premium</li>
-                            <li>✅ Voucher giảm giá cho lần mua hàng tiếp theo</li>
-                        </ul>
-
-                    </div>
                     <div class="qty-box">
                         <button type="button" onclick="minusQty()">-</button>
 
@@ -166,6 +140,7 @@
                 </form>
 
             </div>
+
         </th:block>
     </div>
 
@@ -312,46 +287,60 @@
         const mainImage = document.getElementById("mainImage");
         const thumbList = document.getElementById("thumbList");
 
+        function updateImages(radio) {
+            const images = radio.getAttribute("data-images");
+            if (!images) return;
+
+            const imgArray = images.split(",");
+
+            mainImage.src = "/uploads/product/" + imgArray[0];
+
+            thumbList.innerHTML = "";
+
+            imgArray.forEach(img => {
+                const thumb = document.createElement("img");
+                thumb.src = "/uploads/product/" + img;
+
+                thumb.onclick = function () {
+                    mainImage.src = this.src;
+                };
+
+                thumbList.appendChild(thumb);
+            });
+        }
+
         radios.forEach(radio => {
             radio.addEventListener("change", function () {
-                const images = this.getAttribute("data-images");
-                if (!images) return;
-
-                const imgArray = images.split(",");
-
-                // đổi main image
-                mainImage.src = "/uploads/product/" + imgArray[0];
-
-                // clear thumb
-                thumbList.innerHTML = "";
-
-                imgArray.forEach(img => {
-                    const thumb = document.createElement("img");
-                    thumb.src = "/uploads/product/" + img;
-
-                    thumb.onclick = function () {
-                        mainImage.src = this.src;
-                    };
-                    thumbList.appendChild(thumb);
-                });
+                updateImages(this);
+                updateVariantUI(this);
             });
         });
-    });
-    // JS để update thông số vợt theo variant chọn
-    const racketDetails = /*[[${racketDetails}]]*/ {};
 
-    radios.forEach(radio => {
-        radio.addEventListener("change", function () {
-            const variantId = this.value;
-            const infoBox = this.closest(".variant-item").querySelector(".racket-info");
-
-            if (racketDetails[variantId] && infoBox) {
-                infoBox.querySelector("p:nth-child(1) span").textContent = racketDetails[variantId].level;
-                infoBox.querySelector("p:nth-child(2) span").textContent = racketDetails[variantId].weight;
-                infoBox.querySelector("p:nth-child(3) span").textContent = racketDetails[variantId].style;
-            }
-        });
+        const checkedRadio = document.querySelector(".variant-radio:checked");
+        if (checkedRadio) {
+            updateImages(checkedRadio);
+            updateVariantUI(checkedRadio);
+        }
     });
+
+    function updateVariantUI(radio) {
+        const categoryId = parseInt(radio.getAttribute("data-category-id"));
+        const racketBox = document.getElementById("racketDetailBox");
+
+        if (categoryId === 3) {
+            racketBox.style.display = "block";
+
+            document.getElementById("rHandle").innerText = radio.dataset.handle || "-";
+            document.getElementById("rLength").innerText = radio.dataset.length || "-";
+            document.getElementById("rWeight").innerText = radio.dataset.weight || "-";
+            document.getElementById("rLevel").innerText = radio.dataset.level || "-";
+            document.getElementById("rStyle").innerText = radio.dataset.style || "-";
+
+        } else {
+            racketBox.style.display = "none";
+        }
+    }
+
 </script>
 
 </body>

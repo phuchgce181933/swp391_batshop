@@ -13,6 +13,22 @@
 
     <h2>Quản lý Review</h2>
 
+    <!-- FILTER -->
+    <form class="filter-bar" method="get" th:action="@{/admin/reviews}">
+
+        <select name="rating">
+            <option value="">Tất cả sao</option>
+            <option value="5" th:selected="${selectedRating == 5}">5 ⭐</option>
+            <option value="4" th:selected="${selectedRating == 4}">4 ⭐</option>
+            <option value="3" th:selected="${selectedRating == 3}">3 ⭐</option>
+            <option value="2" th:selected="${selectedRating == 2}">2 ⭐</option>
+            <option value="1" th:selected="${selectedRating == 1}">1 ⭐</option>
+        </select>
+
+        <button type="submit">Lọc</button>
+
+    </form>
+
     <!-- REVIEW LIST -->
     <div class="review-list">
 
@@ -75,31 +91,47 @@
             </div>
 
             <!-- REPLY FORM -->
-            <form class="reply-form"
-                  th:action="@{/admin/reviews/reply}"
-                  method="post">
+            <div class="action-group">
 
-                <input type="hidden"
-                       name="reviewId"
-                       th:value="${r.id}">
+                <!-- REPLY FORM -->
+                <form class="reply-form"
+                      th:action="@{/admin/reviews/reply}"
+                      method="post">
 
-                <textarea name="message"
-                          class="reply-input"
-                          placeholder="Trả lời review..."
-                          required></textarea>
+                    <input type="hidden"
+                           name="reviewId"
+                           th:value="${r.id}">
 
-                <div class="suggestions">
-                    <span onclick="setReply(this)">Cảm ơn bạn đã đánh giá sản phẩm ❤️</span>
-                    <span onclick="setReply(this)">Shop xin lỗi vì trải nghiệm chưa tốt 😢</span>
-                    <span onclick="setReply(this)">Shop sẽ cải thiện chất lượng dịch vụ 💪</span>
-                    <span onclick="setReply(this)">Nếu cần hỗ trợ thêm hãy liên hệ shop nhé 📞</span>
-                </div>
+                    <textarea name="message"
+                              class="reply-input"
+                              placeholder="Trả lời review..."
+                              required></textarea>
 
-                <button type="submit">
-                    Trả lời
-                </button>
+                    <div class="suggestions">
+                        <span onclick="setReply(this)">Cảm ơn bạn đã đánh giá sản phẩm ❤️</span>
+                        <span onclick="setReply(this)">Shop xin lỗi vì trải nghiệm chưa tốt 😢</span>
+                        <span onclick="setReply(this)">Shop sẽ cải thiện chất lượng dịch vụ 💪</span>
+                        <span onclick="setReply(this)">Nếu cần hỗ trợ thêm hãy liên hệ shop nhé 📞</span>
+                    </div>
 
-            </form>
+                    <button type="submit">
+                        Trả lời
+                    </button>
+                </form>
+
+                <!-- DELETE -->
+                <form th:action="@{/admin/reviews/delete}" method="post"
+                      onsubmit="return confirm('Bạn có chắc muốn xóa review này?');">
+
+                    <input type="hidden" name="reviewId" th:value="${r.id}">
+
+                    <button type="submit" class="delete-btn">
+                        Xóa
+                    </button>
+
+                </form>
+
+            </div>
 
     </div>
     <div class="pagination">
@@ -108,7 +140,8 @@
 
         <a th:if="${currentPage > 0}"
            th:href="@{/admin/reviews(
-        page=${currentPage - 1}
+        page=${currentPage - 1},
+        rating=${selectedRating}
    )}">
             Previous
         </a>
@@ -116,8 +149,9 @@
         <!-- PAGE NUMBER -->
         <span th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
         <a th:href="@{/admin/reviews(
-                page=${i}
-        )}"
+        page=${i},
+        rating=${selectedRating}
+            )}"
            th:text="${i + 1}"
            th:classappend="${i == currentPage} ? 'active' : ''">
         </a>
@@ -126,7 +160,8 @@
         <!-- NEXT -->
         <a th:if="${currentPage < totalPages - 1}"
            th:href="@{/admin/reviews(
-            page=${currentPage + 1}
+            page=${currentPage + 1},
+            rating=${selectedRating}
        )}">
             Next
         </a>
@@ -147,5 +182,7 @@
             textarea.focus();
         }
     </script>
+
+</div>
 </body>
 </html>

@@ -195,3 +195,68 @@
     color: white;
     border-color: #2563eb;
 }
+
+/* FILTER BAR */
+.filter-bar {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.filter-bar select {
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+}
+
+.filter-bar button {
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: none;
+    background: #10b981;
+    color: white;
+    cursor: pointer;
+}
+
+.delete-btn {
+    margin-top: 8px;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 8px;
+    background: #ef4444;
+    color: white;
+    font-size: 13px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.delete-btn:hover {
+    background: #dc2626;
+}
+
+/* ACTION GROUP */
+.action-group {
+    display: flex;
+    gap: 12px;
+    align-items: flex-end;
+}
+
+/* REPLY FORM chiếm phần lớn */
+.reply-form {
+    flex: 1;
+}
+
+/* DELETE button */
+.delete-btn {
+    margin-bottom: 2px;
+}
+
+.action-group {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.action-group form:last-child {
+    align-self: flex-end;
+}

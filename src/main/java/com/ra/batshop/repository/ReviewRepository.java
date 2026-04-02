@@ -20,6 +20,11 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
 
     List<Review> findByParentIsNull();
 
+    Page<Review> findByParentIsNullAndRating(
+            Integer rating,
+            Pageable pageable
+    );
+
     @Query("""
            SELECT AVG(r.rating)
            FROM Review r
