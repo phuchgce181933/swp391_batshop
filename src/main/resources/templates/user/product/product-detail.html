@@ -69,22 +69,20 @@
                                    name="productVariantId"
                                    th:value="${v.id}"
                                    th:checked="${stat.index == 0}"
-                                   th:data-images="${#strings.arrayJoin(v.images.![image], ',')}"
-                                   th:data-category-id="${product.category != null ? product.category.id : 0}"
+                                   th:data-images="${#strings.arrayJoin(v.images.![image], ',')}">
 
-                            />
                             <span class="variant-label-content">
 
                                 <span th:text="${v.brand != null ? v.brand.name : ''}"></span>
 
-                                <span th:text="${product.category != null and product.category.id == 3
-                                    ? ' - Size: ' + (v.racketDetail != null and v.racketDetail.weight != null ? v.racketDetail.weight.name() : '-')
-                                    : (v.size != null ? ' - Size: ' + v.size.name : '')}">
+                                <span th:if="${product.category == null or product.category.id != 3 and v.size != null}"
+                                      th:text="' - Size: ' + ${v.size.name}">
                                 </span>
 
-                                <span th:if="${(product.category == null or product.category.id != 3) and v.color != null}"
+                                <span th:if="${product.category == null or product.category.id != 3 and v.color != null}"
                                       th:text="' - ' + ${v.color.name}">
                                 </span>
+
                                 -
 
                                 <del th:if="${fsp != null}" class="original-price"
@@ -98,9 +96,13 @@
                                 <b th:if="${fsp == null}" class="sale-price-normal"
                                    th:text="${#numbers.formatDecimal((v.additionalPrice != null ? v.additionalPrice : product.price), 0, 'COMMA', 0, 'POINT')} + ' ₫'">
                                 </b>
-
+                                <!-- Thông số vợt -->
+                            <div th:if="${racketDetails[v.id] != null}" class="racket-info" style="margin-top:5px;">
+                                <p>Level: <span th:text="${racketDetails[v.id].level}"></span></p>
+                                <p>Weight: <span th:text="${racketDetails[v.id].weight}"></span></p>
+                                <p>Style: <span th:text="${racketDetails[v.id].style}"></span></p>
+                            </div>
                             </span>
-
                         </label>
 
                     </div>
@@ -283,44 +285,65 @@
     }
 
     document.addEventListener("DOMContentLoaded", function () {
+
         const radios = document.querySelectorAll(".variant-radio");
         const mainImage = document.getElementById("mainImage");
         const thumbList = document.getElementById("thumbList");
 
+        const racketDetails = /*[[${racketDetails}]]*/ {};
+
         function updateImages(radio) {
-            const images = radio.getAttribute("data-images");
-            if (!images) return;
+            const images = radio.dataset.images;
+            if (!images || !mainImage || !thumbList) return;
 
             const imgArray = images.split(",");
 
-            mainImage.src = "/uploads/product/" + imgArray[0];
+            mainImage.src = `/uploads/product/${imgArray[0]}`;
 
             thumbList.innerHTML = "";
 
             imgArray.forEach(img => {
                 const thumb = document.createElement("img");
-                thumb.src = "/uploads/product/" + img;
+                thumb.src = `/uploads/product/${img}`;
 
-                thumb.onclick = function () {
-                    mainImage.src = this.src;
-                };
+                thumb.addEventListener("click", () => {
+                    mainImage.src = thumb.src;
+                });
 
                 thumbList.appendChild(thumb);
             });
         }
 
+        function updateRacketInfo(radio) {
+            const variantId = radio.value;
+
+            const container = radio.closest(".variant-item");
+            if (!container) return;
+
+            const infoBox = container.querySelector(".racket-info");
+            if (!infoBox) return;
+
+            const data = racketDetails[variantId];
+            if (!data) return;
+
+            infoBox.querySelector("p:nth-child(1) span").textContent = data.level || "-";
+            infoBox.querySelector("p:nth-child(2) span").textContent = data.weight || "-";
+            infoBox.querySelector("p:nth-child(3) span").textContent = data.style || "-";
+        }
+
         radios.forEach(radio => {
             radio.addEventListener("change", function () {
                 updateImages(this);
-                updateVariantUI(this);
+                updateRacketInfo(this);
             });
         });
 
         const checkedRadio = document.querySelector(".variant-radio:checked");
         if (checkedRadio) {
             updateImages(checkedRadio);
-            updateVariantUI(checkedRadio);
+            updateRacketInfo(checkedRadio);
         }
+
     });
 
     function updateVariantUI(radio) {
