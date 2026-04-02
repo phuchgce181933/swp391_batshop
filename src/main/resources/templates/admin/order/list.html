@@ -123,21 +123,21 @@
                         <select name="status" onchange="return confirmAndSubmit(this)">
                             <option th:value="${o.status}" th:text="${o.status}" selected></option>
 
-                            <!-- PENDING có thể chuyển bình thường sang CONFIRMED -->
+                            <!-- PENDING -->
                             <option th:if="${o.status.name() == 'PENDING'}" value="CONFIRMED">CONFIRMED</option>
-                            <!-- PENDING cũng có thể hủy → đưa vào PROCESSING -->
-                            <option th:if="${o.status.name() == 'PENDING'}" value="PROCESSING">PROCESSING</option>
+                            <option th:if="${o.status.name() == 'PENDING'}" value="CANCELLED">CANCELLED</option>
 
-                            <!-- PROCESSING chỉ được hủy sang CANCELLED -->
+                            <!-- PROCESSING -->
                             <option th:if="${o.status.name() == 'PROCESSING'}" value="CANCELLED">CANCELLED</option>
 
-                            <!-- Các trạng thái tiếp theo bình thường -->
+                            <!-- CONFIRMED → PACKED → SHIPPING → COMPLETED -->
                             <option th:if="${o.status.name() == 'CONFIRMED'}" value="PACKED">PACKED</option>
+                            <option th:if="${o.status.name() == 'CONFIRMED'}" value="CANCELLED">CANCELLED</option> <!-- admin có thể hủy nếu cần -->
                             <option th:if="${o.status.name() == 'PACKED'}" value="SHIPPING">SHIPPING</option>
                             <option th:if="${o.status.name() == 'SHIPPING'}" value="COMPLETED">COMPLETED</option>
 
-                            <!-- Hủy các trạng thái PENDING, CONFIRMED -->
-                            <option th:if="${o.status.name() == 'PENDING' or o.status.name() == 'CONFIRMED'}" value="CANCELLED">CANCELLED</option>
+                            <!-- SHIPPED → CANCELLED (trường hợp bơm hàng) -->
+                            <option th:if="${o.status.name() == 'SHIPPING'}" value="CANCELLED">CANCELLED</option>
                         </select>
                     </form>
 
