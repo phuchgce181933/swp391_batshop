@@ -92,9 +92,13 @@
                                 <b th:if="${fsp == null}" class="sale-price-normal"
                                    th:text="${#numbers.formatDecimal((v.additionalPrice != null ? v.additionalPrice : product.price), 0, 'COMMA', 0, 'POINT')} + ' ₫'">
                                 </b>
-
+                                <!-- Thông số vợt -->
+                            <div th:if="${racketDetails[v.id] != null}" class="racket-info" style="margin-top:5px;">
+                                <p>Level: <span th:text="${racketDetails[v.id].level}"></span></p>
+                                <p>Weight: <span th:text="${racketDetails[v.id].weight}"></span></p>
+                                <p>Style: <span th:text="${racketDetails[v.id].style}"></span></p>
+                            </div>
                             </span>
-
                         </label>
 
                     </div>
@@ -331,6 +335,21 @@
                     thumbList.appendChild(thumb);
                 });
             });
+        });
+    });
+    // JS để update thông số vợt theo variant chọn
+    const racketDetails = /*[[${racketDetails}]]*/ {};
+
+    radios.forEach(radio => {
+        radio.addEventListener("change", function () {
+            const variantId = this.value;
+            const infoBox = this.closest(".variant-item").querySelector(".racket-info");
+
+            if (racketDetails[variantId] && infoBox) {
+                infoBox.querySelector("p:nth-child(1) span").textContent = racketDetails[variantId].level;
+                infoBox.querySelector("p:nth-child(2) span").textContent = racketDetails[variantId].weight;
+                infoBox.querySelector("p:nth-child(3) span").textContent = racketDetails[variantId].style;
+            }
         });
     });
 </script>

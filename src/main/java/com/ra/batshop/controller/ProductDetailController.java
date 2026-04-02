@@ -24,7 +24,9 @@ import com.ra.batshop.repository.OrderItemRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/product")
@@ -70,6 +72,12 @@ public class ProductDetailController {
 
         List<ProductVariant> variants =
                 variantRepository.findByProduct_Id(id);
+        // Tạo một map variantId -> racketDetail để dễ hiển thị
+        Map<Integer, RacketDetail> racketDetails = variants.stream()
+                .filter(v -> v.getRacketDetail() != null)
+                .collect(Collectors.toMap(ProductVariant::getId, ProductVariant::getRacketDetail));
+
+        model.addAttribute("racketDetails", racketDetails);
         List<Comment> comments =
                 commentRepository
                         .findByProduct_IdAndParentIsNullOrderByCreatedAtDesc(id);
@@ -98,7 +106,7 @@ public class ProductDetailController {
         model.addAttribute("totalPages", reviewPage.getTotalPages());
         model.addAttribute("avgRating", avgRating);
         model.addAttribute("reviewCount", reviewCount);
-
+        model.addAttribute("racketDetails", racketDetails);
         Optional<FlashSale> activeSale = flashSaleRepository.findActiveFlashSales(LocalDateTime.now()).stream().findFirst();
 
         if (activeSale.isPresent()) {

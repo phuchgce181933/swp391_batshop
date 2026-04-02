@@ -85,15 +85,17 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
             Pageable pageable);
 
     @Query("""
-            SELECT p FROM Product p
-            LEFT JOIN p.racketDetail rd
-            WHERE p.status = true
-            AND (:categoryId IS NULL OR p.category.id = :categoryId)
-            AND (:brandId IS NULL OR p.brand.id = :brandId)
-            AND (:level IS NULL OR rd.level = :level)
-            AND (:weight IS NULL OR rd.weight = :weight)
-            AND (:style IS NULL OR rd.style = :style)
-            AND (:keyword IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%')))""")
+    SELECT DISTINCT p FROM Product p
+    LEFT JOIN p.variants v
+    LEFT JOIN v.racketDetail rd
+    WHERE p.status = true
+    AND (:categoryId IS NULL OR p.category.id = :categoryId)
+    AND (:brandId IS NULL OR p.brand.id = :brandId)
+    AND (:level IS NULL OR rd.level = :level)
+    AND (:weight IS NULL OR rd.weight = :weight)
+    AND (:style IS NULL OR rd.style = :style)
+    AND (:keyword IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%')))
+""")
     Page<Product> filterAllProducts(
             @Param("categoryId") Integer categoryId,
             @Param("brandId") Integer brandId,

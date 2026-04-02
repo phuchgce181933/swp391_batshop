@@ -23,13 +23,23 @@
         </div>
 
         <div class="item-info">
+
+            <!-- TÊN SẢN PHẨM-->
+            <p style="font-weight:600; font-size:15px;"
+               th:text="${item.productVariant.product.name}">
+            </p>
+
+            <!-- Brand -->
             <p th:if="${item.productVariant.brand != null}"
                th:text="${item.productVariant.brand.name}">
             </p>
+
+            <!-- Size -->
             <p th:if="${item.productVariant.size != null}">
                 Size:
                 <span th:text="${item.productVariant.size.name}"></span>
             </p>
+
         </div>
 
         <div class="item-price"
@@ -67,21 +77,32 @@
 <!--        Voucher:-->
 <!--        <b th:text="${session.voucher.code}"></b>-->
 <!--    </p>-->
-    <div class="total">
-        <span>Tổng cộng</span>
-        <strong th:text="${#numbers.formatDecimal(totalCart,0,'POINT',0,'COMMA')} + ' đ'"></strong>
+    <!-- Tạm tính -->
+    <div class="price-box">
+
+        <div class="price-row">
+            <span>Tạm tính</span>
+            <span th:text="${#numbers.formatDecimal(subtotal,0,'POINT',0,'COMMA')} + ' đ'"></span>
+        </div>
+
+        <div class="price-row">
+            <span>Phí vận chuyển</span>
+            <span>+ <span th:text="${#numbers.formatDecimal(shippingFee,0,'POINT',0,'COMMA')}"></span> đ</span>
+        </div>
+
+        <div class="price-row discount" th:if="${discount > 0}">
+            <span>Giảm giá</span>
+            <span>- <span th:text="${#numbers.formatDecimal(discount,0,'POINT',0,'COMMA')}"></span> đ</span>
+        </div>
+
+        <div class="price-total">
+            <span>Tổng thanh toán</span>
+            <span th:text="${#numbers.formatDecimal(totalCart,0,'POINT',0,'COMMA')} + ' đ'"></span>
+        </div>
+
     </div>
-    <p th:if="${discount > 0}">
-        Giảm giá:
-        - <span th:text="${#numbers.formatDecimal(discount,0,'POINT',0,'COMMA')} + ' đ'"></span>
-    </p>
-    <p>
-        Tổng tiền:
-        <span th:text="${#numbers.formatDecimal(totalCart,0,'POINT',0,'COMMA')} + ' đ'"></span>
-    </p>
-    <div class="note">
-        <p>- Giá trên đã gồm phí vận chuyển 30 nghìn đồng.</p>
-    </div>
+
+    <hr>
     <form th:action="@{/admin/orders/confirm}" method="post">
 
         <!--ĐỊA CHỈ -->

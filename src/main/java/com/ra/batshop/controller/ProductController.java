@@ -162,6 +162,7 @@ public class ProductController {
 
             product.setCreatedAt(LocalDateTime.now());
             product.setStatus(true);
+            //productRepository.save(product);
 
             Category category = categoryRepository
                     .findById(product.getCategory().getId())
@@ -197,17 +198,16 @@ public class ProductController {
                     }
 
                     // ===== SET SIZE =====
-                    if (variant.getSize() != null && variant.getSize().getId() != null) {
-                        variant.setSize(
-                                sizeRepository.findById(variant.getSize().getId()).orElse(null)
-                        );
+                    if (variant.getSize() != null && variant.getSize().getId() != null && variant.getSize().getId() != 0) {
+                        variant.setSize(sizeRepository.findById(variant.getSize().getId()).orElse(null));
+                    } else {
+                        variant.setSize(null); // gán null nếu không chọn
                     }
 
-                    // ===== SET COLOR =====
-                    if (variant.getColor() != null && variant.getColor().getId() != null) {
-                        variant.setColor(
-                                colorRepository.findById(variant.getColor().getId()).orElse(null)
-                        );
+                    if (variant.getColor() != null && variant.getColor().getId() != null && variant.getColor().getId() != 0) {
+                        variant.setColor(colorRepository.findById(variant.getColor().getId()).orElse(null));
+                    } else {
+                        variant.setColor(null);
                     }
 
                     // ===== UPLOAD VARIANT IMAGES =====
@@ -310,7 +310,33 @@ public class ProductController {
             String uploadDir = "uploads/product/";
             Path uploadPath = Paths.get(uploadDir);
             if (!Files.exists(uploadPath)) Files.createDirectories(uploadPath);
+            if (file != null && !file.isEmpty()) {
 
+                // xóa ảnh cũ nếu có
+                if (existing.getImages() != null && !existing.getImages().isEmpty()) {
+                    String oldImage = existing.getImages().get(0).getImage();
+
+                    try {
+                        Files.deleteIfExists(uploadPath.resolve(oldImage));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    existing.getImages().clear();
+                }
+
+                // lưu ảnh mới
+                String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+
+                Files.copy(file.getInputStream(),
+                        uploadPath.resolve(fileName),
+                        StandardCopyOption.REPLACE_EXISTING);
+
+                ProductImage newImage = new ProductImage();
+                newImage.setImage(fileName);
+
+                existing.addImage(newImage);
+            }
             Map<String, List<MultipartFile>> variantImages = request.getMultiFileMap();
 
             // Xử lý tất cả biến thể

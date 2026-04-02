@@ -90,8 +90,8 @@ public class CheckoutController {
 
         httpSession.setAttribute("flashSalePrices", flashSalePrices); // save vào session
 
-        total = total.add(shippingFee);
-
+        //total = total.add(shippingFee);
+        BigDecimal subtotal = total;
         // Áp dụng voucher
         Voucher voucher = (Voucher) httpSession.getAttribute("voucher");
         BigDecimal discount = BigDecimal.ZERO;
@@ -102,6 +102,7 @@ public class CheckoutController {
                 discount = BigDecimal.valueOf(voucher.getMaxDiscountAmount());
             total = total.subtract(discount);
         }
+        BigDecimal finalTotal = subtotal.subtract(discount).add(shippingFee);
         System.out.println("TOTAL CART: " + total);
         System.out.println("===== END DEBUG =====");
 
@@ -119,6 +120,9 @@ public class CheckoutController {
         model.addAttribute("defaultAddress", defaultAddress);
         model.addAttribute("addresses", addresses);
         model.addAttribute("voucher", voucher);
+        model.addAttribute("totalCart", finalTotal);
+        model.addAttribute("subtotal", subtotal);
+        model.addAttribute("shippingFee", shippingFee);
         return "user/checkout/list";
     }
     @PostMapping("/apply-voucher")
