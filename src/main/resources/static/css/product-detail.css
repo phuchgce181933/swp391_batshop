@@ -10,14 +10,21 @@
 
 .main-img {
     width: 100%;
+    height: 400px;
     border: 1px solid #ddd;
+    border-radius: 8px;
+    object-fit: contain;
+    background: #fff;
 }
 
 .thumb-list img {
     width: 80px;
-    margin: 5px;
-    border: 1px solid #ddd;
+    height: 80px;
+    object-fit: cover;
+    border: 2px solid transparent;
+    border-radius: 6px;
     cursor: pointer;
+    transition: 0.3s;
 }
 
 .product-info {

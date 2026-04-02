@@ -44,6 +44,6 @@ public class Review {
     @JoinColumn(name = "parent_id")
     private Review parent;
 
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Review> replies;
 }
