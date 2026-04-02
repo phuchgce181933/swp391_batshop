@@ -63,6 +63,8 @@ public class Order {
     private String district;
     private String ward;
     private String detail;
+    // bổ sung để hủy nì
+    private String cancelReason;
 }
 
 

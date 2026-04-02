@@ -13,14 +13,38 @@
 
 <div class="box">
     <p><strong>Order ID:</strong> <span th:text="${order.id}"></span></p>
-    <p><strong>Created At:</strong> <span th:text="${order.createdAt}"></span></p>
-    <p><strong>Total Price:</strong> <span th:text="${order.totalPrice}"></span></p>
+    <p>
+        <strong>Created At:</strong>
+        <span th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy')} + ' lúc: ' + ${#temporals.format(order.createdAt, 'HH:mm')}"></span>
+    </p>
+    <p>
+        <strong>Total Price:</strong>
+        <span th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')} + '₫'"></span>
+    </p>
     <p><strong>Payment Method:</strong> <span th:text="${order.paymentMethod}"></span></p>
     <p><strong>Status:</strong>
         <span th:text="${order.status}"></span>
     </p>
-</div>
+    <!-- Nút hủy đơn hàng -->
+    <div th:if="${order.status != null and (order.status.name() == 'PENDING' or order.status.name() == 'PROCESSING')}"
+         class="cancel-order">
+        <form th:action="@{'/user/orders/cancel/' + ${order.id}}" method="post">
+            <label for="reason">Lý do hủy đơn:</label>
+            <select id="reason" name="reason" required>
+                <option value="">-- Chọn lý do --</option>
+                <option value="Thay đổi ý định">Thay đổi ý định</option>
+                <option value="Tìm được giá tốt hơn">Tìm được giá tốt hơn</option>
+                <option value="Đặt nhầm đơn">Đặt nhầm đơn</option>
+                <option value="Khác">Khác (vui lòng nhập)</option>
+            </select>
 
+            <input type="text" id="otherReason" name="otherReason" placeholder="Nhập lý do khác"
+                   style="display:none; margin-top:5px;">
+
+            <button type="submit">Hủy đơn</button>
+        </form>
+    </div>
+</div>
 <!-- Timeline trạng thái -->
 <div class="box">
     <h3>Tracking Progress</h3>
@@ -87,4 +111,18 @@
 <a href="/user/orders">← Back to Orders</a>
 </div>
 </body>
+<script>
+    const select = document.getElementById('reason');
+    const otherInput = document.getElementById('otherReason');
+
+    select.addEventListener('change', function() {
+        if (this.value === 'Khác') {
+            otherInput.style.display = 'block';
+            otherInput.required = true;
+        } else {
+            otherInput.style.display = 'none';
+            otherInput.required = false;
+        }
+    });
+</script>
 </html>

@@ -72,3 +72,24 @@ table, th, td {
 th {
     background: #f4f4f4;
 }
+.cancel-order {
+    margin-top: 20px;
+}
+
+.cancel-order input[type="text"] {
+    padding: 5px;
+    width: 250px;
+    margin-right: 10px;
+}
+
+.cancel-order button {
+    padding: 5px 15px;
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.cancel-order button:hover {
+    background-color: #c0392b;
+}
