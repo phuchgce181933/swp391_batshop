@@ -105,7 +105,10 @@ public class CheckoutController {
         BigDecimal finalTotal = subtotal.subtract(discount).add(shippingFee);
         System.out.println("TOTAL CART: " + total);
         System.out.println("===== END DEBUG =====");
-
+        //chặn giỏ rỗng
+        if (cartItems == null || cartItems.isEmpty()) {
+            return "redirect:/cart/list?error=empty_cart";
+        }
         Address defaultAddress = addressRepository.findByUserIdAndIsDefaultTrue(user.getId()).orElse(null);
         List<Address> addresses = addressRepository.findByUserId(user.getId());
         if (addresses == null || addresses.isEmpty()) {
