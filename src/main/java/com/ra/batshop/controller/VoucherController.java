@@ -43,30 +43,39 @@ public class VoucherController {
             return "redirect:/login";
         }
 
-        List<Voucher> vouchers;
+        List<Voucher> vouchers = voucherRepository.findAll();
 
-        // FILTER CODE
+        // 1. Tự động tắt voucher hết hạn
+        LocalDateTime now = LocalDateTime.now();
+        vouchers.forEach(v -> {
+            if (v.getValidTo() != null && v.getValidTo().isBefore(now) && Boolean.TRUE.equals(v.getActive())) {
+                v.setActive(false); // tắt voucher
+                voucherRepository.save(v); // cập nhật DB
+            }
+        });
+
+        // 2. Filter theo keyword
         if (keyword != null && !keyword.isEmpty()) {
-            vouchers = voucherRepository.findByCodeContainingIgnoreCase(keyword);
-        } else {
-            vouchers = voucherRepository.findAll();
+            vouchers = vouchers.stream()
+                    .filter(v -> v.getCode().toLowerCase().contains(keyword.toLowerCase()))
+                    .toList();
         }
 
-        // FILTER STATUS
+        // 3. Filter theo status
         if (status != null) {
             vouchers = vouchers.stream()
                     .filter(v -> Boolean.TRUE.equals(v.getActive()) == status)
                     .toList();
         }
 
-        // FILTER DISCOUNT
+        // 4. Filter theo discount
         if (discount != null) {
             vouchers = vouchers.stream()
                     .filter(v -> v.getDiscountPercent() >= discount)
                     .toList();
         }
 
-        //  FIX: SET totalUsed chuẩn từ DB
+        // 5. Cập nhật totalUsed từ DB
         vouchers.forEach(v -> {
             int used = orderRepository.countVoucherUsed(v.getId());
             v.setTotalUsed(used);

@@ -48,7 +48,7 @@ public class CheckoutController {
         this.userVoucherRepository = userVoucherRepository;
     }
     @GetMapping("/list")
-    public String checkout(HttpSession httpSession, Model model,RedirectAttributes ra) {
+    public String checkout(HttpSession httpSession, Model model, RedirectAttributes ra) {
         User user = (User) httpSession.getAttribute("user");
         if (user == null) return "redirect:/login";
 
@@ -59,6 +59,7 @@ public class CheckoutController {
         System.out.println("===== DEBUG CHECKOUT =====");
         Map<Integer, BigDecimal> flashSalePrices = new HashMap<>();
 
+        // Tính giá từng item, áp dụng flash sale nếu có
         for (CartItem item : cartItems) {
             ProductVariant variant = item.getProductVariant();
 
@@ -71,9 +72,7 @@ public class CheckoutController {
 
             BigDecimal price;
             if (flashSaleOpt.isPresent()) {
-                // lấy % giảm
                 BigDecimal discountPercent = BigDecimal.valueOf(flashSaleOpt.get().getDiscountPercent() != null ? flashSaleOpt.get().getDiscountPercent() : 0);
-                // áp dụng giảm trên basePrice (variant)
                 price = basePrice.multiply(BigDecimal.valueOf(100).subtract(discountPercent))
                         .divide(BigDecimal.valueOf(100));
             } else {
@@ -81,52 +80,54 @@ public class CheckoutController {
             }
 
             item.setDisplayPrice(price);
-
-            item.setDisplayPrice(price);
-
             flashSalePrices.put(variant.getId(), price); // lưu giá theo variantId
             total = total.add(price.multiply(BigDecimal.valueOf(item.getQuantity())));
         }
 
-        httpSession.setAttribute("flashSalePrices", flashSalePrices); // save vào session
+        httpSession.setAttribute("flashSalePrices", flashSalePrices); // lưu vào session
 
-        //total = total.add(shippingFee);
-        BigDecimal subtotal = total;
-        // Áp dụng voucher
+        BigDecimal subtotal = total; // tổng giá sản phẩm
         Voucher voucher = (Voucher) httpSession.getAttribute("voucher");
         BigDecimal discount = BigDecimal.ZERO;
-        if (voucher != null && total.compareTo(BigDecimal.valueOf(voucher.getMinOrderAmount())) >= 0) {
-            discount = total.multiply(BigDecimal.valueOf(voucher.getDiscountPercent()))
+
+        // Áp dụng voucher (chỉ trên subtotal)
+        if (voucher != null && subtotal.compareTo(BigDecimal.valueOf(voucher.getMinOrderAmount())) >= 0) {
+            discount = subtotal.multiply(BigDecimal.valueOf(voucher.getDiscountPercent()))
                     .divide(BigDecimal.valueOf(100));
             if (discount.compareTo(BigDecimal.valueOf(voucher.getMaxDiscountAmount())) > 0)
                 discount = BigDecimal.valueOf(voucher.getMaxDiscountAmount());
-            total = total.subtract(discount);
+            total = subtotal.subtract(discount);
         }
-        BigDecimal finalTotal = subtotal.subtract(discount).add(shippingFee);
+
+        BigDecimal finalTotal = total.add(shippingFee);
+        System.out.println("TOTAL" + finalTotal);// cộng phí ship
         System.out.println("TOTAL CART: " + total);
         System.out.println("===== END DEBUG =====");
-        //chặn giỏ rỗng
+
+        // Chặn giỏ rỗng
         if (cartItems == null || cartItems.isEmpty()) {
             return "redirect:/cart/list?error=empty_cart";
         }
+
         Address defaultAddress = addressRepository.findByUserIdAndIsDefaultTrue(user.getId()).orElse(null);
         List<Address> addresses = addressRepository.findByUserId(user.getId());
         if (addresses == null || addresses.isEmpty()) {
             ra.addFlashAttribute("error", "Bạn chưa có địa chỉ nào! Vui lòng thêm địa chỉ.");
             return "redirect:/address/list?error=no_address";
-        }else if (defaultAddress == null) {
+        } else if (defaultAddress == null) {
             ra.addFlashAttribute("error", "Bạn chưa có địa chỉ mặc định! Vui lòng chọn địa chỉ mặc định.");
             return "redirect:/address/list?error=no_default_address";
         }
+
         model.addAttribute("cartItems", cartItems);
-        model.addAttribute("totalCart", total);
+        model.addAttribute("subtotal", subtotal);
         model.addAttribute("discount", discount);
+        model.addAttribute("shippingFee", shippingFee);
+        model.addAttribute("totalCart", finalTotal);
         model.addAttribute("defaultAddress", defaultAddress);
         model.addAttribute("addresses", addresses);
         model.addAttribute("voucher", voucher);
-        model.addAttribute("totalCart", finalTotal);
-        model.addAttribute("subtotal", subtotal);
-        model.addAttribute("shippingFee", shippingFee);
+
         return "user/checkout/list";
     }
     @PostMapping("/apply-voucher")
