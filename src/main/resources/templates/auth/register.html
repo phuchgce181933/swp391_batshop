@@ -53,7 +53,7 @@
                     <span id="js-pass-error" class="error-message" style="display:none;">⚠ Vui lòng nhập mật khẩu!</span>
                 </div>
 
-                <button type="submit">ĐĂNG KÝ NGAY</button>
+                <button type="submit" id="submitBtn">ĐĂNG KÝ NGAY</button>
 
                 <div class="register-container">
                     <p>Đã có tài khoản? <a th:href="@{/login}" class="register-link">Đăng nhập</a></p>
@@ -63,7 +63,7 @@
     </div>
 </div>
 
-<script>
+<script th:inline="javascript">
     const form = document.getElementById('registerForm');
     const nameInput = document.getElementById('nameInput');
     const emailInput = document.getElementById('emailInput');
@@ -81,72 +81,76 @@
     form.addEventListener('submit', function(e) {
         let hasError = false;
 
+        // Lấy giá trị input
         const nameVal = nameInput.value.trim();
         const emailVal = emailInput.value.trim();
         const phoneVal = phoneInput.value.trim();
         const passVal = passwordInput.value.trim();
 
-        // Reset trạng thái lỗi
-        [jsNameErr, jsEmailErr, jsPhoneErr, jsPassErr].forEach(el => el.style.display = 'none');
-        [nameInput, emailInput, phoneInput, passwordInput].forEach(el => el.classList.remove('input-error'));
+        // 1. Reset hiển thị (Ẩn sạch các thông báo lỗi cũ trước khi check)
+        [jsNameErr, jsEmailErr, jsPhoneErr, jsPassErr].forEach(el => {
+            if(el) el.style.display = 'none';
+        });
+        if(serverEmailErr) serverEmailErr.style.display = 'none';
+        if(serverPhoneErr) serverPhoneErr.style.display = 'none';
 
-        // 1. Check Họ Tên rỗng
+        [nameInput, emailInput, phoneInput, passwordInput].forEach(input => {
+            input.classList.remove('input-error');
+        });
+
+        // 2. Logic kiểm tra
+        // Check Tên
         if (nameVal === "") {
-            jsNameErr.style.display = 'block';
-            nameInput.classList.add('input-error');
+            showError(jsNameErr, nameInput, "⚠ Vui lòng nhập họ tên!");
             hasError = true;
         }
 
-        // 2. Check Email (Rỗng & Định dạng)
+        // Check Email
         if (emailVal === "") {
-            jsEmailErr.innerText = "⚠ Vui lòng nhập Email!";
-            jsEmailErr.style.display = 'block';
-            emailInput.classList.add('input-error');
+            showError(jsEmailErr, emailInput, "⚠ Vui lòng nhập Email!");
             hasError = true;
-        } else if (!emailVal.endsWith("@gmail.com")) {
-            if (serverEmailErr) serverEmailErr.style.display = 'none';
-            jsEmailErr.innerText = "⚠ Email phải có đuôi @gmail.com";
-            jsEmailErr.style.display = 'block';
-            emailInput.classList.add('input-error');
+        } else if (!emailVal.toLowerCase().endsWith("@gmail.com")) {
+            showError(jsEmailErr, emailInput, "⚠ Email phải có đuôi @gmail.com");
             hasError = true;
         }
 
-        // 3. Check Số điện thoại (Rỗng, Chữ, Độ dài)
+        // Check SĐT (Chỉ cho phép số và đúng 10 ký tự)
         if (phoneVal === "") {
-            jsPhoneErr.innerText = "⚠ Vui lòng nhập số điện thoại!";
-            jsPhoneErr.style.display = 'block';
-            phoneInput.classList.add('input-error');
+            showError(jsPhoneErr, phoneInput, "⚠ Vui lòng nhập số điện thoại!");
             hasError = true;
-        } else if (/[^0-9]/.test(phoneVal)) {
-            if (serverPhoneErr) serverPhoneErr.style.display = 'none';
-            jsPhoneErr.innerText = "⚠ Số điện thoại không được chứa chữ!";
-            jsPhoneErr.style.display = 'block';
-            phoneInput.classList.add('input-error');
+        } else if (!/^\d+$/.test(phoneVal)) {
+            showError(jsPhoneErr, phoneInput, "⚠ Số điện thoại chỉ được chứa số!");
             hasError = true;
         } else if (phoneVal.length !== 10) {
-            if (serverPhoneErr) serverPhoneErr.style.display = 'none';
-            jsPhoneErr.innerText = "⚠ Số điện thoại phải đúng 10 số!";
-            jsPhoneErr.style.display = 'block';
-            phoneInput.classList.add('input-error');
+            showError(jsPhoneErr, phoneInput, "⚠ Số điện thoại phải đúng 10 số!");
             hasError = true;
         }
 
-        // 4. Check Mật khẩu rỗng
+        // Check Pass
         if (passVal === "") {
-            jsPassErr.style.display = 'block';
-            passwordInput.classList.add('input-error');
+            showError(jsPassErr, passwordInput, "⚠ Vui lòng nhập mật khẩu!");
             hasError = true;
         }
 
-        // Nếu có lỗi thì chặn gửi form và xóa pass cho bảo mật
+        // 3. Nếu có bất kỳ lỗi nào, chặn submit
         if (hasError) {
             e.preventDefault();
-            passwordInput.value = "";
-            passwordInput.focus();
+            // Không xóa pass ở đây để user đỡ phải nhập lại nếu chỉ sai email/tên
         }
     });
 
-    // Xử lý ẩn lỗi khi người dùng nhập lại
+    // Hàm bổ trợ hiển thị lỗi
+    function showError(errorElement, inputElement, message) {
+        if (errorElement) {
+            errorElement.innerText = message;
+            errorElement.style.display = 'block';
+        }
+        if (inputElement) {
+            inputElement.classList.add('input-error');
+        }
+    }
+
+    // Xóa trạng thái lỗi khi người dùng bắt đầu gõ lại
     [nameInput, emailInput, phoneInput, passwordInput].forEach(input => {
         input.addEventListener('input', function() {
             this.classList.remove('input-error');
@@ -154,15 +158,6 @@
             const errs = parent.querySelectorAll('.error-message');
             errs.forEach(err => err.style.display = 'none');
         });
-    });
-
-    // Xóa pass nếu load trang mà có lỗi từ Server (trùng SĐT/Email)
-    window.addEventListener("load", function() {
-        if ((serverPhoneErr && serverPhoneErr.innerText.trim() !== "") ||
-            (serverEmailErr && serverEmailErr.innerText.trim() !== "")) {
-            passwordInput.value = "";
-            passwordInput.focus();
-        }
     });
 </script>
 </body>

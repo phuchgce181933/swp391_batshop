@@ -46,10 +46,12 @@ public class AuthController {
         boolean hasError = false;
 
         // Check định dạng @gmail.com
-        if (user.getEmail() == null || !user.getEmail().toLowerCase().endsWith("@gmail.com")) {
-            model.addAttribute("errorEmail", "Email phải có định dạng @gmail.com!");
+        // Check định dạng @gmail.com
+        if (user.getEmail() == null || !user.getEmail().matches("^[a-zA-Z0-9._%+-]+@gmail\\.com$")) {
+            model.addAttribute("errorEmail", "Định dạng Email không hợp lệ!");
             hasError = true;
         }
+
 
         // Check trùng dữ liệu
         if (userRepository.existsByEmail(user.getEmail())) {
