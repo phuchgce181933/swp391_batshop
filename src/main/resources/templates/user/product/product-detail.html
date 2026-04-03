@@ -50,7 +50,8 @@
 
             <p>
                 Tình trạng:
-                <span th:text="${product.status ? 'Còn hàng' : 'Hết hàng'}"></span>
+                <span id="stockStatus" style="font-weight:bold;"></span>
+                <span id="stockCount"></span>
             </p>
 
             <div class="variant-box"
@@ -58,7 +59,7 @@
 
                 <h3>Chọn phiên bản:</h3>
 
-                <form th:action="@{/cart/add}" method="post">
+                <form th:action="@{/cart/add}" method="post" onsubmit="return checkStockBeforeSubmit()">
 
                     <div th:each="v, stat : ${variants}" class="variant-item">
 
@@ -69,6 +70,7 @@
                                    name="productVariantId"
                                    th:value="${v.id}"
                                    th:checked="${stat.index == 0}"
+                                   th:data-stock="${v.stock}"
                                    th:data-images="${#strings.arrayJoin(v.images.![image], ',')}">
 
                             <span class="variant-label-content">
@@ -335,6 +337,7 @@
             radio.addEventListener("change", function () {
                 updateImages(this);
                 updateRacketInfo(this);
+                updateStock(this);
             });
         });
 
@@ -342,6 +345,7 @@
         if (checkedRadio) {
             updateImages(checkedRadio);
             updateRacketInfo(checkedRadio);
+            updateStock(checkedRadio);
         }
 
     });
@@ -364,6 +368,37 @@
         }
     }
 
+    function updateStock(radio) {
+        const stock = parseInt(radio.dataset.stock || "0");
+
+        const status = document.getElementById("stockStatus");
+        const count = document.getElementById("stockCount");
+
+        if (stock > 0) {
+            status.textContent = "Còn hàng";
+            status.style.color = "green";
+            count.innerHTML = `(Còn <b>${stock}</b> sản phẩm)`;
+        } else {
+            status.textContent = "Hết hàng";
+            status.style.color = "red";
+            count.innerHTML = "";
+        }
+    }
+
+    function checkStockBeforeSubmit() {
+        const selected = document.querySelector(".variant-radio:checked");
+
+        if (!selected) return true;
+
+        const stock = parseInt(selected.dataset.stock || "0");
+
+        if (stock <= 0) {
+            alert("Sản phẩm này đã hết hàng!");
+            return false;
+        }
+
+        return true;
+    }
 </script>
 
 </body>
