@@ -43,14 +43,21 @@ public class AdminSizeController {
     }
 
     @PostMapping("/save")
-    public String save(@ModelAttribute("size") Size size, RedirectAttributes redirectAttributes) {
+    public String save(@ModelAttribute Size size, RedirectAttributes redirectAttributes) {
+        // EXCEPTION: Validation for numbers only (integers or decimals)
+        if (size.getName() == null || !size.getName().matches("^\\d+(\\.\\d+)?$")) {
+            redirectAttributes.addFlashAttribute("error", "Invalid size! Please enter a number (e.g., 42, 43.5).");
+            return size.getId() == null ? "redirect:/admin/sizes/add" : "redirect:/admin/sizes/edit/" + size.getId();
+        }
+
         Optional<Size> existing = sizeRepository.findByName(size.getName());
         if (existing.isPresent()) {
             if (size.getId() == null || !size.getId().equals(existing.get().getId())) {
-                redirectAttributes.addFlashAttribute("error", "Size name '" + size.getName() + "' already exists!");
+                redirectAttributes.addFlashAttribute("error", "Size '" + size.getName() + "' already exists!");
                 return size.getId() == null ? "redirect:/admin/sizes/add" : "redirect:/admin/sizes/edit/" + size.getId();
             }
         }
+
         sizeRepository.save(size);
         redirectAttributes.addFlashAttribute("success", "Size saved successfully!");
         return "redirect:/admin/sizes";
@@ -62,8 +69,7 @@ public class AdminSizeController {
             sizeRepository.deleteById(id);
             redirectAttributes.addFlashAttribute("success", "Size deleted successfully!");
         } catch (Exception e) {
-            // ĐÂY LÀ CHỖ BẮT LỖI KHI CÓ NGƯỜI ĐẶT HÀNG
-            redirectAttributes.addFlashAttribute("error", "Cannot delete! This size is already linked to products or orders.");
+            redirectAttributes.addFlashAttribute("error", "Cannot delete! This size is linked to existing products.");
         }
         return "redirect:/admin/sizes";
     }

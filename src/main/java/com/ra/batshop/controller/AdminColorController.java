@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes; // Cần thiết để gửi thông báo
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Optional;
 
@@ -43,8 +43,13 @@ public class AdminColorController {
     }
 
     @PostMapping("/save")
-    public String save(@ModelAttribute("color") Color color, RedirectAttributes redirectAttributes) {
-        // 1. Check duplicate name
+    public String save(@ModelAttribute Color color, RedirectAttributes redirectAttributes) {
+        // EXCEPTION: Validation for English letters and spaces only
+        if (color.getName() == null || !color.getName().matches("^[a-zA-Z\\s]+$")) {
+            redirectAttributes.addFlashAttribute("error", "Invalid color name! Please use English letters only (e.g., Red, Black).");
+            return color.getId() == null ? "redirect:/admin/colors/add" : "redirect:/admin/colors/edit/" + color.getId();
+        }
+
         Optional<Color> existing = colorRepository.findByName(color.getName());
         if (existing.isPresent()) {
             if (color.getId() == null || !color.getId().equals(existing.get().getId())) {
@@ -52,6 +57,7 @@ public class AdminColorController {
                 return color.getId() == null ? "redirect:/admin/colors/add" : "redirect:/admin/colors/edit/" + color.getId();
             }
         }
+
         colorRepository.save(color);
         redirectAttributes.addFlashAttribute("success", "Color saved successfully!");
         return "redirect:/admin/colors";
@@ -63,8 +69,7 @@ public class AdminColorController {
             colorRepository.deleteById(id);
             redirectAttributes.addFlashAttribute("success", "Color deleted successfully!");
         } catch (Exception e) {
-            // ĐÂY LÀ CHỖ BẮT LỖI KHI CÓ NGƯỜI ĐẶT HÀNG
-            redirectAttributes.addFlashAttribute("error", "Cannot delete! This color is already linked to products or orders.");
+            redirectAttributes.addFlashAttribute("error", "Cannot delete! This color is linked to existing products.");
         }
         return "redirect:/admin/colors";
     }

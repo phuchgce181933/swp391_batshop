@@ -127,6 +127,11 @@ public class AuthController {
         // Tìm user theo email
         User user = userRepository.findByEmail(email).orElse(null);
 
+        if (email == null || !email.matches("^[a-zA-Z0-9._%+-]+@gmail\\.com$")) {
+            model.addAttribute("emailError", "⚠ Định dạng Email không hợp lệ (phải là @gmail.com)!");
+            model.addAttribute("email", email);
+            return "auth/login";
+        }
         // Kiểm tra Email tồn tại
         if (user == null) {
             model.addAttribute("emailError", "⚠ Email này không tồn tại trên hệ thống!");
