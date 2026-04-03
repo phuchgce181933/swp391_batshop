@@ -48,7 +48,7 @@ public class CheckoutController {
         this.userVoucherRepository = userVoucherRepository;
     }
     @GetMapping("/list")
-    public String checkout(HttpSession httpSession, Model model) {
+    public String checkout(HttpSession httpSession, Model model,RedirectAttributes ra) {
         User user = (User) httpSession.getAttribute("user");
         if (user == null) return "redirect:/login";
 
@@ -112,10 +112,11 @@ public class CheckoutController {
         Address defaultAddress = addressRepository.findByUserIdAndIsDefaultTrue(user.getId()).orElse(null);
         List<Address> addresses = addressRepository.findByUserId(user.getId());
         if (addresses == null || addresses.isEmpty()) {
-            model.addAttribute("addressError", "Bạn chưa có địa chỉ. Vui lòng thêm địa chỉ trước khi thanh toán.");
+            ra.addFlashAttribute("error", "Bạn chưa có địa chỉ nào! Vui lòng thêm địa chỉ.");
+            return "redirect:/address/list?error=no_address";
         }else if (defaultAddress == null) {
-            model.addAttribute("addressError",
-                    "Bạn chưa chọn địa chỉ mặc định. Vui lòng chọn một địa chỉ.");
+            ra.addFlashAttribute("error", "Bạn chưa có địa chỉ mặc định! Vui lòng chọn địa chỉ mặc định.");
+            return "redirect:/address/list?error=no_default_address";
         }
         model.addAttribute("cartItems", cartItems);
         model.addAttribute("totalCart", total);
