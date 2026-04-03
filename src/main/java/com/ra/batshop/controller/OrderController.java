@@ -142,7 +142,8 @@ public class OrderController {
                                   @RequestParam String paymentMethod,
                                   HttpSession session,
                                   HttpServletRequest request,
-                                  RedirectAttributes redirectAttributes) throws Exception {
+                                  RedirectAttributes redirectAttributes,
+                                  RedirectAttributes ra) throws Exception {
 
         User user = (User) session.getAttribute("user");
         if (user == null) return "redirect:/login";
@@ -157,48 +158,44 @@ public class OrderController {
         Map<Integer, BigDecimal> flashSalePrices =
                 (Map<Integer, BigDecimal>) session.getAttribute("flashSalePrices");
 
-        BigDecimal total = BigDecimal.ZERO;
-        BigDecimal shippingFee = BigDecimal.valueOf(30000);
+       // BigDecimal total = BigDecimal.ZERO;
+        //BigDecimal shippingFee = BigDecimal.valueOf(30000);
 
         // ====== TÍNH TOTAL ======
+        BigDecimal subtotal = BigDecimal.ZERO;
         for (CartItem item : cartItems) {
             BigDecimal price;
-            Integer variantId = item.getProductVariant().getId(); // dùng variantId
+            Integer variantId = item.getProductVariant().getId();
 
             if (flashSalePrices != null && flashSalePrices.containsKey(variantId)) {
-                // giá flash sale nếu có
                 price = flashSalePrices.get(variantId);
-                System.out.println("FS Price: " + price + " for variant " + variantId);
             } else {
-                // giá variant chuẩn
                 price = item.getProductVariant().getAdditionalPrice() != null
                         ? item.getProductVariant().getAdditionalPrice()
                         : BigDecimal.ZERO;
-                System.out.println("Variant Price: " + price + " for variant " + variantId);
             }
 
-            BigDecimal itemTotal = price.multiply(BigDecimal.valueOf(item.getQuantity()));
-            total = total.add(itemTotal);
+            subtotal = subtotal.add(price.multiply(BigDecimal.valueOf(item.getQuantity())));
         }
 
+
         // + ship
-        total = total.add(shippingFee);
+       // total = total.add(shippingFee);
 
-        // ====== ÁP DỤNG VOUCHER ======
+        // ====== ÁP DỤNG VOUCHER TRÊN SUBTOTAL ======
         BigDecimal discount = BigDecimal.ZERO;
-
-        if (voucher != null &&
-                total.compareTo(BigDecimal.valueOf(voucher.getMinOrderAmount())) >= 0) {
-
-            discount = total.multiply(BigDecimal.valueOf(voucher.getDiscountPercent()))
+        if (voucher != null && subtotal.compareTo(BigDecimal.valueOf(voucher.getMinOrderAmount())) >= 0) {
+            discount = subtotal.multiply(BigDecimal.valueOf(voucher.getDiscountPercent()))
                     .divide(BigDecimal.valueOf(100));
 
             if (discount.compareTo(BigDecimal.valueOf(voucher.getMaxDiscountAmount())) > 0) {
                 discount = BigDecimal.valueOf(voucher.getMaxDiscountAmount());
             }
-
-            total = total.subtract(discount);
         }
+
+        // ====== TÍNH TOTAL CUỐI CÙNG ======
+        BigDecimal shippingFee = BigDecimal.valueOf(30000);
+        BigDecimal total = subtotal.subtract(discount).add(shippingFee);
 
         // ====== TẠO ORDER ======
         Order order = new Order();
@@ -235,7 +232,7 @@ public class OrderController {
 
         // total cuối cùng
         order.setTotalPrice(total);
-
+        order.setDiscountAmount(discount.intValue());
         orderRepository.save(order);
 
         // ====== TẠO ORDER ITEM ======
@@ -326,7 +323,8 @@ public class OrderController {
 
         redirectAttributes.addFlashAttribute("successMessage",
                 "Đặt hàng thành công!");
-
+        session.removeAttribute("voucher"); // Xóa voucher
+        ra.addFlashAttribute("success", "Đã hủy áp dụng voucher");
         return "redirect:/home";
     }
     @GetMapping("/vnpay-return")
