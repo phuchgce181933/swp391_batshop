@@ -48,7 +48,9 @@ public class CartItemController {
                 .orElseThrow();
 
         Integer stock = variant.getStock();
-
+        if (quantity == null || quantity <= 0) {
+            return "redirect:/product/detail/" + productvariantId + "?error=invalid_quantity";
+        }
         if(quantity > stock){
             return "redirect:/product/detail/" + variant.getProduct().getId() + "?error=stock&stock=" + stock;
         }
@@ -152,6 +154,9 @@ public class CartItemController {
                 .findById(productvariantId)
                 .orElseThrow();
         Integer stock = variant.getStock();
+        if (quantity == null || quantity <= 0) {
+            return "redirect:/cart/list?error=invalid_quantity";
+        }
         if(quantity > stock){
             return "redirect:/cart/list?error=stock&stock=" + stock;
         }

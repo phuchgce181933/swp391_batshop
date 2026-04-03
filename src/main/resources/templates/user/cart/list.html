@@ -69,6 +69,14 @@
     <td  th:text="${#numbers.formatDecimal(
         totalCart, 0, 'POINT', 0, 'COMMA')} + ' đ'">
     </td>
+    <div th:if="${param.error != null and param.error[0] == 'empty_cart'}"
+         style="color:red;font-weight:bold;margin-bottom:10px;">
+        Giỏ hàng trống, không thể thanh toán
+    </div>
+    <div th:if="${param.error != null and param.error[0] == 'invalid_quantity'}"
+         style="color:red;font-weight:bold;margin-bottom:10px;">
+         Số lượng không hợp lệ (phải lớn hơn 0)
+    </div>
     <div th:if="${param.error != null and param.error[0] == 'stock'}"
          style="color:red;font-weight:bold;margin-bottom:10px;">
         Xin lỗi, hiện tại chúng tôi chỉ còn
