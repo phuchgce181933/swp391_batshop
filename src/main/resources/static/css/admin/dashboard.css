@@ -34,7 +34,7 @@
 }
 
 .revenue {
-    background: linear-gradient(45deg, #4e73df, #224abe);
+    background: linear-gradient(180deg, #fb7185, #f97316);
     color: white;
 }
 
@@ -109,7 +109,7 @@
 
 .button-group button {
     padding: 10px 18px;
-    background-color: #4e73df;
+    background: linear-gradient(180deg, #fb7185, #f97316);
     color: white;
     border: none;
     border-radius: 6px;
