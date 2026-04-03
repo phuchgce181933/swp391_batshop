@@ -17,7 +17,7 @@ body {
     min-width: 250px;
     max-width: 250px;
 
-    background: #1e293b;
+    background: linear-gradient(180deg, #fb7185, #f97316);
     color: white;
     padding: 20px;
 
@@ -61,12 +61,11 @@ body {
 }
 
 .admin-menu a:hover {
-    background: #334155;
+    background: rgba(255,255,255,0.15);
 }
 
-/* Active menu */
 .admin-menu a.active {
-    background: #2563eb;
+    background: rgba(255,255,255,0.25);
     font-weight: bold;
 }
 
@@ -155,7 +154,7 @@ table td {
 }
 
 .admin-sidebar::-webkit-scrollbar-thumb {
-    background: #475569;
+    background: linear-gradient(180deg, #fb7185, #f97316);
     border-radius: 10px;
 }
 
