@@ -123,6 +123,7 @@
                                     th:text="${b.name}">
                             </option>
                         </select><br>
+                        <button type="button" class="delete-variant-btn">Xóa Variant</button>
                     </div>
 
                     <!-- RACKET DETAIL FIELDS -->
@@ -197,7 +198,7 @@
                                     th:text="${c}">
                             </option>
                         </select><br>
-
+                        <button type="button" class="delete-variant-btn">Xóa Variant</button>
                     </div>
 
                 </div>
@@ -279,6 +280,12 @@
 
             container.appendChild(div);
 
+            // Thêm event listener cho nút xóa mới
+            document.getElementById("variantContainer").addEventListener("click", function(e){
+                if(e.target && e.target.classList.contains("delete-variant-btn")){
+                    e.target.closest(".variant-item").remove();
+                }
+            });
             index++;
             toggleFields();
         };
