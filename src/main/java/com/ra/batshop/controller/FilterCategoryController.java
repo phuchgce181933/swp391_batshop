@@ -110,6 +110,10 @@ public class FilterCategoryController {
         List<Brand> activeBrands = brandRepository.findByStatusTrue();
         model.addAttribute("brands", activeBrands);
 
+        // THÊM ĐOẠN NÀY ĐỂ LẤY TẤT CẢ DANH MỤC CHO SIDEBAR:
+        List<Category> allCategories = categoryRepository.findAll();
+        model.addAttribute("categories", allCategories);
+
         // 6. Đẩy dữ liệu ra View
         model.addAttribute("products", productPage.getContent());
         model.addAttribute("currentPage", page);

@@ -26,10 +26,10 @@
                 </span>
             </div>
 
-            <p class="blog-excerpt" th:if="${b.content != null}"
-               th:text="${#strings.abbreviate(b.content, 80)}">
+            <div class="blog-excerpt" th:if="${b.content != null}"
+                 th:utext="${b.content}">
                 Đoạn mô tả ngắn gọn về bài viết sẽ nằm ở đây...
-            </p>
+            </div>
         </div>
     </div>
 

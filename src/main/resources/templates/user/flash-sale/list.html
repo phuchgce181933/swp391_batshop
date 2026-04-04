@@ -37,7 +37,7 @@
                              alt="No image available">
                     </a>
 
-                    <div class="product-info" style="text-align: center;">
+                    <div class="product-info" style="text-align: left; padding: 10px 0;">
                         <a th:href="@{/product/detail/{id}(id=${fsp.product.id})}" style="text-decoration: none;">
                             <h3 th:text="${fsp.product.name}"></h3>
                         </a>
@@ -46,9 +46,9 @@
                             <span th:text="${fsp.product.brand != null ? fsp.product.brand.name : 'No brand'}"></span>
                         </div>
 
-                        <div class="price" style="margin-bottom: 15px;">
+                        <div class="price" style="display: flex; align-items: baseline; gap: 8px; justify-content: flex-start;">
+                            <span class="fs-sale-price" th:text="${#numbers.formatDecimal(fsp.salePrice, 0,'COMMA',0,'POINT')} + ' ₫'"></span>
                             <span class="fs-original-price" th:text="${#numbers.formatDecimal(fsp.product.price, 0,'COMMA',0,'POINT')} + ' ₫'"></span>
-                            <span th:text="${#numbers.formatDecimal(fsp.salePrice, 0,'COMMA',0,'POINT')} + ' ₫'"></span>
                         </div>
                     </div>
 
@@ -100,11 +100,11 @@
                              th:src="@{/img/no-image.png}" alt="No image available">
                     </a>
 
-                    <div class="product-info" style="text-align: center;">
+                    <div class="product-info" style="text-align: left; padding: 10px 0;">
                         <a th:href="@{/product/detail/{id}(id=${fsp.product.id})}" style="text-decoration: none;">
                             <h3 th:text="${fsp.product.name}"></h3>
                         </a>
-                        <div class="price" style="margin-bottom: 15px;">
+                        <div class="price" style="display: flex; align-items: baseline; justify-content: flex-start;">
                             <span style="font-weight: bold; font-size: 1.1rem; color: #333;" th:text="${#numbers.formatDecimal(fsp.product.price, 0,'COMMA',0,'POINT')} + ' ₫'"></span>
                         </div>
                     </div>

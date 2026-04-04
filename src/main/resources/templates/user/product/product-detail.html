@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${product.name}">Product</title>
+    <title th:text="|${product.name} - BatShop|">Product</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" th:href="@{/css/product-detail.css}">
     <link rel="stylesheet" th:href="@{/css/user/review.css}">
@@ -84,16 +84,18 @@
                                 <span th:if="${product.category == null or product.category.id != 3 and v.color != null}"
                                       th:text="' - ' + ${v.color.name}">
                                 </span>
+-
 
-                                -
-
-                                <del th:if="${fsp != null}" class="original-price"
-                                     th:text="${#numbers.formatDecimal((v.additionalPrice != null ? v.additionalPrice : product.price), 0, 'COMMA', 0, 'POINT')} + ' ₫'">
-                                </del>
-
-                                <b th:if="${fsp != null}" class="sale-price"
+                                <b th:if="${fsp != null}" class="sale-price" style="color: #ed1c24; font-size: 1.1rem; margin-right: 8px;"
                                    th:text="${#numbers.formatDecimal((v.additionalPrice != null ? v.additionalPrice - (v.additionalPrice * fsp.discountPercent / 100) : fsp.salePrice), 0, 'COMMA', 0, 'POINT')} + ' ₫'">
                                 </b>
+
+                                <span th:if="${fsp != null}" style="font-size: 0.85rem; color: #95a5a6;">
+                                    Giá gốc:
+                                    <del class="original-price"
+                                         th:text="${#numbers.formatDecimal((v.additionalPrice != null ? v.additionalPrice : product.price), 0, 'COMMA', 0, 'POINT')} + ' ₫'">
+                                    </del>
+                                </span>
 
                                 <b th:if="${fsp == null}" class="sale-price-normal"
                                    th:text="${#numbers.formatDecimal((v.additionalPrice != null ? v.additionalPrice : product.price), 0, 'COMMA', 0, 'POINT')} + ' ₫'">

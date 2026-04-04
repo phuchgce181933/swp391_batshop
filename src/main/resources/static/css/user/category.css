@@ -363,3 +363,53 @@ body {
     .product-grid { grid-template-columns: repeat(2, 1fr); }
     .category-header { flex-direction: column; align-items: flex-start; gap: 10px; }
 }
+
+/* =========================================
+   DANH MỤC SẢN PHẨM (SIDEBAR KHUNG XÁM)
+   ========================================= */
+.sidebar-category-list {
+    background-color: #f7f7f7; /* Màu nền xám nhạt giống ảnh */
+    padding: 20px;
+    border-radius: 4px;
+    margin-top: 30px;
+}
+
+.sidebar-category-list h3 {
+    font-size: 15px;
+    color: #111;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.sidebar-category-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-category-list li {
+    margin-bottom: 15px; /* Khoảng cách giữa các dòng */
+}
+
+.sidebar-category-list li:last-child {
+    margin-bottom: 0;
+}
+
+.sidebar-category-list a {
+    text-decoration: none;
+    color: #333;
+    font-size: 14px;
+    display: block;
+    transition: color 0.2s ease;
+}
+
+.sidebar-category-list a:hover {
+    color: #ed5527; /* Đổi màu cam khi hover */
+}
+
+/* Tô đậm danh mục đang được chọn */
+.sidebar-category-list a.active {
+    color: #ed5527;
+    font-weight: bold;
+}

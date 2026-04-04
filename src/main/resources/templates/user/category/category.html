@@ -2,7 +2,7 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Danh Mục Sản Phẩm</title>
+    <title th:text="|${category != null ? category.name : 'Tất cả sản phẩm'} - BatShop|">Danh Mục Sản Phẩm - BatShop</title>
     <link rel="stylesheet" th:href="@{/css/user/category.css}">
 </head>
 
@@ -78,6 +78,20 @@
                 </label>
             </div>
         </form>
+
+        <div class="sidebar-category-list">
+            <h3>DANH MỤC SẢN PHẨM</h3>
+            <ul>
+                <li th:each="cat : ${categories}">
+                    <a th:href="@{/category(id=${cat.id})}"
+                       th:text="${cat.name}"
+                       th:classappend="${category != null and category.id == cat.id} ? 'active' : ''">
+                        Tên danh mục
+                    </a>
+                </li>
+            </ul>
+        </div>
+
     </aside>
 
     <main class="main-content">
