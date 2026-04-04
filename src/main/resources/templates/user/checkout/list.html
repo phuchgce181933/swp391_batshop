@@ -42,8 +42,14 @@
 
         </div>
 
-        <div class="item-price"
-             th:text="${#numbers.formatDecimal(item.displayPrice,0,'POINT',0,'COMMA')} + ' đ'">
+        <div class="item-price">
+            <!-- Nếu giá gốc khác giá giảm thì show giá gốc gạch ngang -->
+            <span th:if="${item.productVariant.additionalPrice != item.displayPrice}"
+                  style="text-decoration: line-through; color: gray;"
+                  th:text="${#numbers.formatDecimal(item.productVariant.additionalPrice,0,'POINT',0,'COMMA')} + ' đ'">
+    </span>
+            <!-- Giá hiển thị sau Flash Sale -->
+            <span th:text="${#numbers.formatDecimal(item.displayPrice,0,'POINT',0,'COMMA')} + ' đ'"></span>
         </div>
         <span class="qty" th:text="'x ' + ${item.quantity}"></span>
     </div>
@@ -64,7 +70,10 @@
 
     </div>
     <div th:if="${voucher != null}" class="applied-voucher mb-3 p-2 border rounded bg-light">
-        <span>Voucher: <b th:text="${voucher.code}"></b> - Giảm <b th:text="${discount}"></b> VND</span>
+       <span>
+    Voucher: <b th:text="${voucher.code}"></b> -
+    Giảm <b th:text="${#numbers.formatDecimal(discount, 0, 'POINT', 0, 'COMMA')}"></b> đ
+</span>
         <a th:href="@{/checkout/cancel-voucher}" class="btn btn-sm btn-outline-danger ms-2">Hủy</a>
     </div>
     <div th:if="${error}" class="alert alert-danger">
