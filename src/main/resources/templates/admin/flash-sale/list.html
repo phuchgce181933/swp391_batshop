@@ -5,7 +5,11 @@
 
     <div class="container-fluid">
         <div class="fs-admin-header mt-3 d-flex justify-content-between align-items-center flex-wrap gap-3">
-            <div class="d-flex align-items-center gap-3" th:with="activeSales=${flashSales.?[status == 'Đang diễn ra']}">
+
+            <div class="d-flex align-items-center gap-3"
+                 th:with="activeSales=${flashSales.?[status == 'Đang diễn ra']},
+                          upcomingSales=${flashSales.?[status == 'Sắp diễn ra']}">
+
                 <h2 class="fs-admin-title m-0">Quản lý Flash Sale</h2>
 
                 <span th:if="${!activeSales.isEmpty()}" th:with="activeSale=${activeSales[0]}"
@@ -13,9 +17,27 @@
                       style="border-radius: 20px; font-size: 0.9rem;">
                     <i class="fas fa-bolt text-warning" style="animation: pulse 1.5s infinite;"></i>
                     Đang diễn ra:
-                    <span th:text="${activeSale.startDate.hour} + 'h - ' + (${activeSale.endDate.hour == 23 ? 24 : activeSale.endDate.hour}) + 'h ' + ${#temporals.format(activeSale.startDate, 'dd/MM/yyyy')}"></span>
+                    <span th:text="'(' + ${activeSale.startDate.hour} + 'h-' + (${activeSale.endDate.hour == 23 ? 24 : activeSale.endDate.hour}) + 'h) ' + ${#temporals.format(activeSale.startDate, 'dd/MM/yyyy')}"></span>
                 </span>
+
+                <span th:if="${activeSales.isEmpty() and !upcomingSales.isEmpty()}"
+                      th:with="upcomingSale=${upcomingSales[upcomingSales.size() - 1]}"
+                      class="badge bg-warning text-dark fs-text-small py-2 px-3 shadow-sm d-flex align-items-center gap-1"
+                      style="border-radius: 20px; font-size: 0.9rem;">
+                    <i class="fas fa-clock text-danger" style="animation: pulse 1.5s infinite;"></i>
+                    Sắp diễn ra:
+                    <span th:text="'(' + ${upcomingSale.startDate.hour} + 'h-' + (${upcomingSale.endDate.hour == 23 ? 24 : upcomingSale.endDate.hour}) + 'h) ' + ${#temporals.format(upcomingSale.startDate, 'dd/MM/yyyy')}"></span>
+                </span>
+
+                <span th:if="${activeSales.isEmpty() and upcomingSales.isEmpty()}"
+                      class="badge bg-secondary fs-text-small py-2 px-3 shadow-sm d-flex align-items-center gap-1"
+                      style="border-radius: 20px; font-size: 0.9rem;">
+                    <i class="fas fa-calendar-times text-light"></i>
+                    Hiện không có đợt Flash Sales tiếp theo...
+                </span>
+
             </div>
+
             <a th:href="@{/admin/flash-sales/add}" class="fs-btn fs-btn-primary"><i class="fas fa-plus me-1"></i>Thêm đợt Flash Sale mới</a>
         </div>
 
@@ -48,7 +70,7 @@
                     <tr>
                         <th>ID</th>
                         <th>Thời gian diễn ra</th>
-                        <th>Sản phẩm</th>
+                        <th>Số lượng Sản phẩm</th>
                         <th>Trạng thái</th>
                         <th>Hành động</th>
                     </tr>
@@ -90,7 +112,7 @@
                         <td>
                             <div class="fs-action-btns">
                                 <a th:href="@{/admin/flash-sales/edit/{id}(id=${fs.id})}" class="fs-btn fs-btn-sm fs-btn-manage">
-                                    <i class="fas fa-edit"></i> Quản lý
+                                    <i class="fas fa-edit"></i> Cập nhật
                                 </a>
 
                                 <a th:if="${fs.status == 'Sắp diễn ra'}"
@@ -151,10 +173,9 @@
             let filteredRows = [...listRows];
 
             function applyFiltersAndPaginate() {
-                const dateVal = filterDate.value; // Format: yyyy-MM-dd
+                const dateVal = filterDate.value;
                 const statusVal = filterStatus.value;
 
-                // Hiển thị nút Xóa bộ lọc nếu đang có bộ lọc được chọn
                 if (dateVal !== "" || statusVal !== "") {
                     btnClearFilter.style.display = "inline-block";
                 } else {
@@ -176,7 +197,6 @@
             }
 
             function renderPage() {
-                // Ẩn tất cả các dòng dữ liệu
                 listRows.forEach(row => row.style.display = "none");
 
                 if (filteredRows.length === 0 && listRows.length > 0) {
@@ -191,7 +211,6 @@
                 const endIndex = startIndex + ITEMS_PER_PAGE;
                 const rowsToShow = filteredRows.slice(startIndex, endIndex);
 
-                // Chỉ hiển thị các dòng thuộc trang hiện tại
                 rowsToShow.forEach(row => row.style.display = "table-row");
 
                 renderPaginationControls();
@@ -202,16 +221,14 @@
                 paginationControls.innerHTML = '';
                 const totalPages = Math.ceil(filteredRows.length / ITEMS_PER_PAGE);
 
-                if (totalPages <= 1) return; // Không cần phân trang nếu <= 1 trang
+                if (totalPages <= 1) return;
 
-                // Nút Prev
                 paginationControls.innerHTML += `
                     <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
                         <a class="page-link" href="#" data-page="${currentPage - 1}">&laquo;</a>
                     </li>
                 `;
 
-                // Các trang số
                 for (let i = 1; i <= totalPages; i++) {
                     paginationControls.innerHTML += `
                         <li class="page-item ${currentPage === i ? 'active' : ''}">
@@ -220,7 +237,6 @@
                     `;
                 }
 
-                // Nút Next
                 paginationControls.innerHTML += `
                     <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
                         <a class="page-link" href="#" data-page="${currentPage + 1}">&raquo;</a>
@@ -228,7 +244,6 @@
                 `;
             }
 
-            // Gắn sự kiện click cho phân trang
             if(paginationControls) {
                 paginationControls.addEventListener("click", function (e) {
                     e.preventDefault();
@@ -242,18 +257,15 @@
                 });
             }
 
-            // Gắn sự kiện lắng nghe bộ lọc thay đổi
             filterDate.addEventListener("change", applyFiltersAndPaginate);
             filterStatus.addEventListener("change", applyFiltersAndPaginate);
 
-            // Gắn sự kiện xóa bộ lọc
             btnClearFilter.addEventListener("click", function() {
                 filterDate.value = "";
                 filterStatus.value = "";
                 applyFiltersAndPaginate();
             });
 
-            // Chạy lần đầu khi khởi tạo
             if (listRows.length > 0) {
                 applyFiltersAndPaginate();
             }

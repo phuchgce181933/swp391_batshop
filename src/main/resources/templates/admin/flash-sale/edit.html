@@ -77,8 +77,9 @@
             <div class="col-12 col-lg-9">
                 <div class="fs-admin-card p-4 border-0 shadow-sm">
                     <div class="border-bottom mb-3 pb-2 d-flex justify-content-between align-items-center">
-                        <h4 class="m-0 fs-card-title-success">
-                            Sản phẩm trong đợt Flash Sale
+                        <h4 class="m-0 fs-card-title-success d-flex align-items-center">
+                            Số lượng Sản phẩm:
+                            <span class="badge bg-success ms-2 rounded-pill" style="font-size: 0.9rem;" th:text="${flashSale.products != null ? flashSale.products.size() : 0}"></span>
                         </h4>
                         <button type="button" class="btn btn-success fw-bold px-3 py-1 fs-alert" data-bs-toggle="modal" data-bs-target="#addProductModal"
                                 th:disabled="${flashSale.status == 'Đã kết thúc'}"

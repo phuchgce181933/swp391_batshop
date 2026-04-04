@@ -94,7 +94,7 @@
         <ul class="pagination">
 
             <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
-                <a class="page-link" th:href="@{/admin/contacts(page=${currentPage - 1}, keyword=${param.keyword}, topic=${param.topic}, status=${param.status}, date=${param.date})}">&laquo; Trước</a>
+                <a class="page-link" th:href="@{/admin/contacts(page=${currentPage - 1}, keyword=${param.keyword}, topic=${param.topic}, status=${param.status}, date=${param.date})}">&laquo;</a>
             </li>
 
             <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}" th:classappend="${currentPage == i ? 'active' : ''}">
@@ -102,7 +102,7 @@
             </li>
 
             <li class="page-item" th:classappend="${currentPage == totalPages - 1 ? 'disabled' : ''}">
-                <a class="page-link" th:href="@{/admin/contacts(page=${currentPage + 1}, keyword=${param.keyword}, topic=${param.topic}, status=${param.status}, date=${param.date})}">Sau &raquo;</a>
+                <a class="page-link" th:href="@{/admin/contacts(page=${currentPage + 1}, keyword=${param.keyword}, topic=${param.topic}, status=${param.status}, date=${param.date})}">&raquo;</a>
             </li>
 
         </ul>
