@@ -52,7 +52,12 @@
                        onchange="this.form.submit()"/>
             </form>
         </td>
-        <td th:text="${#numbers.formatDecimal(item.productVariant.additionalPrice, 0, 'POINT', 0, 'COMMA')}"></td>
+        <td th:text="${#numbers.formatDecimal(
+        flashSalePrices[item.id] != null
+        ? flashSalePrices[item.id]
+        : item.productVariant.product.price + item.productVariant.additionalPrice,
+        0, 'POINT', 0, 'COMMA')}">
+        </td>
         <td th:text="${#numbers.formatDecimal(item.quantity * item.productVariant.additionalPrice, 0, 'POINT', 0, 'COMMA')}"></td>
         <td>
             <form th:action="@{/cart/delete}" method="post">
@@ -66,8 +71,13 @@
 </table>
 <div class="cart-summary">
 <div>
-    <td  th:text="${#numbers.formatDecimal(
-        totalCart, 0, 'POINT', 0, 'COMMA')} + ' đ'">
+    <td th:text="${#numbers.formatDecimal(
+    item.quantity * (
+        flashSalePrices[item.id] != null
+            ? flashSalePrices[item.id]
+            : item.productVariant.product.price + item.productVariant.additionalPrice
+    ),
+    0, 'POINT', 0, 'COMMA')}">
     </td>
     <div th:if="${param.error != null and param.error[0] == 'empty_cart'}"
          style="color:red;font-weight:bold;margin-bottom:10px;">
