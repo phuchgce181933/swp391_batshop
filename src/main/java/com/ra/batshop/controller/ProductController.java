@@ -126,6 +126,70 @@ public class ProductController {
             model.addAttribute("content", "admin/product/add");
             return "admin/layout";
         }
+        if (product.getPrice() == null ||
+                product.getPrice().compareTo(BigDecimal.ZERO) < 1000) {
+
+            model.addAttribute("errorMessage", "Giá sản phẩm phải lớn hơn 1000!");
+
+            model.addAttribute("categories", categoryRepository.findAll());
+            model.addAttribute("brands", brandRepository.findAll());
+            model.addAttribute("sizes", sizeRepository.findAll());
+            model.addAttribute("colors", colorRepository.findAll());
+            model.addAttribute("racketLevels", RacketLevel.values());
+            model.addAttribute("racketLengths", RacketLength.values());
+            model.addAttribute("handleLengths", RacketHandleLength.values());
+            model.addAttribute("racketStyles", RacketStyle.values());
+            model.addAttribute("racketWeights", RacketWeight.values());
+            model.addAttribute("equilibriumPoints", EquilibriumPoint.values());
+            model.addAttribute("chopstickHardness", ChopstickHardness.values());
+            model.addAttribute("content", "admin/product/add");
+
+            return "admin/layout";
+        }
+        if (product.getVariants() != null) {
+            for (ProductVariant v : product.getVariants()) {
+
+                if (v.getStock() == null || v.getStock() < 1000) {
+                    model.addAttribute("errorMessage", "Số lượng phải lớn hơn 1000!");
+
+                    model.addAttribute("categories", categoryRepository.findAll());
+                    model.addAttribute("brands", brandRepository.findAll());
+                    model.addAttribute("sizes", sizeRepository.findAll());
+                    model.addAttribute("colors", colorRepository.findAll());
+                    model.addAttribute("racketLevels", RacketLevel.values());
+                    model.addAttribute("racketLengths", RacketLength.values());
+                    model.addAttribute("handleLengths", RacketHandleLength.values());
+                    model.addAttribute("racketStyles", RacketStyle.values());
+                    model.addAttribute("racketWeights", RacketWeight.values());
+                    model.addAttribute("equilibriumPoints", EquilibriumPoint.values());
+                    model.addAttribute("chopstickHardness", ChopstickHardness.values());
+                    model.addAttribute("content", "admin/product/add");
+
+                    return "admin/layout";
+                }
+
+                if (v.getAdditionalPrice() == null ||
+                        v.getAdditionalPrice().compareTo(BigDecimal.ZERO) < 1000) {
+
+                    model.addAttribute("errorMessage", "Giá biến thể phải lớn hơn 1000!");
+
+                    model.addAttribute("categories", categoryRepository.findAll());
+                    model.addAttribute("brands", brandRepository.findAll());
+                    model.addAttribute("sizes", sizeRepository.findAll());
+                    model.addAttribute("colors", colorRepository.findAll());
+                    model.addAttribute("racketLevels", RacketLevel.values());
+                    model.addAttribute("racketLengths", RacketLength.values());
+                    model.addAttribute("handleLengths", RacketHandleLength.values());
+                    model.addAttribute("racketStyles", RacketStyle.values());
+                    model.addAttribute("racketWeights", RacketWeight.values());
+                    model.addAttribute("equilibriumPoints", EquilibriumPoint.values());
+                    model.addAttribute("chopstickHardness", ChopstickHardness.values());
+                    model.addAttribute("content", "admin/product/add");
+
+                    return "admin/layout";
+                }
+            }
+        }
         // CHECK TRÙNG TÊN
         if (productRepository.existsByNameIgnoreCase(product.getName().trim())) {
 
@@ -245,6 +309,11 @@ public class ProductController {
                     }
                 }
             }
+            if (product.getPrice().compareTo(BigDecimal.ZERO) < 0) {
+                model.addAttribute("errorMessage", "Gi!");
+                return "admin/layout";
+            }
+
 
             productRepository.save(product);
 

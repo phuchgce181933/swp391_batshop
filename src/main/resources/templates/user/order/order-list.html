@@ -8,8 +8,26 @@
 <body>
 <div th:replace="layout/header :: header"></div>
 <div class="order-container">
-<h2>Your Orders</h2>
+<h2>Đơn Hàng của Bạn</h2>
+    <form method="get" action="/user/orders" class="order-filter">
 
+        <!-- FILTER STATUS -->
+        <select name="status" onchange="this.form.submit()">
+            <option value="">-- All Status --</option>
+            <option th:each="s : ${OrderStatus}"
+                    th:value="${s}"
+                    th:text="${s}"
+                    th:selected="${s.name() == selectedStatus}">
+            </option>
+        </select>
+
+        <!-- SORT -->
+        <select name="sort" onchange="this.form.submit()">
+            <option value="desc" th:selected="${sort == 'desc'}">Mới nhất</option>
+            <option value="asc" th:selected="${sort == 'asc'}">Cũ nhất</option>
+        </select>
+
+    </form>
 <table border="1">
     <tr>
         <th>ID</th>

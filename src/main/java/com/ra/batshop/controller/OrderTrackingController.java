@@ -7,6 +7,7 @@ import com.ra.batshop.model.User;
 import com.ra.batshop.repository.OrderRepository;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -22,15 +23,35 @@ public class OrderTrackingController {
 
     // Danh sách đơn hàng
     @GetMapping
-    public String listOrders(HttpSession session, Model model) {
+    public String listOrders(@RequestParam(required = false) String status,
+                             @RequestParam(required = false, defaultValue = "desc") String sort,
+                             HttpSession session,
+                             Model model) {
+
         User user = (User) session.getAttribute("user");
 
         if (user == null) {
             return "redirect:/login";
         }
 
-        List<Order> orders = orderRepository.findByUser(user);
+        // Xử lý sort
+        Sort sortObj = sort.equals("asc") ?
+                Sort.by("createdAt").ascending() :
+                Sort.by("createdAt").descending();
+
+        List<Order> orders;
+
+        // Filter theo status nếu có
+        if (status != null && !status.isEmpty()) {
+            orders = orderRepository.findByUserAndStatus(user, OrderStatus.valueOf(status), sortObj);
+        } else {
+            orders = orderRepository.findByUser(user, sortObj);
+        }
+
         model.addAttribute("orders", orders);
+        model.addAttribute("selectedStatus", status);
+        model.addAttribute("sort", sort);
+        model.addAttribute("OrderStatus", OrderStatus.values());
 
         return "user/order/order-list";
     }

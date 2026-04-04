@@ -14,14 +14,14 @@
 <div class="box">
     <p><strong>Order ID:</strong> <span th:text="${order.id}"></span></p>
     <p>
-        <strong>Created At:</strong>
+        <strong>Tạo lúc:</strong>
         <span th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy')} + ' lúc: ' + ${#temporals.format(order.createdAt, 'HH:mm')}"></span>
     </p>
     <p>
-        <strong>Total Price:</strong>
+        <strong>Tổng giá đơn hàng:</strong>
         <span th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')} + '₫'"></span>
     </p>
-    <p><strong>Payment Method:</strong> <span th:text="${order.paymentMethod}"></span></p>
+    <p><strong>Phương thức thanh toán:</strong> <span th:text="${order.paymentMethod}"></span></p>
     <p><strong>Status:</strong>
         <span th:text="${order.status}"></span>
     </p>
