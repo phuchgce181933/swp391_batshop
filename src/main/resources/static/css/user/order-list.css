@@ -63,3 +63,67 @@ tr:hover {
 .track-btn:hover {
     background-color: #0652DD;
 }
+/* FORM CONTAINER */
+.order-filter {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 12px 16px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* SELECT BOX */
+.order-filter select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #fafafa;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+/* HOVER + FOCUS */
+.order-filter select:hover {
+    border-color: #ff4d4f;
+}
+
+.order-filter select:focus {
+    outline: none;
+    border-color: #ff4d4f;
+    background: #fff;
+}
+
+/* BUTTON */
+.order-filter button {
+    padding: 8px 18px;
+    border: none;
+    background: linear-gradient(135deg, #ff4d4f, #ff7a45);
+    color: #fff;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+/* BUTTON HOVER */
+.order-filter button:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+    .order-filter {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .order-filter select,
+    .order-filter button {
+        width: 100%;
+    }
+}

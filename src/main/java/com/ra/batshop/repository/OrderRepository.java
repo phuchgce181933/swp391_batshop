@@ -6,6 +6,7 @@ import com.ra.batshop.model.Product;
 import com.ra.batshop.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -15,8 +16,8 @@ import java.util.Optional;
 
 public interface OrderRepository extends JpaRepository<Order, Integer> {
     // Lấy danh sách đơn của user
-    List<Order> findByUser(User user);
-
+    List<Order> findByUser(User user, Sort sort);
+    List<Order> findByUserAndStatus(User user, OrderStatus status, Sort sort);
     // Lấy đơn theo id và user (để bảo mật)
     Optional<Order> findByIdAndUser(Integer id, User user);
 
