@@ -44,8 +44,7 @@
                     <span class="blog-date" th:text="${#temporals.format(blog.createdAt, 'dd-MM-yyyy HH:mm')}">16-01-2026 11:32</span>
                 </div>
 
-                <p class="blog-excerpt" th:text="${blog.content}">Mô tả ngắn gọn nội dung bài viết...</p>
-            </div>
+                <div class="blog-excerpt" th:utext="${blog.content}">Mô tả ngắn gọn nội dung bài viết...</div>            </div>
         </div>
     </div>
 
