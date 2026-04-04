@@ -42,9 +42,9 @@
       <div th:each="addr : ${addresses}" class="card mb-3">
         <div class="card-body d-flex justify-content-between align-items-start">
           <div>
-                        <span th:if="${addr.isDefault}" class="badge badge-default mb-2">
-                           <i class="fa-solid fa-circle-check"></i> Địa chỉ mặc định
-                        </span>
+            <span th:if="${addr.isDefault}" class="badge badge-default mb-2">
+               <i class="fa-solid fa-circle-check"></i> Địa chỉ mặc định
+            </span>
             <div class="mb-1">
               <span class="fw-bold fs-5" th:text="${addr.receiverName}"></span>
               <span class="text-muted mx-2">|</span>
@@ -57,7 +57,6 @@
             <button type="button" class="btn btn-outline-warning btn-sm" th:onclick="'editAddress(' + ${addr.id} + ')'">
               <i class="fa-solid fa-pencil"></i>
             </button>
-
             <button type="button" class="btn btn-outline-danger btn-sm" th:onclick="'confirmDelete(' + ${addr.id} + ')'">
               <i class="fa-solid fa-trash"></i>
             </button>
@@ -76,9 +75,13 @@
             <label class="form-label small fw-bold">Họ tên người nhận</label>
             <input type="text" class="form-control" name="receiverName" id="receiverName" required th:value="${user.fullName}">
           </div>
+
           <div class="mb-3">
             <label class="form-label small fw-bold">Số điện thoại người nhận</label>
-            <input type="text" class="form-control" name="receiverPhone" id="receiverPhone" required th:value="${user.phone}">
+            <input type="text" class="form-control" name="receiverPhone" id="receiverPhone"
+                   required th:value="${user.phone}"
+                   placeholder="Nhập 10 chữ số">
+            <div class="form-text text-muted" style="font-size: 0.75rem;">Chỉ nhập số, đúng 10 ký tự.</div>
           </div>
 
           <div class="mb-3">
@@ -99,10 +102,14 @@
               <option value="">-- Chọn Xã --</option>
             </select>
           </div>
+
           <div class="mb-3">
             <label class="form-label small fw-bold">Số nhà, tên đường</label>
-            <input type="text" class="form-control" name="detail" id="detail" placeholder="Ví dụ: 123 Đường ABC" required>
+            <input type="text" class="form-control" name="detail" id="detail"
+                   placeholder="Ví dụ: 123/45, Đường ABC" required>
+            <div class="form-text text-muted" style="font-size: 0.75rem;">Không dùng ký tự đặc biệt (trừ dấu / và ,).</div>
           </div>
+
           <div class="form-check mb-4">
             <input class="form-check-input" type="checkbox" name="isDefault" id="isDefaultCheck">
             <label class="form-check-label" for="isDefaultCheck">Đặt làm địa chỉ mặc định</label>
@@ -126,7 +133,6 @@
   const wards = document.getElementById("ward");
   let provinceData = [];
 
-  // Tải dữ liệu hành chính
   fetch("https://provinces.open-api.vn/api/?depth=3")
           .then(res => res.json())
           .then(data => {
@@ -154,7 +160,29 @@
     }
   };
 
-  // Hàm lấy thông tin địa chỉ để sửa
+  // PHẦN CẦN CHÚ Ý: Đã cập nhật cho phép dấu phẩy (,)
+  document.getElementById('addressForm').onsubmit = function(e) {
+    const phone = document.getElementById('receiverPhone').value;
+    const detail = document.getElementById('detail').value;
+
+    const phoneRegex = /^\d{10}$/;
+    if (!phoneRegex.test(phone)) {
+      alert("Số điện thoại không hợp lệ! Vui lòng nhập đúng 10 chữ số.");
+      e.preventDefault();
+      return false;
+    }
+
+    // Regex đã thêm dấu phẩy (,) sau dấu xẹt (/)
+    const detailRegex = /^[a-zA-Z0-9\s,/À-ỹ]*$/;
+    if (!detailRegex.test(detail)) {
+      alert("Địa chỉ không được chứa ký tự đặc biệt (ngoại trừ dấu / và ,)!");
+      e.preventDefault();
+      return false;
+    }
+
+    return true;
+  };
+
   function editAddress(id) {
     fetch('/address/get/' + id)
             .then(res => res.json())
@@ -182,7 +210,6 @@
             });
   }
 
-  // Hàm Xóa Cứng: Chuyển hướng trực tiếp đến API delete
   function confirmDelete(id) {
     if (confirm('Lưu ý: Địa chỉ này sẽ bị xóa VĨNH VIỄN. Bạn có chắc chắn không?')) {
       window.location.href = '/address/delete/' + id;
@@ -196,7 +223,6 @@
     districts.disabled = wards.disabled = true;
   }
 
-  // Tự động đóng thông báo sau 5 giây
   window.setTimeout(function() {
     const alerts = document.querySelectorAll('.alert-dismissible');
     alerts.forEach(alert => {
