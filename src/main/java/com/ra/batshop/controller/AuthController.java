@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.Random;
 
 @Controller
@@ -231,27 +232,49 @@ public class AuthController {
         return "profile/info";
     }
 
+    // THÊM HÀM NÀY ĐỂ HIỂN THỊ GIAO DIỆN
     @GetMapping("/profile/edit")
     public String showEditProfile(HttpSession session, Model model) {
         User user = (User) session.getAttribute("user");
-        if (user == null) return "redirect:/login";
+        if (user == null) return "redirect:/login"; // Nếu chưa đăng nhập thì đẩy về login
+
         model.addAttribute("user", user);
-        return "profile/edit-profile";
+        return "profile/edit-profile"; // Trả về file edit-profile.html
     }
 
+    // Hàm POST của bạn đã có (giữ nguyên hoặc cập nhật như dưới)
     @PostMapping("/profile/edit")
     public String updateProfile(@ModelAttribute("user") User userForm, HttpSession session, Model model) {
         User sessionUser = (User) session.getAttribute("user");
         if (sessionUser == null) return "redirect:/login";
 
+        // 1. Kiểm tra 10 số điện thoại
+        if (userForm.getPhone() == null || !userForm.getPhone().matches("^\\d{10}$")) {
+            model.addAttribute("error", "Số điện thoại không hợp lệ! Vui lòng nhập đúng 10 chữ số.");
+            model.addAttribute("user", userForm);
+            return "profile/edit-profile";
+        }
+
+        // 2. Check trùng Email (trừ chính mình)
         userRepository.findByEmail(userForm.getEmail()).ifPresent(u -> {
             if (!u.getId().equals(sessionUser.getId())) {
                 model.addAttribute("error", "Email này đã được sử dụng!");
             }
         });
 
-        if (model.containsAttribute("error")) return "profile/edit-profile";
+        // 3. Check trùng SĐT (trừ chính mình)
+        userRepository.findByPhone(userForm.getPhone()).ifPresent(u -> {
+            if (!u.getId().equals(sessionUser.getId())) {
+                model.addAttribute("error", "Số điện thoại này đã được sử dụng!");
+            }
+        });
 
+        if (model.containsAttribute("error")) {
+            model.addAttribute("user", userForm);
+            return "profile/edit-profile";
+        }
+
+        // Lưu vào DB
         User userInDb = userRepository.findById(sessionUser.getId()).get();
         userInDb.setFullName(userForm.getFullName());
         userInDb.setEmail(userForm.getEmail());
@@ -262,7 +285,6 @@ public class AuthController {
         session.setAttribute("user", userInDb);
         return "redirect:/profile/edit?success";
     }
-
     @GetMapping("/change-password")
     public String showChangePassword(HttpSession session) {
         if (session.getAttribute("user") == null) return "redirect:/login";
