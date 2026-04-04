@@ -90,6 +90,8 @@ public class CartItemController {
 
         BigDecimal finalPrice;
 
+        BigDecimal basePrice = variant.getAdditionalPrice() != null ? variant.getAdditionalPrice() : BigDecimal.ZERO;
+
         Optional<FlashSaleProduct> fspOpt =
                 flashSaleProductRepository.findActiveByProductId(
                         variant.getProduct().getId(),
@@ -97,10 +99,11 @@ public class CartItemController {
                 );
 
         if (fspOpt.isPresent()) {
-            finalPrice = fspOpt.get().getSalePrice();
+            BigDecimal discountPercent = BigDecimal.valueOf(fspOpt.get().getDiscountPercent() != null ? fspOpt.get().getDiscountPercent() : 0);
+            finalPrice = basePrice.multiply(BigDecimal.valueOf(100).subtract(discountPercent))
+                    .divide(BigDecimal.valueOf(100));
         } else {
-            finalPrice = variant.getProduct().getPrice()
-                    .add(variant.getAdditionalPrice());
+            finalPrice = basePrice;
         }
 
         flashSalePrices.put(cartItem.getId(), finalPrice);
@@ -117,17 +120,46 @@ public class CartItemController {
         if (user == null) {
             return "redirect:/login";
         }
-        List<CartItem> cartitem = cartItemRepository.findByUserId(user.getId());
-        if (cartitem == null) {
-            cartitem = List.of();
+
+        List<CartItem> cartItems = cartItemRepository.findByUserId(user.getId());
+        if (cartItems == null) {
+            cartItems = List.of();
         }
 
-        Double total = cartItemRepository.calculateTotalByUserId(user.getId());
-        if (total == null) {
-            total = 0.0;
+        // Map lưu giá flash sale theo itemId
+        Map<Integer, BigDecimal> flashSalePrices = new HashMap<>();
+        BigDecimal total = BigDecimal.ZERO;
+
+        for (CartItem item : cartItems) {
+            ProductVariant variant = item.getProductVariant();
+
+            Optional<FlashSaleProduct> flashSaleOpt =
+                    flashSaleProductRepository.findActiveByProductId(
+                            variant.getProduct().getId(),
+                            LocalDateTime.now()
+                    );
+
+            BigDecimal basePrice = variant.getAdditionalPrice() != null ? variant.getAdditionalPrice() : BigDecimal.ZERO;
+
+            BigDecimal price;
+            if (flashSaleOpt.isPresent()) {
+                BigDecimal discountPercent = BigDecimal.valueOf(
+                        flashSaleOpt.get().getDiscountPercent() != null ? flashSaleOpt.get().getDiscountPercent() : 0
+                );
+                price = basePrice.multiply(BigDecimal.valueOf(100).subtract(discountPercent))
+                        .divide(BigDecimal.valueOf(100));
+            } else {
+                price = basePrice;
+            }
+
+            flashSalePrices.put(item.getId(), price); // lưu theo itemId
+            total = total.add(price.multiply(BigDecimal.valueOf(item.getQuantity())));
         }
-        model.addAttribute("cartItems", cartitem);
-        model.addAttribute("totalCart", total );
+
+        httpSession.setAttribute("flashSalePrices", flashSalePrices);
+        model.addAttribute("cartItems", cartItems);
+        model.addAttribute("totalCart", total.doubleValue());
+
         return "user/cart/list";
     }
     @PostMapping("/delete")

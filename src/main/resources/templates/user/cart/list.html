@@ -15,85 +15,81 @@
     <thead>
     <tr>
         <th>id</th>
-        <th>productVariant</th>
-        <th>quantity</th>
-        <th>price</th>
-        <th>tổng</th>
-        <th>delete</th>
+        <th>Sản phẩm</th>
+        <th>Số lượng</th>
+        <th>Giá gốc</th>
+        <th>Giá cần thanh toán</th>
+        <th>Xóa khỏi giỏ hàng</th>
     </tr>
     </thead>
     <tbody>
-
-    <!-- giỏ hàng rỗng -->
+    <!-- Giỏ hàng trống -->
     <tr th:if="${#lists.isEmpty(cartItems)}">
         <td colspan="6" style="text-align:center; padding:20px;">
             🛒 Giỏ hàng của bạn đang trống
         </td>
     </tr>
 
-    <!-- có sản phẩm -->
-    <tr th:each="item, stat : ${cartItems}"
-        th:unless="${#lists.isEmpty(cartItems)}">
-
+    <!-- Có sản phẩm -->
+    <tr th:each="item, stat : ${cartItems}" th:unless="${#lists.isEmpty(cartItems)}">
         <td th:text="${stat.count}"></td>
         <td th:text="${item.productVariant.product.name}"></td>
         <td>
             <form th:action="@{/cart/update}" method="post">
-                <input type="hidden"
-                       name="productVariantId"
-                       th:value="${item.productVariant.id}"/>
-
-                <input type="hidden" name="id" th:value="${item.id}"/>
-                <input type="number"
-                       name="quantity"
-                       th:value="${item.quantity}"
-                       min="1"
-                       style="width:60px"
-                       onchange="this.form.submit()"/>
+                <input type="hidden" name="productVariantId" th:value="${item.productVariant.id}" />
+                <input type="hidden" name="id" th:value="${item.id}" />
+                <input type="number" name="quantity" th:value="${item.quantity}" min="1"
+                       style="width:60px" onchange="this.form.submit()" />
             </form>
         </td>
-        <td th:text="${#numbers.formatDecimal(
-        flashSalePrices[item.id] != null
-        ? flashSalePrices[item.id]
-        : item.productVariant.product.price + item.productVariant.additionalPrice,
-        0, 'POINT', 0, 'COMMA')}">
+
+        <!-- Giá gốc -->
+        <td th:with="sale = ${session.flashSalePrices != null ? session.flashSalePrices[item.id] : null}">
+    <span th:if="${sale != null}"
+          th:text="${#numbers.formatDecimal(item.productVariant.additionalPrice,0,'POINT',0,'COMMA')} + ' đ'"
+          style="text-decoration: line-through; color: gray;"></span>
         </td>
-        <td th:text="${#numbers.formatDecimal(item.quantity * item.productVariant.additionalPrice, 0, 'POINT', 0, 'COMMA')}"></td>
+
+        <!-- Giá cần thanh toán + % giảm nếu có FS -->
+        <td th:with="sale = ${session.flashSalePrices != null ? session.flashSalePrices[item.id] : null}">
+    <span th:text="${#numbers.formatDecimal((sale != null ? sale : item.productVariant.additionalPrice) * item.quantity,0,'POINT',0,'COMMA')} + ' đ'"
+          style="color: red; font-weight: bold;"></span>
+
+            <!-- Hiển thị % giảm chỉ khi sale < giá gốc -->
+            <span th:if="${sale != null and sale < item.productVariant.additionalPrice}">
+        (<span th:text="${T(java.math.BigDecimal).valueOf(
+            100 - (sale.doubleValue() / item.productVariant.additionalPrice.doubleValue() * 100)
+        ).setScale(0, T(java.math.RoundingMode).HALF_UP)}"></span>% giảm)
+    </span>
+        </td>
+
         <td>
             <form th:action="@{/cart/delete}" method="post">
-                <input type="hidden" name="id" th:value="${item.id}">
+                <input type="hidden" name="id" th:value="${item.id}" />
                 <button type="submit">delete</button>
             </form>
         </td>
     </tr>
-
     </tbody>
 </table>
 <div class="cart-summary">
-<div>
-    <td th:text="${#numbers.formatDecimal(
-    item.quantity * (
-        flashSalePrices[item.id] != null
-            ? flashSalePrices[item.id]
-            : item.productVariant.product.price + item.productVariant.additionalPrice
-    ),
-    0, 'POINT', 0, 'COMMA')}">
-    </td>
-    <div th:if="${param.error != null and param.error[0] == 'empty_cart'}"
-         style="color:red;font-weight:bold;margin-bottom:10px;">
-        Giỏ hàng trống, không thể thanh toán
+    <div>
+        <td th:text="${#numbers.formatDecimal(totalCart, 0, 'POINT', 0, 'COMMA')} + ' đ'"></td>
+        <div th:if="${param.error != null and param.error[0] == 'empty_cart'}"
+             style="color:red;font-weight:bold;margin-bottom:10px;">
+            Giỏ hàng trống, không thể thanh toán
+        </div>
+        <div th:if="${param.error != null and param.error[0] == 'invalid_quantity'}"
+             style="color:red;font-weight:bold;margin-bottom:10px;">
+            Số lượng không hợp lệ (phải lớn hơn 0)
+        </div>
+        <div th:if="${param.error != null and param.error[0] == 'stock'}"
+             style="color:red;font-weight:bold;margin-bottom:10px;">
+            Xin lỗi, hiện tại chúng tôi chỉ còn
+            <b th:text="${param.stock[0]}"></b>
+            sản phẩm trong kho.
+        </div>
     </div>
-    <div th:if="${param.error != null and param.error[0] == 'invalid_quantity'}"
-         style="color:red;font-weight:bold;margin-bottom:10px;">
-         Số lượng không hợp lệ (phải lớn hơn 0)
-    </div>
-    <div th:if="${param.error != null and param.error[0] == 'stock'}"
-         style="color:red;font-weight:bold;margin-bottom:10px;">
-        Xin lỗi, hiện tại chúng tôi chỉ còn
-        <b th:text="${param.stock[0]}"></b>
-        sản phẩm trong kho.
-    </div>
-</div>
     <a th:href="@{/checkout/list}" class="checkout-btn">
         Thanh toán
     </a>

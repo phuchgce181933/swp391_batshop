@@ -11,21 +11,22 @@ h1 {
 
 table {
     width: 100%;
-    max-width: 900px;
+    max-width: 1200px; /* tăng từ 900px lên 1200px */
     margin: auto;
     border-collapse: collapse;
     background: #fff;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
-thead {
-    background: #f0f0f0;
-}
-
 th, td {
-    padding: 10px 12px;
+    padding: 12px 15px; /* tăng padding để chữ thoáng */
     border-bottom: 1px solid #e0e0e0;
     text-align: center;
+    white-space: nowrap; /* không xuống hàng */
+}
+
+thead th {
+    font-weight: bold;
 }
 
 tr:hover {
@@ -63,7 +64,7 @@ td:last-child form button {
     z-index: 200;
 }
 .cart-summary {
-    max-width: 900px;
+    max-width: 1200px;
     margin: 20px auto;
     text-align: left;
     background: #fff;
