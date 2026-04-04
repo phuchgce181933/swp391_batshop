@@ -127,9 +127,9 @@ public class ProductController {
             return "admin/layout";
         }
         if (product.getPrice() == null ||
-                product.getPrice().compareTo(BigDecimal.ZERO) < 1000) {
+                product.getPrice().compareTo(BigDecimal.ZERO) < 0) {
 
-            model.addAttribute("errorMessage", "Giá sản phẩm phải lớn hơn 1000!");
+            model.addAttribute("errorMessage", "Giá sản phẩm phải lớn hơn 0!");
 
             model.addAttribute("categories", categoryRepository.findAll());
             model.addAttribute("brands", brandRepository.findAll());
@@ -149,8 +149,8 @@ public class ProductController {
         if (product.getVariants() != null) {
             for (ProductVariant v : product.getVariants()) {
 
-                if (v.getStock() == null || v.getStock() < 1000) {
-                    model.addAttribute("errorMessage", "Số lượng phải lớn hơn 1000!");
+                if (v.getStock() == null || v.getStock() < 0) {
+                    model.addAttribute("errorMessage", "Số lượng phải lớn hơn 0!");
 
                     model.addAttribute("categories", categoryRepository.findAll());
                     model.addAttribute("brands", brandRepository.findAll());
@@ -169,9 +169,9 @@ public class ProductController {
                 }
 
                 if (v.getAdditionalPrice() == null ||
-                        v.getAdditionalPrice().compareTo(BigDecimal.ZERO) < 1000) {
+                        v.getAdditionalPrice().compareTo(BigDecimal.ZERO) < 0) {
 
-                    model.addAttribute("errorMessage", "Giá biến thể phải lớn hơn 1000!");
+                    model.addAttribute("errorMessage", "Giá biến thể phải lớn hơn 0!");
 
                     model.addAttribute("categories", categoryRepository.findAll());
                     model.addAttribute("brands", brandRepository.findAll());
