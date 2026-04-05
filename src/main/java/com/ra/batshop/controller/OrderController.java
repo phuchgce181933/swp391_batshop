@@ -142,8 +142,8 @@ public class OrderController {
                                   @RequestParam String paymentMethod,
                                   HttpSession session,
                                   HttpServletRequest request,
-                                  RedirectAttributes redirectAttributes,
-                                  RedirectAttributes ra) throws Exception {
+                                  RedirectAttributes redirectAttributes
+                                  ) throws Exception {
 
         User user = (User) session.getAttribute("user");
         if (user == null) return "redirect:/login";
@@ -324,7 +324,7 @@ public class OrderController {
         redirectAttributes.addFlashAttribute("successMessage",
                 "Đặt hàng thành công!");
         session.removeAttribute("voucher"); // Xóa voucher
-        ra.addFlashAttribute("success", "Đã hủy áp dụng voucher");
+        //ra.addFlashAttribute("success", "Đã hủy áp dụng voucher");
         return "redirect:/home";
     }
     @GetMapping("/vnpay-return")
